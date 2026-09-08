@@ -25,27 +25,19 @@ jobs:
         with:
           ref: main
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-          cache: pip
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Build site artifact with real-name lookup
-        env:
-          PLAYER_IDENTITY_PRIVATE_KEY: ${{ secrets.PLAYER_IDENTITY_PRIVATE_KEY }}
+      - name: Build public site artifact
         run: |
           set -euo pipefail
           rm -rf _site
           mkdir -p _site/data _site/data/players
-          cp index.html app.js identity-ui.js styles.css summary-compact.css _site/
+          cp index.html app.js identity-ui.js auth-ui.js auth-ui.css styles.css summary-compact.css _site/
           cp data/ranking.json _site/data/ranking.json
           cp -R data/players/. _site/data/players/
           touch _site/.nojekyll
-          python deploy_identity.py data/player_identity.enc.json _site/data/player_identity.json
+          if find _site -type f -name 'player_identity*.json' | grep -q .; then
+            echo "Identity database must never be included in the public Pages artifact."
+            exit 1
+          fi
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
