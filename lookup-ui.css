@@ -1,0 +1,53 @@
+.lookup-results-note {
+  margin: 0 0 12px;
+  color: var(--muted, #6b7485);
+  font-size: 13px;
+}
+
+.lookup-results {
+  display: grid;
+  gap: 9px;
+}
+
+.lookup-candidate {
+  width: 100%;
+  min-height: 64px;
+  padding: 11px 13px;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.lookup-candidate-main {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.lookup-candidate-main strong {
+  color: var(--text, #162033);
+  font-size: 16px;
+}
+
+.lookup-candidate-main small,
+.lookup-candidate-meta {
+  color: var(--muted, #6b7485);
+  font-size: 12px;
+}
+
+.lookup-candidate-meta {
+  flex: 0 0 auto;
+  margin-left: 12px;
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .lookup-candidate {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .lookup-candidate-meta {
+    margin-left: 0;
+    text-align: left;
+  }
+}
