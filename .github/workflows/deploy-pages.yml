@@ -1,0 +1,64 @@
+name: Deploy PTCG ranking site
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build site artifact with real-name lookup
+        env:
+          PLAYER_IDENTITY_PRIVATE_KEY: ${{ secrets.PLAYER_IDENTITY_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site/data _site/data/players
+          cp index.html app.js identity-ui.js styles.css summary-compact.css _site/
+          cp data/ranking.json _site/data/ranking.json
+          cp -R data/players/. _site/data/players/
+          touch _site/.nojekyll
+          python deploy_identity.py data/player_identity.enc.json _site/data/player_identity.json
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
