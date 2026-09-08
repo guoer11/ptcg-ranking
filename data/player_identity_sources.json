@@ -1,0 +1,14 @@
+{
+  "sources": [
+    {
+      "name": "2025-26 歷史賽事來源 A",
+      "url": "https://tcg.sfc-jpn.jp/tourround.asp?tid=2144060&kno=9999999&znt=1",
+      "note": "使用者提供的上賽季姓名來源；僅做 PTCG ID ↔ 姓名對照，不作為目前組別判定。"
+    },
+    {
+      "name": "2025-26 歷史賽事來源 B",
+      "url": "https://tcg.sfc-jpn.jp/tourround.asp?tid=7085706&kno=9999999&znt=1",
+      "note": "使用者提供的上賽季姓名來源；僅做 PTCG ID ↔ 姓名對照，不作為目前組別判定。"
+    }
+  ]
+}
