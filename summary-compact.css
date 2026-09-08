@@ -1,0 +1,86 @@
+.group-summary {
+  margin-bottom: 14px;
+  padding: 14px 16px;
+}
+
+.group-summary-head {
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+}
+
+.group-summary-head > div > span,
+.group-summary-head small {
+  font-size: 13px;
+}
+
+.group-summary-head > div > strong {
+  margin-top: 2px;
+  font-size: 20px;
+}
+
+.summary-metrics {
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.summary-metric {
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+.summary-metric strong {
+  margin-bottom: 2px;
+  font-size: clamp(21px, 2.5vw, 26px);
+}
+
+.summary-metric span {
+  font-size: 13px;
+}
+
+.summary-world-slots {
+  font-size: clamp(17px, 2vw, 21px) !important;
+}
+
+@media (max-width: 760px) {
+  .group-summary {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .group-summary-head {
+    padding-bottom: 8px;
+  }
+
+  .group-summary-head small {
+    display: none;
+  }
+
+  .group-summary-head > div > strong {
+    font-size: 18px;
+  }
+
+  .summary-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .summary-metric {
+    padding: 9px 6px;
+    text-align: center;
+  }
+
+  .summary-metric strong {
+    font-size: 19px;
+  }
+
+  .summary-metric span {
+    font-size: 11px;
+  }
+
+  .summary-world-slots {
+    font-size: 14px !important;
+    line-height: 1.25;
+  }
+}

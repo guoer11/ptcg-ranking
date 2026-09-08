@@ -1,6 +1,8 @@
 {
-  "updated_at": null,
-  "count": 0,
+  "updated_at": "2026-09-08T15:21:41+08:00",
+  "count": 3127,
   "players": {},
-  "diagnostics": []
+  "encrypted": true,
+  "encrypted_file": "player_identity.enc.json",
+  "note": "玩家真實姓名資料已加密保存；公開檔案不包含姓名明文。"
 }

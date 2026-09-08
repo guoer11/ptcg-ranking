@@ -6,6 +6,7 @@
   <meta name="description" content="PTCG 台灣玩家排名追蹤" />
   <title>PTCG 台灣即時排名</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="summary-compact.css?v=0.2.3-r1" />
 </head>
 <body>
   <header class="site-header">
@@ -26,22 +27,28 @@
   </header>
 
   <main class="wrap main-content">
-    <section class="summary-grid" aria-label="排名摘要">
-      <article class="summary-card">
-        <span>大師組</span>
-        <strong id="countMaster">0</strong>
-        <small>位玩家</small>
-      </article>
-      <article class="summary-card">
-        <span>少年組</span>
-        <strong id="countSenior">0</strong>
-        <small>位玩家</small>
-      </article>
-      <article class="summary-card">
-        <span>孩童組</span>
-        <strong id="countJunior">0</strong>
-        <small>位玩家</small>
-      </article>
+    <section class="summary-card group-summary" aria-label="目前組別摘要">
+      <div class="group-summary-head">
+        <div>
+          <span>目前查看</span>
+          <strong id="summaryGroupLabel">孩童組</strong>
+        </div>
+        <small>切換下方組別後會同步更新</small>
+      </div>
+      <div class="summary-metrics">
+        <div class="summary-metric">
+          <strong id="summaryPlayerCount">0</strong>
+          <span>位玩家</span>
+        </div>
+        <div class="summary-metric">
+          <strong id="summaryTopPoints">—</strong>
+          <span>目前最高積分</span>
+        </div>
+        <div class="summary-metric">
+          <strong id="summaryWorldSlots" class="summary-world-slots">尚未公布</strong>
+          <span>世界賽名額</span>
+        </div>
+      </div>
     </section>
 
     <section class="panel">
@@ -57,6 +64,13 @@
         <button class="tab active" data-group="Junior" role="tab">孩童組</button>
         <button class="tab" data-group="Senior" role="tab">少年組</button>
         <button class="tab" data-group="Master" role="tab">大師組</button>
+      </div>
+
+      <div class="update-toolbar">
+        <span>目前自動更新：每天 00:05</span>
+        <div class="update-actions">
+          <button id="reloadDataButton" class="secondary-btn" type="button">重新讀取資料</button>
+        </div>
       </div>
 
       <div id="rankingContainer" class="ranking-container"></div>
@@ -77,8 +91,8 @@
     </section>
 
     <section class="notice">
-      <strong>目前為 v0.2.1 測試版</strong>
-      <span>空榜時顯示 10 筆示範資料；另加入歷史 PTCG ID ↔ 真實姓名資料庫，正式排名出現後會自動套用姓名。</span>
+      <strong>目前為 v0.2.3 測試版</strong>
+      <span>空榜時於孩童組顯示 3 筆示範資料；玩家列直接呈現「暱稱＋姓名＋PTCG ID」。正式排名出現後會自動改用官方資料。</span>
     </section>
   </main>
 
@@ -102,6 +116,6 @@
     <div class="wrap">非官方網站。本頁僅整理公開賽事與排名資訊，Pokémon 相關商標屬原權利人所有。</div>
   </footer>
 
-  <script src="app.js" defer></script>
+  <script src="app.js?v=0.2.3-r2" defer></script>
 </body>
 </html>

@@ -1,17 +1,10 @@
 const GROUP_LABELS = { Master: '大師組', Senior: '少年組', Junior: '孩童組' };
-const DEMO_PLAYER_ID = 'tw64474352';
+const WORLD_SLOTS = { Master: null, Senior: null, Junior: null };
 
 const DEMO_ROWS = [
-  { name: 'Yule', player_id: DEMO_PLAYER_ID, points: 195, region: '高雄市' },
-  { name: '示範玩家02', points: 180, region: '台北市' },
-  { name: '示範玩家03', points: 165, region: '新北市' },
-  { name: '示範玩家04', points: 150, region: '台中市' },
-  { name: '示範玩家05', points: 140, region: '桃園市' },
-  { name: '示範玩家06', points: 125, region: '台南市' },
-  { name: '示範玩家07', points: 110, region: '新竹市' },
-  { name: '示範玩家08', points: 100, region: '彰化縣' },
-  { name: '示範玩家09', points: 90, region: '嘉義市' },
-  { name: '示範玩家10', points: 80, region: '高雄市' }
+  { name: 'Andrew', real_name: '', player_id: 'tw39371632', points: 205, region: '臺南市' },
+  { name: 'Yule', real_name: '', player_id: 'tw64474352', points: 195, region: '高雄市' },
+  { name: 'Kaikaiwang', real_name: '', player_id: 'tw06034751', points: 160, region: '臺北市' }
 ].map((row, index) => ({ ...row, rank: index + 1, demo_key: `demo-${index + 1}` }));
 
 let rankingData = { updated_at: null, groups: { Master: [], Senior: [], Junior: [] } };
@@ -28,6 +21,7 @@ const modal = document.getElementById('playerModal');
 const modalTitle = document.getElementById('playerModalTitle');
 const modalUpdated = document.getElementById('playerModalUpdated');
 const modalBody = document.getElementById('playerModalBody');
+const reloadDataButton = document.getElementById('reloadDataButton');
 
 function esc(value = '') {
   return String(value)
@@ -62,11 +56,22 @@ function identityFor(playerId) {
   return identityData?.players?.[String(playerId).toLowerCase()] || null;
 }
 
+function highestPoints(rows) {
+  const values = (rows || [])
+    .map(row => Number(row.points))
+    .filter(value => Number.isFinite(value));
+  return values.length ? Math.max(...values) : null;
+}
+
 function updateSummary() {
-  const groups = rankingData.groups;
-  document.getElementById('countMaster').textContent = groups.Master?.length || 0;
-  document.getElementById('countSenior').textContent = groups.Senior?.length || 0;
-  document.getElementById('countJunior').textContent = groups.Junior?.length || 0;
+  const rows = rankingData.groups[activeGroup] || [];
+  const top = highestPoints(rows);
+  const worldSlots = WORLD_SLOTS[activeGroup];
+
+  document.getElementById('summaryGroupLabel').textContent = GROUP_LABELS[activeGroup];
+  document.getElementById('summaryPlayerCount').textContent = rows.length;
+  document.getElementById('summaryTopPoints').textContent = top == null ? '—' : `${top} pt`;
+  document.getElementById('summaryWorldSlots').textContent = worldSlots == null ? '尚未公布' : `${worldSlots} 名`;
 }
 
 function filteredRows() {
@@ -95,7 +100,7 @@ function playerNameHtml(row) {
   const realName = identity?.real_name;
   return `
     <strong>${esc(row.name || row.player_id || '—')}</strong>
-    ${realName ? `<div class="hint row-id">本名：${esc(realName)}</div>` : ''}
+    ${realName ? `<div class="player-real-name">${esc(realName)}</div>` : ''}
     ${row.player_id ? `<div class="hint row-id">${esc(row.player_id)}</div>` : ''}`;
 }
 
@@ -105,7 +110,8 @@ function demoTable() {
       <td><span class="rank-badge">${row.rank}</span></td>
       <td>
         <strong>${esc(row.name)}</strong>
-        ${row.player_id ? `<div class="hint row-id">${esc(row.player_id)}</div>` : '<div class="hint row-id">示範資料</div>'}
+        <div class="player-real-name">${esc(row.real_name)}</div>
+        <div class="hint row-id">${esc(row.player_id)}</div>
       </td>
       <td>${esc(row.points)} pt</td>
       <td>${esc(GROUP_LABELS[activeGroup])}</td>
@@ -115,8 +121,8 @@ function demoTable() {
 
   return `
     <div class="demo-box">
-      <div class="demo-label">v0.2.1：10 筆示範資料</div>
-      <p>目前官方新賽季仍是空榜。以下排名、積分與大部分玩家名稱都是介面示範，不代表真實排名；正式資料出現後會自動被官方排行取代。</p>
+      <div class="demo-label">v0.2.3：3 筆示範資料</div>
+      <p>目前官方新賽季仍是空榜。以下玩家暱稱與 PTCG ID 為真實對照；真實姓名已改為加密保存；排名與積分僅用來示範介面。正式資料出現後會自動被官方排行取代。</p>
       <div class="table-scroll">
         <table class="ranking-table">
           <thead><tr><th>排名</th><th>玩家</th><th>得分</th><th>組別</th><th>地區</th><th></th></tr></thead>
@@ -136,7 +142,7 @@ function renderRanking() {
         <strong>${GROUP_LABELS[activeGroup]}目前尚無排名資料</strong>
         <span>新賽季空榜屬正常狀況；官方有資料後會由自動更新程式寫入。</span>
       </div>
-      ${demoTable()}`;
+      ${activeGroup === 'Junior' ? demoTable() : ''}`;
     bindDetailButtons();
     return;
   }
@@ -170,8 +176,17 @@ function renderRanking() {
   bindDetailButtons();
 }
 
-async function loadData() {
+async function loadData(options = {}) {
+  const { showLoading = false } = options;
   try {
+    if (showLoading) {
+      statusText.textContent = '重新讀取中…';
+      if (reloadDataButton) {
+        reloadDataButton.disabled = true;
+        reloadDataButton.textContent = '讀取中…';
+      }
+    }
+
     const [rankingResponse, identityResponse] = await Promise.all([
       fetch(`data/ranking.json?v=${Date.now()}`, { cache: 'no-store' }),
       fetch(`data/player_identity.json?v=${Date.now()}`, { cache: 'no-store' })
@@ -187,6 +202,7 @@ async function loadData() {
 
     statusText.textContent = '資料讀取正常';
     updatedAt.textContent = formatTime(raw.updated_at);
+    statusDot.classList.remove('error');
     statusDot.classList.add('ok');
     updateSummary();
     renderRanking();
@@ -194,8 +210,14 @@ async function loadData() {
     console.error(error);
     statusText.textContent = '資料讀取失敗';
     updatedAt.textContent = '請檢查 data/ranking.json';
+    statusDot.classList.remove('ok');
     statusDot.classList.add('error');
     container.innerHTML = '<div class="empty-state"><strong>無法載入排名資料</strong><span>請稍後重新整理。</span></div>';
+  } finally {
+    if (reloadDataButton) {
+      reloadDataButton.disabled = false;
+      reloadDataButton.textContent = '重新讀取資料';
+    }
   }
 }
 
@@ -267,7 +289,7 @@ function renderPlayerDetail(data) {
 
   const note = data.events_note ? `<div class="demo-note">${esc(data.events_note)}</div>` : '';
   const demoBadge = data.demo ? '<span class="demo-badge">示範資料</span>' : '';
-  const realNameNote = realName ? `<div class="demo-note">歷史公開賽事姓名：<strong>${esc(realName)}</strong>（目前組別仍以新賽季官方排名為準）</div>` : '';
+  const realNameNote = realName ? `<div class="identity-note"><strong>${esc(realName)}</strong><span>歷史公開賽事姓名</span></div>` : '';
   const totalEvents = Number.isFinite(Number(data.total_events)) ? Number(data.total_events) : (data.events?.length || 0);
 
   modalBody.innerHTML = `
@@ -295,17 +317,23 @@ function renderPlayerDetail(data) {
 function openDemoPlayerModal(demoKey) {
   const row = DEMO_ROWS.find(x => x.demo_key === demoKey);
   if (!row) return;
-  const base = row.rank === 1 ? [50, 25, 25, 25, 25, 20, 20, 15] : [25, 25, 20, 20, 15, 15, 10, 10];
+  const demoTop8 = [
+    [50, 25, 25, 25, 25, 20, 20, 15],
+    [25, 25, 25, 20, 20, 20, 15, 10],
+    [25, 25, 20, 20, 15, 15, 10, 10]
+  ];
+  const base = demoTop8[row.rank - 1] || demoTop8[2];
   const data = {
     demo: true,
     name: row.name,
-    player_id: row.player_id || `DEMO-${String(row.rank).padStart(2, '0')}`,
+    real_name: row.real_name,
+    player_id: row.player_id,
     official_points: row.points,
     group: activeGroup,
     region: row.region,
     top8: { points: base, total: base.reduce((a, b) => a + b, 0) },
     total_events: 10,
-    events_note: '此視窗為 v0.2.1 介面示範。除 Yule 的部分既有示範資訊外，其餘排名、積分與賽事內容皆為模擬資料。',
+    events_note: '此視窗為 v0.2.3 介面示範。玩家暱稱與 PTCG ID 為真實對照；真實姓名已加密保存；排名、積分與下列賽事內容為模擬資料。',
     events: [
       { name: '示範高級球聯盟賽', date: '2026-08-30', location: '示範店家 A', points: base[0] },
       { name: '示範 Great Ball League', date: '2026-08-16', location: '示範店家 B', points: base[1] },
@@ -334,7 +362,7 @@ async function openPlayerModal(playerId) {
     modalTitle.textContent = identity?.real_name ? `${playerId}｜${identity.real_name}` : playerId;
     modalUpdated.textContent = '本站尚未建立此玩家詳細資料';
     modalBody.innerHTML = `
-      ${identity?.real_name ? `<div class="demo-note">歷史公開賽事姓名：<strong>${esc(identity.real_name)}</strong></div>` : ''}
+      ${identity?.real_name ? `<div class="identity-note"><strong>${esc(identity.real_name)}</strong><span>歷史公開賽事姓名</span></div>` : ''}
       <div class="detail-unavailable">
         <strong>這位玩家目前只有排行榜／姓名對照資料</strong>
         <p>等玩家公開賽事抓取功能完成後，這裡會顯示 Top 8 與所有賽事紀錄。</p>
@@ -348,6 +376,7 @@ document.querySelectorAll('.tab').forEach(button => {
     document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
     button.classList.add('active');
     activeGroup = button.dataset.group;
+    updateSummary();
     renderRanking();
   });
 });
@@ -356,6 +385,10 @@ searchInput.addEventListener('input', event => {
   searchKeyword = event.target.value.trim();
   renderRanking();
 });
+
+if (reloadDataButton) {
+  reloadDataButton.addEventListener('click', () => loadData({ showLoading: true }));
+}
 
 document.getElementById('playerLookupForm').addEventListener('submit', async event => {
   event.preventDefault();
