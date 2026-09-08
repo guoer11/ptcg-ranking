@@ -1,0 +1,36 @@
+{
+  "demo": true,
+  "player_id": "tw64474352",
+  "name": "Yule",
+  "official_points": 195,
+  "group": "Junior",
+  "group_label": "孩童組",
+  "region": "高雄市",
+  "updated_at": "2026-09-06T13:32:00+08:00",
+  "top8": {
+    "points": [50, 25, 25, 25, 25, 20, 20, 15],
+    "total": 205
+  },
+  "total_events": 19,
+  "events_note": "v0.2 介面預覽：目前只列出已確認的部分賽事，正式自動抓取完成後會顯示完整公開賽事紀錄。",
+  "events": [
+    {
+      "name": "2025-26 Taiwan Master Ball League TCG Division Junior Category",
+      "date": "2026-06-13",
+      "location": "The Pokémon Company",
+      "points": 25
+    },
+    {
+      "name": "2025-26 臺灣高級球聯盟賽 賽季 3-4 (孩童組)",
+      "date": "2026-05-30",
+      "location": "Saka Saka Limited Taiwan Branch",
+      "points": 15
+    },
+    {
+      "name": "2025-26 Taiwan Great Ball League Season 3",
+      "date": "2026-05-23",
+      "location": "紙牌屋",
+      "points": 6
+    }
+  ]
+}
