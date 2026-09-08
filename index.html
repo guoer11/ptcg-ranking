@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="summary-compact.css?v=0.2.3-r1" />
   <link rel="stylesheet" href="auth-ui.css?v=0.3-r2" />
+  <link rel="stylesheet" href="lookup-ui.css?v=0.3-r1" />
 </head>
 <body>
   <header class="site-header">
@@ -87,15 +88,15 @@
     <section class="panel player-lookup">
       <div class="panel-head">
         <div>
-          <h2>玩家公開資料查詢</h2>
-          <p>輸入 PTCG ID；若本站已有資料會開啟詳細視窗，否則前往官方玩家公開頁。</p>
+          <h2>玩家資料查詢</h2>
+          <p>輸入真實姓名、暱稱或 PTCG ID；真實姓名搜尋需先用右上角帳號登入。</p>
         </div>
       </div>
       <form id="playerLookupForm" class="lookup-form">
-        <input id="playerIdInput" class="search-input" type="text" placeholder="例如：tw64474352" autocomplete="off" />
+        <input id="playerIdInput" class="search-input" type="text" placeholder="姓名 / 暱稱 / PTCG ID" autocomplete="off" />
         <button class="primary-btn" type="submit">查詢玩家</button>
       </form>
-      <p class="hint">歷史姓名對照已移至私人資料庫；目前組別仍一律以新賽季官方排行榜為準。</p>
+      <p class="hint">真實姓名搜尋只在登入後啟用；若有同名玩家會先列出候選結果。</p>
     </section>
 
     <section class="notice">
@@ -128,5 +129,6 @@
   <script src="app.js?v=0.3-r1" defer></script>
   <script src="identity-ui.js?v=0.3-r1" defer></script>
   <script src="auth-ui.js?v=0.3-r2" defer></script>
+  <script src="lookup-ui.js?v=0.3-r1" defer></script>
 </body>
 </html>
