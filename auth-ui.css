@@ -1,0 +1,46 @@
+.identity-auth {
+  margin: 14px 0 18px;
+  padding: 12px 14px;
+  border: 1px solid rgba(148, 163, 184, .28);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: rgba(15, 23, 42, .03);
+}
+
+.identity-auth-copy {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.identity-auth-copy strong {
+  font-size: .95rem;
+}
+
+.identity-auth-copy small {
+  color: var(--muted, #64748b);
+}
+
+.identity-auth-actions {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.identity-auth button[hidden] {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .identity-auth {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .identity-auth-actions button {
+    width: 100%;
+  }
+}
