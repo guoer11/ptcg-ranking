@@ -1,0 +1,47 @@
+name: Update PTCG ranking
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */3 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-ptcg-ranking
+  cancel-in-progress: false
+
+jobs:
+  update-ranking:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch official ranking
+        env:
+          POKEMON_EMAIL: ${{ secrets.POKEMON_EMAIL }}
+          POKEMON_PASSWORD: ${{ secrets.POKEMON_PASSWORD }}
+        run: python scraper.py
+
+      - name: Commit ranking changes
+        run: |
+          if git diff --quiet; then
+            echo "No ranking changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git commit -m "Update ranking data"
+          git push

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="PTCG 台灣玩家排名追蹤" />
+  <title>PTCG 台灣即時排名</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div>
+        <p class="eyebrow">Pokémon TCG Taiwan</p>
+        <h1>PTCG 台灣即時排名</h1>
+        <p class="subtitle">自動整理官方 Master / Senior / Junior 排名資料</p>
+      </div>
+      <div class="status-card">
+        <span class="status-dot"></span>
+        <div>
+          <strong id="dataStatus">資料載入中</strong>
+          <small id="updatedAt">—</small>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap main-content">
+    <section class="summary-grid" aria-label="排名摘要">
+      <article class="summary-card">
+        <span>大師組</span>
+        <strong id="countMaster">0</strong>
+        <small>位玩家</small>
+      </article>
+      <article class="summary-card">
+        <span>少年組</span>
+        <strong id="countSenior">0</strong>
+        <small>位玩家</small>
+      </article>
+      <article class="summary-card">
+        <span>孩童組</span>
+        <strong id="countJunior">0</strong>
+        <small>位玩家</small>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>玩家排行榜</h2>
+          <p>資料來源：Pokémon Asia 官方訓練家網站</p>
+        </div>
+        <input id="rankingSearch" class="search-input" type="search" placeholder="搜尋玩家名稱 / PTCG ID / 地區" autocomplete="off" />
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="選擇組別">
+        <button class="tab active" data-group="Junior" role="tab">孩童組</button>
+        <button class="tab" data-group="Senior" role="tab">少年組</button>
+        <button class="tab" data-group="Master" role="tab">大師組</button>
+      </div>
+
+      <div id="rankingContainer" class="ranking-container"></div>
+    </section>
+
+    <section class="panel player-lookup">
+      <div class="panel-head">
+        <div>
+          <h2>玩家公開資料查詢</h2>
+          <p>輸入 PTCG ID，可直接前往官方玩家公開頁。</p>
+        </div>
+      </div>
+      <form id="playerLookupForm" class="lookup-form">
+        <input id="playerIdInput" class="search-input" type="text" placeholder="例如：tw64474352" autocomplete="off" />
+        <button class="primary-btn" type="submit">開啟官方玩家頁</button>
+      </form>
+      <p class="hint">下一版會把玩家賽事紀錄抓回本站，並自動計算本季前 8 場最高積分。</p>
+    </section>
+
+    <section class="notice">
+      <strong>目前為 v0.1 測試版</strong>
+      <span>新賽季尚未有排名時，排行榜會正常顯示空榜；自動抓取架構已預先完成。</span>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">非官方網站。本頁僅整理公開賽事與排名資訊，Pokémon 相關商標屬原權利人所有。</div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
