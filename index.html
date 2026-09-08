@@ -66,21 +66,37 @@
       <div class="panel-head">
         <div>
           <h2>玩家公開資料查詢</h2>
-          <p>輸入 PTCG ID，可直接前往官方玩家公開頁。</p>
+          <p>輸入 PTCG ID；若本站已有資料會開啟詳細視窗，否則前往官方玩家公開頁。</p>
         </div>
       </div>
       <form id="playerLookupForm" class="lookup-form">
         <input id="playerIdInput" class="search-input" type="text" placeholder="例如：tw64474352" autocomplete="off" />
-        <button class="primary-btn" type="submit">開啟官方玩家頁</button>
+        <button class="primary-btn" type="submit">查詢玩家</button>
       </form>
-      <p class="hint">下一版會把玩家賽事紀錄抓回本站，並自動計算本季前 8 場最高積分。</p>
+      <p class="hint">目前可輸入 tw64474352 預覽 v0.2 玩家詳細資料介面。</p>
     </section>
 
     <section class="notice">
-      <strong>目前為 v0.1 測試版</strong>
-      <span>新賽季尚未有排名時，排行榜會正常顯示空榜；自動抓取架構已預先完成。</span>
+      <strong>目前為 v0.2 測試版</strong>
+      <span>新增玩家放大鏡、詳細資料視窗、Top 8 積分與賽事紀錄介面；新賽季空榜時提供 Yule 示範列預覽。</span>
     </section>
   </main>
+
+  <div id="playerModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal></div>
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="playerModalTitle">
+      <header class="modal-header">
+        <div>
+          <h2 id="playerModalTitle">玩家詳細資料</h2>
+          <small id="playerModalUpdated">—</small>
+        </div>
+        <button class="modal-close" type="button" aria-label="關閉" data-close-modal>×</button>
+      </header>
+      <div id="playerModalBody" class="modal-body">
+        <div class="modal-loading">資料載入中…</div>
+      </div>
+    </section>
+  </div>
 
   <footer class="footer">
     <div class="wrap">非官方網站。本頁僅整理公開賽事與排名資訊，Pokémon 相關商標屬原權利人所有。</div>
