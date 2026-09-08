@@ -30,7 +30,7 @@ jobs:
           set -euo pipefail
           rm -rf _site
           mkdir -p _site/data _site/data/players
-          cp index.html app.js identity-ui.js auth-ui.js auth-ui.css styles.css summary-compact.css _site/
+          cp index.html app.js identity-ui.js auth-ui.js auth-ui.css lookup-ui.js lookup-ui.css styles.css summary-compact.css _site/
           cp data/ranking.json _site/data/ranking.json
           cp -R data/players/. _site/data/players/
           touch _site/.nojekyll
