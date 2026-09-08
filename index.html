@@ -7,6 +7,7 @@
   <title>PTCG 台灣即時排名</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="summary-compact.css?v=0.2.3-r1" />
+  <link rel="stylesheet" href="auth-ui.css?v=0.3-r1" />
 </head>
 <body>
   <header class="site-header">
@@ -57,7 +58,7 @@
           <h2>玩家排行榜</h2>
           <p>資料來源：Pokémon Asia 官方訓練家網站</p>
         </div>
-        <input id="rankingSearch" class="search-input" type="search" placeholder="搜尋玩家名稱 / 真實姓名 / PTCG ID / 地區" autocomplete="off" />
+        <input id="rankingSearch" class="search-input" type="search" placeholder="搜尋玩家名稱 / PTCG ID / 地區（登入後可搜尋真實姓名）" autocomplete="off" />
       </div>
 
       <div class="tabs" role="tablist" aria-label="選擇組別">
@@ -70,6 +71,17 @@
         <span>目前自動更新：每天 00:05</span>
         <div class="update-actions">
           <button id="reloadDataButton" class="secondary-btn" type="button">重新讀取資料</button>
+        </div>
+      </div>
+
+      <div id="identityAuth" class="identity-auth" aria-live="polite">
+        <div class="identity-auth-copy">
+          <strong id="identityAuthState">真實姓名：登入後顯示</strong>
+          <small id="identityAuthDetail">使用與比賽紀錄站相同的 Google 帳號</small>
+        </div>
+        <div class="identity-auth-actions">
+          <button id="identityLoginButton" class="primary-btn" type="button">Google 登入</button>
+          <button id="identityLogoutButton" class="secondary-btn" type="button" hidden>登出</button>
         </div>
       </div>
 
@@ -87,12 +99,12 @@
         <input id="playerIdInput" class="search-input" type="text" placeholder="例如：tw64474352" autocomplete="off" />
         <button class="primary-btn" type="submit">查詢玩家</button>
       </form>
-      <p class="hint">已加入歷史公開賽事姓名對照來源；目前組別仍一律以新賽季官方排行榜為準。</p>
+      <p class="hint">歷史姓名對照已移至私人資料庫；目前組別仍一律以新賽季官方排行榜為準。</p>
     </section>
 
     <section class="notice">
-      <strong>目前為 v0.2.3 測試版</strong>
-      <span>空榜時於孩童組顯示 3 筆示範資料；玩家列直接呈現「暱稱＋姓名＋PTCG ID」。正式排名出現後會自動改用官方資料。</span>
+      <strong>目前為 v0.3 測試版</strong>
+      <span>排名、積分、暱稱與 PTCG ID 維持公開；真實姓名只有授權 Google 帳號登入後才會從私人資料庫載入。</span>
     </section>
   </main>
 
@@ -116,7 +128,9 @@
     <div class="wrap">非官方網站。本頁僅整理公開賽事與排名資訊，Pokémon 相關商標屬原權利人所有。</div>
   </footer>
 
-  <script src="app.js?v=0.2.3-r3" defer></script>
-  <script src="identity-ui.js?v=0.2.3-r1" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="app.js?v=0.3-r1" defer></script>
+  <script src="identity-ui.js?v=0.3-r1" defer></script>
+  <script src="auth-ui.js?v=0.3-r1" defer></script>
 </body>
 </html>
