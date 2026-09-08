@@ -1,7 +1,21 @@
 const GROUP_LABELS = { Master: '大師組', Senior: '少年組', Junior: '孩童組' };
 const DEMO_PLAYER_ID = 'tw64474352';
 
+const DEMO_ROWS = [
+  { name: 'Yule', player_id: DEMO_PLAYER_ID, points: 195, region: '高雄市' },
+  { name: '示範玩家02', points: 180, region: '台北市' },
+  { name: '示範玩家03', points: 165, region: '新北市' },
+  { name: '示範玩家04', points: 150, region: '台中市' },
+  { name: '示範玩家05', points: 140, region: '桃園市' },
+  { name: '示範玩家06', points: 125, region: '台南市' },
+  { name: '示範玩家07', points: 110, region: '新竹市' },
+  { name: '示範玩家08', points: 100, region: '彰化縣' },
+  { name: '示範玩家09', points: 90, region: '嘉義市' },
+  { name: '示範玩家10', points: 80, region: '高雄市' }
+].map((row, index) => ({ ...row, rank: index + 1, demo_key: `demo-${index + 1}` }));
+
 let rankingData = { updated_at: null, groups: { Master: [], Senior: [], Junior: [] } };
+let identityData = { updated_at: null, count: 0, players: {} };
 let activeGroup = 'Junior';
 let searchKeyword = '';
 
@@ -43,6 +57,11 @@ function normalizeGroups(data) {
   };
 }
 
+function identityFor(playerId) {
+  if (!playerId) return null;
+  return identityData?.players?.[String(playerId).toLowerCase()] || null;
+}
+
 function updateSummary() {
   const groups = rankingData.groups;
   document.getElementById('countMaster').textContent = groups.Master?.length || 0;
@@ -54,29 +73,55 @@ function filteredRows() {
   const rows = rankingData.groups[activeGroup] || [];
   if (!searchKeyword) return rows;
   const key = searchKeyword.toLowerCase();
-  return rows.filter(row => [row.name, row.player_id, row.region, row.points, row.rank]
-    .some(v => String(v ?? '').toLowerCase().includes(key)));
+  return rows.filter(row => {
+    const realName = identityFor(row.player_id)?.real_name;
+    return [row.name, realName, row.player_id, row.region, row.points, row.rank]
+      .some(v => String(v ?? '').toLowerCase().includes(key));
+  });
 }
 
-function detailButton(playerId, label = '查看玩家詳細資料') {
+function detailButton(playerId, label = '查看玩家詳細資料', demoKey = '') {
+  if (demoKey) {
+    return `<button class="detail-btn" type="button" data-demo-key="${esc(demoKey)}" title="${esc(label)}" aria-label="${esc(label)}">⌕</button>`;
+  }
   if (!playerId) {
     return '<button class="detail-btn" type="button" disabled title="目前沒有 PTCG ID">⌕</button>';
   }
   return `<button class="detail-btn" type="button" data-player-id="${esc(playerId)}" title="${esc(label)}" aria-label="${esc(label)}">⌕</button>`;
 }
 
-function demoRow() {
+function playerNameHtml(row) {
+  const identity = identityFor(row.player_id);
+  const realName = identity?.real_name;
+  return `
+    <strong>${esc(row.name || row.player_id || '—')}</strong>
+    ${realName ? `<div class="hint row-id">本名：${esc(realName)}</div>` : ''}
+    ${row.player_id ? `<div class="hint row-id">${esc(row.player_id)}</div>` : ''}`;
+}
+
+function demoTable() {
+  const rows = DEMO_ROWS.map(row => `
+    <tr>
+      <td><span class="rank-badge">${row.rank}</span></td>
+      <td>
+        <strong>${esc(row.name)}</strong>
+        ${row.player_id ? `<div class="hint row-id">${esc(row.player_id)}</div>` : '<div class="hint row-id">示範資料</div>'}
+      </td>
+      <td>${esc(row.points)} pt</td>
+      <td>${esc(GROUP_LABELS[activeGroup])}</td>
+      <td>${esc(row.region)}</td>
+      <td class="detail-col">${detailButton(row.player_id, '開啟示範玩家詳細資料', row.demo_key)}</td>
+    </tr>`).join('');
+
   return `
     <div class="demo-box">
-      <div class="demo-label">v0.2 介面預覽</div>
-      <p>目前官方新賽季排行榜仍是空榜，所以先用 Yule 示範未來排行榜的放大鏡操作。</p>
-      <div class="demo-ranking-row">
-        <span class="rank-badge">17</span>
-        <div class="demo-player"><strong>Yule</strong><small>tw64474352</small></div>
-        <strong class="demo-points">195 pt</strong>
-        <span>孩童組</span>
-        <span>高雄市</span>
-        ${detailButton(DEMO_PLAYER_ID, '預覽 Yule 玩家詳細資料')}
+      <div class="demo-label">v0.2.1：10 筆示範資料</div>
+      <p>目前官方新賽季仍是空榜。以下排名、積分與大部分玩家名稱都是介面示範，不代表真實排名；正式資料出現後會自動被官方排行取代。</p>
+      <div class="table-scroll">
+        <table class="ranking-table">
+          <thead><tr><th>排名</th><th>玩家</th><th>得分</th><th>組別</th><th>地區</th><th></th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
       </div>
     </div>`;
 }
@@ -91,7 +136,7 @@ function renderRanking() {
         <strong>${GROUP_LABELS[activeGroup]}目前尚無排名資料</strong>
         <span>新賽季空榜屬正常狀況；官方有資料後會由自動更新程式寫入。</span>
       </div>
-      ${activeGroup === 'Junior' ? demoRow() : ''}`;
+      ${demoTable()}`;
     bindDetailButtons();
     return;
   }
@@ -100,7 +145,7 @@ function renderRanking() {
     container.innerHTML = `
       <div class="empty-state">
         <strong>找不到符合條件的玩家</strong>
-        <span>請換個名稱、PTCG ID 或地區再試一次。</span>
+        <span>請換個名稱、真實姓名、PTCG ID 或地區再試一次。</span>
       </div>`;
     return;
   }
@@ -108,10 +153,7 @@ function renderRanking() {
   const body = rows.map(row => `
     <tr>
       <td><span class="rank-badge">${esc(row.rank ?? '—')}</span></td>
-      <td>
-        <strong>${esc(row.name || row.player_id || '—')}</strong>
-        ${row.player_id ? `<div class="hint row-id">${esc(row.player_id)}</div>` : ''}
-      </td>
+      <td>${playerNameHtml(row)}</td>
       <td>${esc(row.points ?? '—')} pt</td>
       <td>${esc(GROUP_LABELS[activeGroup])}</td>
       <td>${esc(row.region || '—')}</td>
@@ -128,12 +170,21 @@ function renderRanking() {
   bindDetailButtons();
 }
 
-async function loadRanking() {
+async function loadData() {
   try {
-    const response = await fetch(`data/ranking.json?v=${Date.now()}`, { cache: 'no-store' });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const raw = await response.json();
+    const [rankingResponse, identityResponse] = await Promise.all([
+      fetch(`data/ranking.json?v=${Date.now()}`, { cache: 'no-store' }),
+      fetch(`data/player_identity.json?v=${Date.now()}`, { cache: 'no-store' })
+    ]);
+
+    if (!rankingResponse.ok) throw new Error(`ranking HTTP ${rankingResponse.status}`);
+    const raw = await rankingResponse.json();
     rankingData = { ...raw, groups: normalizeGroups(raw) };
+
+    if (identityResponse.ok) {
+      identityData = await identityResponse.json();
+    }
+
     statusText.textContent = '資料讀取正常';
     updatedAt.textContent = formatTime(raw.updated_at);
     statusDot.classList.add('ok');
@@ -151,6 +202,9 @@ async function loadRanking() {
 function bindDetailButtons() {
   document.querySelectorAll('[data-player-id]').forEach(button => {
     button.addEventListener('click', () => openPlayerModal(button.dataset.playerId));
+  });
+  document.querySelectorAll('[data-demo-key]').forEach(button => {
+    button.addEventListener('click', () => openDemoPlayerModal(button.dataset.demoKey));
   });
 }
 
@@ -206,17 +260,19 @@ function eventsHtml(data) {
 }
 
 function renderPlayerDetail(data) {
+  const identity = identityFor(data.player_id);
+  const realName = data.real_name || identity?.real_name;
   modalTitle.textContent = data.name || data.player_id || '玩家詳細資料';
   modalUpdated.textContent = data.updated_at ? formatTime(data.updated_at, '最後更新：') : '最後更新：—';
 
-  const note = data.events_note
-    ? `<div class="demo-note">${esc(data.events_note)}</div>`
-    : '';
+  const note = data.events_note ? `<div class="demo-note">${esc(data.events_note)}</div>` : '';
   const demoBadge = data.demo ? '<span class="demo-badge">示範資料</span>' : '';
+  const realNameNote = realName ? `<div class="demo-note">歷史公開賽事姓名：<strong>${esc(realName)}</strong>（目前組別仍以新賽季官方排名為準）</div>` : '';
   const totalEvents = Number.isFinite(Number(data.total_events)) ? Number(data.total_events) : (data.events?.length || 0);
 
   modalBody.innerHTML = `
     ${demoBadge}
+    ${realNameNote}
     <section class="player-stat-grid">
       <article><strong>${esc(data.official_points ?? '—')}pt</strong><span>本季積分</span></article>
       <article><strong class="player-id-value">${esc(data.player_id || '—')}</strong><span>PTCG ID</span></article>
@@ -229,11 +285,35 @@ function renderPlayerDetail(data) {
     <section class="events-section">
       <div class="events-title-row">
         <h3>▣ 所有賽事紀錄 <span>(${esc(totalEvents)} 場賽事)</span></h3>
-        <a class="official-link" href="${esc(playerOfficialUrl(data.player_id))}" target="_blank" rel="noopener">官方玩家頁 ↗</a>
+        ${data.player_id?.startsWith('tw') ? `<a class="official-link" href="${esc(playerOfficialUrl(data.player_id))}" target="_blank" rel="noopener">官方玩家頁 ↗</a>` : ''}
       </div>
       ${note}
       ${eventsHtml(data)}
     </section>`;
+}
+
+function openDemoPlayerModal(demoKey) {
+  const row = DEMO_ROWS.find(x => x.demo_key === demoKey);
+  if (!row) return;
+  const base = row.rank === 1 ? [50, 25, 25, 25, 25, 20, 20, 15] : [25, 25, 20, 20, 15, 15, 10, 10];
+  const data = {
+    demo: true,
+    name: row.name,
+    player_id: row.player_id || `DEMO-${String(row.rank).padStart(2, '0')}`,
+    official_points: row.points,
+    group: activeGroup,
+    region: row.region,
+    top8: { points: base, total: base.reduce((a, b) => a + b, 0) },
+    total_events: 10,
+    events_note: '此視窗為 v0.2.1 介面示範。除 Yule 的部分既有示範資訊外，其餘排名、積分與賽事內容皆為模擬資料。',
+    events: [
+      { name: '示範高級球聯盟賽', date: '2026-08-30', location: '示範店家 A', points: base[0] },
+      { name: '示範 Great Ball League', date: '2026-08-16', location: '示範店家 B', points: base[1] },
+      { name: '示範高級球聯盟賽', date: '2026-08-02', location: '示範店家 C', points: base[2] }
+    ]
+  };
+  openModalShell();
+  renderPlayerDetail(data);
 }
 
 async function openPlayerModal(playerId) {
@@ -250,11 +330,13 @@ async function openPlayerModal(playerId) {
     renderPlayerDetail(data);
   } catch (error) {
     console.warn('本站尚無玩家詳細資料：', playerId, error);
-    modalTitle.textContent = playerId;
+    const identity = identityFor(playerId);
+    modalTitle.textContent = identity?.real_name ? `${playerId}｜${identity.real_name}` : playerId;
     modalUpdated.textContent = '本站尚未建立此玩家詳細資料';
     modalBody.innerHTML = `
+      ${identity?.real_name ? `<div class="demo-note">歷史公開賽事姓名：<strong>${esc(identity.real_name)}</strong></div>` : ''}
       <div class="detail-unavailable">
-        <strong>這位玩家目前只有排行榜資料</strong>
+        <strong>這位玩家目前只有排行榜／姓名對照資料</strong>
         <p>等玩家公開賽事抓取功能完成後，這裡會顯示 Top 8 與所有賽事紀錄。</p>
         <a class="primary-btn link-btn" href="${esc(playerOfficialUrl(playerId))}" target="_blank" rel="noopener">先開啟官方玩家頁</a>
       </div>`;
@@ -288,4 +370,4 @@ document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && modal.classList.contains('open')) closePlayerModal();
 });
 
-loadRanking();
+loadData();
