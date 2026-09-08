@@ -4,6 +4,13 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "17 */3 * * *"
+  push:
+    branches:
+      - main
+    paths:
+      - "scrape_identity.py"
+      - "data/player_identity_sources.json"
+      - ".github/workflows/update-ranking.yml"
 
 permissions:
   contents: write
@@ -28,20 +35,23 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Update historical player names
+        run: python scrape_identity.py
+
       - name: Fetch official ranking
         env:
           POKEMON_EMAIL: ${{ secrets.POKEMON_EMAIL }}
           POKEMON_PASSWORD: ${{ secrets.POKEMON_PASSWORD }}
         run: python scraper.py
 
-      - name: Commit ranking changes
+      - name: Commit data changes
         run: |
           if git diff --quiet; then
-            echo "No ranking changes."
+            echo "No data changes."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/
-          git commit -m "Update ranking data"
+          git commit -m "Update ranking and player identity data"
           git push
