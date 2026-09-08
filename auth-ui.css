@@ -1,46 +1,69 @@
-.identity-auth {
-  margin: 14px 0 18px;
-  padding: 12px 14px;
-  border: 1px solid rgba(148, 163, 184, .28);
-  border-radius: 14px;
+.header-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  background: rgba(15, 23, 42, .03);
-}
-
-.identity-auth-copy {
-  min-width: 0;
-  display: grid;
-  gap: 3px;
-}
-
-.identity-auth-copy strong {
-  font-size: .95rem;
-}
-
-.identity-auth-copy small {
-  color: var(--muted, #64748b);
-}
-
-.identity-auth-actions {
-  display: flex;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 10px;
   flex: 0 0 auto;
 }
 
-.identity-auth button[hidden] {
-  display: none;
+.identity-auth-icon {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .1);
+  color: #dbe6f8;
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease, color .15s ease;
 }
 
-@media (max-width: 640px) {
-  .identity-auth {
-    align-items: stretch;
-    flex-direction: column;
+.identity-auth-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.identity-auth-icon:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, .16);
+  border-color: rgba(255, 255, 255, .34);
+  color: #fff;
+}
+
+.identity-auth-icon.is-signed-in {
+  color: #54d889;
+  border-color: rgba(84, 216, 137, .42);
+  background: rgba(84, 216, 137, .1);
+}
+
+.identity-auth-icon.is-authorized {
+  box-shadow: 0 0 0 3px rgba(84, 216, 137, .09);
+}
+
+.identity-auth-icon:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+.identity-auth-icon.is-busy svg {
+  opacity: .7;
+}
+
+@media (max-width: 760px) {
+  .header-actions {
+    width: 100%;
   }
 
-  .identity-auth-actions button {
-    width: 100%;
+  .header-actions .status-card {
+    flex: 1 1 auto;
+  }
+
+  .identity-auth-icon {
+    align-self: stretch;
+    height: auto;
+    min-height: 48px;
   }
 }
