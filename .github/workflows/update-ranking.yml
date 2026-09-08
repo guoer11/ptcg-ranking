@@ -11,6 +11,7 @@ on:
     paths:
       - "scrape_identity.py"
       - "scrape_identity_preflight.py"
+      - "sync_identity_supabase.py"
       - "encrypt_identity.py"
       - "privacy/player_identity_public.pem"
       - "requirements.txt"
@@ -48,6 +49,11 @@ jobs:
         run: |
           python scrape_identity.py
           python scrape_identity_preflight.py
+
+      - name: Sync private player names to Supabase
+        env:
+          PLAYER_IDENTITY_PRIVATE_KEY: ${{ secrets.PLAYER_IDENTITY_PRIVATE_KEY }}
+        run: python sync_identity_supabase.py
 
       - name: Encrypt historical player names
         run: |
