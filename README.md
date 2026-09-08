@@ -1,11 +1,25 @@
 # PTCG 台灣即時排名
 
-第一版（v0.1）功能：
+目前版本：**v0.2**
+
+## v0.2 新增
+
+- 排行榜玩家列新增「放大鏡」詳細資料按鈕
+- 玩家詳細資料 Modal 視窗
+- 顯示玩家本季積分、PTCG ID、組別、地區
+- Top 8 高積分賽事區塊
+- 所有賽事紀錄表格介面
+- 空榜期間在孩童組提供 `Yule / tw64474352` 示範列
+- PTCG ID 查詢若本站已有詳細資料會直接開啟 Modal
+- 尚未建立本站詳細資料的玩家，會提供官方玩家頁連結
+
+> 目前新賽季尚未有正式排行榜資料，因此 v0.2 的 Yule 詳細資料為介面預覽。Top 8 摘要依已確認畫面建立，賽事表暫時只列出已確認的部分紀錄；正式自動抓取玩家公開賽事功能會在後續接上。
+
+## v0.1 基礎功能
 
 - Master / Senior / Junior 三組排行榜介面
 - 搜尋玩家名稱、PTCG ID、地區
 - 空榜狀態顯示（新賽季尚未有排名也可正常運作）
-- PTCG ID 官方玩家頁快速查詢
 - Python 自動登入 Pokémon Asia 訓練家網站
 - 自動解析官方排行榜 HTML
 - GitHub Actions 每 3 小時檢查一次排名
@@ -35,17 +49,7 @@ Secrets 設好後：
 
 ## GitHub Pages
 
-到：
-
-`Settings → Pages`
-
-在 **Build and deployment** 選：
-
-- Source: `Deploy from a branch`
-- Branch: `main`
-- Folder: `/ (root)`
-
-儲存後網站通常會是：
+網站：
 
 `https://guoer11.github.io/ptcg-ranking/`
 
