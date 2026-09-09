@@ -15,6 +15,28 @@ function identityAuthButton() {
   return document.getElementById('identityAuthButton');
 }
 
+function updateIdentityTextUI() {
+  const lookupDescription = document.getElementById('playerLookupDescription');
+  const lookupInput = document.getElementById('playerIdInput');
+  const lookupHint = document.getElementById('playerLookupHint');
+  const noticeText = document.getElementById('versionNoticeText');
+
+  if (identityAuthorized) {
+    if (searchInput) searchInput.placeholder = '搜尋玩家名稱 / 真實姓名 / PTCG ID / 地區';
+    if (lookupDescription) lookupDescription.textContent = '輸入真實姓名、暱稱或 PTCG ID。';
+    if (lookupInput) lookupInput.placeholder = '姓名 / 暱稱 / PTCG ID';
+    if (lookupHint) lookupHint.textContent = '真實姓名搜尋已啟用；若有同名玩家會先列出候選結果。';
+    if (noticeText) noticeText.textContent = '排名、積分、暱稱與 PTCG ID 維持公開；真實姓名僅由目前授權帳號讀取。';
+    return;
+  }
+
+  if (searchInput) searchInput.placeholder = '搜尋玩家名稱 / PTCG ID / 地區';
+  if (lookupDescription) lookupDescription.textContent = '輸入暱稱或 PTCG ID。';
+  if (lookupInput) lookupInput.placeholder = '暱稱 / PTCG ID';
+  if (lookupHint) lookupHint.textContent = '若有多筆相符玩家會先列出候選結果。';
+  if (noticeText) noticeText.textContent = '排名、積分、暱稱與 PTCG ID 維持公開。';
+}
+
 function updateIdentityAuthUI(message = '') {
   const button = identityAuthButton();
   if (!button) return;
@@ -25,19 +47,13 @@ function updateIdentityAuthUI(message = '') {
   if (!identitySession) {
     button.setAttribute('aria-label', 'Google 登入');
     button.title = message || 'Google 登入';
-    if (searchInput) searchInput.placeholder = '搜尋玩家名稱 / PTCG ID / 地區（登入後可搜尋真實姓名）';
+    updateIdentityTextUI();
     return;
   }
 
-  if (identityAuthorized) {
-    button.setAttribute('aria-label', '已登入，點此登出');
-    button.title = message || '已登入，點此登出';
-    if (searchInput) searchInput.placeholder = '搜尋玩家名稱 / 真實姓名 / PTCG ID / 地區';
-  } else {
-    button.setAttribute('aria-label', '已登入但沒有姓名檢視權限，點此登出');
-    button.title = message || '已登入但沒有姓名檢視權限，點此登出';
-    if (searchInput) searchInput.placeholder = '搜尋玩家名稱 / PTCG ID / 地區';
-  }
+  button.setAttribute('aria-label', '已登入，點此登出');
+  button.title = message || '已登入，點此登出';
+  updateIdentityTextUI();
 }
 
 async function loadPrivateIdentities() {
@@ -48,7 +64,7 @@ async function loadPrivateIdentities() {
     return;
   }
 
-  updateIdentityAuthUI('正在讀取姓名資料…');
+  updateIdentityAuthUI('正在確認登入資料…');
   const players = {};
   const pageSize = 1000;
   let from = 0;
@@ -73,11 +89,11 @@ async function loadPrivateIdentities() {
     const count = Object.keys(players).length;
     identityData = { updated_at: new Date().toISOString(), count, players };
     identityAuthorized = count > 0;
-    updateIdentityAuthUI(identityAuthorized ? '已登入，點此登出' : '此 Google 帳號未被授權查看姓名，點此登出');
+    updateIdentityAuthUI('已登入，點此登出');
   } catch (error) {
-    console.error('私人姓名資料讀取失敗', error);
+    console.error('私人資料讀取失敗', error);
     clearPrivateIdentities();
-    updateIdentityAuthUI('姓名資料讀取失敗，點此登出');
+    updateIdentityAuthUI('登入資料讀取失敗，點此登出');
   }
 
   renderRanking();
