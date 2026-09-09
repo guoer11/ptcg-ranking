@@ -12,6 +12,9 @@ const TOURNAMENT_GROUP_LABELS = {
   Open: '全年齡組'
 };
 
+const ULTRA_VENUE_NAME = 'Saka Saka Limited Taiwan Branch';
+const ULTRA_VENUE_ADDRESS = '臺中市西區育德里健行路1049號11F（台中 金典酒店 11F）';
+
 let tournamentData = { season: '2026-27', updated_at: null, events: [] };
 let tournamentLeague = 'all';
 let tournamentKeyword = '';
@@ -80,6 +83,18 @@ function eventGroupLabel(group) {
   return TOURNAMENT_GROUP_LABELS[group] || group || '全年齡組';
 }
 
+function eventVenueLabel(event) {
+  const venue = String(event?.venue || '').trim();
+  if (event?.league === 'Ultra' && venue.includes(ULTRA_VENUE_NAME)) {
+    return ULTRA_VENUE_ADDRESS;
+  }
+  return venue;
+}
+
+function eventHasResults(event) {
+  return Array.isArray(event?.results) && event.results.length > 0;
+}
+
 function formatEventDate(dateValue, timeValue = '') {
   const raw = String(dateValue || '');
   const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -94,6 +109,7 @@ function eventSearchTerms(event) {
   const terms = [
     event.title,
     event.venue,
+    eventVenueLabel(event),
     event.region,
     event.address,
     event.group,
@@ -166,6 +182,8 @@ function renderTournamentList() {
   tournamentList.innerHTML = events.map(event => {
     const date = formatEventDate(event.date, event.time || '');
     const status = eventStatus(event);
+    const venue = eventVenueLabel(event);
+    const hasResults = eventHasResults(event);
     return `
       <article class="tournament-card">
         <div class="tournament-card-top">
@@ -184,13 +202,15 @@ function renderTournamentList() {
         <h3>${tournamentEsc(event.title || `官方活動 ${event.event_id || ''}`)}</h3>
 
         <div class="tournament-card-info">
-          ${event.venue ? `<span>⌂ ${tournamentEsc(event.venue)}</span>` : ''}
+          ${venue ? `<span title="${tournamentEsc(venue)}">⌂ ${tournamentEsc(venue)}</span>` : ''}
           ${event.capacity ? `<span>♟ ${tournamentEsc(event.capacity)} 人</span>` : ''}
           ${event.group && event.group !== 'Open' ? `<span>${tournamentEsc(eventGroupLabel(event.group))}</span>` : ''}
         </div>
 
         <div class="tournament-card-actions">
-          <button class="secondary-btn" type="button" data-event-id="${tournamentEsc(event.event_id)}">查看詳情</button>
+          ${hasResults
+            ? `<button class="primary-btn tournament-result-button" type="button" data-event-id="${tournamentEsc(event.event_id)}">查看賽事成績</button>`
+            : '<span class="tournament-result-pending">待更新賽事成績</span>'}
         </div>
       </article>`;
   }).join('');
@@ -203,7 +223,7 @@ function renderTournamentList() {
 function renderTournamentResults(event) {
   const results = Array.isArray(event.results) ? event.results : [];
   if (!results.length) {
-    return `<div class="empty-state compact-empty"><strong>${eventStatusLabel(eventStatus(event))}</strong><span>官方公布活動結果後，自動更新排程會嘗試收錄成績。</span></div>`;
+    return '<div class="empty-state compact-empty"><strong>待更新賽事成績</strong><span>官方公布活動結果後，自動更新排程會嘗試收錄成績。</span></div>';
   }
   const rows = results.map(row => `
     <tr>
@@ -225,10 +245,14 @@ function renderTournamentResults(event) {
 function openTournamentModal(eventId) {
   const event = (tournamentData.events || []).find(item => String(item.event_id) === String(eventId));
   if (!event) return;
+  const venue = eventVenueLabel(event);
+  const detailAddress = String(event.address || '').trim();
+  const showAddress = detailAddress && detailAddress !== venue;
+
   tournamentModal.classList.add('open');
   tournamentModal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('modal-open');
-  tournamentModalTitle.textContent = event.title || '賽事詳情';
+  tournamentModalTitle.textContent = `${event.title || '賽事詳情'} · 官方成績`;
   const subtitle = [
     TOURNAMENT_LEAGUE_LABELS[event.league] || '',
     event.group && event.group !== 'Open' ? eventGroupLabel(event.group) : '',
@@ -239,10 +263,10 @@ function openTournamentModal(eventId) {
     <section class="tournament-detail-grid">
       <article><strong>${tournamentEsc(event.date || '—')}</strong><span>比賽日期</span></article>
       <article><strong>${tournamentEsc(event.time || '—')}</strong><span>比賽時間</span></article>
-      <article><strong>${tournamentEsc(event.venue || '—')}</strong><span>會場 / 店家</span></article>
+      <article><strong>${tournamentEsc(venue || '—')}</strong><span>會場 / 地址</span></article>
       <article><strong>${tournamentEsc(event.capacity || '—')}</strong><span>人數上限</span></article>
     </section>
-    ${event.address ? `<p class="hint">${tournamentEsc(event.address)}</p>` : ''}
+    ${showAddress ? `<p class="hint">${tournamentEsc(detailAddress)}</p>` : ''}
     <h3>官方活動結果</h3>
     ${renderTournamentResults(event)}
     ${event.url ? `<a class="primary-btn tournament-result-link" href="${tournamentEsc(event.url)}" target="_blank" rel="noopener">開啟官方活動頁 ↗</a>` : ''}`;
