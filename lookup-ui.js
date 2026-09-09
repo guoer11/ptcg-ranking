@@ -99,7 +99,7 @@ function showLookupCandidates(query, candidates) {
   }).join('');
 
   modalBody.innerHTML = `
-    <div class="lookup-results-note">若有同名玩家，請依 PTCG ID 或目前排名資料選擇正確的人。</div>
+    <div class="lookup-results-note">若有多位玩家，請依 PTCG ID 或目前排名資料選擇正確的人。</div>
     <div class="lookup-results">${items}</div>`;
 
   modalBody.querySelectorAll('[data-lookup-player-id]').forEach(button => {
@@ -130,10 +130,7 @@ async function handlePlayerLookup(event) {
   }
 
   if (!identityAuthorized) {
-    const message = identitySession
-      ? '目前沒有可用的私人姓名資料；若剛登入請稍等一下再搜尋。'
-      : '目前找不到公開排名中的暱稱。若要用真實姓名搜尋，請先按右上角帳號圖示登入。';
-    showLookupMessage('找不到符合的玩家', message);
+    showLookupMessage('找不到符合的玩家', '請確認暱稱或 PTCG ID 是否正確。');
     return;
   }
 
