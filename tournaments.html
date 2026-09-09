@@ -7,7 +7,7 @@
   <title>PTCG 台灣賽事資訊</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="site-nav.css?v=0.5-r1" />
-  <link rel="stylesheet" href="tournaments.css?v=0.5-r1" />
+  <link rel="stylesheet" href="tournaments.css?v=0.5-r2" />
 </head>
 <body>
   <header class="site-header tournament-header">
@@ -63,10 +63,30 @@
           <h2>2026-27 賽季</h2>
           <p>官方新增活動後，排程會自動發現並更新；活動結束後持續檢查官方成績。</p>
         </div>
-        <label class="future-toggle">
-          <input id="showFutureOnly" type="checkbox" />
-          <span>只看未來賽事</span>
+      </div>
+
+      <div class="tournament-toolbar">
+        <label class="tournament-search-box" aria-label="搜尋賽事">
+          <span class="tournament-search-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+          </span>
+          <input id="tournamentSearch" type="search" placeholder="搜尋賽事名稱 / 日期 / 店家..." autocomplete="off" />
         </label>
+
+        <select id="tournamentSeasonFilter" class="tournament-select" aria-label="賽季">
+          <option value="2026-27">2026-27 賽季</option>
+        </select>
+
+        <select id="tournamentRegionFilter" class="tournament-select" aria-label="地區">
+          <option value="all">⌖ 全國</option>
+        </select>
+
+        <select id="tournamentStatusFilter" class="tournament-select" aria-label="成績狀態">
+          <option value="all">全部狀態</option>
+          <option value="upcoming">未舉行</option>
+          <option value="waiting">等待官方成績</option>
+          <option value="results">已有官方成績</option>
+        </select>
       </div>
 
       <div class="league-tabs" role="tablist" aria-label="選擇賽事類型">
@@ -75,16 +95,6 @@
         <button class="league-tab" type="button" data-league="Ultra">高級球</button>
         <button class="league-tab" type="button" data-league="Premier">紀念球</button>
         <button class="league-tab" type="button" data-league="Master">大師球</button>
-      </div>
-
-      <div class="tournament-toolbar">
-        <input id="tournamentSearch" class="search-input" type="search" placeholder="搜尋賽事 / 店家 / 地區 / 組別" autocomplete="off" />
-        <select id="tournamentStatusFilter" class="tournament-select" aria-label="成績狀態">
-          <option value="all">全部狀態</option>
-          <option value="upcoming">未舉行</option>
-          <option value="waiting">等待官方成績</option>
-          <option value="results">已有官方成績</option>
-        </select>
       </div>
 
       <div id="tournamentList" class="tournament-list">
@@ -116,6 +126,6 @@
     <div class="wrap">非官方網站。本頁僅整理公開賽事資訊，Pokémon 相關商標屬原權利人所有。</div>
   </footer>
 
-  <script src="tournaments.js?v=0.5-r3" defer></script>
+  <script src="tournaments.js?v=0.5-r4" defer></script>
 </body>
 </html>
