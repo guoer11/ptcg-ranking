@@ -200,7 +200,9 @@ function renderTournamentList() {
             <span class="league-badge ${tournamentEsc(event.league || '')}">${tournamentEsc(TOURNAMENT_LEAGUE_LABELS[event.league] || event.league || '聯盟賽')}</span>
             ${event.region ? `<span class="location-badge">⌖ ${tournamentEsc(event.region)}</span>` : ''}
           </div>
-          <span class="result-badge ${status}">${eventStatusLabel(status)}</span>
+          ${hasResults
+            ? `<button class="result-badge results results-button" type="button" data-event-id="${tournamentEsc(event.event_id)}" aria-label="查看${tournamentEsc(event.title || '賽事')}成績">查看成績</button>`
+            : `<span class="result-badge ${status}">${eventStatusLabel(status)}</span>`}
         </div>
 
         <div class="tournament-date">
@@ -216,12 +218,6 @@ function renderTournamentList() {
           ${event.capacity ? `<span>♟ ${tournamentEsc(event.capacity)} 人</span>` : ''}
           ${event.group && event.group !== 'Open' ? `<span>${tournamentEsc(eventGroupLabel(event.group))}</span>` : ''}
         </div>
-
-        <div class="tournament-card-actions">
-          ${hasResults
-            ? `<button class="primary-btn tournament-result-button" type="button" data-event-id="${tournamentEsc(event.event_id)}">查看賽事成績</button>`
-            : '<span class="tournament-result-pending">待更新賽事成績</span>'}
-        </div>
       </article>`;
   }).join('');
 
@@ -233,7 +229,7 @@ function renderTournamentList() {
 function renderTournamentResults(event) {
   const results = Array.isArray(event.results) ? event.results : [];
   if (!results.length) {
-    return '<div class="empty-state compact-empty"><strong>待更新賽事成績</strong><span>官方公布活動結果後，自動更新排程會嘗試收錄成績。</span></div>';
+    return '<div class="empty-state compact-empty"><strong>等待官方成績</strong><span>官方公布活動結果後，自動更新排程會嘗試收錄成績。</span></div>';
   }
   const rows = results.map(row => `
     <tr>
