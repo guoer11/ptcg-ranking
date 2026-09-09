@@ -12,9 +12,6 @@ const TOURNAMENT_GROUP_LABELS = {
   Open: '全年齡組'
 };
 
-const ULTRA_VENUE_NAME = 'Saka Saka Limited Taiwan Branch';
-const ULTRA_VENUE_ADDRESS = '臺中市西區育德里健行路1049號11F（台中 金典酒店 11F）';
-
 let tournamentData = { season: '2026-27', updated_at: null, events: [] };
 let tournamentLeague = 'all';
 let tournamentKeyword = '';
@@ -85,8 +82,9 @@ function eventGroupLabel(group) {
 
 function eventVenueLabel(event) {
   const venue = String(event?.venue || '').trim();
-  if (event?.league === 'Ultra' && venue.includes(ULTRA_VENUE_NAME)) {
-    return ULTRA_VENUE_ADDRESS;
+  const address = String(event?.address || '').trim();
+  if (event?.league === 'Ultra') {
+    return address || venue;
   }
   return venue;
 }
