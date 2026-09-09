@@ -1,0 +1,126 @@
+/* v0.4: world qualification line + player ranking trend */
+
+.world-qualified-row td {
+  background: #f6fbf8;
+}
+
+.world-qualified-row .rank-badge {
+  background: #e3f4ea;
+  color: #176846;
+}
+
+.world-cutoff-rank td {
+  border-bottom: 0;
+}
+
+.world-cut-line td {
+  padding: 6px 12px 10px !important;
+  border-bottom: 1px solid var(--line) !important;
+  background: #fff !important;
+}
+
+.world-cut-line span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #176846;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.world-cut-line span::before,
+.world-cut-line span::after {
+  content: '';
+  height: 2px;
+  flex: 1;
+  background: #79b99a;
+  border-radius: 999px;
+}
+
+.ranking-trend-card {
+  margin: 0 0 22px;
+  border: 1px solid #dce4ef;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.ranking-trend-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 17px;
+  background: #f6f8fb;
+  border-bottom: 1px solid #e5eaf1;
+}
+
+.ranking-trend-head h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.ranking-trend-head span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.ranking-trend-list {
+  display: grid;
+}
+
+.ranking-trend-row {
+  display: grid;
+  grid-template-columns: 100px minmax(120px, 1fr) 90px minmax(150px, 1.2fr);
+  align-items: center;
+  gap: 12px;
+  padding: 13px 17px;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.ranking-trend-row:last-child {
+  border-bottom: 0;
+}
+
+.ranking-trend-date,
+.ranking-trend-points,
+.ranking-trend-change {
+  color: #5f6b7f;
+  font-size: 13px;
+}
+
+.ranking-trend-rank strong,
+.ranking-trend-rank small {
+  display: block;
+}
+
+.ranking-trend-rank small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.ranking-trend-change {
+  font-weight: 800;
+}
+
+.trend-up { color: #167153; }
+.trend-down { color: #c34d4a; }
+.trend-new { color: #2f6fed; }
+
+.ranking-trend-empty {
+  padding: 20px 17px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@media (max-width: 720px) {
+  .ranking-trend-row {
+    grid-template-columns: 78px 1fr 72px;
+    gap: 8px;
+  }
+
+  .ranking-trend-change {
+    grid-column: 2 / -1;
+  }
+}
