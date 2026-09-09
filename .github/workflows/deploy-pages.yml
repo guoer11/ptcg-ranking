@@ -34,7 +34,7 @@ jobs:
           set -euo pipefail
           rm -rf _site
           mkdir -p _site/data _site/data/players _site/data/seasons
-          cp index.html tournaments.html app.js identity-ui.js auth-ui.js auth-ui.css lookup-ui.js lookup-ui.css ranking-season-ui.js ranking-season-ui.css tournaments.js tournaments.css site-nav.css styles.css summary-compact.css _site/
+          cp index.html tournaments.html manifest.webmanifest sw.js app.js identity-ui.js auth-ui.js auth-ui.css lookup-ui.js lookup-ui.css ranking-season-ui.js ranking-season-ui.css tournaments.js tournaments.css site-nav.css styles.css summary-compact.css push-ui.js push-ui.css _site/
           cp data/ranking.json _site/data/ranking.json
           cp data/ranking_history.json _site/data/ranking_history.json
           cp data/tournaments.json _site/data/tournaments.json
