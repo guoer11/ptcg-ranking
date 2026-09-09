@@ -54,8 +54,8 @@
             <span class="status-dot"></span>
             <div>
               <strong id="dataStatus">資料載入中</strong>
-              <small id="lastCheckAt">更新時間：—</small>
-              <small id="updatedAt">尚未有排名更新紀錄</small>
+              <small id="lastCheckAt">最後自動檢查：—</small>
+              <small id="updatedAt">最後資料更新：尚未有更新</small>
             </div>
           </div>
         </div>
@@ -127,7 +127,7 @@
     </section>
 
     <section class="notice">
-      <strong>目前為 v0.7.1 測試版</strong>
+      <strong>目前為 v0.7.2 測試版</strong>
       <span id="versionNoticeText">排名、積分、暱稱與 PTCG ID 維持公開。</span>
     </section>
   </main>
@@ -209,8 +209,9 @@
   <script src="line-ui.js?v=0.7-r2" defer></script>
   <script>
     (() => {
-      const el = document.getElementById('lastCheckAt');
-      if (!el) return;
+      const checkEl = document.getElementById('lastCheckAt');
+      const updateEl = document.getElementById('updatedAt');
+      if (!checkEl) return;
 
       const parts = new Intl.DateTimeFormat('en-CA', {
         timeZone: 'Asia/Taipei',
@@ -233,7 +234,20 @@
         day = previous.getUTCDate();
       }
 
-      el.textContent = `更新時間:${year}/${month}/${day} 00:05`;
+      checkEl.textContent = `最後自動檢查：${year}/${month}/${day} 00:05`;
+
+      if (updateEl) {
+        const normalizeUpdateText = () => {
+          const text = updateEl.textContent.trim();
+          if (text === '尚未有排名更新紀錄') {
+            updateEl.textContent = '最後資料更新：尚未有更新';
+          } else if (text.startsWith('資料更新：')) {
+            updateEl.textContent = `最後資料更新：${text.slice('資料更新：'.length)}`;
+          }
+        };
+        new MutationObserver(normalizeUpdateText).observe(updateEl, { childList: true, subtree: true, characterData: true });
+        normalizeUpdateText();
+      }
     })();
   </script>
 </body>
