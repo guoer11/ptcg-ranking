@@ -40,6 +40,8 @@ jobs:
           cp data/tournaments.json _site/data/tournaments.json
           cp -R data/players/. _site/data/players/
           cp -R data/seasons/. _site/data/seasons/
+          python -m pip install --disable-pip-version-check --quiet pillow
+          python generate_pwa_icons.py _site
           touch _site/.nojekyll
           if find _site -type f -name 'player_identity*.json' | grep -q .; then
             echo "Identity database must never be included in the public Pages artifact."
