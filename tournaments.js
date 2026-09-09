@@ -16,12 +16,14 @@ let tournamentData = { season: '2026-27', updated_at: null, events: [] };
 let tournamentLeague = 'all';
 let tournamentKeyword = '';
 let tournamentStatus = 'all';
-let tournamentFutureOnly = false;
+let tournamentSeason = '2026-27';
+let tournamentRegion = 'all';
 
 const tournamentList = document.getElementById('tournamentList');
 const tournamentSearch = document.getElementById('tournamentSearch');
 const tournamentStatusFilter = document.getElementById('tournamentStatusFilter');
-const showFutureOnly = document.getElementById('showFutureOnly');
+const tournamentSeasonFilter = document.getElementById('tournamentSeasonFilter');
+const tournamentRegionFilter = document.getElementById('tournamentRegionFilter');
 const tournamentModal = document.getElementById('tournamentModal');
 const tournamentModalTitle = document.getElementById('tournamentModalTitle');
 const tournamentModalSubtitle = document.getElementById('tournamentModalSubtitle');
@@ -88,18 +90,44 @@ function formatEventDate(dateValue, timeValue = '') {
   };
 }
 
+function eventSearchTerms(event) {
+  const terms = [
+    event.title,
+    event.venue,
+    event.region,
+    event.address,
+    event.group,
+    event.event_id,
+    event.season,
+    TOURNAMENT_LEAGUE_LABELS[event.league],
+    eventGroupLabel(event.group)
+  ];
+
+  const match = String(event.date || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match) {
+    const [, year, monthRaw, dayRaw] = match;
+    const month = Number(monthRaw);
+    const day = Number(dayRaw);
+    terms.push(
+      `${month}/${day}`,
+      `${month}-${day}`,
+      `${month}月${day}日`,
+      `${year}/${month}/${day}`,
+      `${year}-${month}-${day}`
+    );
+  }
+
+  return terms.map(value => String(value || '').toLowerCase());
+}
+
 function filteredTournaments() {
   const key = tournamentKeyword.toLowerCase();
-  const today = todayTaipei();
   return (tournamentData.events || [])
     .filter(event => tournamentLeague === 'all' || event.league === tournamentLeague)
     .filter(event => tournamentStatus === 'all' || eventStatus(event) === tournamentStatus)
-    .filter(event => !tournamentFutureOnly || String(event.date || '') >= today)
-    .filter(event => {
-      if (!key) return true;
-      return [event.title, event.venue, event.region, event.address, event.group, event.event_id]
-        .some(value => String(value || '').toLowerCase().includes(key));
-    })
+    .filter(event => tournamentSeason === 'all' || String(event.season || tournamentData.season || '') === tournamentSeason)
+    .filter(event => tournamentRegion === 'all' || event.region === tournamentRegion)
+    .filter(event => !key || eventSearchTerms(event).some(value => value.includes(key)))
     .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')) || String(a.title || '').localeCompare(String(b.title || ''), 'zh-Hant'));
 }
 
@@ -115,10 +143,23 @@ function updateTournamentSummary() {
   document.getElementById('tournamentPlayerResultCount').textContent = resultRows;
 }
 
+function setupTournamentFilters() {
+  const events = tournamentData.events || [];
+  const seasons = [...new Set(events.map(event => event.season || tournamentData.season).filter(Boolean))].sort().reverse();
+  if (!seasons.length && tournamentData.season) seasons.push(tournamentData.season);
+  tournamentSeasonFilter.innerHTML = seasons.map(season => `<option value="${tournamentEsc(season)}">${tournamentEsc(season)} 賽季</option>`).join('');
+  tournamentSeason = seasons.includes(tournamentData.season) ? tournamentData.season : (seasons[0] || 'all');
+  tournamentSeasonFilter.value = tournamentSeason;
+
+  const regions = [...new Set(events.map(event => event.region).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'zh-Hant'));
+  tournamentRegionFilter.innerHTML = '<option value="all">⌖ 全國</option>' + regions.map(region => `<option value="${tournamentEsc(region)}">⌖ ${tournamentEsc(region)}</option>`).join('');
+  tournamentRegionFilter.value = 'all';
+}
+
 function renderTournamentList() {
   const events = filteredTournaments();
   if (!events.length) {
-    tournamentList.innerHTML = '<div class="empty-state"><strong>目前沒有符合條件的賽事</strong><span>官方新增聯盟賽事後會由排程自動收錄。</span></div>';
+    tournamentList.innerHTML = '<div class="empty-state tournament-grid-empty"><strong>目前沒有符合條件的賽事</strong><span>可調整賽季、地區、賽事類型或搜尋條件。</span></div>';
     return;
   }
 
@@ -127,24 +168,28 @@ function renderTournamentList() {
     const status = eventStatus(event);
     return `
       <article class="tournament-card">
+        <div class="tournament-card-top">
+          <div class="tournament-card-badges">
+            <span class="league-badge ${tournamentEsc(event.league || '')}">${tournamentEsc(TOURNAMENT_LEAGUE_LABELS[event.league] || event.league || '聯盟賽')}</span>
+            ${event.region ? `<span class="location-badge">⌖ ${tournamentEsc(event.region)}</span>` : ''}
+          </div>
+          <span class="result-badge ${status}">${eventStatusLabel(status)}</span>
+        </div>
+
         <div class="tournament-date">
           <strong>${tournamentEsc(date.main)}</strong>
           <span>${tournamentEsc(date.sub)}</span>
         </div>
-        <div>
-          <div>
-            <span class="league-badge ${tournamentEsc(event.league || '')}">${tournamentEsc(TOURNAMENT_LEAGUE_LABELS[event.league] || event.league || '聯盟賽')}</span>
-            <span class="group-badge">${tournamentEsc(eventGroupLabel(event.group))}</span>
-          </div>
-          <h3>${tournamentEsc(event.title || `官方活動 ${event.event_id || ''}`)}</h3>
-          <div class="tournament-meta">
-            ${event.venue ? `<span>⌂ ${tournamentEsc(event.venue)}</span>` : ''}
-            ${event.region ? `<span>⌖ ${tournamentEsc(event.region)}</span>` : ''}
-            ${event.capacity ? `<span>♟ ${tournamentEsc(event.capacity)} 人</span>` : ''}
-          </div>
+
+        <h3>${tournamentEsc(event.title || `官方活動 ${event.event_id || ''}`)}</h3>
+
+        <div class="tournament-card-info">
+          ${event.venue ? `<span>⌂ ${tournamentEsc(event.venue)}</span>` : ''}
+          ${event.capacity ? `<span>♟ ${tournamentEsc(event.capacity)} 人</span>` : ''}
+          ${event.group && event.group !== 'Open' ? `<span>${tournamentEsc(eventGroupLabel(event.group))}</span>` : ''}
         </div>
+
         <div class="tournament-card-actions">
-          <span class="result-badge ${status}">${eventStatusLabel(status)}</span>
           <button class="secondary-btn" type="button" data-event-id="${tournamentEsc(event.event_id)}">查看詳情</button>
         </div>
       </article>`;
@@ -184,7 +229,12 @@ function openTournamentModal(eventId) {
   tournamentModal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('modal-open');
   tournamentModalTitle.textContent = event.title || '賽事詳情';
-  tournamentModalSubtitle.textContent = `${TOURNAMENT_LEAGUE_LABELS[event.league] || ''} · ${eventGroupLabel(event.group)}`;
+  const subtitle = [
+    TOURNAMENT_LEAGUE_LABELS[event.league] || '',
+    event.group && event.group !== 'Open' ? eventGroupLabel(event.group) : '',
+    event.region || ''
+  ].filter(Boolean).join(' · ');
+  tournamentModalSubtitle.textContent = subtitle || '賽事資訊';
   tournamentModalBody.innerHTML = `
     <section class="tournament-detail-grid">
       <article><strong>${tournamentEsc(event.date || '—')}</strong><span>比賽日期</span></article>
@@ -216,6 +266,7 @@ async function loadTournamentData() {
     updatedText.textContent = tournamentFormatUpdate(tournamentData.updated_at);
     dot.classList.add('ok');
     dot.classList.remove('error');
+    setupTournamentFilters();
     updateTournamentSummary();
     renderTournamentList();
   } catch (error) {
@@ -247,8 +298,13 @@ tournamentStatusFilter.addEventListener('change', event => {
   renderTournamentList();
 });
 
-showFutureOnly.addEventListener('change', event => {
-  tournamentFutureOnly = event.target.checked;
+tournamentSeasonFilter.addEventListener('change', event => {
+  tournamentSeason = event.target.value;
+  renderTournamentList();
+});
+
+tournamentRegionFilter.addEventListener('change', event => {
+  tournamentRegion = event.target.value;
   renderTournamentList();
 });
 
