@@ -29,10 +29,12 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf _site
-          mkdir -p _site/data _site/data/players
-          cp index.html app.js identity-ui.js auth-ui.js auth-ui.css lookup-ui.js lookup-ui.css styles.css summary-compact.css _site/
+          mkdir -p _site/data _site/data/players _site/data/seasons
+          cp index.html app.js identity-ui.js auth-ui.js auth-ui.css lookup-ui.js lookup-ui.css ranking-season-ui.js ranking-season-ui.css styles.css summary-compact.css _site/
           cp data/ranking.json _site/data/ranking.json
+          cp data/ranking_history.json _site/data/ranking_history.json
           cp -R data/players/. _site/data/players/
+          cp -R data/seasons/. _site/data/seasons/
           touch _site/.nojekyll
           if find _site -type f -name 'player_identity*.json' | grep -q .; then
             echo "Identity database must never be included in the public Pages artifact."
