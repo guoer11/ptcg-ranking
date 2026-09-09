@@ -18,7 +18,7 @@ import re
 import time
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import parse_qs, urlencode, urljoin, urlparse
+from urllib.parse import urljoin, urlparse
 from zoneinfo import ZoneInfo
 
 import requests
@@ -32,18 +32,24 @@ SEASON = "2026-27"
 SEASON_START = "2026-09-01"
 SEASON_END = "2027-07-31"
 
-# 官方搜尋頁的聯盟篩選目前可由 csps[] 使用。先掃最可能的 5~8，
-# 若四種聯盟沒有都找到，再用 1~12 補掃；避免每天大量無意義請求。
-PRIMARY_CSP_IDS = (5, 6, 7, 8)
-FALLBACK_CSP_IDS = tuple(i for i in range(1, 13) if i not in PRIMARY_CSP_IDS)
+# Pokémon Asia 台灣活動搜尋頁目前的「聯盟集點活動」篩選：
+# 5 = Great、6 = Ultra、7 = Premier、8 = Master。
+# discovery 直接信任官方篩選類型，不再只靠活動標題的英文名稱判斷，
+# 因為 Ultra Ball 的官方標題目前使用中文「臺灣高級球聯盟賽」。
+CSP_LEAGUES = {
+    5: "Great",
+    6: "Ultra",
+    7: "Premier",
+    8: "Master",
+}
 MAX_PAGES_PER_CSP = 8
 REQUEST_DELAY = 0.12
 
-LEAGUE_KEYWORDS = {
-    "Great": "Great Ball League",
-    "Ultra": "Ultra Ball League",
-    "Premier": "Premier Ball League",
-    "Master": "Master Ball League",
+LEAGUE_ALIASES = {
+    "Great": ("Great Ball League", "臺灣超級球聯盟賽", "台湾超级球联盟赛"),
+    "Ultra": ("Ultra Ball League", "臺灣高級球聯盟賽", "台湾高级球联盟赛", "高級球聯盟賽"),
+    "Premier": ("Premier Ball League", "臺灣紀念球聯盟賽", "台湾纪念球联盟赛", "紀念球聯盟賽"),
+    "Master": ("Master Ball League", "臺灣大師球聯盟賽", "台湾大师球联盟赛", "大師球聯盟賽"),
 }
 
 GROUP_KEYWORDS = {
@@ -74,15 +80,15 @@ def clean(text: str | None) -> str:
 
 
 def classify_league(text: str) -> str | None:
-    lowered = text.lower()
-    for league, keyword in LEAGUE_KEYWORDS.items():
-        if keyword.lower() in lowered:
+    lowered = clean(text).lower()
+    for league, aliases in LEAGUE_ALIASES.items():
+        if any(alias.lower() in lowered for alias in aliases):
             return league
     return None
 
 
 def classify_group(text: str) -> str:
-    lowered = text.lower()
+    lowered = clean(text).lower()
     for group, keywords in GROUP_KEYWORDS.items():
         if any(keyword.lower() in lowered for keyword in keywords):
             return group
@@ -101,7 +107,7 @@ def search_page(session: requests.Session, csp_id: int, page_no: int) -> Beautif
     return BeautifulSoup(response.text, "html.parser")
 
 
-def discover_for_csp(session: requests.Session, csp_id: int) -> dict[str, dict]:
+def discover_for_csp(session: requests.Session, csp_id: int, league: str) -> dict[str, dict]:
     found: dict[str, dict] = {}
     seen_page_ids: set[tuple[str, ...]] = set()
 
@@ -114,10 +120,17 @@ def discover_for_csp(session: requests.Session, csp_id: int) -> dict[str, dict]:
             event_id = event_id_from_href(href)
             if not event_id:
                 continue
+
             text = clean(anchor.get_text(" ", strip=True))
-            league = classify_league(text)
-            if not league or SEASON not in text:
+            if SEASON not in text:
                 continue
+
+            # 官方 csp[] 已限定聯盟種類，所以用篩選本身作為主要依據。
+            # 若標題中可辨識出聯盟且與篩選不同，則略過，避免混入異常項目。
+            title_league = classify_league(text)
+            if title_league and title_league != league:
+                continue
+
             page_items[event_id] = {
                 "event_id": event_id,
                 "url": href,
@@ -138,27 +151,21 @@ def discover_for_csp(session: requests.Session, csp_id: int) -> dict[str, dict]:
 
 def discover_events(session: requests.Session) -> dict[str, dict]:
     found: dict[str, dict] = {}
+    counts: dict[str, int] = {}
 
-    for csp_id in PRIMARY_CSP_IDS:
+    for csp_id, league in CSP_LEAGUES.items():
         try:
-            found.update(discover_for_csp(session, csp_id))
+            items = discover_for_csp(session, csp_id, league)
+            found.update(items)
+            counts[league] = len(items)
         except Exception as exc:
-            print(f"警告：csps[]={csp_id} 搜尋失敗：{exc}")
+            counts[league] = 0
+            print(f"警告：{league}（csps[]={csp_id}）搜尋失敗：{exc}")
 
-    discovered_leagues = {item.get("league") for item in found.values()}
-    missing = set(LEAGUE_KEYWORDS) - discovered_leagues
-    if missing:
-        print(f"主要篩選尚缺 {sorted(missing)}，啟用補充搜尋。")
-        for csp_id in FALLBACK_CSP_IDS:
-            try:
-                found.update(discover_for_csp(session, csp_id))
-            except Exception as exc:
-                print(f"警告：csps[]={csp_id} 補充搜尋失敗：{exc}")
-            discovered_leagues = {item.get("league") for item in found.values()}
-            if set(LEAGUE_KEYWORDS).issubset(discovered_leagues):
-                break
-
-    print(f"發現 {len(found)} 個 {SEASON} 聯盟賽事候選。")
+    print(
+        f"發現 {len(found)} 個 {SEASON} 聯盟賽事候選："
+        + "、".join(f"{league} {counts.get(league, 0)}" for league in ("Great", "Ultra", "Premier", "Master"))
+    )
     return found
 
 
@@ -231,7 +238,11 @@ def parse_result_table(soup: BeautifulSoup) -> list[dict]:
             continue
 
         head_cells = table.find("tr")
-        header_names = [clean(cell.get_text(" ", strip=True)) for cell in head_cells.find_all(["th", "td"]) ] if head_cells else []
+        header_names = (
+            [clean(cell.get_text(" ", strip=True)) for cell in head_cells.find_all(["th", "td"])]
+            if head_cells
+            else []
+        )
 
         def column_index(*needles: str) -> int | None:
             for index, header in enumerate(header_names):
@@ -260,10 +271,9 @@ def parse_result_table(soup: BeautifulSoup) -> list[dict]:
             if points is None:
                 point_match = re.search(r"(\d[\d,]*)\s*pt", joined, flags=re.I)
                 points = int(point_match.group(1).replace(",", "")) if point_match else None
+
             name = cells[name_i] if name_i is not None and name_i < len(cells) else ""
             region = cells[region_i] if region_i is not None and region_i < len(cells) else ""
-
-            # 若沒有明確姓名欄，找 PTCG ID 前一格當備援。
             if not name and id_i is not None and id_i > 0 and id_i - 1 < len(cells):
                 name = cells[id_i - 1]
 
@@ -280,7 +290,6 @@ def parse_result_table(soup: BeautifulSoup) -> list[dict]:
         if results:
             break
 
-    # 部分官方結果使用 div 模擬表格，沒有 <table>；再做一層備援。
     if not results:
         for row in soup.select(".tableRow"):
             text = clean(row.get_text(" ", strip=True))
@@ -327,7 +336,11 @@ def parse_event_detail(session: requests.Session, seed: dict, old: dict | None =
     address = value_after_label(soup, "地址")
     capacity = number(value_after_label(soup, "人數限制"))
     region = ""
-    for token in ("臺北市", "新北市", "桃園市", "臺中市", "臺南市", "高雄市", "新竹縣", "苗栗縣", "彰化縣", "南投縣", "雲林縣", "嘉義縣", "屏東縣", "宜蘭縣", "花蓮縣", "臺東縣", "澎湖縣", "金門縣", "連江縣", "基隆市", "新竹市", "嘉義市"):
+    for token in (
+        "臺北市", "新北市", "桃園市", "臺中市", "臺南市", "高雄市", "新竹縣", "苗栗縣", "彰化縣",
+        "南投縣", "雲林縣", "嘉義縣", "屏東縣", "宜蘭縣", "花蓮縣", "臺東縣", "澎湖縣", "金門縣",
+        "連江縣", "基隆市", "新竹市", "嘉義市",
+    ):
         if token in page_text:
             region = token
             break
@@ -336,7 +349,7 @@ def parse_event_detail(session: requests.Session, seed: dict, old: dict | None =
     checked_at = datetime.now(TAIPEI).isoformat(timespec="seconds")
     old = old or {}
 
-    item = {
+    return {
         "event_id": seed["event_id"],
         "season": SEASON,
         "league": league,
@@ -354,7 +367,6 @@ def parse_event_detail(session: requests.Session, seed: dict, old: dict | None =
         "discovered_at": old.get("discovered_at") or checked_at,
         "checked_at": checked_at,
     }
-    return item
 
 
 def load_existing() -> dict:
@@ -369,9 +381,14 @@ def load_existing() -> dict:
 def main() -> int:
     session = make_session()
     old_payload = load_existing()
-    old_events = {str(item.get("event_id")): item for item in old_payload.get("events", []) if item.get("event_id")}
+    old_events = {
+        str(item.get("event_id")): item
+        for item in old_payload.get("events", [])
+        if item.get("event_id")
+    }
 
     discovered = discover_events(session)
+
     # 舊資料保留，避免官方搜尋頁暫時異常時整批消失。
     for event_id, old in old_events.items():
         if event_id not in discovered:
@@ -394,7 +411,8 @@ def main() -> int:
                 item = old
             else:
                 continue
-        if item.get("season") != SEASON or item.get("league") not in LEAGUE_KEYWORDS:
+
+        if item.get("season") != SEASON or item.get("league") not in CSP_LEAGUES.values():
             continue
         if item.get("date") and not (SEASON_START <= item["date"] <= SEASON_END):
             continue
@@ -402,7 +420,14 @@ def main() -> int:
         if index < len(discovered) - 1:
             time.sleep(REQUEST_DELAY)
 
-    events.sort(key=lambda item: (item.get("date") or "9999-99-99", item.get("league") or "", item.get("group") or "", int(item.get("event_id") or 0)))
+    events.sort(
+        key=lambda item: (
+            item.get("date") or "9999-99-99",
+            item.get("league") or "",
+            item.get("group") or "",
+            int(item.get("event_id") or 0),
+        )
+    )
     now = datetime.now(TAIPEI).isoformat(timespec="seconds")
     payload = {
         "season": SEASON,
@@ -427,7 +452,10 @@ def main() -> int:
 
     DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
     DATA_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"賽事資料已更新：{len(events)} 場；{sum(len(item.get('results', [])) for item in events)} 筆成績。")
+    print(
+        f"賽事資料已更新：{len(events)} 場；"
+        f"{sum(len(item.get('results', [])) for item in events)} 筆成績。"
+    )
     return 0
 
 
