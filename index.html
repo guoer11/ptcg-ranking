@@ -4,13 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="PTCG 台灣玩家排名追蹤" />
+  <meta name="theme-color" content="#17233a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>PTCG 台灣即時排名</title>
+  <link rel="manifest" href="manifest.webmanifest?v=0.6-r1" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="summary-compact.css?v=0.2.3-r1" />
   <link rel="stylesheet" href="auth-ui.css?v=0.3-r2" />
   <link rel="stylesheet" href="lookup-ui.css?v=0.3-r1" />
   <link rel="stylesheet" href="ranking-season-ui.css?v=0.4-r1" />
   <link rel="stylesheet" href="site-nav.css?v=0.5-r1" />
+  <link rel="stylesheet" href="push-ui.css?v=0.6-r1" />
 </head>
 <body>
   <header class="site-header">
@@ -41,6 +46,11 @@
               <small id="updatedAt">尚未有排名更新紀錄</small>
             </div>
           </div>
+          <button id="pushNotificationButton" class="push-notification-icon" type="button" aria-label="通知設定" title="通知設定" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6v-5a7 7 0 0 0-5-6.71V3a2 2 0 0 0-4 0v1.29A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2Z" />
+            </svg>
+          </button>
           <button id="identityAuthButton" class="identity-auth-icon" type="button" aria-label="Google 登入" title="Google 登入">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" />
@@ -115,7 +125,7 @@
     </section>
 
     <section class="notice">
-      <strong>目前為 v0.5 測試版</strong>
+      <strong>目前為 v0.6 測試版</strong>
       <span id="versionNoticeText">排名、積分、暱稱與 PTCG ID 維持公開。</span>
     </section>
   </main>
@@ -136,6 +146,42 @@
     </section>
   </div>
 
+  <div id="pushModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-push-modal></div>
+    <section class="modal-card push-modal-card" role="dialog" aria-modal="true" aria-labelledby="pushModalTitle">
+      <header class="modal-header">
+        <div>
+          <h2 id="pushModalTitle">通知設定</h2>
+          <small>僅你的授權帳號可設定</small>
+        </div>
+        <button class="modal-close" type="button" aria-label="關閉" data-close-push-modal>×</button>
+      </header>
+      <div class="modal-body">
+        <div class="push-status-box">
+          <strong id="pushStatusTitle">正在檢查通知狀態</strong>
+          <span id="pushStatusText">請稍候。</span>
+        </div>
+
+        <div class="push-actions">
+          <button id="pushToggleButton" class="primary-btn" type="button">開啟通知</button>
+          <button id="pushTestButton" class="secondary-btn" type="button" disabled>發送測試通知</button>
+        </div>
+
+        <section class="push-preferences" aria-label="通知項目">
+          <h3>通知項目</h3>
+          <label class="push-pref-row"><span>官方排行榜公布 / 更新</span><input id="pushPrefRanking" data-push-pref type="checkbox" checked /></label>
+          <label class="push-pref-row"><span>新增超級球賽事</span><input id="pushPrefGreat" data-push-pref type="checkbox" checked /></label>
+          <label class="push-pref-row"><span>新增高級球賽事</span><input id="pushPrefUltra" data-push-pref type="checkbox" checked /></label>
+          <label class="push-pref-row"><span>新增紀念球賽事</span><input id="pushPrefPremier" data-push-pref type="checkbox" checked /></label>
+          <label class="push-pref-row"><span>新增大師球賽事</span><input id="pushPrefMaster" data-push-pref type="checkbox" checked /></label>
+          <label class="push-pref-row"><span>官方賽事成績公布</span><input id="pushPrefResults" data-push-pref type="checkbox" /></label>
+        </section>
+
+        <p class="push-help">iPhone 需從「加入主畫面」後的網站圖示開啟。啟用成功後，就算網站沒有開著也能收到推播。</p>
+      </div>
+    </section>
+  </div>
+
   <footer class="footer">
     <div class="wrap">非官方網站。本頁僅整理公開賽事與排名資訊，Pokémon 相關商標屬原權利人所有。</div>
   </footer>
@@ -143,9 +189,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script src="app.js?v=0.3-r1" defer></script>
   <script src="identity-ui.js?v=0.4-r1" defer></script>
-  <script src="auth-ui.js?v=0.3.2-r1" defer></script>
+  <script src="auth-ui.js?v=0.6-r1" defer></script>
   <script src="lookup-ui.js?v=0.3.2-r1" defer></script>
   <script src="ranking-season-ui.js?v=0.4-r1" defer></script>
+  <script src="push-ui.js?v=0.6-r1" defer></script>
   <script>
     (() => {
       const el = document.getElementById('lastCheckAt');
