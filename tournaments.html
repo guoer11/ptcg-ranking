@@ -37,8 +37,8 @@
           <span class="status-dot" id="tournamentStatusDot"></span>
           <div>
             <strong id="tournamentDataStatus">資料載入中</strong>
-            <small id="tournamentUpdatedAt">更新時間：—</small>
-            <small>每日 00:05、12:00 自動檢查</small>
+            <small id="tournamentLastCheckAt">最後自動檢查：—</small>
+            <small id="tournamentUpdatedAt">最後資料更新：尚未有更新</small>
           </div>
         </div>
       </div>
@@ -107,7 +107,7 @@
     </section>
 
     <section class="notice tournament-version">
-      <strong>目前為 v0.7.1 測試版</strong>
+      <strong>目前為 v0.7.2 測試版</strong>
       <span>賽事頁用於整理與核算；正式積分與排名仍以官方資料為準。</span>
     </section>
   </main>
@@ -131,5 +131,53 @@
   </footer>
 
   <script src="tournaments.js?v=0.6.2-r5" defer></script>
+  <script>
+    (() => {
+      const checkEl = document.getElementById('tournamentLastCheckAt');
+      const updateEl = document.getElementById('tournamentUpdatedAt');
+
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Taipei',
+        year: 'numeric', month: 'numeric', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: false
+      }).formatToParts(new Date()).reduce((acc, part) => {
+        if (part.type !== 'literal') acc[part.type] = Number(part.value);
+        return acc;
+      }, {});
+
+      let year = parts.year;
+      let month = parts.month;
+      let day = parts.day;
+      let slot = '00:05';
+      const minutesNow = (parts.hour || 0) * 60 + (parts.minute || 0);
+
+      if (minutesNow < 5) {
+        const previous = new Date(Date.UTC(year, month - 1, day) - 86400000);
+        year = previous.getUTCFullYear();
+        month = previous.getUTCMonth() + 1;
+        day = previous.getUTCDate();
+        slot = '12:00';
+      } else if (minutesNow >= 12 * 60) {
+        slot = '12:00';
+      }
+
+      if (checkEl) {
+        checkEl.textContent = `最後自動檢查：${year}/${month}/${day} ${slot}`;
+      }
+
+      if (updateEl) {
+        const normalizeUpdateText = () => {
+          const text = updateEl.textContent.trim();
+          if (text === '更新時間：尚未有更新紀錄') {
+            updateEl.textContent = '最後資料更新：尚未有更新';
+          } else if (text.startsWith('更新時間：')) {
+            updateEl.textContent = `最後資料更新：${text.slice('更新時間：'.length)}`;
+          }
+        };
+        new MutationObserver(normalizeUpdateText).observe(updateEl, { childList: true, subtree: true, characterData: true });
+        normalizeUpdateText();
+      }
+    })();
+  </script>
 </body>
 </html>
