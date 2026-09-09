@@ -23,7 +23,8 @@
           <span class="status-dot"></span>
           <div>
             <strong id="dataStatus">資料載入中</strong>
-            <small id="updatedAt">更新時間：—</small>
+            <small id="lastCheckAt">更新時間：—</small>
+            <small id="updatedAt">尚未有排名更新紀錄</small>
           </div>
         </div>
         <button id="identityAuthButton" class="identity-auth-icon" type="button" aria-label="Google 登入" title="Google 登入">
@@ -131,19 +132,31 @@
   <script src="lookup-ui.js?v=0.3-r1" defer></script>
   <script>
     (() => {
-      const el = document.getElementById('updatedAt');
+      const el = document.getElementById('lastCheckAt');
       if (!el) return;
 
-      const normalizeUpdateTime = () => {
-        const text = el.textContent || '';
-        const match = text.match(/(\d{4})\/(\d{2})\/(\d{2})\s+(\d{2}:\d{2})/);
-        if (!match) return;
-        const formatted = `更新時間:${Number(match[1])}/${Number(match[2])}/${Number(match[3])} ${match[4]}`;
-        if (el.textContent !== formatted) el.textContent = formatted;
-      };
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Taipei',
+        year: 'numeric', month: 'numeric', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: false
+      }).formatToParts(new Date()).reduce((acc, part) => {
+        if (part.type !== 'literal') acc[part.type] = Number(part.value);
+        return acc;
+      }, {});
 
-      new MutationObserver(normalizeUpdateTime).observe(el, { childList: true, characterData: true, subtree: true });
-      normalizeUpdateTime();
+      let year = parts.year;
+      let month = parts.month;
+      let day = parts.day;
+      const minutesNow = (parts.hour || 0) * 60 + (parts.minute || 0);
+
+      if (minutesNow < 5) {
+        const previous = new Date(Date.UTC(year, month - 1, day) - 86400000);
+        year = previous.getUTCFullYear();
+        month = previous.getUTCMonth() + 1;
+        day = previous.getUTCDate();
+      }
+
+      el.textContent = `更新時間:${year}/${month}/${day} 00:05`;
     })();
   </script>
 </body>
