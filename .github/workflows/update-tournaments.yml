@@ -12,6 +12,7 @@ on:
       - main
     paths:
       - "scrape_tournaments.py"
+      - "backfill_early_tournaments.py"
       - "requirements.txt"
       - ".github/workflows/update-tournaments.yml"
 
@@ -43,6 +44,9 @@ jobs:
 
       - name: Fetch official tournament information
         run: python scrape_tournaments.py
+
+      - name: Backfill early-season official tournaments
+        run: python backfill_early_tournaments.py
 
       - name: Commit tournament changes
         run: |
