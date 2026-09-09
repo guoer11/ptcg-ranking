@@ -163,24 +163,42 @@ def discover_events(session: requests.Session) -> dict[str, dict]:
 
 
 def value_after_label(soup: BeautifulSoup, label: str) -> str | None:
-    node = soup.find(string=lambda value: value and clean(value) == label)
-    if not node:
-        return None
-    parent = node.parent
+    # 優先讀真正的資料表列，避免先命中頁首導覽的「會場 / 報名」。
+    for row in soup.find_all("tr"):
+        cells = row.find_all(["th", "td"], recursive=False)
+        if len(cells) < 2:
+            continue
+        if clean(cells[0].get_text(" ", strip=True)) != label:
+            continue
+        value = clean(cells[1].get_text(" ", strip=True))
+        if value and value != label:
+            return value
 
-    # 常見 table 結構：th/td 或 dt/dd。
-    if parent and parent.name in {"th", "td", "dt"}:
-        sibling = parent.find_next_sibling()
+    # dt/dd 結構。
+    for term in soup.find_all("dt"):
+        if clean(term.get_text(" ", strip=True)) != label:
+            continue
+        sibling = term.find_next_sibling("dd")
         if sibling:
             value = clean(sibling.get_text(" ", strip=True))
-            if value and value != label:
+            if value:
                 return value
 
-    # 官方部分欄位以 div/p 包裝，向後找第一個短文字節點。
-    if parent:
-        for candidate in parent.find_all_next(limit=8):
+    # 最後備援：逐一檢查所有同名文字節點，而不是只取第一個導覽連結。
+    rejected = {"活動概要", "會場", "報名", "事前報名", "主辦方情報", "基本情報"}
+    for node in soup.find_all(string=lambda value: value and clean(value) == label):
+        parent = node.parent
+        if not parent:
+            continue
+        if parent.name in {"th", "td", "dt"}:
+            sibling = parent.find_next_sibling()
+            if sibling:
+                value = clean(sibling.get_text(" ", strip=True))
+                if value and value not in rejected and value != label:
+                    return value
+        for candidate in parent.find_all_next(limit=10):
             value = clean(candidate.get_text(" ", strip=True))
-            if not value or value == label:
+            if not value or value == label or value in rejected:
                 continue
             if len(value) <= 160:
                 return value
