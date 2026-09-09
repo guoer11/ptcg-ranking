@@ -6,6 +6,10 @@ on:
   push:
     branches:
       - main
+  schedule:
+    # 資料排程在台灣時間 00:05 / 12:05 執行；Pages 於 00:15 / 12:15 重新發布最新資料。
+    - cron: "15 16 * * *"
+    - cron: "15 4 * * *"
 
 permissions:
   contents: read
