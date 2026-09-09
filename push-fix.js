@@ -1,3 +1,31 @@
+function installPwaIconMetadata() {
+  try {
+    let touchIcon = document.querySelector('link[rel="apple-touch-icon"]');
+    if (!touchIcon) {
+      touchIcon = document.createElement('link');
+      touchIcon.rel = 'apple-touch-icon';
+      touchIcon.setAttribute('sizes', '180x180');
+      document.head.appendChild(touchIcon);
+    }
+    touchIcon.href = './apple-touch-icon.png?v=0.6-r2';
+
+    let appTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+    if (!appTitle) {
+      appTitle = document.createElement('meta');
+      appTitle.name = 'apple-mobile-web-app-title';
+      document.head.appendChild(appTitle);
+    }
+    appTitle.content = 'PTCG排名';
+
+    const manifest = document.querySelector('link[rel="manifest"]');
+    if (manifest) manifest.href = './manifest.webmanifest?v=0.6-r2';
+  } catch (error) {
+    console.warn('PWA 圖示設定失敗', error);
+  }
+}
+
+installPwaIconMetadata();
+
 async function repairStalePushSubscription() {
   try {
     if (!identityClient || !identitySession || !identityAuthorized) return;
