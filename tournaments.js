@@ -89,6 +89,16 @@ function eventVenueLabel(event) {
   return venue;
 }
 
+function splitUltraAddress(value) {
+  const text = String(value || '').trim();
+  const match = text.match(/^(.*?)(\s*[（(][^()（）]+[）)])\s*$/);
+  if (!match || !match[1].trim()) return { main: text, note: '' };
+  return {
+    main: match[1].trim(),
+    note: match[2].trim()
+  };
+}
+
 function eventHasResults(event) {
   return Array.isArray(event?.results) && event.results.length > 0;
 }
@@ -181,6 +191,7 @@ function renderTournamentList() {
     const date = formatEventDate(event.date, event.time || '');
     const status = eventStatus(event);
     const venue = eventVenueLabel(event);
+    const venueParts = event.league === 'Ultra' ? splitUltraAddress(venue) : { main: venue, note: '' };
     const hasResults = eventHasResults(event);
     return `
       <article class="tournament-card">
@@ -200,7 +211,8 @@ function renderTournamentList() {
         <h3>${tournamentEsc(event.title || `官方活動 ${event.event_id || ''}`)}</h3>
 
         <div class="tournament-card-info">
-          ${venue ? `<span title="${tournamentEsc(venue)}">⌂ ${tournamentEsc(venue)}</span>` : ''}
+          ${venueParts.main ? `<span title="${tournamentEsc(venue)}">⌂ ${tournamentEsc(venueParts.main)}</span>` : ''}
+          ${venueParts.note ? `<span class="tournament-address-note" title="${tournamentEsc(venue)}">${tournamentEsc(venueParts.note)}</span>` : ''}
           ${event.capacity ? `<span>♟ ${tournamentEsc(event.capacity)} 人</span>` : ''}
           ${event.group && event.group !== 'Open' ? `<span>${tournamentEsc(eventGroupLabel(event.group))}</span>` : ''}
         </div>
@@ -244,6 +256,7 @@ function openTournamentModal(eventId) {
   const event = (tournamentData.events || []).find(item => String(item.event_id) === String(eventId));
   if (!event) return;
   const venue = eventVenueLabel(event);
+  const venueParts = event.league === 'Ultra' ? splitUltraAddress(venue) : { main: venue, note: '' };
   const detailAddress = String(event.address || '').trim();
   const showAddress = detailAddress && detailAddress !== venue;
 
@@ -261,7 +274,7 @@ function openTournamentModal(eventId) {
     <section class="tournament-detail-grid">
       <article><strong>${tournamentEsc(event.date || '—')}</strong><span>比賽日期</span></article>
       <article><strong>${tournamentEsc(event.time || '—')}</strong><span>比賽時間</span></article>
-      <article><strong>${tournamentEsc(venue || '—')}</strong><span>會場 / 地址</span></article>
+      <article><strong>${tournamentEsc(venueParts.main || '—')}${venueParts.note ? `<br><small>${tournamentEsc(venueParts.note)}</small>` : ''}</strong><span>會場 / 地址</span></article>
       <article><strong>${tournamentEsc(event.capacity || '—')}</strong><span>人數上限</span></article>
     </section>
     ${showAddress ? `<p class="hint">${tournamentEsc(detailAddress)}</p>` : ''}
