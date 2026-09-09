@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="summary-compact.css?v=0.2.3-r1" />
   <link rel="stylesheet" href="auth-ui.css?v=0.3-r2" />
   <link rel="stylesheet" href="lookup-ui.css?v=0.3-r1" />
+  <link rel="stylesheet" href="ranking-season-ui.css?v=0.4-r1" />
 </head>
 <body>
   <header class="site-header">
@@ -55,8 +56,8 @@
           <span>目前最高積分</span>
         </div>
         <div class="summary-metric">
-          <strong id="summaryWorldSlots" class="summary-world-slots">尚未公布</strong>
-          <span>世界賽名額</span>
+          <strong id="summaryWorldSlots" class="summary-world-slots">16 名</strong>
+          <span id="summaryWorldSlotsLabel">世界賽名額（暫依上季）</span>
         </div>
       </div>
     </section>
@@ -100,7 +101,7 @@
     </section>
 
     <section class="notice">
-      <strong>目前為 v0.3.2 測試版</strong>
+      <strong>目前為 v0.4 測試版</strong>
       <span id="versionNoticeText">排名、積分、暱稱與 PTCG ID 維持公開。</span>
     </section>
   </main>
@@ -127,9 +128,10 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script src="app.js?v=0.3-r1" defer></script>
-  <script src="identity-ui.js?v=0.3.2-r1" defer></script>
+  <script src="identity-ui.js?v=0.4-r1" defer></script>
   <script src="auth-ui.js?v=0.3.2-r1" defer></script>
   <script src="lookup-ui.js?v=0.3.2-r1" defer></script>
+  <script src="ranking-season-ui.js?v=0.4-r1" defer></script>
   <script>
     (() => {
       const el = document.getElementById('lastCheckAt');
