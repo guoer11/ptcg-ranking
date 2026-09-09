@@ -163,8 +163,12 @@
 .tournament-date span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
 .tournament-card h3 {
   margin: 0 0 10px;
-  font-size: 16px;
-  line-height: 1.42;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  line-height: 1.35;
 }
 .tournament-card-info {
   display: flex;
@@ -257,5 +261,6 @@
   #tournamentStatusFilter { grid-column: auto; }
   .tournament-list { grid-template-columns: 1fr; }
   .tournament-card { min-height: 0; }
+  .tournament-card h3 { font-size: 13px; white-space: nowrap; }
   .tournament-detail-grid { grid-template-columns: 1fr; }
 }
