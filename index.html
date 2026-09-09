@@ -10,29 +10,43 @@
   <link rel="stylesheet" href="auth-ui.css?v=0.3-r2" />
   <link rel="stylesheet" href="lookup-ui.css?v=0.3-r1" />
   <link rel="stylesheet" href="ranking-season-ui.css?v=0.4-r1" />
+  <link rel="stylesheet" href="site-nav.css?v=0.5-r1" />
 </head>
 <body>
   <header class="site-header">
-    <div class="wrap header-inner">
-      <div>
-        <p class="eyebrow">Pokémon TCG Taiwan</p>
-        <h1>PTCG 台灣即時排名</h1>
-        <p class="subtitle">自動整理官方 Master / Senior / Junior 排名資料</p>
-      </div>
-      <div class="header-actions">
-        <div class="status-card">
-          <span class="status-dot"></span>
-          <div>
-            <strong id="dataStatus">資料載入中</strong>
-            <small id="lastCheckAt">更新時間：—</small>
-            <small id="updatedAt">尚未有排名更新紀錄</small>
-          </div>
+    <div class="wrap">
+      <nav class="site-nav" aria-label="網站功能">
+        <a class="active" href="index.html" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10l8-7 8 7v10h-5v-6H9v6H4Z"/></svg>
+          玩家排行
+        </a>
+        <a href="tournaments.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v2h3v4c0 2.76-2.24 5-5 5h-.17A5.02 5.02 0 0 1 13 15.58V19h4v2H7v-2h4v-3.42A5.02 5.02 0 0 1 9.17 14H9c-2.76 0-5-2.24-5-5V5h3V3Zm10 4v4a3 3 0 0 0 1-2V7h-1ZM6 7v2a3 3 0 0 0 1 2V7H6Z"/></svg>
+          賽事資訊
+        </a>
+      </nav>
+
+      <div class="header-inner">
+        <div>
+          <p class="eyebrow">Pokémon TCG Taiwan</p>
+          <h1>PTCG 台灣即時排名</h1>
+          <p class="subtitle">自動整理官方 Master / Senior / Junior 排名資料</p>
         </div>
-        <button id="identityAuthButton" class="identity-auth-icon" type="button" aria-label="Google 登入" title="Google 登入">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" />
-          </svg>
-        </button>
+        <div class="header-actions">
+          <div class="status-card">
+            <span class="status-dot"></span>
+            <div>
+              <strong id="dataStatus">資料載入中</strong>
+              <small id="lastCheckAt">更新時間：—</small>
+              <small id="updatedAt">尚未有排名更新紀錄</small>
+            </div>
+          </div>
+          <button id="identityAuthButton" class="identity-auth-icon" type="button" aria-label="Google 登入" title="Google 登入">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -101,7 +115,7 @@
     </section>
 
     <section class="notice">
-      <strong>目前為 v0.4 測試版</strong>
+      <strong>目前為 v0.5 測試版</strong>
       <span id="versionNoticeText">排名、積分、暱稱與 PTCG ID 維持公開。</span>
     </section>
   </main>
