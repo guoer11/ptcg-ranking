@@ -1,0 +1,12 @@
+{
+  "id": "./",
+  "name": "PTCG 台灣排名",
+  "short_name": "PTCG 排名",
+  "description": "PTCG 台灣賽事與官方排名追蹤",
+  "lang": "zh-Hant-TW",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#17233a"
+}
