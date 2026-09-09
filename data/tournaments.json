@@ -1,6 +1,6 @@
 {
   "season": "2026-27",
-  "updated_at": "2026-09-09T10:28:23+08:00",
+  "updated_at": "2026-09-09T10:39:09+08:00",
   "source": "https://asia.pokemon-card.com/tw/event-search/list/",
   "authority_note": "本資料供賽事整理與積分核算輔助；正式積分與排名以 Pokémon Asia 官方排行榜為準。",
   "schedule": [
@@ -8,6 +8,60 @@
     "12:05"
   ],
   "events": [
+    {
+      "event_id": "66951",
+      "season": "2026-27",
+      "league": "Ultra",
+      "group": "Junior",
+      "title": "2026-27 臺灣高級球聯盟賽 賽季 1-1 (孩童組)",
+      "date": "2026-09-12",
+      "time": "08:30-19:00",
+      "venue": "Saka Saka Limited Taiwan Branch",
+      "region": "臺北市",
+      "address": "臺北市信義區西村里信義路五段5號C2區(台北 世貿一館 C2區)",
+      "capacity": 128,
+      "url": "https://asia.pokemon-card.com/tw/event-search/66951/",
+      "results": [],
+      "result_count": 0,
+      "discovered_at": "2026-09-09T10:38:34+08:00",
+      "checked_at": "2026-09-09T10:38:34+08:00"
+    },
+    {
+      "event_id": "66949",
+      "season": "2026-27",
+      "league": "Ultra",
+      "group": "Master",
+      "title": "2026-27 臺灣高級球聯盟賽 賽季 1-1 (大師組)",
+      "date": "2026-09-12",
+      "time": "08:30-19:00",
+      "venue": "Saka Saka Limited Taiwan Branch",
+      "region": "臺北市",
+      "address": "臺北市信義區西村里信義路五段5號C2區(台北 世貿一館 C2區)",
+      "capacity": 1008,
+      "url": "https://asia.pokemon-card.com/tw/event-search/66949/",
+      "results": [],
+      "result_count": 0,
+      "discovered_at": "2026-09-09T10:38:33+08:00",
+      "checked_at": "2026-09-09T10:38:33+08:00"
+    },
+    {
+      "event_id": "66950",
+      "season": "2026-27",
+      "league": "Ultra",
+      "group": "Senior",
+      "title": "2026-27 臺灣高級球聯盟賽 賽季 1-1 (少年組)",
+      "date": "2026-09-12",
+      "time": "08:30-19:00",
+      "venue": "Saka Saka Limited Taiwan Branch",
+      "region": "臺北市",
+      "address": "臺北市信義區西村里信義路五段5號C2區(台北 世貿一館 C2區)",
+      "capacity": 128,
+      "url": "https://asia.pokemon-card.com/tw/event-search/66950/",
+      "results": [],
+      "result_count": 0,
+      "discovered_at": "2026-09-09T10:38:34+08:00",
+      "checked_at": "2026-09-09T10:38:34+08:00"
+    },
     {
       "event_id": "66350",
       "season": "2026-27",
@@ -24,7 +78,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:46+08:00",
-      "checked_at": "2026-09-09T10:27:46+08:00"
+      "checked_at": "2026-09-09T10:38:21+08:00"
     },
     {
       "event_id": "66351",
@@ -42,7 +96,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:46+08:00",
-      "checked_at": "2026-09-09T10:27:46+08:00"
+      "checked_at": "2026-09-09T10:38:22+08:00"
     },
     {
       "event_id": "66352",
@@ -60,7 +114,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:47+08:00",
-      "checked_at": "2026-09-09T10:27:47+08:00"
+      "checked_at": "2026-09-09T10:38:22+08:00"
     },
     {
       "event_id": "66353",
@@ -78,7 +132,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:48+08:00",
-      "checked_at": "2026-09-09T10:27:47+08:00"
+      "checked_at": "2026-09-09T10:38:23+08:00"
     },
     {
       "event_id": "66354",
@@ -96,7 +150,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:48+08:00",
-      "checked_at": "2026-09-09T10:27:48+08:00"
+      "checked_at": "2026-09-09T10:38:23+08:00"
     },
     {
       "event_id": "66355",
@@ -114,7 +168,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:49+08:00",
-      "checked_at": "2026-09-09T10:27:49+08:00"
+      "checked_at": "2026-09-09T10:38:24+08:00"
     },
     {
       "event_id": "67511",
@@ -132,7 +186,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:59+08:00",
-      "checked_at": "2026-09-09T10:27:59+08:00"
+      "checked_at": "2026-09-09T10:38:43+08:00"
     },
     {
       "event_id": "66356",
@@ -150,7 +204,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:50+08:00",
-      "checked_at": "2026-09-09T10:27:49+08:00"
+      "checked_at": "2026-09-09T10:38:24+08:00"
     },
     {
       "event_id": "66357",
@@ -168,7 +222,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:51+08:00",
-      "checked_at": "2026-09-09T10:27:50+08:00"
+      "checked_at": "2026-09-09T10:38:25+08:00"
     },
     {
       "event_id": "66358",
@@ -186,7 +240,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:51+08:00",
-      "checked_at": "2026-09-09T10:27:51+08:00"
+      "checked_at": "2026-09-09T10:38:26+08:00"
     },
     {
       "event_id": "66359",
@@ -204,7 +258,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:52+08:00",
-      "checked_at": "2026-09-09T10:27:51+08:00"
+      "checked_at": "2026-09-09T10:38:26+08:00"
     },
     {
       "event_id": "66360",
@@ -222,7 +276,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:53+08:00",
-      "checked_at": "2026-09-09T10:27:52+08:00"
+      "checked_at": "2026-09-09T10:38:27+08:00"
     },
     {
       "event_id": "66361",
@@ -240,7 +294,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:53+08:00",
-      "checked_at": "2026-09-09T10:27:53+08:00"
+      "checked_at": "2026-09-09T10:38:27+08:00"
     },
     {
       "event_id": "66362",
@@ -258,7 +312,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:54+08:00",
-      "checked_at": "2026-09-09T10:27:53+08:00"
+      "checked_at": "2026-09-09T10:38:28+08:00"
     },
     {
       "event_id": "66363",
@@ -276,7 +330,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:54+08:00",
-      "checked_at": "2026-09-09T10:27:54+08:00"
+      "checked_at": "2026-09-09T10:38:29+08:00"
     },
     {
       "event_id": "66364",
@@ -294,7 +348,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:55+08:00",
-      "checked_at": "2026-09-09T10:27:54+08:00"
+      "checked_at": "2026-09-09T10:38:30+08:00"
     },
     {
       "event_id": "66365",
@@ -312,7 +366,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:55+08:00",
-      "checked_at": "2026-09-09T10:27:55+08:00"
+      "checked_at": "2026-09-09T10:38:30+08:00"
     },
     {
       "event_id": "66366",
@@ -330,7 +384,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:56+08:00",
-      "checked_at": "2026-09-09T10:27:56+08:00"
+      "checked_at": "2026-09-09T10:38:31+08:00"
     },
     {
       "event_id": "66382",
@@ -348,7 +402,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:57+08:00",
-      "checked_at": "2026-09-09T10:27:56+08:00"
+      "checked_at": "2026-09-09T10:38:32+08:00"
     },
     {
       "event_id": "67539",
@@ -366,7 +420,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:03+08:00",
-      "checked_at": "2026-09-09T10:28:02+08:00"
+      "checked_at": "2026-09-09T10:38:47+08:00"
     },
     {
       "event_id": "67654",
@@ -384,7 +438,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:05+08:00",
-      "checked_at": "2026-09-09T10:28:05+08:00"
+      "checked_at": "2026-09-09T10:38:48+08:00"
     },
     {
       "event_id": "67678",
@@ -402,7 +456,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:05+08:00",
-      "checked_at": "2026-09-09T10:28:05+08:00"
+      "checked_at": "2026-09-09T10:38:49+08:00"
     },
     {
       "event_id": "68314",
@@ -420,7 +474,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:16+08:00",
-      "checked_at": "2026-09-09T10:28:16+08:00"
+      "checked_at": "2026-09-09T10:39:01+08:00"
     },
     {
       "event_id": "67533",
@@ -438,7 +492,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:00+08:00",
-      "checked_at": "2026-09-09T10:28:00+08:00"
+      "checked_at": "2026-09-09T10:38:44+08:00"
     },
     {
       "event_id": "67534",
@@ -456,7 +510,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:01+08:00",
-      "checked_at": "2026-09-09T10:28:01+08:00"
+      "checked_at": "2026-09-09T10:38:45+08:00"
     },
     {
       "event_id": "67959",
@@ -474,7 +528,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:11+08:00",
-      "checked_at": "2026-09-09T10:28:11+08:00"
+      "checked_at": "2026-09-09T10:38:55+08:00"
     },
     {
       "event_id": "68103",
@@ -492,7 +546,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:11+08:00",
-      "checked_at": "2026-09-09T10:28:12+08:00"
+      "checked_at": "2026-09-09T10:38:56+08:00"
     },
     {
       "event_id": "68227",
@@ -510,7 +564,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:15+08:00",
-      "checked_at": "2026-09-09T10:28:14+08:00"
+      "checked_at": "2026-09-09T10:38:59+08:00"
     },
     {
       "event_id": "67532",
@@ -528,7 +582,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:59+08:00",
-      "checked_at": "2026-09-09T10:27:59+08:00"
+      "checked_at": "2026-09-09T10:38:44+08:00"
     },
     {
       "event_id": "67741",
@@ -546,7 +600,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:08+08:00",
-      "checked_at": "2026-09-09T10:28:08+08:00"
+      "checked_at": "2026-09-09T10:38:51+08:00"
     },
     {
       "event_id": "68115",
@@ -564,7 +618,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:13+08:00",
-      "checked_at": "2026-09-09T10:28:13+08:00"
+      "checked_at": "2026-09-09T10:38:57+08:00"
     },
     {
       "event_id": "68406",
@@ -582,7 +636,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:18+08:00",
-      "checked_at": "2026-09-09T10:28:18+08:00"
+      "checked_at": "2026-09-09T10:39:03+08:00"
     },
     {
       "event_id": "67535",
@@ -600,7 +654,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:02+08:00",
-      "checked_at": "2026-09-09T10:28:01+08:00"
+      "checked_at": "2026-09-09T10:38:46+08:00"
     },
     {
       "event_id": "67644",
@@ -618,7 +672,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:04+08:00",
-      "checked_at": "2026-09-09T10:28:04+08:00"
+      "checked_at": "2026-09-09T10:38:48+08:00"
     },
     {
       "event_id": "67695",
@@ -636,7 +690,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:06+08:00",
-      "checked_at": "2026-09-09T10:28:06+08:00"
+      "checked_at": "2026-09-09T10:38:50+08:00"
     },
     {
       "event_id": "68687",
@@ -654,7 +708,61 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:21+08:00",
-      "checked_at": "2026-09-09T10:28:22+08:00"
+      "checked_at": "2026-09-09T10:39:07+08:00"
+    },
+    {
+      "event_id": "66954",
+      "season": "2026-27",
+      "league": "Ultra",
+      "group": "Junior",
+      "title": "2026-27 臺灣高級球聯盟賽 賽季 1-2 (孩童組)",
+      "date": "2026-10-03",
+      "time": "08:30-19:00",
+      "venue": "Saka Saka Limited Taiwan Branch",
+      "region": "臺中市",
+      "address": "臺中市西區育德里健行路1049號11F(台中 金典酒店 11F )",
+      "capacity": 128,
+      "url": "https://asia.pokemon-card.com/tw/event-search/66954/",
+      "results": [],
+      "result_count": 0,
+      "discovered_at": "2026-09-09T10:38:36+08:00",
+      "checked_at": "2026-09-09T10:38:36+08:00"
+    },
+    {
+      "event_id": "66952",
+      "season": "2026-27",
+      "league": "Ultra",
+      "group": "Master",
+      "title": "2026-27 臺灣高級球聯盟賽 賽季 1-2 (大師組)",
+      "date": "2026-10-03",
+      "time": "08:30-19:00",
+      "venue": "Saka Saka Limited Taiwan Branch",
+      "region": "臺中市",
+      "address": "臺中市西區育德里健行路1049號11F(台中 金典酒店 11F )",
+      "capacity": 540,
+      "url": "https://asia.pokemon-card.com/tw/event-search/66952/",
+      "results": [],
+      "result_count": 0,
+      "discovered_at": "2026-09-09T10:38:35+08:00",
+      "checked_at": "2026-09-09T10:38:35+08:00"
+    },
+    {
+      "event_id": "66953",
+      "season": "2026-27",
+      "league": "Ultra",
+      "group": "Senior",
+      "title": "2026-27 臺灣高級球聯盟賽 賽季 1-2 (少年組)",
+      "date": "2026-10-03",
+      "time": "08:30-19:00",
+      "venue": "Saka Saka Limited Taiwan Branch",
+      "region": "臺中市",
+      "address": "臺中市西區育德里健行路1049號11F(台中 金典酒店 11F )",
+      "capacity": 128,
+      "url": "https://asia.pokemon-card.com/tw/event-search/66953/",
+      "results": [],
+      "result_count": 0,
+      "discovered_at": "2026-09-09T10:38:36+08:00",
+      "checked_at": "2026-09-09T10:38:36+08:00"
     },
     {
       "event_id": "67510",
@@ -672,7 +780,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:58+08:00",
-      "checked_at": "2026-09-09T10:27:58+08:00"
+      "checked_at": "2026-09-09T10:38:42+08:00"
     },
     {
       "event_id": "67802",
@@ -690,7 +798,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:09+08:00",
-      "checked_at": "2026-09-09T10:28:09+08:00"
+      "checked_at": "2026-09-09T10:38:53+08:00"
     },
     {
       "event_id": "67807",
@@ -708,7 +816,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:09+08:00",
-      "checked_at": "2026-09-09T10:28:10+08:00"
+      "checked_at": "2026-09-09T10:38:53+08:00"
     },
     {
       "event_id": "68114",
@@ -726,7 +834,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:12+08:00",
-      "checked_at": "2026-09-09T10:28:12+08:00"
+      "checked_at": "2026-09-09T10:38:56+08:00"
     },
     {
       "event_id": "68478",
@@ -744,7 +852,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:20+08:00",
-      "checked_at": "2026-09-09T10:28:21+08:00"
+      "checked_at": "2026-09-09T10:39:06+08:00"
     },
     {
       "event_id": "68811",
@@ -762,7 +870,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:22+08:00",
-      "checked_at": "2026-09-09T10:28:23+08:00"
+      "checked_at": "2026-09-09T10:39:08+08:00"
     },
     {
       "event_id": "67703",
@@ -780,7 +888,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:07+08:00",
-      "checked_at": "2026-09-09T10:28:06+08:00"
+      "checked_at": "2026-09-09T10:38:50+08:00"
     },
     {
       "event_id": "67748",
@@ -798,7 +906,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:08+08:00",
-      "checked_at": "2026-09-09T10:28:08+08:00"
+      "checked_at": "2026-09-09T10:38:52+08:00"
     },
     {
       "event_id": "68242",
@@ -816,7 +924,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:16+08:00",
-      "checked_at": "2026-09-09T10:28:15+08:00"
+      "checked_at": "2026-09-09T10:39:00+08:00"
     },
     {
       "event_id": "68118",
@@ -834,7 +942,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:13+08:00",
-      "checked_at": "2026-09-09T10:28:13+08:00"
+      "checked_at": "2026-09-09T10:38:58+08:00"
     },
     {
       "event_id": "68316",
@@ -852,7 +960,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:17+08:00",
-      "checked_at": "2026-09-09T10:28:17+08:00"
+      "checked_at": "2026-09-09T10:39:02+08:00"
     },
     {
       "event_id": "68407",
@@ -870,7 +978,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:18+08:00",
-      "checked_at": "2026-09-09T10:28:19+08:00"
+      "checked_at": "2026-09-09T10:39:04+08:00"
     },
     {
       "event_id": "68472",
@@ -888,7 +996,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:19+08:00",
-      "checked_at": "2026-09-09T10:28:20+08:00"
+      "checked_at": "2026-09-09T10:39:05+08:00"
     },
     {
       "event_id": "68676",
@@ -906,7 +1014,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:21+08:00",
-      "checked_at": "2026-09-09T10:28:21+08:00"
+      "checked_at": "2026-09-09T10:39:07+08:00"
     },
     {
       "event_id": "68738",
@@ -924,7 +1032,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:22+08:00",
-      "checked_at": "2026-09-09T10:28:22+08:00"
+      "checked_at": "2026-09-09T10:39:08+08:00"
     },
     {
       "event_id": "67606",
@@ -942,7 +1050,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:04+08:00",
-      "checked_at": "2026-09-09T10:28:03+08:00"
+      "checked_at": "2026-09-09T10:38:47+08:00"
     },
     {
       "event_id": "67879",
@@ -960,7 +1068,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:10+08:00",
-      "checked_at": "2026-09-09T10:28:10+08:00"
+      "checked_at": "2026-09-09T10:38:54+08:00"
     },
     {
       "event_id": "68437",
@@ -978,7 +1086,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:19+08:00",
-      "checked_at": "2026-09-09T10:28:20+08:00"
+      "checked_at": "2026-09-09T10:39:05+08:00"
     },
     {
       "event_id": "68813",
@@ -996,7 +1104,61 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:23+08:00",
-      "checked_at": "2026-09-09T10:28:23+08:00"
+      "checked_at": "2026-09-09T10:39:09+08:00"
+    },
+    {
+      "event_id": "66987",
+      "season": "2026-27",
+      "league": "Ultra",
+      "group": "Junior",
+      "title": "2026-27 臺灣高級球聯盟賽 賽季 1-3 (孩童組)",
+      "date": "2026-10-17",
+      "time": "08:30-19:00",
+      "venue": "Saka Saka Limited Taiwan Branch",
+      "region": "高雄市",
+      "address": "高雄市左營區菜公里高鐵路123號10F(高雄 新光三越 左營 10F)",
+      "capacity": 128,
+      "url": "https://asia.pokemon-card.com/tw/event-search/66987/",
+      "results": [],
+      "result_count": 0,
+      "discovered_at": "2026-09-09T10:38:39+08:00",
+      "checked_at": "2026-09-09T10:38:39+08:00"
+    },
+    {
+      "event_id": "66985",
+      "season": "2026-27",
+      "league": "Ultra",
+      "group": "Master",
+      "title": "2026-27 臺灣高級球聯盟賽 賽季 1-3 (大師組)",
+      "date": "2026-10-17",
+      "time": "08:30-19:00",
+      "venue": "Saka Saka Limited Taiwan Branch",
+      "region": "高雄市",
+      "address": "高雄市左營區菜公里高鐵路123號10F(高雄 新光三越 左營 10F)",
+      "capacity": 720,
+      "url": "https://asia.pokemon-card.com/tw/event-search/66985/",
+      "results": [],
+      "result_count": 0,
+      "discovered_at": "2026-09-09T10:38:37+08:00",
+      "checked_at": "2026-09-09T10:38:37+08:00"
+    },
+    {
+      "event_id": "66986",
+      "season": "2026-27",
+      "league": "Ultra",
+      "group": "Senior",
+      "title": "2026-27 臺灣高級球聯盟賽 賽季 1-3 (少年組)",
+      "date": "2026-10-17",
+      "time": "08:30-19:00",
+      "venue": "Saka Saka Limited Taiwan Branch",
+      "region": "高雄市",
+      "address": "高雄市左營區菜公里高鐵路123號10F(高雄 新光三越 左營 10F)",
+      "capacity": 128,
+      "url": "https://asia.pokemon-card.com/tw/event-search/66986/",
+      "results": [],
+      "result_count": 0,
+      "discovered_at": "2026-09-09T10:38:38+08:00",
+      "checked_at": "2026-09-09T10:38:38+08:00"
     },
     {
       "event_id": "67509",
@@ -1014,7 +1176,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:58+08:00",
-      "checked_at": "2026-09-09T10:27:57+08:00"
+      "checked_at": "2026-09-09T10:38:42+08:00"
     },
     {
       "event_id": "67536",
@@ -1032,7 +1194,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:02+08:00",
-      "checked_at": "2026-09-09T10:28:02+08:00"
+      "checked_at": "2026-09-09T10:38:46+08:00"
     },
     {
       "event_id": "67704",
@@ -1050,7 +1212,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:07+08:00",
-      "checked_at": "2026-09-09T10:28:07+08:00"
+      "checked_at": "2026-09-09T10:38:51+08:00"
     },
     {
       "event_id": "68204",
@@ -1068,7 +1230,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:14+08:00",
-      "checked_at": "2026-09-09T10:28:14+08:00"
+      "checked_at": "2026-09-09T10:38:58+08:00"
     },
     {
       "event_id": "68404",
@@ -1086,7 +1248,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:17+08:00",
-      "checked_at": "2026-09-09T10:28:18+08:00"
+      "checked_at": "2026-09-09T10:39:02+08:00"
     },
     {
       "event_id": "64989",
@@ -1104,7 +1266,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:43+08:00",
-      "checked_at": "2026-09-09T10:27:44+08:00"
+      "checked_at": "2026-09-09T10:38:19+08:00"
     },
     {
       "event_id": "64991",
@@ -1122,7 +1284,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:45+08:00",
-      "checked_at": "2026-09-09T10:27:45+08:00"
+      "checked_at": "2026-09-09T10:38:20+08:00"
     },
     {
       "event_id": "64990",
@@ -1140,7 +1302,61 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:44+08:00",
-      "checked_at": "2026-09-09T10:27:45+08:00"
+      "checked_at": "2026-09-09T10:38:20+08:00"
+    },
+    {
+      "event_id": "66990",
+      "season": "2026-27",
+      "league": "Ultra",
+      "group": "Junior",
+      "title": "2026-27 臺灣高級球聯盟賽 賽季 1-4 (孩童組)",
+      "date": "2026-11-21",
+      "time": "08:30-19:00",
+      "venue": "Saka Saka Limited Taiwan Branch",
+      "region": "臺南市",
+      "address": "臺南市歸仁區武東里歸仁十二路3號3F(大臺南會展中心 3F 熱蘭遮廳A)",
+      "capacity": 128,
+      "url": "https://asia.pokemon-card.com/tw/event-search/66990/",
+      "results": [],
+      "result_count": 0,
+      "discovered_at": "2026-09-09T10:38:41+08:00",
+      "checked_at": "2026-09-09T10:38:41+08:00"
+    },
+    {
+      "event_id": "66988",
+      "season": "2026-27",
+      "league": "Ultra",
+      "group": "Master",
+      "title": "2026-27 臺灣高級球聯盟賽 賽季 1-4 (大師組)",
+      "date": "2026-11-21",
+      "time": "08:30-19:00",
+      "venue": "Saka Saka Limited Taiwan Branch",
+      "region": "臺南市",
+      "address": "臺南市歸仁區武東里歸仁十二路3號3F(大臺南會展中心 3F 大員廳)",
+      "capacity": 864,
+      "url": "https://asia.pokemon-card.com/tw/event-search/66988/",
+      "results": [],
+      "result_count": 0,
+      "discovered_at": "2026-09-09T10:38:39+08:00",
+      "checked_at": "2026-09-09T10:38:39+08:00"
+    },
+    {
+      "event_id": "66989",
+      "season": "2026-27",
+      "league": "Ultra",
+      "group": "Senior",
+      "title": "2026-27 臺灣高級球聯盟賽 賽季 1-4 (少年組)",
+      "date": "2026-11-21",
+      "time": "08:30-19:00",
+      "venue": "Saka Saka Limited Taiwan Branch",
+      "region": "臺南市",
+      "address": "臺南市歸仁區武東里歸仁十二路3號3F(大臺南會展中心 3F 熱蘭遮廳A)",
+      "capacity": 128,
+      "url": "https://asia.pokemon-card.com/tw/event-search/66989/",
+      "results": [],
+      "result_count": 0,
+      "discovered_at": "2026-09-09T10:38:40+08:00",
+      "checked_at": "2026-09-09T10:38:40+08:00"
     }
   ]
 }
