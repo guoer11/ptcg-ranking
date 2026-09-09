@@ -1,6 +1,6 @@
 {
   "season": "2026-27",
-  "updated_at": "2026-09-09T10:21:23+08:00",
+  "updated_at": "2026-09-09T10:28:23+08:00",
   "source": "https://asia.pokemon-card.com/tw/event-search/list/",
   "authority_note": "本資料供賽事整理與積分核算輔助；正式積分與排名以 Pokémon Asia 官方排行榜為準。",
   "schedule": [
@@ -16,7 +16,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-13",
       "time": "10:00-15:00",
-      "venue": "報名",
+      "venue": "躲貓貓桌遊店",
       "region": "臺中市",
       "address": "台中市后里區三豐路四段17號",
       "capacity": 40,
@@ -24,7 +24,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:46+08:00",
-      "checked_at": "2026-09-09T10:20:46+08:00"
+      "checked_at": "2026-09-09T10:27:46+08:00"
     },
     {
       "event_id": "66351",
@@ -34,7 +34,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-13",
       "time": "14:00-19:00",
-      "venue": "報名",
+      "venue": "拉比卡牌",
       "region": "臺北市",
       "address": "台北市內湖區五分街89號2樓",
       "capacity": 64,
@@ -42,7 +42,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:46+08:00",
-      "checked_at": "2026-09-09T10:20:46+08:00"
+      "checked_at": "2026-09-09T10:27:46+08:00"
     },
     {
       "event_id": "66352",
@@ -52,7 +52,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-13",
       "time": "14:00-19:00",
-      "venue": "報名",
+      "venue": "Play Lab Game 休閒館 高雄",
       "region": "高雄市",
       "address": "高雄市三民區建國二路166號",
       "capacity": 52,
@@ -60,7 +60,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:47+08:00",
-      "checked_at": "2026-09-09T10:20:47+08:00"
+      "checked_at": "2026-09-09T10:27:47+08:00"
     },
     {
       "event_id": "66353",
@@ -70,7 +70,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-13",
       "time": "13:30-18:30",
-      "venue": "報名",
+      "venue": "藍色的貓",
       "region": "高雄市",
       "address": "高雄市岡山區大義二路20號",
       "capacity": 36,
@@ -78,7 +78,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:48+08:00",
-      "checked_at": "2026-09-09T10:20:48+08:00"
+      "checked_at": "2026-09-09T10:27:47+08:00"
     },
     {
       "event_id": "66354",
@@ -88,7 +88,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-13",
       "time": "13:00-18:00",
-      "venue": "報名",
+      "venue": "B ONE桌遊",
       "region": "高雄市",
       "address": "高雄市鳳山區北明街117號",
       "capacity": 70,
@@ -96,7 +96,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:48+08:00",
-      "checked_at": "2026-09-09T10:20:48+08:00"
+      "checked_at": "2026-09-09T10:27:48+08:00"
     },
     {
       "event_id": "66355",
@@ -106,7 +106,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-13",
       "time": "11:00-16:00",
-      "venue": "報名",
+      "venue": "諾亞方舟 - 彰化魔豆店",
       "region": "彰化縣",
       "address": "彰化縣彰化市光復路173號4樓",
       "capacity": 68,
@@ -114,7 +114,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:49+08:00",
-      "checked_at": "2026-09-09T10:20:49+08:00"
+      "checked_at": "2026-09-09T10:27:49+08:00"
     },
     {
       "event_id": "67511",
@@ -124,7 +124,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-13",
       "time": "09:00-19:00",
-      "venue": "報名",
+      "venue": "Card Master",
       "region": "臺北市",
       "address": "臺北市萬華區中華路一段51-1號地下一樓(西門地下街第三廣場)",
       "capacity": 256,
@@ -132,7 +132,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:59+08:00",
-      "checked_at": "2026-09-09T10:20:59+08:00"
+      "checked_at": "2026-09-09T10:27:59+08:00"
     },
     {
       "event_id": "66356",
@@ -142,7 +142,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-19",
       "time": "11:00-16:00",
-      "venue": "報名",
+      "venue": "鬥樂一中店",
       "region": "臺中市",
       "address": "台中市北區尊賢街9號4樓",
       "capacity": 120,
@@ -150,7 +150,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:50+08:00",
-      "checked_at": "2026-09-09T10:20:50+08:00"
+      "checked_at": "2026-09-09T10:27:49+08:00"
     },
     {
       "event_id": "66357",
@@ -160,7 +160,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-19",
       "time": "14:00-19:00",
-      "venue": "報名",
+      "venue": "貓腳印士林店",
       "region": "臺北市",
       "address": "台北市士林區大西路66號B1",
       "capacity": 96,
@@ -168,7 +168,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:51+08:00",
-      "checked_at": "2026-09-09T10:20:51+08:00"
+      "checked_at": "2026-09-09T10:27:50+08:00"
     },
     {
       "event_id": "66358",
@@ -178,7 +178,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-19",
       "time": "10:00-16:00",
-      "venue": "報名",
+      "venue": "Card Master",
       "region": "臺北市",
       "address": "100台北市中正區南昌路二段47號1樓",
       "capacity": 128,
@@ -186,7 +186,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:51+08:00",
-      "checked_at": "2026-09-09T10:20:51+08:00"
+      "checked_at": "2026-09-09T10:27:51+08:00"
     },
     {
       "event_id": "66359",
@@ -196,7 +196,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-19",
       "time": "13:30-18:30",
-      "venue": "報名",
+      "venue": "卡卡邦尼樂遊館",
       "region": "新北市",
       "address": "新北市板橋區民生路三段32之2號",
       "capacity": 32,
@@ -204,7 +204,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:52+08:00",
-      "checked_at": "2026-09-09T10:20:52+08:00"
+      "checked_at": "2026-09-09T10:27:51+08:00"
     },
     {
       "event_id": "66360",
@@ -214,7 +214,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-19",
       "time": "11:00-16:00",
-      "venue": "報名",
+      "venue": "一新書局",
       "region": "高雄市",
       "address": "高雄市苓雅區廣州一街143-6號",
       "capacity": 64,
@@ -222,7 +222,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:53+08:00",
-      "checked_at": "2026-09-09T10:20:53+08:00"
+      "checked_at": "2026-09-09T10:27:52+08:00"
     },
     {
       "event_id": "66361",
@@ -232,7 +232,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-20",
       "time": "14:00-19:00",
-      "venue": "報名",
+      "venue": "磚櫃玩具店(台北店)",
       "region": "新北市",
       "address": "新北市中和區宜安路18巷2號",
       "capacity": 66,
@@ -240,7 +240,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:53+08:00",
-      "checked_at": "2026-09-09T10:20:53+08:00"
+      "checked_at": "2026-09-09T10:27:53+08:00"
     },
     {
       "event_id": "66362",
@@ -250,7 +250,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-20",
       "time": "10:30-15:30",
-      "venue": "報名",
+      "venue": "怪獸造咔",
       "region": "臺中市",
       "address": "台中市南區光輝街113號",
       "capacity": 32,
@@ -258,7 +258,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:54+08:00",
-      "checked_at": "2026-09-09T10:20:54+08:00"
+      "checked_at": "2026-09-09T10:27:53+08:00"
     },
     {
       "event_id": "66363",
@@ -268,7 +268,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-20",
       "time": "10:30-15:30",
-      "venue": "報名",
+      "venue": "Magic Star卡牌店",
       "region": "臺北市",
       "address": "台北市大安區和平東路二段231號2樓",
       "capacity": 66,
@@ -276,7 +276,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:54+08:00",
-      "checked_at": "2026-09-09T10:20:54+08:00"
+      "checked_at": "2026-09-09T10:27:54+08:00"
     },
     {
       "event_id": "66364",
@@ -286,7 +286,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-20",
       "time": "14:00-19:00",
-      "venue": "報名",
+      "venue": "Play Lab Game 休閒館 台南",
       "region": "臺南市",
       "address": "台南市中西區民族路二段62號2樓",
       "capacity": 52,
@@ -294,7 +294,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:55+08:00",
-      "checked_at": "2026-09-09T10:20:55+08:00"
+      "checked_at": "2026-09-09T10:27:54+08:00"
     },
     {
       "event_id": "66365",
@@ -304,7 +304,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-20",
       "time": "13:00-18:00",
-      "venue": "報名",
+      "venue": "Bruce桌遊空間-美術館店",
       "region": "高雄市",
       "address": "高雄市鼓山區華榮路405號",
       "capacity": 64,
@@ -312,7 +312,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:55+08:00",
-      "checked_at": "2026-09-09T10:20:55+08:00"
+      "checked_at": "2026-09-09T10:27:55+08:00"
     },
     {
       "event_id": "66366",
@@ -322,7 +322,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-20",
       "time": "10:00-15:00",
-      "venue": "報名",
+      "venue": "踢桌子",
       "region": "新竹縣",
       "address": "新竹縣竹北市博愛街358號2F",
       "capacity": 84,
@@ -330,7 +330,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:56+08:00",
-      "checked_at": "2026-09-09T10:20:56+08:00"
+      "checked_at": "2026-09-09T10:27:56+08:00"
     },
     {
       "event_id": "66382",
@@ -340,7 +340,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-20",
       "time": "09:00-16:00",
-      "venue": "報名",
+      "venue": "踢桌子",
       "region": "新竹縣",
       "address": "新竹縣竹北市博愛街358號2F",
       "capacity": 84,
@@ -348,7 +348,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:57+08:00",
-      "checked_at": "2026-09-09T10:20:57+08:00"
+      "checked_at": "2026-09-09T10:27:56+08:00"
     },
     {
       "event_id": "67539",
@@ -358,7 +358,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-25",
       "time": "13:00-18:00",
-      "venue": "報名",
+      "venue": "KYD遊樂園",
       "region": "桃園市",
       "address": "桃園市中壢區中央東路13號6樓",
       "capacity": 80,
@@ -366,7 +366,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:03+08:00",
-      "checked_at": "2026-09-09T10:21:03+08:00"
+      "checked_at": "2026-09-09T10:28:02+08:00"
     },
     {
       "event_id": "67654",
@@ -376,7 +376,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-25",
       "time": "13:30-18:30",
-      "venue": "報名",
+      "venue": "松梅桌遊",
       "region": "高雄市",
       "address": "高雄市苓雅區自強三路2號3F(諾貝爾大樓)",
       "capacity": 128,
@@ -384,7 +384,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:05+08:00",
-      "checked_at": "2026-09-09T10:21:05+08:00"
+      "checked_at": "2026-09-09T10:28:05+08:00"
     },
     {
       "event_id": "67678",
@@ -394,7 +394,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-25",
       "time": "10:00-16:00",
-      "venue": "報名",
+      "venue": "茶咖",
       "region": "臺北市",
       "address": "1F., No. 133, Shezhong St.,",
       "capacity": 40,
@@ -402,7 +402,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:05+08:00",
-      "checked_at": "2026-09-09T10:21:05+08:00"
+      "checked_at": "2026-09-09T10:28:05+08:00"
     },
     {
       "event_id": "68314",
@@ -412,7 +412,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-25",
       "time": "14:00-19:00",
-      "venue": "報名",
+      "venue": "卡舖啦啦",
       "region": "臺中市",
       "address": "台中市南區復興路二段30-26號2樓",
       "capacity": 72,
@@ -420,7 +420,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:16+08:00",
-      "checked_at": "2026-09-09T10:21:16+08:00"
+      "checked_at": "2026-09-09T10:28:16+08:00"
     },
     {
       "event_id": "67533",
@@ -430,7 +430,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-26",
       "time": "14:00-18:00",
-      "venue": "報名",
+      "venue": "周周GO玩具 森林1店",
       "region": "臺北市",
       "address": "台北市士林區中山北路七段24號B1",
       "capacity": 32,
@@ -438,7 +438,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:00+08:00",
-      "checked_at": "2026-09-09T10:21:00+08:00"
+      "checked_at": "2026-09-09T10:28:00+08:00"
     },
     {
       "event_id": "67534",
@@ -448,7 +448,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-26",
       "time": "14:00-20:00",
-      "venue": "報名",
+      "venue": "鬥陣",
       "region": "彰化縣",
       "address": "彰化縣彰化市永樂街12號",
       "capacity": 64,
@@ -456,7 +456,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:01+08:00",
-      "checked_at": "2026-09-09T10:21:01+08:00"
+      "checked_at": "2026-09-09T10:28:01+08:00"
     },
     {
       "event_id": "67959",
@@ -466,7 +466,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-26",
       "time": "10:30-16:00",
-      "venue": "報名",
+      "venue": "松鼠窩桌遊館",
       "region": "新北市",
       "address": "新北市三重區重新路一段78號2樓",
       "capacity": 70,
@@ -474,7 +474,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:11+08:00",
-      "checked_at": "2026-09-09T10:21:11+08:00"
+      "checked_at": "2026-09-09T10:28:11+08:00"
     },
     {
       "event_id": "68103",
@@ -484,7 +484,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-26",
       "time": "10:00-18:00",
-      "venue": "報名",
+      "venue": "模羊玩具店",
       "region": "宜蘭縣",
       "address": "宜蘭市 民族路159號",
       "capacity": 42,
@@ -492,7 +492,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:11+08:00",
-      "checked_at": "2026-09-09T10:21:11+08:00"
+      "checked_at": "2026-09-09T10:28:12+08:00"
     },
     {
       "event_id": "68227",
@@ -502,7 +502,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-26",
       "time": "13:00-19:00",
-      "venue": "報名",
+      "venue": "Bruce桌遊空間-嫩江店",
       "region": "高雄市",
       "address": "高雄市三民區嫩江街74號2樓",
       "capacity": 32,
@@ -510,7 +510,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:15+08:00",
-      "checked_at": "2026-09-09T10:21:15+08:00"
+      "checked_at": "2026-09-09T10:28:14+08:00"
     },
     {
       "event_id": "67532",
@@ -520,7 +520,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-27",
       "time": "14:00-22:00",
-      "venue": "報名",
+      "venue": "貓腳印松江店",
       "region": "臺北市",
       "address": "台北市中山區南京東路二段95號B1",
       "capacity": 96,
@@ -528,7 +528,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:59+08:00",
-      "checked_at": "2026-09-09T10:20:59+08:00"
+      "checked_at": "2026-09-09T10:27:59+08:00"
     },
     {
       "event_id": "67741",
@@ -538,7 +538,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-27",
       "time": "11:00-16:00",
-      "venue": "報名",
+      "venue": "貓腳印-彰化店",
       "region": "彰化縣",
       "address": "彰化縣員林市莒光路398號2樓",
       "capacity": 64,
@@ -546,7 +546,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:08+08:00",
-      "checked_at": "2026-09-09T10:21:08+08:00"
+      "checked_at": "2026-09-09T10:28:08+08:00"
     },
     {
       "event_id": "68115",
@@ -556,7 +556,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-27",
       "time": "13:30-18:00",
-      "venue": "報名",
+      "venue": "幽靈屋",
       "region": "臺北市",
       "address": "台北市南港區忠孝東路七段625巷33號",
       "capacity": 44,
@@ -564,7 +564,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:13+08:00",
-      "checked_at": "2026-09-09T10:21:13+08:00"
+      "checked_at": "2026-09-09T10:28:13+08:00"
     },
     {
       "event_id": "68406",
@@ -574,7 +574,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-27",
       "time": "14:00-18:00",
-      "venue": "報名",
+      "venue": "PLAY ONE 壹樂研究所",
       "region": "桃園市",
       "address": "桃園市中壢區廣安街44號",
       "capacity": 48,
@@ -582,7 +582,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:18+08:00",
-      "checked_at": "2026-09-09T10:21:18+08:00"
+      "checked_at": "2026-09-09T10:28:18+08:00"
     },
     {
       "event_id": "67535",
@@ -592,7 +592,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-28",
       "time": "10:00-22:00",
-      "venue": "報名",
+      "venue": "一刻館卡片遊戲專賣店",
       "region": "桃園市",
       "address": "桃園市桃園區中華路43號2樓",
       "capacity": 66,
@@ -600,7 +600,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:02+08:00",
-      "checked_at": "2026-09-09T10:21:02+08:00"
+      "checked_at": "2026-09-09T10:28:01+08:00"
     },
     {
       "event_id": "67644",
@@ -610,7 +610,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-28",
       "time": "11:00-15:00",
-      "venue": "報名",
+      "venue": "一新書局",
       "region": "高雄市",
       "address": "高雄市苓雅區廣州一街143-6號",
       "capacity": 64,
@@ -618,7 +618,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:04+08:00",
-      "checked_at": "2026-09-09T10:21:04+08:00"
+      "checked_at": "2026-09-09T10:28:04+08:00"
     },
     {
       "event_id": "67695",
@@ -628,7 +628,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-28",
       "time": "14:00-18:30",
-      "venue": "報名",
+      "venue": "磚櫃玩具店(台北店)",
       "region": "新北市",
       "address": "新北市中和區宜安路18巷2號",
       "capacity": 66,
@@ -636,7 +636,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:06+08:00",
-      "checked_at": "2026-09-09T10:21:06+08:00"
+      "checked_at": "2026-09-09T10:28:06+08:00"
     },
     {
       "event_id": "68687",
@@ -646,7 +646,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-09-28",
       "time": "13:00-19:00",
-      "venue": "報名",
+      "venue": "The ONE集換式卡牌會所",
       "region": "臺北市",
       "address": "臺北市大安區復興南路一段103號9樓之2",
       "capacity": 36,
@@ -654,7 +654,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:21+08:00",
-      "checked_at": "2026-09-09T10:21:21+08:00"
+      "checked_at": "2026-09-09T10:28:22+08:00"
     },
     {
       "event_id": "67510",
@@ -664,7 +664,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-04",
       "time": "09:00-19:00",
-      "venue": "報名",
+      "venue": "諾亞方舟益智遊戲",
       "region": "臺中市",
       "address": "臺中市北區三民路三段129號中正大樓(國立臺中科技大學 中正大樓 一樓閱覽室)",
       "capacity": 256,
@@ -672,7 +672,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:58+08:00",
-      "checked_at": "2026-09-09T10:20:58+08:00"
+      "checked_at": "2026-09-09T10:27:58+08:00"
     },
     {
       "event_id": "67802",
@@ -682,7 +682,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-04",
       "time": "13:00-19:00",
-      "venue": "報名",
+      "venue": "貓腳印淡水店",
       "region": "新北市",
       "address": "新北市淡水區學府路28號5f",
       "capacity": 68,
@@ -690,7 +690,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:09+08:00",
-      "checked_at": "2026-09-09T10:21:09+08:00"
+      "checked_at": "2026-09-09T10:28:09+08:00"
     },
     {
       "event_id": "67807",
@@ -700,7 +700,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-04",
       "time": "09:00-14:00",
-      "venue": "報名",
+      "venue": "踢桌子",
       "region": "新竹縣",
       "address": "新竹縣竹北市博愛街358號2F",
       "capacity": 84,
@@ -708,7 +708,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:09+08:00",
-      "checked_at": "2026-09-09T10:21:09+08:00"
+      "checked_at": "2026-09-09T10:28:10+08:00"
     },
     {
       "event_id": "68114",
@@ -718,7 +718,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-04",
       "time": "14:30-19:30",
-      "venue": "報名",
+      "venue": "玩坊 桌遊店",
       "region": "嘉義市",
       "address": "嘉義市西區博愛路一段365號1樓",
       "capacity": 64,
@@ -726,7 +726,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:12+08:00",
-      "checked_at": "2026-09-09T10:21:12+08:00"
+      "checked_at": "2026-09-09T10:28:12+08:00"
     },
     {
       "event_id": "68478",
@@ -736,7 +736,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-04",
       "time": "14:00-19:00",
-      "venue": "報名",
+      "venue": "Play Lab Game 休閒館 高雄",
       "region": "高雄市",
       "address": "高雄市三民區建國二路166號",
       "capacity": 52,
@@ -744,7 +744,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:20+08:00",
-      "checked_at": "2026-09-09T10:21:20+08:00"
+      "checked_at": "2026-09-09T10:28:21+08:00"
     },
     {
       "event_id": "68811",
@@ -754,7 +754,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-04",
       "time": "14:30-19:00",
-      "venue": "報名",
+      "venue": "南瓜鎮",
       "region": "新北市",
       "address": "新北市三峽區國光街91號",
       "capacity": 32,
@@ -762,7 +762,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:22+08:00",
-      "checked_at": "2026-09-09T10:21:22+08:00"
+      "checked_at": "2026-09-09T10:28:23+08:00"
     },
     {
       "event_id": "67703",
@@ -772,7 +772,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-09",
       "time": "11:00-16:30",
-      "venue": "報名",
+      "venue": "米朧家",
       "region": "高雄市",
       "address": "高雄市仁武區八德西路1421號",
       "capacity": 32,
@@ -780,7 +780,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:07+08:00",
-      "checked_at": "2026-09-09T10:21:07+08:00"
+      "checked_at": "2026-09-09T10:28:06+08:00"
     },
     {
       "event_id": "67748",
@@ -790,7 +790,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-09",
       "time": "10:30-14:30",
-      "venue": "報名",
+      "venue": "森桌遊",
       "region": "新北市",
       "address": "新北市蘆洲區中山一路120巷3號",
       "capacity": 32,
@@ -798,7 +798,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:08+08:00",
-      "checked_at": "2026-09-09T10:21:08+08:00"
+      "checked_at": "2026-09-09T10:28:08+08:00"
     },
     {
       "event_id": "68242",
@@ -808,7 +808,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-09",
       "time": "13:00-18:00",
-      "venue": "報名",
+      "venue": "ALG-Academy Legacy Games",
       "region": "臺北市",
       "address": "台北市中山區長春路368號5樓",
       "capacity": 80,
@@ -816,7 +816,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:16+08:00",
-      "checked_at": "2026-09-09T10:21:16+08:00"
+      "checked_at": "2026-09-09T10:28:15+08:00"
     },
     {
       "event_id": "68118",
@@ -826,7 +826,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-10",
       "time": "13:30-17:00",
-      "venue": "報名",
+      "venue": "紙牌屋",
       "region": "臺南市",
       "address": "台南市東區東門路一段354號10樓",
       "capacity": 80,
@@ -834,7 +834,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:13+08:00",
-      "checked_at": "2026-09-09T10:21:13+08:00"
+      "checked_at": "2026-09-09T10:28:13+08:00"
     },
     {
       "event_id": "68316",
@@ -844,7 +844,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-10",
       "time": "11:00-15:00",
-      "venue": "報名",
+      "venue": "Ririco - 集換式卡牌專賣",
       "region": "臺中市",
       "address": "406台中市北屯區北屯路288號B1",
       "capacity": 70,
@@ -852,7 +852,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:17+08:00",
-      "checked_at": "2026-09-09T10:21:17+08:00"
+      "checked_at": "2026-09-09T10:28:17+08:00"
     },
     {
       "event_id": "68407",
@@ -862,7 +862,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-10",
       "time": "13:30-19:00",
-      "venue": "報名",
+      "venue": "塔普卡桌遊卡牌",
       "region": "新竹縣",
       "address": "新竹縣竹北市仁義路182號2樓",
       "capacity": 76,
@@ -870,7 +870,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:18+08:00",
-      "checked_at": "2026-09-09T10:21:18+08:00"
+      "checked_at": "2026-09-09T10:28:19+08:00"
     },
     {
       "event_id": "68472",
@@ -880,7 +880,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-10",
       "time": "14:00-18:00",
-      "venue": "報名",
+      "venue": "SAGA TCG店",
       "region": "宜蘭縣",
       "address": "宜蘭縣宜蘭市復興路一段8號1樓",
       "capacity": 32,
@@ -888,7 +888,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:19+08:00",
-      "checked_at": "2026-09-09T10:21:19+08:00"
+      "checked_at": "2026-09-09T10:28:20+08:00"
     },
     {
       "event_id": "68676",
@@ -898,7 +898,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-10",
       "time": "11:00-18:00",
-      "venue": "報名",
+      "venue": "諾亞方舟益智遊戲",
       "region": "臺中市",
       "address": "台中市西屯區台灣大道二段910號5樓之1",
       "capacity": 90,
@@ -906,7 +906,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:21+08:00",
-      "checked_at": "2026-09-09T10:21:21+08:00"
+      "checked_at": "2026-09-09T10:28:21+08:00"
     },
     {
       "event_id": "68738",
@@ -916,7 +916,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-10",
       "time": "14:00-19:30",
-      "venue": "報名",
+      "venue": "貓腳印士林店",
       "region": "臺北市",
       "address": "台北市士林區大西路66號B1",
       "capacity": 96,
@@ -924,7 +924,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:22+08:00",
-      "checked_at": "2026-09-09T10:21:22+08:00"
+      "checked_at": "2026-09-09T10:28:22+08:00"
     },
     {
       "event_id": "67606",
@@ -934,7 +934,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-11",
       "time": "13:00-19:00",
-      "venue": "報名",
+      "venue": "5樓-豐原店",
       "region": "臺中市",
       "address": "臺中市豐原區三民路65號5樓",
       "capacity": 64,
@@ -942,7 +942,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:04+08:00",
-      "checked_at": "2026-09-09T10:21:04+08:00"
+      "checked_at": "2026-09-09T10:28:03+08:00"
     },
     {
       "event_id": "67879",
@@ -952,7 +952,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-11",
       "time": "11:00-17:00",
-      "venue": "報名",
+      "venue": "諾亞方舟 - 彰化魔豆店",
       "region": "彰化縣",
       "address": "彰化縣彰化市光復路173號4樓",
       "capacity": 68,
@@ -960,7 +960,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:10+08:00",
-      "checked_at": "2026-09-09T10:21:10+08:00"
+      "checked_at": "2026-09-09T10:28:10+08:00"
     },
     {
       "event_id": "68437",
@@ -970,7 +970,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-11",
       "time": "08:30-14:00",
-      "venue": "報名",
+      "venue": "桌覓桌遊",
       "region": "高雄市",
       "address": "高雄市苓雅區林泉街38巷9弄7號1樓",
       "capacity": 66,
@@ -978,7 +978,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:19+08:00",
-      "checked_at": "2026-09-09T10:21:19+08:00"
+      "checked_at": "2026-09-09T10:28:20+08:00"
     },
     {
       "event_id": "68813",
@@ -988,7 +988,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-11",
       "time": "13:00-21:00",
-      "venue": "報名",
+      "venue": "B ONE桌遊",
       "region": "高雄市",
       "address": "高雄市鳳山區北明街117號",
       "capacity": 70,
@@ -996,7 +996,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:23+08:00",
-      "checked_at": "2026-09-09T10:21:23+08:00"
+      "checked_at": "2026-09-09T10:28:23+08:00"
     },
     {
       "event_id": "67509",
@@ -1006,7 +1006,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-18",
       "time": "10:00-19:00",
-      "venue": "報名",
+      "venue": "漢謚玩具社",
       "region": "高雄市",
       "address": "高雄市前鎮區興邦里中華五路789號(高雄夢時代購物中心)",
       "capacity": 256,
@@ -1014,7 +1014,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:58+08:00",
-      "checked_at": "2026-09-09T10:20:58+08:00"
+      "checked_at": "2026-09-09T10:27:57+08:00"
     },
     {
       "event_id": "67536",
@@ -1024,7 +1024,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-18",
       "time": "10:00-14:00",
-      "venue": "報名",
+      "venue": "享玩桌遊",
       "region": "桃園市",
       "address": "桃園市中壢區大仁街31號1樓",
       "capacity": 66,
@@ -1032,7 +1032,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:02+08:00",
-      "checked_at": "2026-09-09T10:21:02+08:00"
+      "checked_at": "2026-09-09T10:28:02+08:00"
     },
     {
       "event_id": "67704",
@@ -1042,7 +1042,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-18",
       "time": "09:00-13:00",
-      "venue": "報名",
+      "venue": "嶺東玩咖",
       "region": "臺中市",
       "address": "台中市南屯區精科三路7號",
       "capacity": 32,
@@ -1050,7 +1050,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:07+08:00",
-      "checked_at": "2026-09-09T10:21:07+08:00"
+      "checked_at": "2026-09-09T10:28:07+08:00"
     },
     {
       "event_id": "68204",
@@ -1060,7 +1060,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-18",
       "time": "14:00-19:00",
-      "venue": "報名",
+      "venue": "瘋桌遊益智遊戲專賣店 大安店",
       "region": "臺北市",
       "address": "台北市大安區通化街28巷2號",
       "capacity": 66,
@@ -1068,7 +1068,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:14+08:00",
-      "checked_at": "2026-09-09T10:21:14+08:00"
+      "checked_at": "2026-09-09T10:28:14+08:00"
     },
     {
       "event_id": "68404",
@@ -1078,7 +1078,7 @@
       "title": "2026-27 Taiwan Great Ball League Season 1",
       "date": "2026-10-18",
       "time": "13:30-19:00",
-      "venue": "報名",
+      "venue": "玖零玩具",
       "region": "臺南市",
       "address": "台南市中西區民權路一段1號1樓",
       "capacity": 32,
@@ -1086,7 +1086,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:17+08:00",
-      "checked_at": "2026-09-09T10:21:17+08:00"
+      "checked_at": "2026-09-09T10:28:18+08:00"
     },
     {
       "event_id": "64989",
@@ -1096,7 +1096,7 @@
       "title": "2026-27 Taiwan Premier Ball League TCG Category Junior Division",
       "date": "2026-11-07",
       "time": "08:00-20:00",
-      "venue": "報名",
+      "venue": "The Pokémon Company",
       "region": "臺北市",
       "address": "115018 台北市南港區經貿二路2號 南港展覽館2館 1F / 4F",
       "capacity": 700,
@@ -1104,7 +1104,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:43+08:00",
-      "checked_at": "2026-09-09T10:20:43+08:00"
+      "checked_at": "2026-09-09T10:27:44+08:00"
     },
     {
       "event_id": "64991",
@@ -1114,7 +1114,7 @@
       "title": "2026-27 Taiwan Premier Ball League TCG Category Masters Division",
       "date": "2026-11-07",
       "time": "08:00-20:00",
-      "venue": "報名",
+      "venue": "The Pokémon Company",
       "region": "臺北市",
       "address": "115018 台北市南港區經貿二路2號 南港展覽館2館 1F / 4F",
       "capacity": 4000,
@@ -1122,7 +1122,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:45+08:00",
-      "checked_at": "2026-09-09T10:20:45+08:00"
+      "checked_at": "2026-09-09T10:27:45+08:00"
     },
     {
       "event_id": "64990",
@@ -1132,7 +1132,7 @@
       "title": "2026-27 Taiwan Premier Ball League TCG Category Senior Division",
       "date": "2026-11-07",
       "time": "08:00-20:00",
-      "venue": "報名",
+      "venue": "The Pokémon Company",
       "region": "臺北市",
       "address": "115018 台北市南港區經貿二路2號 南港展覽館2館 1F / 4F",
       "capacity": 800,
@@ -1140,7 +1140,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:44+08:00",
-      "checked_at": "2026-09-09T10:20:44+08:00"
+      "checked_at": "2026-09-09T10:27:45+08:00"
     }
   ]
 }
