@@ -23,7 +23,7 @@
           <span class="status-dot"></span>
           <div>
             <strong id="dataStatus">資料載入中</strong>
-            <small id="updatedAt">—</small>
+            <small id="updatedAt">更新時間：—</small>
           </div>
         </div>
         <button id="identityAuthButton" class="identity-auth-icon" type="button" aria-label="Google 登入" title="Google 登入">
@@ -75,8 +75,7 @@
         <button class="tab" data-group="Master" role="tab">大師組</button>
       </div>
 
-      <div class="update-toolbar">
-        <span>目前自動更新：每天 00:05</span>
+      <div class="update-toolbar" style="justify-content:flex-end;">
         <div class="update-actions">
           <button id="reloadDataButton" class="secondary-btn" type="button">重新讀取資料</button>
         </div>
@@ -130,5 +129,22 @@
   <script src="identity-ui.js?v=0.3-r1" defer></script>
   <script src="auth-ui.js?v=0.3-r2" defer></script>
   <script src="lookup-ui.js?v=0.3-r1" defer></script>
+  <script>
+    (() => {
+      const el = document.getElementById('updatedAt');
+      if (!el) return;
+
+      const normalizeUpdateTime = () => {
+        const text = el.textContent || '';
+        const match = text.match(/(\d{4})\/(\d{2})\/(\d{2})\s+(\d{2}:\d{2})/);
+        if (!match) return;
+        const formatted = `更新時間:${Number(match[1])}/${Number(match[2])}/${Number(match[3])} ${match[4]}`;
+        if (el.textContent !== formatted) el.textContent = formatted;
+      };
+
+      new MutationObserver(normalizeUpdateTime).observe(el, { childList: true, characterData: true, subtree: true });
+      normalizeUpdateTime();
+    })();
+  </script>
 </body>
 </html>
