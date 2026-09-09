@@ -190,6 +190,20 @@
   padding-top: 14px;
 }
 .tournament-card-actions button { white-space: nowrap; }
+.tournament-result-pending {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px dashed #cfd8e6;
+  border-radius: 10px;
+  background: #f7f9fc;
+  color: #7a879a;
+  font-size: 12px;
+  font-weight: 800;
+}
+.tournament-result-button { min-width: 124px; }
 
 .league-badge,
 .result-badge,
@@ -263,4 +277,7 @@
   .tournament-card { min-height: 0; }
   .tournament-card h3 { font-size: 13px; white-space: nowrap; }
   .tournament-detail-grid { grid-template-columns: 1fr; }
+  .tournament-card-actions { justify-content: stretch; }
+  .tournament-result-pending,
+  .tournament-result-button { width: 100%; }
 }
