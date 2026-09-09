@@ -127,7 +127,7 @@
     </section>
 
     <section class="notice">
-      <strong>目前為 v0.6.2 測試版</strong>
+      <strong>目前為 v0.7 測試版</strong>
       <span id="versionNoticeText">排名、積分、暱稱與 PTCG ID 維持公開。</span>
     </section>
   </main>
@@ -160,17 +160,26 @@
       </header>
       <div class="modal-body">
         <div class="push-status-box">
-          <strong id="pushStatusTitle">正在檢查通知狀態</strong>
-          <span id="pushStatusText">請稍候。</span>
+          <strong id="pushStatusTitle">網站推播</strong>
+          <span id="pushStatusText">正在檢查通知狀態。</span>
         </div>
 
         <div class="push-actions">
           <button id="pushToggleButton" class="primary-btn" type="button">開啟通知</button>
-          <button id="pushTestButton" class="secondary-btn" type="button" disabled>發送測試通知</button>
+          <button id="pushTestButton" class="secondary-btn" type="button" disabled>發送網站測試通知</button>
         </div>
 
-        <section class="push-preferences" aria-label="通知項目">
-          <h3>通知項目</h3>
+        <div class="push-status-box">
+          <strong>LINE 通知</strong>
+          <span id="lineStatusText">正在檢查 LINE 連線。</span>
+        </div>
+
+        <div class="push-actions">
+          <button id="lineTestButton" class="secondary-btn" type="button" disabled>發送 LINE 測試通知</button>
+        </div>
+
+        <section class="push-preferences" aria-label="網站推播項目">
+          <h3>網站推播項目</h3>
           <label class="push-pref-row"><span>官方排行榜公布 / 更新</span><input id="pushPrefRanking" data-push-pref type="checkbox" checked /></label>
           <label class="push-pref-row"><span>新增超級球賽事</span><input id="pushPrefGreat" data-push-pref type="checkbox" checked /></label>
           <label class="push-pref-row"><span>新增高級球賽事</span><input id="pushPrefUltra" data-push-pref type="checkbox" checked /></label>
@@ -179,7 +188,7 @@
           <label class="push-pref-row"><span>官方賽事成績公布</span><input id="pushPrefResults" data-push-pref type="checkbox" /></label>
         </section>
 
-        <p class="push-help">iPhone 需從「加入主畫面」後的網站圖示開啟。啟用成功後，就算網站沒有開著也能收到推播。</p>
+        <p class="push-help">LINE 目前會通知官方排行榜公布／更新與新增聯盟賽事；網站推播則依上方勾選項目發送。iPhone 網站推播需從「加入主畫面」後的網站圖示開啟。</p>
       </div>
     </section>
   </div>
@@ -196,6 +205,7 @@
   <script src="ranking-season-ui.js?v=0.4-r1" defer></script>
   <script src="push-ui.js?v=0.6-r1" defer></script>
   <script src="push-fix.js?v=0.6-r1" defer></script>
+  <script src="line-ui.js?v=0.7-r1" defer></script>
   <script>
     (() => {
       const el = document.getElementById('lastCheckAt');
