@@ -37,6 +37,10 @@ function updateIdentityTextUI() {
   if (noticeText) noticeText.textContent = '排名、積分、暱稱與 PTCG ID 維持公開。';
 }
 
+function refreshPushAuthUI() {
+  if (typeof window.updatePushUI === 'function') window.updatePushUI();
+}
+
 function updateIdentityAuthUI(message = '') {
   const button = identityAuthButton();
   if (!button) return;
@@ -48,12 +52,14 @@ function updateIdentityAuthUI(message = '') {
     button.setAttribute('aria-label', 'Google 登入');
     button.title = message || 'Google 登入';
     updateIdentityTextUI();
+    refreshPushAuthUI();
     return;
   }
 
   button.setAttribute('aria-label', '已登入，點此登出');
   button.title = message || '已登入，點此登出';
   updateIdentityTextUI();
+  refreshPushAuthUI();
 }
 
 async function loadPrivateIdentities() {
