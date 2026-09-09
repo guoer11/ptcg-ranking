@@ -1,0 +1,58 @@
+name: Update PTCG tournaments
+
+on:
+  workflow_dispatch:
+  schedule:
+    # GitHub Actions cron 使用 UTC。
+    # 16:05 UTC = 台灣時間隔日 00:05；04:05 UTC = 台灣時間 12:05。
+    - cron: "5 16 * * *"
+    - cron: "5 4 * * *"
+  push:
+    branches:
+      - main
+    paths:
+      - "scrape_tournaments.py"
+      - "requirements.txt"
+      - ".github/workflows/update-tournaments.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-ptcg-tournaments
+  cancel-in-progress: true
+
+jobs:
+  update-tournaments:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch official tournament information
+        run: python scrape_tournaments.py
+
+      - name: Commit tournament changes
+        run: |
+          if git diff --quiet -- data/tournaments.json; then
+            echo "No tournament changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/tournaments.json
+          git commit -m "Update official tournament data"
+          git pull --rebase origin main
+          git push origin HEAD:main
