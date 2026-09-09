@@ -17,7 +17,7 @@ def rounded_card(draw, box, radius, fill, outline=None, width=1):
 
 def draw_icon(size):
     scale = 3
-    s = size * scale
+    s = 512 * scale
     img = Image.new('RGB', (s, s), NAVY)
     d = ImageDraw.Draw(img)
 
@@ -37,7 +37,7 @@ def draw_icon(size):
         (82, 220, 250, 365, -4),
         (103, 235, 272, 382, 7),
     ]
-    for x1, y1, x2, y2, _angle in cards:
+    for x1, y1, x2, y2, angle in cards:
         card = Image.new('RGBA', (220 * scale, 190 * scale), (0, 0, 0, 0))
         cd = ImageDraw.Draw(card)
         rounded_card(cd, (18*scale, 18*scale, 198*scale, 170*scale), 18*scale, NAVY_2, GOLD, 8*scale)
@@ -46,7 +46,7 @@ def draw_icon(size):
             (121*scale, 110*scale), (108*scale, 139*scale), (95*scale, 110*scale),
             (66*scale, 98*scale), (95*scale, 86*scale),
         ], fill=GOLD_LIGHT)
-        card = card.rotate(_angle, resample=Image.Resampling.BICUBIC, expand=True)
+        card = card.rotate(angle, resample=Image.Resampling.BICUBIC, expand=True)
         img.paste(card, (int((x1-28)*scale), int((y1-42)*scale)), card)
 
     d = ImageDraw.Draw(img)
