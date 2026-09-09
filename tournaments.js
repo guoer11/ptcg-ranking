@@ -1,0 +1,260 @@
+const TOURNAMENT_LEAGUE_LABELS = {
+  Great: '超級球',
+  Ultra: '高級球',
+  Premier: '紀念球',
+  Master: '大師球'
+};
+
+const TOURNAMENT_GROUP_LABELS = {
+  Junior: '孩童組',
+  Senior: '少年組',
+  Master: '大師組',
+  Open: '全年齡組'
+};
+
+let tournamentData = { season: '2026-27', updated_at: null, events: [] };
+let tournamentLeague = 'all';
+let tournamentKeyword = '';
+let tournamentStatus = 'all';
+let tournamentFutureOnly = false;
+
+const tournamentList = document.getElementById('tournamentList');
+const tournamentSearch = document.getElementById('tournamentSearch');
+const tournamentStatusFilter = document.getElementById('tournamentStatusFilter');
+const showFutureOnly = document.getElementById('showFutureOnly');
+const tournamentModal = document.getElementById('tournamentModal');
+const tournamentModalTitle = document.getElementById('tournamentModalTitle');
+const tournamentModalSubtitle = document.getElementById('tournamentModalSubtitle');
+const tournamentModalBody = document.getElementById('tournamentModalBody');
+
+function tournamentEsc(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function tournamentFormatUpdate(iso) {
+  if (!iso) return '更新時間：尚未有更新紀錄';
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return `更新時間：${iso}`;
+  const parts = new Intl.DateTimeFormat('zh-TW', {
+    timeZone: 'Asia/Taipei',
+    year: 'numeric', month: 'numeric', day: 'numeric',
+    hour: '2-digit', minute: '2-digit', hour12: false
+  }).formatToParts(date).reduce((acc, part) => {
+    if (part.type !== 'literal') acc[part.type] = part.value;
+    return acc;
+  }, {});
+  return `更新時間：${parts.year}/${Number(parts.month)}/${Number(parts.day)} ${parts.hour}:${parts.minute}`;
+}
+
+function todayTaipei() {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).formatToParts(new Date()).reduce((acc, part) => {
+    if (part.type !== 'literal') acc[part.type] = part.value;
+    return acc;
+  }, {});
+  return `${parts.year}-${parts.month}-${parts.day}`;
+}
+
+function eventStatus(event) {
+  if (Array.isArray(event.results) && event.results.length) return 'results';
+  const date = String(event.date || '').slice(0, 10);
+  if (date && date < todayTaipei()) return 'waiting';
+  return 'upcoming';
+}
+
+function eventStatusLabel(status) {
+  if (status === 'results') return '已有官方成績';
+  if (status === 'waiting') return '等待官方成績';
+  return '未舉行';
+}
+
+function eventGroupLabel(group) {
+  return TOURNAMENT_GROUP_LABELS[group] || group || '全年齡組';
+}
+
+function formatEventDate(dateValue, timeValue = '') {
+  const raw = String(dateValue || '');
+  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return { main: raw || '日期未定', sub: timeValue || '' };
+  return {
+    main: `${Number(match[2])}/${Number(match[3])}`,
+    sub: `${match[1]}${timeValue ? ` · ${timeValue}` : ''}`
+  };
+}
+
+function filteredTournaments() {
+  const key = tournamentKeyword.toLowerCase();
+  const today = todayTaipei();
+  return (tournamentData.events || [])
+    .filter(event => tournamentLeague === 'all' || event.league === tournamentLeague)
+    .filter(event => tournamentStatus === 'all' || eventStatus(event) === tournamentStatus)
+    .filter(event => !tournamentFutureOnly || String(event.date || '') >= today)
+    .filter(event => {
+      if (!key) return true;
+      return [event.title, event.venue, event.region, event.address, event.group, event.event_id]
+        .some(value => String(value || '').toLowerCase().includes(key));
+    })
+    .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')) || String(a.title || '').localeCompare(String(b.title || ''), 'zh-Hant'));
+}
+
+function updateTournamentSummary() {
+  const events = tournamentData.events || [];
+  const today = todayTaipei();
+  const upcoming = events.filter(event => String(event.date || '') >= today).length;
+  const resultEvents = events.filter(event => Array.isArray(event.results) && event.results.length).length;
+  const resultRows = events.reduce((sum, event) => sum + (Array.isArray(event.results) ? event.results.length : 0), 0);
+  document.getElementById('tournamentTotalCount').textContent = events.length;
+  document.getElementById('tournamentUpcomingCount').textContent = upcoming;
+  document.getElementById('tournamentResultCount').textContent = resultEvents;
+  document.getElementById('tournamentPlayerResultCount').textContent = resultRows;
+}
+
+function renderTournamentList() {
+  const events = filteredTournaments();
+  if (!events.length) {
+    tournamentList.innerHTML = '<div class="empty-state"><strong>目前沒有符合條件的賽事</strong><span>官方新增聯盟賽事後會由排程自動收錄。</span></div>';
+    return;
+  }
+
+  tournamentList.innerHTML = events.map(event => {
+    const date = formatEventDate(event.date, event.time || '');
+    const status = eventStatus(event);
+    return `
+      <article class="tournament-card">
+        <div class="tournament-date">
+          <strong>${tournamentEsc(date.main)}</strong>
+          <span>${tournamentEsc(date.sub)}</span>
+        </div>
+        <div>
+          <div>
+            <span class="league-badge ${tournamentEsc(event.league || '')}">${tournamentEsc(TOURNAMENT_LEAGUE_LABELS[event.league] || event.league || '聯盟賽')}</span>
+            <span class="group-badge">${tournamentEsc(eventGroupLabel(event.group))}</span>
+          </div>
+          <h3>${tournamentEsc(event.title || `官方活動 ${event.event_id || ''}`)}</h3>
+          <div class="tournament-meta">
+            ${event.venue ? `<span>⌂ ${tournamentEsc(event.venue)}</span>` : ''}
+            ${event.region ? `<span>⌖ ${tournamentEsc(event.region)}</span>` : ''}
+            ${event.capacity ? `<span>♟ ${tournamentEsc(event.capacity)} 人</span>` : ''}
+          </div>
+        </div>
+        <div class="tournament-card-actions">
+          <span class="result-badge ${status}">${eventStatusLabel(status)}</span>
+          <button class="secondary-btn" type="button" data-event-id="${tournamentEsc(event.event_id)}">查看詳情</button>
+        </div>
+      </article>`;
+  }).join('');
+
+  tournamentList.querySelectorAll('[data-event-id]').forEach(button => {
+    button.addEventListener('click', () => openTournamentModal(button.dataset.eventId));
+  });
+}
+
+function renderTournamentResults(event) {
+  const results = Array.isArray(event.results) ? event.results : [];
+  if (!results.length) {
+    return `<div class="empty-state compact-empty"><strong>${eventStatusLabel(eventStatus(event))}</strong><span>官方公布活動結果後，自動更新排程會嘗試收錄成績。</span></div>`;
+  }
+  const rows = results.map(row => `
+    <tr>
+      <td>${tournamentEsc(row.rank ?? '—')}</td>
+      <td>${tournamentEsc(row.name || '—')}</td>
+      <td>${tournamentEsc(row.player_id || '—')}</td>
+      <td>${tournamentEsc(row.region || '—')}</td>
+      <td><strong>${tournamentEsc(row.points ?? '—')} pt</strong></td>
+    </tr>`).join('');
+  return `
+    <div class="tournament-result-table-wrap">
+      <table class="tournament-result-table">
+        <thead><tr><th>排名</th><th>玩家</th><th>PTCG ID</th><th>地區</th><th>獲得積分</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function openTournamentModal(eventId) {
+  const event = (tournamentData.events || []).find(item => String(item.event_id) === String(eventId));
+  if (!event) return;
+  tournamentModal.classList.add('open');
+  tournamentModal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+  tournamentModalTitle.textContent = event.title || '賽事詳情';
+  tournamentModalSubtitle.textContent = `${TOURNAMENT_LEAGUE_LABELS[event.league] || ''} · ${eventGroupLabel(event.group)}`;
+  tournamentModalBody.innerHTML = `
+    <section class="tournament-detail-grid">
+      <article><strong>${tournamentEsc(event.date || '—')}</strong><span>比賽日期</span></article>
+      <article><strong>${tournamentEsc(event.time || '—')}</strong><span>比賽時間</span></article>
+      <article><strong>${tournamentEsc(event.venue || '—')}</strong><span>會場 / 店家</span></article>
+      <article><strong>${tournamentEsc(event.capacity || '—')}</strong><span>人數上限</span></article>
+    </section>
+    ${event.address ? `<p class="hint">${tournamentEsc(event.address)}</p>` : ''}
+    <h3>官方活動結果</h3>
+    ${renderTournamentResults(event)}
+    ${event.url ? `<a class="primary-btn tournament-result-link" href="${tournamentEsc(event.url)}" target="_blank" rel="noopener">開啟官方活動頁 ↗</a>` : ''}`;
+}
+
+function closeTournamentModal() {
+  tournamentModal.classList.remove('open');
+  tournamentModal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+}
+
+async function loadTournamentData() {
+  const statusText = document.getElementById('tournamentDataStatus');
+  const updatedText = document.getElementById('tournamentUpdatedAt');
+  const dot = document.getElementById('tournamentStatusDot');
+  try {
+    const response = await fetch(`data/tournaments.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    tournamentData = await response.json();
+    statusText.textContent = '賽事資料讀取正常';
+    updatedText.textContent = tournamentFormatUpdate(tournamentData.updated_at);
+    dot.classList.add('ok');
+    dot.classList.remove('error');
+    updateTournamentSummary();
+    renderTournamentList();
+  } catch (error) {
+    console.error(error);
+    statusText.textContent = '賽事資料讀取失敗';
+    updatedText.textContent = '請稍後重新整理';
+    dot.classList.add('error');
+    dot.classList.remove('ok');
+    tournamentList.innerHTML = '<div class="empty-state"><strong>無法載入賽事資料</strong><span>請稍後重新整理。</span></div>';
+  }
+}
+
+document.querySelectorAll('.league-tab').forEach(button => {
+  button.addEventListener('click', () => {
+    document.querySelectorAll('.league-tab').forEach(item => item.classList.remove('active'));
+    button.classList.add('active');
+    tournamentLeague = button.dataset.league;
+    renderTournamentList();
+  });
+});
+
+tournamentSearch.addEventListener('input', event => {
+  tournamentKeyword = event.target.value.trim();
+  renderTournamentList();
+});
+
+tournamentStatusFilter.addEventListener('change', event => {
+  tournamentStatus = event.target.value;
+  renderTournamentList();
+});
+
+showFutureOnly.addEventListener('change', event => {
+  tournamentFutureOnly = event.target.checked;
+  renderTournamentList();
+});
+
+document.querySelectorAll('[data-close-tournament-modal]').forEach(item => item.addEventListener('click', closeTournamentModal));
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && tournamentModal.classList.contains('open')) closeTournamentModal();
+});
+
+loadTournamentData();
