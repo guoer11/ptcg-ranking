@@ -5,6 +5,11 @@
 
 使用環境變數 POKEMON_EMAIL / POKEMON_PASSWORD 登入官方訓練家網站，
 抓取 Master / Senior / Junior 排名頁，解析後輸出 data/ranking.json。
+
+2026-27 賽季規劃：
+- 排名追蹤：2026-09-01 ～ 2027-07-31（台灣時間）
+- 僅保留最近 3 次「有效排名變動」快照於 data/ranking_history.json
+- 追蹤期結束後，把最終排名封存到 data/seasons/2026-27.json
 """
 
 from __future__ import annotations
@@ -13,7 +18,7 @@ import json
 import os
 import re
 import sys
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 from zoneinfo import ZoneInfo
@@ -25,8 +30,21 @@ BASE_URL = "https://asia.pokemon-card.com"
 LOGIN_URL = f"{BASE_URL}/tw/login/"
 GROUPS = ("Master", "Senior", "Junior")
 DATA_FILE = Path("data/ranking.json")
-HISTORY_DIR = Path("data/history")
+HISTORY_FILE = Path("data/ranking_history.json")
+LEGACY_HISTORY_DIR = Path("data/history")
+SEASONS_DIR = Path("data/seasons")
+SEASONS_INDEX_FILE = SEASONS_DIR / "index.json"
 TAIPEI = ZoneInfo("Asia/Taipei")
+
+SEASON = "2026-27"
+SEASON_START = date(2026, 9, 1)
+TRACKING_END = date(2027, 7, 31)
+WORLDS_START = date(2027, 8, 13)
+WORLDS_END = date(2027, 8, 15)
+WORLDS_LOCATION = "Singapore EXPO, Tampines, Singapore"
+WORLDS_SOURCE = "https://worlds.pokemon.com/en-us/"
+WORLD_SLOTS = {"Master": 32, "Senior": 16, "Junior": 16}
+HISTORY_LIMIT = 3
 
 
 def clean_text(node) -> str:
@@ -97,7 +115,6 @@ def row_cells(row) -> list[str]:
     if len(direct) >= 4:
         return direct[:4]
 
-    # 官方結構若日後多包一層，使用常見文字節點當備援。
     fallback = []
     for child in row.find_all(["h4", "p", "span"], recursive=True):
         text = clean_text(child)
@@ -183,7 +200,6 @@ def fetch_group(session: requests.Session, group: str) -> list[dict]:
             if link not in seen and link not in queue:
                 queue.append(link)
 
-    # 排除重複資料列。
     unique = []
     keys = set()
     for item in rows:
@@ -198,41 +214,158 @@ def fetch_group(session: requests.Session, group: str) -> list[dict]:
     return unique
 
 
-def load_existing() -> dict:
-    if not DATA_FILE.exists():
-        return {}
+def read_json(path: Path, fallback):
+    if not path.exists():
+        return fallback
     try:
-        return json.loads(DATA_FILE.read_text(encoding="utf-8"))
+        return json.loads(path.read_text(encoding="utf-8"))
     except Exception:
-        return {}
+        return fallback
+
+
+def write_json(path: Path, payload) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def load_existing() -> dict:
+    return read_json(DATA_FILE, {})
+
+
+def groups_have_players(groups: dict) -> bool:
+    return any(groups.get(group) for group in GROUPS)
+
+
+def cleanup_legacy_history() -> None:
+    if not LEGACY_HISTORY_DIR.exists():
+        return
+    for path in LEGACY_HISTORY_DIR.glob("*.json"):
+        path.unlink()
+
+
+def append_history_snapshot(payload: dict) -> None:
+    if not groups_have_players(payload.get("groups", {})):
+        print("目前仍是空榜，不建立歷史排名快照。")
+        return
+
+    history = read_json(
+        HISTORY_FILE,
+        {"season": SEASON, "max_snapshots": HISTORY_LIMIT, "snapshots": []},
+    )
+    snapshots = history.get("snapshots") or []
+
+    if snapshots and snapshots[-1].get("groups") == payload.get("groups"):
+        print("歷史快照內容未變，不重複新增。")
+        return
+
+    snapshots.append(payload)
+    snapshots = snapshots[-HISTORY_LIMIT:]
+    write_json(
+        HISTORY_FILE,
+        {
+            "season": SEASON,
+            "max_snapshots": HISTORY_LIMIT,
+            "snapshots": snapshots,
+        },
+    )
+    cleanup_legacy_history()
+    print(f"歷史排名快照已更新：保留最近 {len(snapshots)} 次有效變動。")
 
 
 def save_if_changed(groups: dict) -> bool:
     old = load_existing()
     old_groups = old.get("groups", {})
+
+    if groups_have_players(old_groups) and not groups_have_players(groups):
+        raise RuntimeError("官方本次回傳全空榜；為避免覆蓋既有正式排名，已中止寫入。")
+
     if old_groups == groups:
         print("排名資料無變更，不改寫檔案。")
         return False
 
     now = datetime.now(TAIPEI)
     payload = {
-        "season": "2026-27",
+        "season": SEASON,
+        "season_start": SEASON_START.isoformat(),
+        "tracking_end": TRACKING_END.isoformat(),
         "updated_at": now.isoformat(timespec="seconds"),
         "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
         "groups": groups,
     }
 
-    DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
-    DATA_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-
-    HISTORY_DIR.mkdir(parents=True, exist_ok=True)
-    history_file = HISTORY_DIR / f"{now.date().isoformat()}.json"
-    history_file.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_json(DATA_FILE, payload)
+    append_history_snapshot(payload)
     print(f"排名已更新：{payload['updated_at']}")
     return True
 
 
+def update_seasons_index(archive_payload: dict) -> None:
+    index = read_json(SEASONS_INDEX_FILE, {"seasons": []})
+    seasons = [item for item in (index.get("seasons") or []) if item.get("season") != SEASON]
+    seasons.append(
+        {
+            "season": SEASON,
+            "season_start": SEASON_START.isoformat(),
+            "tracking_end": TRACKING_END.isoformat(),
+            "worlds_start": WORLDS_START.isoformat(),
+            "worlds_end": WORLDS_END.isoformat(),
+            "archive": f"data/seasons/{SEASON}.json",
+            "finalized_at": archive_payload.get("finalized_at"),
+        }
+    )
+    seasons.sort(key=lambda item: item.get("season", ""), reverse=True)
+    write_json(SEASONS_INDEX_FILE, {"seasons": seasons})
+
+
+def finalize_season() -> bool:
+    archive_file = SEASONS_DIR / f"{SEASON}.json"
+    if archive_file.exists():
+        print(f"{SEASON} 賽季排名已封存，不重複建立。")
+        return False
+
+    current = load_existing()
+    if not groups_have_players(current.get("groups", {})):
+        print("目前沒有可封存的正式排名資料。")
+        return False
+
+    payload = {
+        "season": SEASON,
+        "status": "final",
+        "season_start": SEASON_START.isoformat(),
+        "tracking_end": TRACKING_END.isoformat(),
+        "finalized_at": datetime.now(TAIPEI).isoformat(timespec="seconds"),
+        "worlds": {
+            "start": WORLDS_START.isoformat(),
+            "end": WORLDS_END.isoformat(),
+            "location": WORLDS_LOCATION,
+            "source": WORLDS_SOURCE,
+        },
+        "world_slots_planning": {
+            "Master": WORLD_SLOTS["Master"],
+            "Senior": WORLD_SLOTS["Senior"],
+            "Junior": WORLD_SLOTS["Junior"],
+            "note": "暫依上季名額規劃，非 2027 最終官方資格公告。",
+        },
+        "final_ranking": current,
+    }
+    write_json(archive_file, payload)
+    update_seasons_index(payload)
+    print(f"{SEASON} 賽季最終排名已封存：{archive_file}")
+    return True
+
+
 def main() -> int:
+    today = datetime.now(TAIPEI).date()
+
+    if today < SEASON_START:
+        print(f"{SEASON} 排名追蹤尚未開始（{SEASON_START.isoformat()}）。")
+        return 0
+
+    if today > TRACKING_END:
+        finalize_season()
+        print(f"{SEASON} 排名追蹤已於 {TRACKING_END.isoformat()} 結束；不再抓取本季排名。")
+        return 0
+
     email = os.getenv("POKEMON_EMAIL", "").strip()
     password = os.getenv("POKEMON_PASSWORD", "")
     if not email or not password:
