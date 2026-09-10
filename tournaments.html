@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest?v=0.6-r1" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="site-nav.css?v=0.6.1-r1" />
-  <link rel="stylesheet" href="tournaments.css?v=0.8.1-r1" />
+  <link rel="stylesheet" href="tournaments.css?v=0.8.1-r2" />
   <style>
     .tournament-card.tournament-card-official-link {
       cursor: pointer;
@@ -27,32 +27,32 @@
       box-shadow: 0 0 0 3px rgba(47,111,237,.16), 0 12px 28px rgba(47,111,237,.10);
     }
 
-    /* v0.8.1：用淡色卡片直接區分賽事目前狀態。 */
+    /* v0.8.1：用淡色卡片直接區分賽事目前狀態；採純單色呈現。 */
     .tournament-card.tournament-card-registration-open {
       background: #eef6ff;
       border-color: #bed8ff;
-      box-shadow: inset 4px 0 0 #2f6fed;
+      box-shadow: none;
     }
     .tournament-card.tournament-card-registration-closed {
       background: #f5f7fa;
       border-color: #d9e0e9;
-      box-shadow: inset 4px 0 0 #98a5b5;
+      box-shadow: none;
     }
     .tournament-card.tournament-card-waiting {
       background: #fff9e8;
       border-color: #efd994;
-      box-shadow: inset 4px 0 0 #d5a41c;
+      box-shadow: none;
     }
     .tournament-card.tournament-card-results {
       background: #eef9f3;
       border-color: #b9e3ce;
-      box-shadow: inset 4px 0 0 #2c9a6a;
+      box-shadow: none;
     }
     .tournament-card-registration-open .tournament-date,
     .tournament-card-registration-closed .tournament-date,
     .tournament-card-waiting .tournament-date,
     .tournament-card-results .tournament-date {
-      background: rgba(255,255,255,.72);
+      background: transparent;
     }
     .result-badge.registration-open { background: #dcecff; color: #1859b8; }
     .result-badge.registration-closed { background: #e7ecf2; color: #596677; }
@@ -153,7 +153,7 @@
     </section>
 
     <section class="notice tournament-version">
-      <strong>目前為 v0.8.1 測試版</strong>
+      <strong>目前為 v0.8.2 測試版</strong>
       <span>賽事頁用於整理與核算；正式積分與排名仍以官方資料為準。</span>
     </section>
   </main>
@@ -194,10 +194,10 @@
       let year = parts.year;
       let month = parts.month;
       let day = parts.day;
-      let slot = '00:05';
+      let slot = '00:01';
       const minutesNow = (parts.hour || 0) * 60 + (parts.minute || 0);
 
-      if (minutesNow < 5) {
+      if (minutesNow < 1) {
         const previous = new Date(Date.UTC(year, month - 1, day) - 86400000);
         year = previous.getUTCFullYear();
         month = previous.getUTCMonth() + 1;
