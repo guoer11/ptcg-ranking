@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest?v=0.6-r1" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="site-nav.css?v=0.6.1-r1" />
-  <link rel="stylesheet" href="tournaments.css?v=0.8-r1" />
+  <link rel="stylesheet" href="tournaments.css?v=0.8.1-r1" />
   <style>
     .tournament-card.tournament-card-official-link {
       cursor: pointer;
@@ -26,6 +26,36 @@
       border-color: #6f95dc;
       box-shadow: 0 0 0 3px rgba(47,111,237,.16), 0 12px 28px rgba(47,111,237,.10);
     }
+
+    /* v0.8.1：用淡色卡片直接區分賽事目前狀態。 */
+    .tournament-card.tournament-card-registration-open {
+      background: #eef6ff;
+      border-color: #bed8ff;
+      box-shadow: inset 4px 0 0 #2f6fed;
+    }
+    .tournament-card.tournament-card-registration-closed {
+      background: #f5f7fa;
+      border-color: #d9e0e9;
+      box-shadow: inset 4px 0 0 #98a5b5;
+    }
+    .tournament-card.tournament-card-waiting {
+      background: #fff9e8;
+      border-color: #efd994;
+      box-shadow: inset 4px 0 0 #d5a41c;
+    }
+    .tournament-card.tournament-card-results {
+      background: #eef9f3;
+      border-color: #b9e3ce;
+      box-shadow: inset 4px 0 0 #2c9a6a;
+    }
+    .tournament-card-registration-open .tournament-date,
+    .tournament-card-registration-closed .tournament-date,
+    .tournament-card-waiting .tournament-date,
+    .tournament-card-results .tournament-date {
+      background: rgba(255,255,255,.72);
+    }
+    .result-badge.registration-open { background: #dcecff; color: #1859b8; }
+    .result-badge.registration-closed { background: #e7ecf2; color: #596677; }
   </style>
 </head>
 <body>
@@ -100,8 +130,9 @@
           <option value="all">⌖ 全國</option>
         </select>
 
-        <select id="tournamentStatusFilter" class="tournament-select" aria-label="成績狀態">
+        <select id="tournamentStatusFilter" class="tournament-select" aria-label="成績與報名狀態">
           <option value="all">全部狀態</option>
+          <option value="registration-open">可報名</option>
           <option value="upcoming">未舉行</option>
           <option value="waiting">等待官方成績</option>
           <option value="results">已有官方成績</option>
@@ -122,7 +153,7 @@
     </section>
 
     <section class="notice tournament-version">
-      <strong>目前為 v0.8 測試版</strong>
+      <strong>目前為 v0.8.1 測試版</strong>
       <span>賽事頁用於整理與核算；正式積分與排名仍以官方資料為準。</span>
     </section>
   </main>
@@ -145,7 +176,7 @@
     <div class="wrap">非官方網站。本頁僅整理公開賽事資訊，Pokémon 相關商標屬原權利人所有。</div>
   </footer>
 
-  <script src="tournaments.js?v=0.8-r1" defer></script>
+  <script src="tournaments.js?v=0.8.1-r1" defer></script>
   <script>
     (() => {
       const checkEl = document.getElementById('tournamentLastCheckAt');
@@ -226,6 +257,9 @@
       function officialCardLinkActive(event) {
         if (!event || !event.url || (Array.isArray(event.results) && event.results.length)) return false;
 
+        const eventDay = eventDayUtc(event.date);
+        if (eventDay != null && eventDay < taipeiTodayUtc()) return false;
+
         const registration = registrationWindows[String(event.event_id || '')];
         if (registration?.registration_end_at) {
           const now = Date.now();
@@ -242,21 +276,53 @@
         return fallbackOfficialCardLinkActive(event);
       }
 
-      function decorateOfficialCardLinks() {
+      function decorateTournamentStates() {
         if (typeof window.filteredTournaments !== 'function' || !list) return;
         const events = window.filteredTournaments();
         const cards = list.querySelectorAll('.tournament-card');
 
         cards.forEach((card, index) => {
           const event = events[index];
-          card.classList.remove('tournament-card-official-link');
+          if (!event) return;
+
+          card.classList.remove(
+            'tournament-card-official-link',
+            'tournament-card-registration-open',
+            'tournament-card-registration-closed',
+            'tournament-card-waiting',
+            'tournament-card-results'
+          );
           card.removeAttribute('role');
           card.removeAttribute('tabindex');
           card.removeAttribute('title');
           card.removeAttribute('aria-label');
           delete card.dataset.officialUrl;
 
-          if (!officialCardLinkActive(event)) return;
+          const badge = card.querySelector('.result-badge');
+          const hasResults = Array.isArray(event.results) && event.results.length > 0;
+          const eventDay = eventDayUtc(event.date);
+          const isPast = eventDay != null && eventDay < taipeiTodayUtc();
+
+          if (hasResults) {
+            card.classList.add('tournament-card-results');
+            return;
+          }
+
+          if (isPast) {
+            card.classList.add('tournament-card-waiting');
+            return;
+          }
+
+          const canRegister = officialCardLinkActive(event);
+          card.classList.add(canRegister ? 'tournament-card-registration-open' : 'tournament-card-registration-closed');
+
+          if (badge) {
+            badge.classList.remove('upcoming', 'registration-open', 'registration-closed');
+            badge.classList.add(canRegister ? 'registration-open' : 'registration-closed');
+            badge.textContent = canRegister ? '未舉行 · 可報名' : '未舉行 · 報名截止';
+          }
+
+          if (!canRegister) return;
 
           const title = String(event.title || '此賽事');
           card.classList.add('tournament-card-official-link');
@@ -266,6 +332,22 @@
           card.setAttribute('title', '開啟官方活動頁（報名）');
           card.setAttribute('aria-label', `開啟${title}官方活動頁（報名）`);
         });
+      }
+
+      // 「可報名」是既有未舉行賽事的子集合，保留其他篩選條件後再套報名狀態。
+      if (typeof window.filteredTournaments === 'function') {
+        const baseFilteredTournaments = window.filteredTournaments;
+        window.filteredTournaments = function () {
+          if (tournamentStatus !== 'registration-open') return baseFilteredTournaments();
+
+          const selectedStatus = tournamentStatus;
+          tournamentStatus = 'all';
+          try {
+            return baseFilteredTournaments().filter(event => eventStatus(event) === 'upcoming' && officialCardLinkActive(event));
+          } finally {
+            tournamentStatus = selectedStatus;
+          }
+        };
       }
 
       async function loadRegistrationWindows() {
@@ -278,14 +360,19 @@
           console.warn('官方報名期間資料尚未可用，使用賽前 7 天備援規則。', error);
           registrationWindows = {};
         }
-        decorateOfficialCardLinks();
+
+        if (typeof window.renderTournamentList === 'function') {
+          window.renderTournamentList();
+        } else {
+          decorateTournamentStates();
+        }
       }
 
       if (typeof window.renderTournamentList === 'function') {
         const originalRenderTournamentList = window.renderTournamentList;
         window.renderTournamentList = function (...args) {
           const result = originalRenderTournamentList.apply(this, args);
-          decorateOfficialCardLinks();
+          decorateTournamentStates();
           return result;
         };
       }
@@ -307,7 +394,7 @@
         });
       }
 
-      decorateOfficialCardLinks();
+      decorateTournamentStates();
       loadRegistrationWindows();
     });
   </script>
