@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
   schedule:
     # GitHub Actions cron 使用 UTC。
-    # 16:05 UTC = 台灣時間隔日 00:05；04:00 UTC = 台灣時間 12:00。
-    - cron: "5 16 * * *"
+    # 16:01 UTC = 台灣時間隔日 00:01；04:00 UTC = 台灣時間 12:00。
+    - cron: "1 16 * * *"
     - cron: "0 4 * * *"
   push:
     branches:
