@@ -11,7 +11,22 @@
   <link rel="manifest" href="manifest.webmanifest?v=0.6-r1" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="site-nav.css?v=0.6.1-r1" />
-  <link rel="stylesheet" href="tournaments.css?v=0.6.2-r2" />
+  <link rel="stylesheet" href="tournaments.css?v=0.8-r1" />
+  <style>
+    .tournament-card.tournament-card-official-link {
+      cursor: pointer;
+      -webkit-tap-highlight-color: rgba(47,111,237,.10);
+    }
+    .tournament-card.tournament-card-official-link:hover {
+      border-color: #8ba8dd;
+      box-shadow: 0 12px 28px rgba(47,111,237,.12);
+    }
+    .tournament-card.tournament-card-official-link:focus-visible {
+      outline: 0;
+      border-color: #6f95dc;
+      box-shadow: 0 0 0 3px rgba(47,111,237,.16), 0 12px 28px rgba(47,111,237,.10);
+    }
+  </style>
 </head>
 <body>
   <header class="site-header tournament-header">
@@ -107,7 +122,7 @@
     </section>
 
     <section class="notice tournament-version">
-      <strong>目前為 v0.7.2 測試版</strong>
+      <strong>目前為 v0.8 測試版</strong>
       <span>賽事頁用於整理與核算；正式積分與排名仍以官方資料為準。</span>
     </section>
   </main>
@@ -130,7 +145,7 @@
     <div class="wrap">非官方網站。本頁僅整理公開賽事資訊，Pokémon 相關商標屬原權利人所有。</div>
   </footer>
 
-  <script src="tournaments.js?v=0.6.2-r5" defer></script>
+  <script src="tournaments.js?v=0.8-r1" defer></script>
   <script>
     (() => {
       const checkEl = document.getElementById('tournamentLastCheckAt');
@@ -178,6 +193,75 @@
         normalizeUpdateText();
       }
     })();
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const DAY_MS = 86400000;
+
+      function taipeiTodayUtc() {
+        const parts = new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Asia/Taipei',
+          year: 'numeric', month: '2-digit', day: '2-digit'
+        }).formatToParts(new Date()).reduce((acc, part) => {
+          if (part.type !== 'literal') acc[part.type] = Number(part.value);
+          return acc;
+        }, {});
+        return Date.UTC(parts.year, parts.month - 1, parts.day);
+      }
+
+      function eventDayUtc(value) {
+        const match = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (!match) return null;
+        return Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+      }
+
+      function officialCardLinkActive(event) {
+        if (!event || !event.url || (Array.isArray(event.results) && event.results.length)) return false;
+        const eventDay = eventDayUtc(event.date);
+        if (eventDay == null) return false;
+        const daysUntil = Math.round((eventDay - taipeiTodayUtc()) / DAY_MS);
+        return daysUntil >= 8;
+      }
+
+      function decorateOfficialCardLinks() {
+        if (typeof window.filteredTournaments !== 'function') return;
+        const events = window.filteredTournaments();
+        const cards = document.querySelectorAll('#tournamentList .tournament-card');
+
+        cards.forEach((card, index) => {
+          const event = events[index];
+          if (!officialCardLinkActive(event)) return;
+
+          const title = String(event.title || '此賽事');
+          const openOfficial = () => window.open(event.url, '_blank', 'noopener,noreferrer');
+          card.classList.add('tournament-card-official-link');
+          card.setAttribute('role', 'link');
+          card.setAttribute('tabindex', '0');
+          card.setAttribute('title', '開啟官方活動頁');
+          card.setAttribute('aria-label', `開啟${title}官方活動頁`);
+
+          card.addEventListener('click', clickEvent => {
+            if (clickEvent.target.closest('button, a, input, select, textarea')) return;
+            openOfficial();
+          });
+          card.addEventListener('keydown', keyEvent => {
+            if (keyEvent.key !== 'Enter' && keyEvent.key !== ' ') return;
+            keyEvent.preventDefault();
+            openOfficial();
+          });
+        });
+      }
+
+      if (typeof window.renderTournamentList === 'function') {
+        const originalRenderTournamentList = window.renderTournamentList;
+        window.renderTournamentList = function (...args) {
+          const result = originalRenderTournamentList.apply(this, args);
+          decorateOfficialCardLinks();
+          return result;
+        };
+      }
+
+      decorateOfficialCardLinks();
+    });
   </script>
 </body>
 </html>
