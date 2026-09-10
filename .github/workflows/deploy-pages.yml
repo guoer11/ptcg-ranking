@@ -7,7 +7,7 @@ on:
     branches:
       - main
   schedule:
-    # 資料排程在台灣時間 00:05 / 12:05 執行；Pages 於 00:15 / 12:15 重新發布最新資料。
+    # 資料排程在台灣時間 00:05 / 12:00 執行；Pages 於 00:15 / 12:15 重新發布最新資料。
     - cron: "15 16 * * *"
     - cron: "15 4 * * *"
 
@@ -38,6 +38,11 @@ jobs:
           cp data/ranking.json _site/data/ranking.json
           cp data/ranking_history.json _site/data/ranking_history.json
           cp data/tournaments.json _site/data/tournaments.json
+          if [ -f data/tournament_registration.json ]; then
+            cp data/tournament_registration.json _site/data/tournament_registration.json
+          else
+            printf '%s\n' '{"updated_at":null,"events":{}}' > _site/data/tournament_registration.json
+          fi
           cp -R data/players/. _site/data/players/
           cp -R data/seasons/. _site/data/seasons/
           python -m pip install --disable-pip-version-check --quiet pillow
