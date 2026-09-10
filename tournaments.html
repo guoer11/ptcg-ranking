@@ -196,6 +196,8 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       const DAY_MS = 86400000;
+      const list = document.getElementById('tournamentList');
+      let registrationWindows = {};
 
       function taipeiTodayUtc() {
         const parts = new Intl.DateTimeFormat('en-CA', {
@@ -214,41 +216,69 @@
         return Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
       }
 
-      function officialCardLinkActive(event) {
-        if (!event || !event.url || (Array.isArray(event.results) && event.results.length)) return false;
-        const eventDay = eventDayUtc(event.date);
+      function fallbackOfficialCardLinkActive(event) {
+        const eventDay = eventDayUtc(event?.date);
         if (eventDay == null) return false;
         const daysUntil = Math.round((eventDay - taipeiTodayUtc()) / DAY_MS);
         return daysUntil >= 8;
       }
 
+      function officialCardLinkActive(event) {
+        if (!event || !event.url || (Array.isArray(event.results) && event.results.length)) return false;
+
+        const registration = registrationWindows[String(event.event_id || '')];
+        if (registration?.registration_end_at) {
+          const now = Date.now();
+          const startAt = Date.parse(registration.registration_start_at || '');
+          const endAt = Date.parse(registration.registration_end_at || '');
+
+          if (Number.isFinite(endAt)) {
+            if (Number.isFinite(startAt) && now < startAt) return false;
+            return now < endAt;
+          }
+        }
+
+        // 官方頁若暫時解析不到報名受理期間，保留原本「賽前 7 天關閉」備援。
+        return fallbackOfficialCardLinkActive(event);
+      }
+
       function decorateOfficialCardLinks() {
-        if (typeof window.filteredTournaments !== 'function') return;
+        if (typeof window.filteredTournaments !== 'function' || !list) return;
         const events = window.filteredTournaments();
-        const cards = document.querySelectorAll('#tournamentList .tournament-card');
+        const cards = list.querySelectorAll('.tournament-card');
 
         cards.forEach((card, index) => {
           const event = events[index];
+          card.classList.remove('tournament-card-official-link');
+          card.removeAttribute('role');
+          card.removeAttribute('tabindex');
+          card.removeAttribute('title');
+          card.removeAttribute('aria-label');
+          delete card.dataset.officialUrl;
+
           if (!officialCardLinkActive(event)) return;
 
           const title = String(event.title || '此賽事');
-          const openOfficial = () => window.open(event.url, '_blank', 'noopener,noreferrer');
           card.classList.add('tournament-card-official-link');
+          card.dataset.officialUrl = event.url;
           card.setAttribute('role', 'link');
           card.setAttribute('tabindex', '0');
-          card.setAttribute('title', '開啟官方活動頁');
-          card.setAttribute('aria-label', `開啟${title}官方活動頁`);
-
-          card.addEventListener('click', clickEvent => {
-            if (clickEvent.target.closest('button, a, input, select, textarea')) return;
-            openOfficial();
-          });
-          card.addEventListener('keydown', keyEvent => {
-            if (keyEvent.key !== 'Enter' && keyEvent.key !== ' ') return;
-            keyEvent.preventDefault();
-            openOfficial();
-          });
+          card.setAttribute('title', '開啟官方活動頁（報名）');
+          card.setAttribute('aria-label', `開啟${title}官方活動頁（報名）`);
         });
+      }
+
+      async function loadRegistrationWindows() {
+        try {
+          const response = await fetch(`data/tournament_registration.json?v=${Date.now()}`, { cache: 'no-store' });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const payload = await response.json();
+          registrationWindows = payload?.events && typeof payload.events === 'object' ? payload.events : {};
+        } catch (error) {
+          console.warn('官方報名期間資料尚未可用，使用賽前 7 天備援規則。', error);
+          registrationWindows = {};
+        }
+        decorateOfficialCardLinks();
       }
 
       if (typeof window.renderTournamentList === 'function') {
@@ -260,7 +290,25 @@
         };
       }
 
+      if (list) {
+        list.addEventListener('click', event => {
+          if (event.target.closest('button, a, input, select, textarea')) return;
+          const card = event.target.closest('.tournament-card-official-link');
+          if (!card?.dataset.officialUrl) return;
+          window.open(card.dataset.officialUrl, '_blank', 'noopener,noreferrer');
+        });
+
+        list.addEventListener('keydown', event => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          const card = event.target.closest('.tournament-card-official-link');
+          if (!card?.dataset.officialUrl) return;
+          event.preventDefault();
+          window.open(card.dataset.officialUrl, '_blank', 'noopener,noreferrer');
+        });
+      }
+
       decorateOfficialCardLinks();
+      loadRegistrationWindows();
     });
   </script>
 </body>
