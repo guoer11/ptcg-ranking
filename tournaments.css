@@ -268,3 +268,37 @@
   .tournament-card h3 { font-size: 13px; white-space: nowrap; }
   .tournament-detail-grid { grid-template-columns: 1fr; }
 }
+
+/* v0.8.1 同功能微調：狀態卡片改為純單色，不使用左側色帶或半透明內層。 */
+.tournament-card.tournament-card-registration-open {
+  background: #eef6ff !important;
+  border-color: #bed8ff !important;
+  box-shadow: none !important;
+}
+.tournament-card.tournament-card-registration-closed {
+  background: #f5f7fa !important;
+  border-color: #d9e0e9 !important;
+  box-shadow: none !important;
+}
+.tournament-card.tournament-card-waiting {
+  background: #fff9e8 !important;
+  border-color: #efd994 !important;
+  box-shadow: none !important;
+}
+.tournament-card.tournament-card-results {
+  background: #eef9f3 !important;
+  border-color: #b9e3ce !important;
+  box-shadow: none !important;
+}
+.tournament-card-registration-open .tournament-date,
+.tournament-card-registration-closed .tournament-date,
+.tournament-card-waiting .tournament-date,
+.tournament-card-results .tournament-date {
+  background: transparent !important;
+}
+.tournament-card.tournament-card-registration-open:hover,
+.tournament-card.tournament-card-registration-closed:hover,
+.tournament-card.tournament-card-waiting:hover,
+.tournament-card.tournament-card-results:hover {
+  box-shadow: 0 10px 26px rgba(25,40,70,.08) !important;
+}
