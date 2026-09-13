@@ -56,6 +56,10 @@
     }
     .result-badge.registration-open { background: #dcecff; color: #1859b8; }
     .result-badge.registration-closed { background: #e7ecf2; color: #596677; }
+    .tournament-registration-deadline {
+      font-weight: 700;
+      color: #1859b8;
+    }
   </style>
 </head>
 <body>
@@ -153,7 +157,7 @@
     </section>
 
     <section class="notice tournament-version">
-      <strong>目前為 v0.8.2 測試版</strong>
+      <strong>目前為 v0.9.0 測試版</strong>
       <span>賽事頁用於整理與核算；正式積分與排名仍以官方資料為準。</span>
     </section>
   </main>
@@ -276,6 +280,20 @@
         return fallbackOfficialCardLinkActive(event);
       }
 
+      function formatRegistrationDeadline(value) {
+        const timestamp = Date.parse(value || '');
+        if (!Number.isFinite(timestamp)) return '';
+        const parts = new Intl.DateTimeFormat('zh-TW', {
+          timeZone: 'Asia/Taipei',
+          month: 'numeric', day: 'numeric',
+          hour: '2-digit', minute: '2-digit', hour12: false
+        }).formatToParts(new Date(timestamp)).reduce((acc, part) => {
+          if (part.type !== 'literal') acc[part.type] = part.value;
+          return acc;
+        }, {});
+        return `${Number(parts.month)}/${Number(parts.day)} ${parts.hour}:${parts.minute}`;
+      }
+
       function decorateTournamentStates() {
         if (typeof window.filteredTournaments !== 'function' || !list) return;
         const events = window.filteredTournaments();
@@ -297,6 +315,7 @@
           card.removeAttribute('title');
           card.removeAttribute('aria-label');
           delete card.dataset.officialUrl;
+          card.querySelector('.tournament-registration-deadline')?.remove();
 
           const badge = card.querySelector('.result-badge');
           const hasResults = Array.isArray(event.results) && event.results.length > 0;
@@ -320,6 +339,18 @@
             badge.classList.remove('upcoming', 'registration-open', 'registration-closed');
             badge.classList.add(canRegister ? 'registration-open' : 'registration-closed');
             badge.textContent = canRegister ? '未舉行 · 可報名' : '未舉行 · 報名截止';
+          }
+
+          if (canRegister) {
+            const registration = registrationWindows[String(event.event_id || '')];
+            const deadline = formatRegistrationDeadline(registration?.registration_end_at);
+            const info = card.querySelector('.tournament-card-info');
+            if (deadline && info) {
+              const deadlineRow = document.createElement('span');
+              deadlineRow.className = 'tournament-registration-deadline';
+              deadlineRow.textContent = `◷ 報名截止 ${deadline}`;
+              info.appendChild(deadlineRow);
+            }
           }
 
           if (!canRegister) return;
