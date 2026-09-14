@@ -12,6 +12,10 @@ const TOURNAMENT_GROUP_LABELS = {
   Open: '全年齡組'
 };
 
+const PAIRING_ACCESS_SUPABASE_URL = 'https://ceobnyikrudlxasyjukg.supabase.co';
+const PAIRING_ACCESS_SUPABASE_KEY = 'sb_publishable_6uVBALI1T3lMZoFEUiLK4g__R7gv0fz';
+let tournamentPairingClient = null;
+
 let tournamentData = { season: '2026-27', updated_at: null, events: [] };
 let tournamentLeague = 'all';
 let tournamentKeyword = '';
@@ -36,6 +40,66 @@ function tournamentEsc(value = '') {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
+}
+
+function ensureTournamentSupabase() {
+  if (window.supabase?.createClient) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const existing = document.getElementById('tournamentSupabaseSdk');
+    if (existing) {
+      existing.addEventListener('load', () => resolve(), { once: true });
+      existing.addEventListener('error', () => reject(new Error('Supabase SDK 載入失敗')), { once: true });
+      return;
+    }
+    const script = document.createElement('script');
+    script.id = 'tournamentSupabaseSdk';
+    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    script.async = true;
+    script.addEventListener('load', () => resolve(), { once: true });
+    script.addEventListener('error', () => reject(new Error('Supabase SDK 載入失敗')), { once: true });
+    document.head.appendChild(script);
+  });
+}
+
+function removeTournamentPairingNav() {
+  document.querySelector('.site-nav a[data-pairing-nav]')?.remove();
+}
+
+function insertTournamentPairingNav() {
+  if (document.querySelector('.site-nav a[data-pairing-nav]')) return;
+  const nav = document.querySelector('.site-nav');
+  const tournamentLink = nav?.querySelector('a[href="tournaments.html"]');
+  if (!nav || !tournamentLink) return;
+
+  const link = document.createElement('a');
+  link.href = 'pairing.html';
+  link.dataset.pairingNav = 'true';
+  link.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v3h3v4h-3v3h-4v3h-2v-3H7v-3H4V7h3V4Zm2 2v6h6V6H9Zm-3 3v0h1V9H6Zm11 0v0h1V9h-1Z"/></svg>
+    即時配對`;
+  tournamentLink.insertAdjacentElement('afterend', link);
+}
+
+async function refreshTournamentPairingNav() {
+  removeTournamentPairingNav();
+  try {
+    await ensureTournamentSupabase();
+    if (!window.supabase?.createClient) return;
+    if (!tournamentPairingClient) {
+      tournamentPairingClient = window.supabase.createClient(PAIRING_ACCESS_SUPABASE_URL, PAIRING_ACCESS_SUPABASE_KEY);
+      tournamentPairingClient.auth.onAuthStateChange(() => {
+        setTimeout(refreshTournamentPairingNav, 0);
+      });
+    }
+    const { data: sessionData } = await tournamentPairingClient.auth.getSession();
+    if (!sessionData?.session) return;
+    const { data: allowed, error } = await tournamentPairingClient.rpc('can_use_pairing');
+    if (error) throw error;
+    if (allowed === true) insertTournamentPairingNav();
+  } catch (error) {
+    console.warn('即時配對導覽權限確認失敗', error);
+    removeTournamentPairingNav();
+  }
 }
 
 function tournamentFormatUpdate(iso) {
@@ -345,3 +409,4 @@ document.addEventListener('keydown', event => {
 });
 
 loadTournamentData();
+refreshTournamentPairingNav();
