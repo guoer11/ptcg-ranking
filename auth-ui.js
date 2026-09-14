@@ -6,6 +6,28 @@ let identitySession = null;
 let identityAuthorized = false;
 let identityClient = null;
 
+function pairingNavLink() {
+  return document.querySelector('.site-nav a[href="pairing.html"]');
+}
+
+async function refreshPairingNavAccess() {
+  const link = pairingNavLink();
+  if (!link) return;
+  link.hidden = true;
+  if (!identitySession || !identityClient) return;
+
+  try {
+    const { data, error } = await identityClient.rpc('can_use_pairing');
+    if (error) throw error;
+    link.hidden = data !== true;
+  } catch (error) {
+    console.warn('即時配對權限確認失敗', error);
+    link.hidden = true;
+  }
+}
+
+if (pairingNavLink()) pairingNavLink().hidden = true;
+
 function clearPrivateIdentities() {
   identityData = { updated_at: null, count: 0, players: {} };
   identityAuthorized = false;
@@ -53,6 +75,7 @@ function updateIdentityAuthUI(message = '') {
     button.title = message || 'Google 登入';
     updateIdentityTextUI();
     refreshPushAuthUI();
+    refreshPairingNavAccess();
     return;
   }
 
@@ -60,12 +83,14 @@ function updateIdentityAuthUI(message = '') {
   button.title = message || '已登入，點此登出';
   updateIdentityTextUI();
   refreshPushAuthUI();
+  refreshPairingNavAccess();
 }
 
 async function loadPrivateIdentities() {
   clearPrivateIdentities();
   if (!identitySession || !identityClient) {
     updateIdentityAuthUI();
+    await refreshPairingNavAccess();
     renderRanking();
     return;
   }
@@ -102,6 +127,7 @@ async function loadPrivateIdentities() {
     updateIdentityAuthUI('登入資料讀取失敗，點此登出');
   }
 
+  await refreshPairingNavAccess();
   renderRanking();
 }
 
@@ -136,6 +162,7 @@ async function startIdentityAuth() {
       identitySession = null;
       clearPrivateIdentities();
       updateIdentityAuthUI();
+      await refreshPairingNavAccess();
       renderRanking();
     } catch (error) {
       console.error(identitySession ? '登出失敗' : 'Google 登入失敗', error);
@@ -155,6 +182,7 @@ async function startIdentityAuth() {
     if (event === 'SIGNED_OUT' || !session) {
       clearPrivateIdentities();
       updateIdentityAuthUI();
+      await refreshPairingNavAccess();
       renderRanking();
       return;
     }
