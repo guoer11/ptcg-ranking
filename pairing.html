@@ -25,7 +25,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v2h3v4c0 2.76-2.24 5-5 5h-.17A5.02 5.02 0 0 1 13 15.58V19h4v2H7v-2h4v-3.42A5.02 5.02 0 0 1 9.17 14H9c-2.76 0-5-2.24-5-5V5h3V3Zm10 4v4a3 3 0 0 0 1-2V7h-1ZM6 7v2a3 3 0 0 0 1 2V7H6Z"/></svg>
           賽事資訊
         </a>
-        <a class="active" href="pairing.html" aria-current="page">
+        <a class="active" href="pairing.html" aria-current="page" hidden>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v3h3v4h-3v3h-4v3h-2v-3H7v-3H4V7h3V4Zm2 2v6h6V6H9Zm-3 3v0h1V9H6Zm11 0v0h1V9h-1Z"/></svg>
           即時配對
         </a>
@@ -49,7 +49,7 @@
     </div>
   </header>
 
-  <main class="wrap pairing-main">
+  <main class="wrap pairing-main" hidden>
     <div class="pairing-grid">
       <section class="panel pairing-panel">
         <h2>配對查詢</h2>
@@ -129,7 +129,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="pairing.js?v=0.11.0-r2" defer></script>
+  <script src="pairing.js?v=0.11.0-r3" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const source = document.getElementById('pairingSourceUrl');
