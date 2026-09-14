@@ -92,7 +92,7 @@ function siteAccountEnsurePushModal() {
           <label class="push-pref-row"><span>新增大師球賽事</span><input id="pushPrefMaster" data-push-pref type="checkbox" checked /></label>
           <label class="push-pref-row"><span>官方賽事成績公布</span><input id="pushPrefResults" data-push-pref type="checkbox" /></label>
         </section>
-        <p class="push-help">LINE 目前會通知官方排行榜公布／更新與新增聯盟賽事；即時配對監控會在下一輪公布後另外通知。LINE 用量直接向 LINE 官方 API 查詢，不由網站自行累計。iPhone 網站推播需從「加入主畫面」後的網站圖示開啟。</p>
+        <p class="push-help">LINE 目前會通知官方排行榜公布／更新與新增聯盟賽事；即時配對監控會在配對公布後另外通知。LINE 用量直接向 LINE 官方 API 查詢，不由網站自行累計。iPhone 網站推播需從「加入主畫面」後的網站圖示開啟。</p>
       </div>
     </section>`;
   const footer = document.querySelector('footer.footer');
@@ -225,18 +225,14 @@ function siteAccountLoadScript(src, initName) {
 }
 
 function siteAccountInit() {
-  siteAccountEnsureStylesheet('site-nav.css?v=0.11.2-r1', 'nav');
-  siteAccountEnsureStylesheet('auth-ui.css?v=0.11.2-r1', 'auth');
-  siteAccountEnsureStylesheet('push-ui.css?v=0.11.2-r1', 'push');
+  siteAccountEnsureStylesheet('site-nav.css?v=0.12.0-r1', 'nav');
+  siteAccountEnsureStylesheet('auth-ui.css?v=0.12.0-r1', 'auth');
+  siteAccountEnsureStylesheet('push-ui.css?v=0.12.0-r1', 'push');
   siteAccountEnsureControls();
   siteAccountEnsurePushModal();
-
-  const notice = document.querySelector('.notice strong, .tournament-version strong');
-  if (notice && /^目前為 v/i.test(notice.textContent.trim())) notice.textContent = '目前為 v0.11.2 測試版';
-
   siteAccountInitAuth();
 }
 
-siteAccountLoadScript('push-ui.js?v=0.11.2-r1', 'initPushUI');
-siteAccountLoadScript('line-ui.js?v=0.11.2-r1', 'initLineUI');
+siteAccountLoadScript('push-ui.js?v=0.12.0-r1', 'initPushUI');
+siteAccountLoadScript('line-ui.js?v=0.12.0-r1', 'initLineUI');
 document.addEventListener('DOMContentLoaded', siteAccountInit);
