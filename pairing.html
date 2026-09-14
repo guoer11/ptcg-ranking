@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="PTCG TCG マイスター即時配對查詢與下一輪通知" />
+  <meta name="theme-color" content="#17233a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>PTCG 即時配對</title>
+  <link rel="manifest" href="manifest.webmanifest?v=0.6-r1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="site-nav.css?v=0.6.1-r1" />
+  <link rel="stylesheet" href="pairing.css?v=0.11.0-r1" />
+</head>
+<body>
+  <header class="site-header pairing-header">
+    <div class="wrap">
+      <nav class="site-nav" aria-label="網站功能">
+        <a href="index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10l8-7 8 7v10h-5v-6H9v6H4Z"/></svg>
+          玩家排行
+        </a>
+        <a href="tournaments.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v2h3v4c0 2.76-2.24 5-5 5h-.17A5.02 5.02 0 0 1 13 15.58V19h4v2H7v-2h4v-3.42A5.02 5.02 0 0 1 9.17 14H9c-2.76 0-5-2.24-5-5V5h3V3Zm10 4v4a3 3 0 0 0 1-2V7h-1ZM6 7v2a3 3 0 0 0 1 2V7H6Z"/></svg>
+          賽事資訊
+        </a>
+        <a class="active" href="pairing.html" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v3h3v4h-3v3h-4v3h-2v-3H7v-3H4V7h3V4Zm2 2v6h6V6H9Zm-3 3v0h1V9H6Zm11 0v0h1V9h-1Z"/></svg>
+          即時配對
+        </a>
+      </nav>
+
+      <div class="header-inner">
+        <div>
+          <p class="eyebrow">Pokémon TCG Taiwan</p>
+          <h1>即時配對</h1>
+          <p class="subtitle">TCG マイスター配對查詢、姓名對照與下一輪通知</p>
+        </div>
+        <div class="status-card">
+          <span class="status-dot"></span>
+          <div>
+            <strong>後端監控可用</strong>
+            <small>正式監控：每 10 秒檢查下一輪</small>
+            <small>LINE + 網站推播</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap pairing-main">
+    <div class="pairing-grid">
+      <section class="panel pairing-panel">
+        <h2>配對查詢</h2>
+        <p class="section-note">比賽當天貼一次活動網址或任一 Round 配對網址。之後只要調整 Round，就能查目前配對；正式監控會自動往下一輪檢查。</p>
+
+        <div class="pairing-form">
+          <div class="pairing-field">
+            <label for="pairingSourceUrl">活動網址 / Round 配對網址</label>
+            <input id="pairingSourceUrl" class="search-input" type="url" inputmode="url" placeholder="https://tcg.sfc-jpn.jp/tour.asp?tid=..." autocomplete="off" />
+          </div>
+
+          <div class="pairing-row">
+            <div class="pairing-field">
+              <label for="pairingPlayerId">追蹤玩家 PTCG ID</label>
+              <input id="pairingPlayerId" class="search-input" type="text" value="tw39371632" autocomplete="off" autocapitalize="none" />
+            </div>
+            <div class="pairing-field">
+              <label for="pairingRound">Round</label>
+              <input id="pairingRound" class="search-input" type="number" min="1" step="1" value="1" inputmode="numeric" />
+            </div>
+          </div>
+
+          <div class="pairing-actions">
+            <button id="pairingLookupButton" class="primary-btn" type="button">查詢這一輪</button>
+            <button id="pairingOpenOfficialButton" class="secondary-btn" type="button">開官方配對頁</button>
+            <button id="pairingLoadTestButton" class="secondary-btn pairing-test-btn" type="button">載入歷史測試場</button>
+            <button id="pairingTestButton" class="secondary-btn pairing-test-btn" type="button">發送測試通知</button>
+          </div>
+        </div>
+
+        <div id="pairingResult" class="pairing-result is-waiting">
+          <div class="pairing-result-title">
+            <strong>尚未查詢</strong>
+            <span class="pairing-round-badge">等待輸入</span>
+          </div>
+          <div class="pairing-watch-copy">可先按「載入歷史測試場」，用 2026/9/12 高級球孩童組驗證功能。</div>
+        </div>
+
+        <div id="pairingMessage" class="pairing-message"></div>
+      </section>
+
+      <aside>
+        <section class="pairing-watch-card">
+          <div class="pairing-watch-head">
+            <strong>下一輪自動監控</strong>
+            <span id="pairingWatchStatus" class="pairing-watch-status"><span class="pairing-watch-dot"></span>未監控</span>
+          </div>
+          <div id="pairingWatchCopy" class="pairing-watch-copy">正式比賽時，先查到目前 Round，再按「開始監控下一輪」。後端會每 <strong>10 秒</strong>檢查一次。</div>
+          <div class="pairing-actions" style="margin-top:14px;">
+            <button id="pairingStartButton" class="primary-btn" type="button">開始監控下一輪</button>
+            <button id="pairingStopButton" class="secondary-btn" type="button">停止監控</button>
+          </div>
+        </section>
+
+        <section class="pairing-watch-card">
+          <div class="pairing-watch-head"><strong>通知與姓名</strong></div>
+          <div id="pairingAuthCopy" class="pairing-watch-copy">正在確認登入狀態…</div>
+          <div class="pairing-watch-copy" style="margin-top:8px;">配對頁本身只提供 PTCG ID。登入你目前網站的授權帳號後，系統會用現有私人資料補上玩家真實姓名。</div>
+        </section>
+
+        <section class="pairing-history-note" style="margin-top:12px;">
+          <strong>歷史測試場</strong><br>
+          2026/9/12 高級球孩童組（tid=3000442）只用來做單輪查詢與通知測試。為避免已存在的 Round 2、3、4…一次全部發送，測試場不允許啟動連續監控。
+        </section>
+      </aside>
+    </div>
+
+    <section class="notice" style="margin-top:20px;">
+      <strong>目前為 v0.11.0 測試版</strong>
+      <span>正式比賽配對仍以現場主辦與 TCG マイスター頁面為準。</span>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">非官方網站。本頁僅協助整理公開配對資訊，Pokémon 相關商標屬原權利人所有。</div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="pairing.js?v=0.11.0-r1" defer></script>
+</body>
+</html>
