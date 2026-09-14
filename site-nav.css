@@ -20,6 +20,7 @@
   text-decoration: none;
   transition: background .16s ease, color .16s ease;
 }
+.site-nav a[hidden] { display: none !important; }
 .site-nav a:hover { background: rgba(255,255,255,.08); color: #fff; }
 .site-nav a.active {
   background: rgba(255, 188, 45, .14);
