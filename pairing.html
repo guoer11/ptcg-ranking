@@ -53,7 +53,7 @@
     <div class="pairing-grid">
       <section class="panel pairing-panel">
         <h2>配對查詢</h2>
-        <p class="section-note">比賽當天貼一次活動網址或任一 Round 配對網址。正式監控會自動檢查下一輪；最終排名公布後也會通知並自動結束這場監控。</p>
+        <p class="section-note">比賽當天貼一次活動網址或任一 Round 配對網址。貼入 Round 配對網址時會自動同步右側 Round。正式監控會自動檢查下一輪；最終排名公布後也會通知並自動結束這場監控。</p>
 
         <div class="pairing-form">
           <div class="pairing-field">
@@ -130,5 +130,35 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script src="pairing.js?v=0.11.0-r2" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const source = document.getElementById('pairingSourceUrl');
+      const round = document.getElementById('pairingRound');
+      if (!source || !round) return;
+
+      const syncRoundFromUrl = () => {
+        const raw = source.value.trim();
+        if (!raw) return;
+        try {
+          const url = new URL(raw);
+          if (url.hostname !== 'tcg.sfc-jpn.jp') return;
+
+          if (/\/tourround\.asp$/i.test(url.pathname)) {
+            const kno = Number(url.searchParams.get('kno'));
+            if (Number.isInteger(kno) && kno >= 1) round.value = String(kno);
+            return;
+          }
+
+          if (/\/tour\.asp$/i.test(url.pathname)) round.value = '1';
+        } catch (_) {
+          // 使用者仍在輸入網址時不顯示錯誤，查詢時再由既有驗證處理。
+        }
+      };
+
+      source.addEventListener('input', syncRoundFromUrl);
+      source.addEventListener('change', syncRoundFromUrl);
+      syncRoundFromUrl();
+    });
+  </script>
 </body>
 </html>
