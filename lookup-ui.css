@@ -1,3 +1,39 @@
+.lookup-group-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 14px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.lookup-group-tabs::-webkit-scrollbar { display: none; }
+
+.lookup-group-tab {
+  flex: 0 0 auto;
+  min-height: 38px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #eef2f8;
+  color: #4c586d;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.lookup-group-tab.active {
+  background: #17233a;
+  color: #fff;
+}
+
+.lookup-group-tab:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(47,111,237,.14);
+}
+
 .lookup-results-note {
   margin: 0 0 12px;
   color: var(--muted, #6b7485);
@@ -41,6 +77,14 @@
 }
 
 @media (max-width: 640px) {
+  .lookup-group-tabs {
+    margin-bottom: 12px;
+  }
+
+  .lookup-group-tab {
+    padding: 8px 13px;
+  }
+
   .lookup-candidate {
     align-items: flex-start;
     flex-direction: column;
