@@ -20,6 +20,7 @@ const watchCopy = () => document.getElementById('pairingWatchCopy');
 const authCopy = () => document.getElementById('pairingAuthCopy');
 const lookupButton = () => document.getElementById('pairingLookupButton');
 const testButton = () => document.getElementById('pairingTestButton');
+const finalTestButton = () => document.getElementById('pairingFinalTestButton');
 const startButton = () => document.getElementById('pairingStartButton');
 const stopButton = () => document.getElementById('pairingStopButton');
 
@@ -40,7 +41,7 @@ function setPairingMessage(text, type = '') {
 }
 
 function setPairingBusy(busy) {
-  [lookupButton(), testButton(), startButton(), stopButton(), document.getElementById('pairingLoadTestButton')]
+  [lookupButton(), testButton(), finalTestButton(), startButton(), stopButton(), document.getElementById('pairingLoadTestButton')]
     .filter(Boolean)
     .forEach(button => { button.disabled = busy; });
 }
@@ -167,6 +168,44 @@ async function renderPairing(data) {
     </div>`;
 }
 
+async function renderFinalRank(ranking, notification = null) {
+  const box = resultBox();
+  if (!box) return;
+  const standing = ranking?.standing_match;
+  if (!standing) {
+    box.className = 'pairing-result is-waiting';
+    box.innerHTML = `
+      <div class="pairing-result-title">
+        <strong>最終排名尚未公布</strong>
+        <span class="pairing-round-badge">Final rank</span>
+      </div>
+      <div class="pairing-watch-copy">目前還找不到這位玩家的最終排名。</div>`;
+    return;
+  }
+
+  const playerId = normalizePlayerId(standing.player);
+  const names = await lookupRealNames([playerId]);
+  const playerName = notification?.player_name || names[playerId] || '';
+  box.className = 'pairing-result is-found';
+  box.innerHTML = `
+    <div class="pairing-result-title">
+      <strong>最終排名</strong>
+      <span class="pairing-round-badge">Final rank</span>
+    </div>
+    <div class="pairing-match-grid">
+      <article>
+        <span>你的玩家</span>
+        <strong>${escPairing(playerName || playerId)}</strong>
+        ${playerName ? `<small>${escPairing(playerId)}</small>` : ''}
+      </article>
+      <article>
+        <span>最終排名</span>
+        <strong>第 ${escPairing(standing.rank)} 名</strong>
+        <small>不顯示總分</small>
+      </article>
+    </div>`;
+}
+
 async function lookupCurrentPairing() {
   const playerId = normalizePlayerId(playerInput()?.value);
   if (!/^tw\d+$/i.test(playerId)) throw new Error('請輸入有效的 PTCG ID，例如 tw39371632');
@@ -176,6 +215,13 @@ async function lookupCurrentPairing() {
   const data = await fetchPairing(parsed.url, playerId);
   await renderPairing(data);
   return { data, parsed, playerId };
+}
+
+async function currentWatchInputs() {
+  const playerId = normalizePlayerId(playerInput()?.value);
+  if (!/^tw\d+$/i.test(playerId)) throw new Error('請輸入有效的 PTCG ID，例如 tw39371632');
+  const parsed = normalizeRoundUrl(sourceInput()?.value, Number(roundInput()?.value || 1));
+  return { parsed, playerId };
 }
 
 async function authorizedWatchRequest(action, extra = {}) {
@@ -200,15 +246,20 @@ function renderWatchStatus(watch) {
 
   if (!watch?.active) {
     status.classList.remove('active');
+    if (watch?.final_notified && watch?.final_result?.rank) {
+      status.innerHTML = '<span class="pairing-watch-dot"></span>已完成';
+      copy.innerHTML = `最終排名已公布：<strong>第 ${escPairing(watch.final_result.rank)} 名</strong>。這場監控已自動停止。`;
+      return;
+    }
     status.innerHTML = '<span class="pairing-watch-dot"></span>未監控';
-    copy.innerHTML = '正式比賽時，先查到目前 Round，再按「開始監控下一輪」。後端會每 <strong>10 秒</strong>檢查一次。';
+    copy.innerHTML = '正式比賽時，先查到目前 Round，再按「開始監控下一輪」。後端會每 <strong>10 秒</strong>檢查下一輪與最終排名。';
     return;
   }
 
   status.classList.add('active');
   status.innerHTML = '<span class="pairing-watch-dot"></span>監控中';
   const checked = watch.last_checked_at ? new Date(watch.last_checked_at).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '尚未檢查';
-  copy.innerHTML = `活動 <strong>${escPairing(watch.tid)}</strong> · 玩家 <strong>${escPairing(watch.player_id)}</strong><br>正在等待 <strong>Round ${escPairing(watch.next_round)}</strong>，每 10 秒由後端檢查。最後檢查：${escPairing(checked)}`;
+  copy.innerHTML = `活動 <strong>${escPairing(watch.tid)}</strong> · 玩家 <strong>${escPairing(watch.player_id)}</strong><br>正在等待 <strong>Round ${escPairing(watch.next_round)}</strong> 或最終排名，每 10 秒由後端檢查。最後檢查：${escPairing(checked)}`;
 }
 
 async function refreshWatchStatus() {
@@ -255,14 +306,33 @@ async function handleTestNotification() {
   }
 }
 
+async function handleFinalTestNotification() {
+  setPairingBusy(true);
+  setPairingMessage('正在讀取歷史最終排名並發送 LINE / 網站推播測試…');
+  try {
+    const { parsed, playerId } = await currentWatchInputs();
+    const data = await authorizedWatchRequest('test-final', { url: parsed.url, player_id: playerId });
+    await renderFinalRank(data.ranking, data.notification);
+    const lineSent = Boolean(data?.notification?.line?.sent);
+    const pushSent = Number(data?.notification?.push?.sent || 0);
+    const rank = data?.ranking?.standing_match?.rank;
+    const parts = [lineSent ? 'LINE 已送出' : 'LINE 未送出', pushSent > 0 ? `網站推播已送出 ${pushSent} 支裝置` : '目前沒有可用的網站推播訂閱'];
+    setPairingMessage(`最終排名測試完成：第 ${rank} 名；${parts.join('；')}。`, lineSent || pushSent > 0 ? 'success' : 'error');
+  } catch (error) {
+    setPairingMessage(`最終排名測試失敗：${error?.message || String(error)}`, 'error');
+  } finally {
+    setPairingBusy(false);
+  }
+}
+
 async function handleStartWatch() {
   setPairingBusy(true);
   try {
     const { parsed, playerId } = await lookupCurrentPairing();
-    if (parsed.tid === TEST_TID) throw new Error('這是歷史測試場，為避免 Round 2、3、4…連續洗版，請使用「發送測試通知」，不要啟動連續監控。');
+    if (parsed.tid === TEST_TID) throw new Error('這是歷史測試場，為避免 Round 2、3、4…連續洗版，請使用測試通知按鈕，不要啟動連續監控。');
     const data = await authorizedWatchRequest('start', { url: parsed.url, player_id: playerId });
     renderWatchStatus(data.watch);
-    setPairingMessage(`已開始監控 Round ${data.watch.next_round}，後端每 10 秒檢查一次。iPhone 鎖屏後仍會繼續。`, 'success');
+    setPairingMessage(`已開始監控 Round ${data.watch.next_round} 與最終排名，後端每 10 秒檢查一次。iPhone 鎖屏後仍會繼續。`, 'success');
   } catch (error) {
     setPairingMessage(error?.message || String(error), 'error');
   } finally {
@@ -275,7 +345,7 @@ async function handleStopWatch() {
   try {
     const data = await authorizedWatchRequest('stop');
     renderWatchStatus(data.watch);
-    setPairingMessage('已停止下一輪配對監控。', 'success');
+    setPairingMessage('已停止下一輪與最終排名監控。', 'success');
   } catch (error) {
     setPairingMessage(error?.message || String(error), 'error');
   } finally {
@@ -287,7 +357,7 @@ function loadHistoricalTest() {
   if (sourceInput()) sourceInput().value = TEST_TOURNAMENT_URL;
   if (playerInput()) playerInput().value = DEFAULT_PLAYER_ID;
   if (roundInput()) roundInput().value = '1';
-  setPairingMessage('已載入 2026/9/12 高級球孩童組歷史測試場。按「查詢這一輪」可驗證配對解析。');
+  setPairingMessage('已載入 2026/9/12 高級球孩童組歷史測試場。可測 Round 配對通知或最終排名通知。');
 }
 
 async function initPairingAuth() {
@@ -316,6 +386,7 @@ function initPairingPage() {
   document.getElementById('pairingLoadTestButton')?.addEventListener('click', loadHistoricalTest);
   lookupButton()?.addEventListener('click', handleLookup);
   testButton()?.addEventListener('click', handleTestNotification);
+  finalTestButton()?.addEventListener('click', handleFinalTestNotification);
   startButton()?.addEventListener('click', handleStartWatch);
   stopButton()?.addEventListener('click', handleStopWatch);
   document.getElementById('pairingOpenOfficialButton')?.addEventListener('click', () => {
