@@ -8,6 +8,65 @@ const familyNotifyStatus = () => document.getElementById('familyNotifyStatus');
 const familyNotifyButton = () => document.getElementById('familyNotifyEnableButton');
 const familyNotifyHint = () => document.getElementById('familyNotifyHint');
 
+function familyEscape(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function familyRenderMatchSummary() {
+  const params = new URLSearchParams(window.location.search);
+  const type = params.get('type') || '';
+  if (type !== 'round' && type !== 'final') return false;
+
+  const summary = document.getElementById('familyMatchSummary');
+  const title = document.getElementById('familyMatchTitle');
+  const badge = document.getElementById('familyMatchBadge');
+  const eyebrow = document.getElementById('familyMatchEyebrow');
+  const grid = document.getElementById('familyMatchGrid');
+  const officialLink = document.getElementById('familyOfficialLink');
+  if (!summary || !title || !badge || !eyebrow || !grid || !officialLink) return false;
+
+  const player = params.get('player') || '—';
+  const official = params.get('official') || '';
+
+  if (type === 'final') {
+    const rank = params.get('rank') || '—';
+    eyebrow.textContent = '比賽完成';
+    title.textContent = '最終排名';
+    badge.textContent = 'Final rank';
+    grid.innerHTML = `
+      <article><span>玩家</span><strong>${familyEscape(player)}</strong></article>
+      <article><span>最終排名</span><strong>第 ${familyEscape(rank)} 名</strong></article>`;
+    officialLink.textContent = '開啟官方排名';
+  } else {
+    const round = params.get('round') || '—';
+    const table = params.get('table') || '—';
+    const opponent = params.get('opponent') || '—';
+    eyebrow.textContent = '最新配對';
+    title.textContent = `Round ${round}`;
+    badge.textContent = `Round ${round}`;
+    grid.innerHTML = `
+      <article><span>玩家</span><strong>${familyEscape(player)}</strong></article>
+      <article><span>桌號</span><strong>${familyEscape(table)}</strong></article>
+      <article class="family-match-wide"><span>對手</span><strong>${familyEscape(opponent)}</strong></article>`;
+    officialLink.textContent = '開啟官方配對';
+  }
+
+  if (official && /^https:\/\/tcg\.sfc-jpn\.jp\//i.test(official)) {
+    officialLink.href = official;
+    officialLink.hidden = false;
+  } else {
+    officialLink.hidden = true;
+  }
+
+  summary.hidden = false;
+  return true;
+}
+
 function familyIsIOS() {
   return /iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
@@ -106,21 +165,31 @@ async function handleFamilyEnable() {
 }
 
 async function initFamilyNotify() {
-  const queryToken = new URLSearchParams(window.location.search).get('token');
+  const params = new URLSearchParams(window.location.search);
+  const queryToken = params.get('token');
   if (queryToken) localStorage.setItem(FAMILY_INVITE_STORAGE_KEY, queryToken);
 
+  const hasMatchSummary = familyRenderMatchSummary();
   const alreadyLinked = localStorage.getItem(FAMILY_LINKED_STORAGE_KEY) === '1';
   const token = localStorage.getItem(FAMILY_INVITE_STORAGE_KEY) || '';
   const button = familyNotifyButton();
   button?.addEventListener('click', handleFamilyEnable);
 
   if (alreadyLinked) {
-    familySetState('家庭通知已啟用', '這支裝置已完成綁定，Round 配對與最終排名公布時會收到網站推播。', 'success');
+    familySetState('家庭通知已啟用', hasMatchSummary
+      ? '這支裝置已完成綁定；上方是剛剛通知的配對資訊。'
+      : '這支裝置已完成綁定，Round 配對與最終排名公布時會收到網站推播。', 'success');
     if (button) {
       button.disabled = true;
       button.textContent = '已開啟通知';
     }
     if (familyNotifyHint()) familyNotifyHint().textContent = '若日後不想接收通知，可直接從 iPhone 通知設定關閉。';
+    return;
+  }
+
+  if (hasMatchSummary && !token) {
+    familySetState('配對資訊', '上方可查看這次通知的配對資料。若這支裝置尚未綁定，請重新使用家庭邀請連結設定。');
+    if (button) button.disabled = true;
     return;
   }
 
