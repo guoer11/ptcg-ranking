@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="summary-compact.css?v=0.2.3-r1" />
   <link rel="stylesheet" href="auth-ui.css?v=0.3-r2" />
-  <link rel="stylesheet" href="lookup-ui.css?v=0.3-r1" />
+  <link rel="stylesheet" href="lookup-ui.css?v=0.10.0-r1" />
   <link rel="stylesheet" href="ranking-season-ui.css?v=0.4-r1" />
   <link rel="stylesheet" href="site-nav.css?v=0.6.1-r1" />
   <link rel="stylesheet" href="push-ui.css?v=0.6-r1" />
@@ -119,15 +119,21 @@
           <p id="playerLookupDescription">輸入暱稱或 PTCG ID。</p>
         </div>
       </div>
+      <div class="lookup-group-tabs" role="tablist" aria-label="玩家查詢組別">
+        <button class="lookup-group-tab active" type="button" data-lookup-group="all" role="tab" aria-selected="true">全部</button>
+        <button class="lookup-group-tab" type="button" data-lookup-group="Junior" role="tab" aria-selected="false">孩童組</button>
+        <button class="lookup-group-tab" type="button" data-lookup-group="Senior" role="tab" aria-selected="false">少年組</button>
+        <button class="lookup-group-tab" type="button" data-lookup-group="Master" role="tab" aria-selected="false">大師組</button>
+      </div>
       <form id="playerLookupForm" class="lookup-form">
         <input id="playerIdInput" class="search-input" type="text" placeholder="暱稱 / PTCG ID" autocomplete="off" />
         <button class="primary-btn" type="submit">查詢玩家</button>
       </form>
-      <p id="playerLookupHint" class="hint">若有多筆相符玩家會先列出候選結果。</p>
+      <p id="playerLookupHint" class="hint">組別以本季官方排名為準；尚未出現在排名的玩家請使用「全部」查詢。</p>
     </section>
 
     <section class="notice">
-      <strong>目前為 v0.8 測試版</strong>
+      <strong>目前為 v0.10.0 測試版</strong>
       <span id="versionNoticeText">排名、積分、暱稱與 PTCG ID 維持公開。</span>
     </section>
   </main>
@@ -202,7 +208,7 @@
   <script src="app.js?v=0.3-r1" defer></script>
   <script src="identity-ui.js?v=0.4-r1" defer></script>
   <script src="auth-ui.js?v=0.6-r1" defer></script>
-  <script src="lookup-ui.js?v=0.3.2-r1" defer></script>
+  <script src="lookup-ui.js?v=0.10.0-r1" defer></script>
   <script src="ranking-season-ui.js?v=0.4-r1" defer></script>
   <script src="push-ui.js?v=0.6-r1" defer></script>
   <script src="push-fix.js?v=0.6-r1" defer></script>
