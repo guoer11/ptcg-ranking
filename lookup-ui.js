@@ -25,6 +25,11 @@ function lookupRankingInfo(playerId) {
   return allLookupRankingRows().find(row => normalizeLookupValue(row.player_id) === id) || null;
 }
 
+function lookupOfficialRankingInfo(playerId) {
+  const id = normalizeLookupValue(playerId);
+  return allLookupRankingRows().find(row => !row.demo && normalizeLookupValue(row.player_id) === id) || null;
+}
+
 function lookupCandidateScore(candidate, key) {
   const values = [candidate.real_name, candidate.name, candidate.player_id]
     .map(normalizeLookupValue)
@@ -51,8 +56,9 @@ function findLookupCandidates(raw) {
       player_id: row.player_id,
       name: row.name || '',
       real_name: identityFor(row.player_id)?.real_name || '',
-      group: row.group || '',
-      region: row.region || ''
+      group: row.demo ? '' : (row.group || ''),
+      region: row.region || '',
+      demo: Boolean(row.demo)
     });
   }
 
@@ -61,14 +67,15 @@ function findLookupCandidates(raw) {
       const realName = identity?.real_name || '';
       if (!normalizeLookupValue(realName).includes(key)) continue;
       const id = normalizeLookupValue(playerId);
-      const ranking = lookupRankingInfo(playerId);
+      const ranking = lookupOfficialRankingInfo(playerId);
       const existing = byId.get(id) || {};
       byId.set(id, {
         player_id: playerId,
         name: existing.name || ranking?.name || '',
         real_name: realName,
-        group: existing.group || ranking?.group || '',
-        region: existing.region || ranking?.region || ''
+        group: ranking?.group || existing.group || '',
+        region: ranking?.region || existing.region || '',
+        demo: Boolean(existing.demo && !ranking)
       });
     }
   }
@@ -130,7 +137,7 @@ async function handlePlayerLookup(event) {
 
   const compact = raw.replace(/\s+/g, '');
   if (/^tw\d+$/i.test(compact)) {
-    const ranking = lookupRankingInfo(compact);
+    const ranking = lookupOfficialRankingInfo(compact);
     if (lookupGroup !== 'all') {
       const selectedGroupLabel = LOOKUP_GROUP_LABELS[lookupGroup] || lookupGroup;
       if (!ranking?.group) {
