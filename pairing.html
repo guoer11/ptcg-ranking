@@ -35,13 +35,13 @@
         <div>
           <p class="eyebrow">Pokémon TCG Taiwan</p>
           <h1>即時配對</h1>
-          <p class="subtitle">TCG マイスター配對查詢、姓名對照與下一輪通知</p>
+          <p class="subtitle">TCG マイスター配對查詢、姓名對照、下一輪與最終排名通知</p>
         </div>
         <div class="status-card">
           <span class="status-dot"></span>
           <div>
             <strong>後端監控可用</strong>
-            <small>正式監控：每 10 秒檢查下一輪</small>
+            <small>每 10 秒檢查下一輪 / Final rank</small>
             <small>LINE + 網站推播</small>
           </div>
         </div>
@@ -53,7 +53,7 @@
     <div class="pairing-grid">
       <section class="panel pairing-panel">
         <h2>配對查詢</h2>
-        <p class="section-note">比賽當天貼一次活動網址或任一 Round 配對網址。之後只要調整 Round，就能查目前配對；正式監控會自動往下一輪檢查。</p>
+        <p class="section-note">比賽當天貼一次活動網址或任一 Round 配對網址。正式監控會自動檢查下一輪；最終排名公布後也會通知並自動結束這場監控。</p>
 
         <div class="pairing-form">
           <div class="pairing-field">
@@ -76,7 +76,8 @@
             <button id="pairingLookupButton" class="primary-btn" type="button">查詢這一輪</button>
             <button id="pairingOpenOfficialButton" class="secondary-btn" type="button">開官方配對頁</button>
             <button id="pairingLoadTestButton" class="secondary-btn pairing-test-btn" type="button">載入歷史測試場</button>
-            <button id="pairingTestButton" class="secondary-btn pairing-test-btn" type="button">發送測試通知</button>
+            <button id="pairingTestButton" class="secondary-btn pairing-test-btn" type="button">測試 Round 通知</button>
+            <button id="pairingFinalTestButton" class="secondary-btn pairing-test-btn" type="button">測試最終排名通知</button>
           </div>
         </div>
 
@@ -85,7 +86,7 @@
             <strong>尚未查詢</strong>
             <span class="pairing-round-badge">等待輸入</span>
           </div>
-          <div class="pairing-watch-copy">可先按「載入歷史測試場」，用 2026/9/12 高級球孩童組驗證功能。</div>
+          <div class="pairing-watch-copy">可先按「載入歷史測試場」，用 2026/9/12 高級球孩童組驗證配對與最終排名通知。</div>
         </div>
 
         <div id="pairingMessage" class="pairing-message"></div>
@@ -94,10 +95,10 @@
       <aside>
         <section class="pairing-watch-card">
           <div class="pairing-watch-head">
-            <strong>下一輪自動監控</strong>
+            <strong>下一輪 / 最終排名自動監控</strong>
             <span id="pairingWatchStatus" class="pairing-watch-status"><span class="pairing-watch-dot"></span>未監控</span>
           </div>
-          <div id="pairingWatchCopy" class="pairing-watch-copy">正式比賽時，先查到目前 Round，再按「開始監控下一輪」。後端會每 <strong>10 秒</strong>檢查一次。</div>
+          <div id="pairingWatchCopy" class="pairing-watch-copy">正式比賽時，先查到目前 Round，再按「開始監控下一輪」。後端會每 <strong>10 秒</strong>檢查下一輪與最終排名。</div>
           <div class="pairing-actions" style="margin-top:14px;">
             <button id="pairingStartButton" class="primary-btn" type="button">開始監控下一輪</button>
             <button id="pairingStopButton" class="secondary-btn" type="button">停止監控</button>
@@ -112,14 +113,14 @@
 
         <section class="pairing-history-note" style="margin-top:12px;">
           <strong>歷史測試場</strong><br>
-          2026/9/12 高級球孩童組（tid=3000442）只用來做單輪查詢與通知測試。為避免已存在的 Round 2、3、4…一次全部發送，測試場不允許啟動連續監控。
+          2026/9/12 高級球孩童組（tid=3000442）可用來測 Round 1 配對通知與 Final rank 通知。Final rank 測試只顯示最終名次，不顯示總分。為避免已存在的 Round 2、3、4…一次全部發送，歷史測試場不允許啟動連續監控。
         </section>
       </aside>
     </div>
 
     <section class="notice" style="margin-top:20px;">
       <strong>目前為 v0.11.0 測試版</strong>
-      <span>正式比賽配對仍以現場主辦與 TCG マイスター頁面為準。</span>
+      <span>正式比賽配對與最終排名仍以現場主辦與 TCG マイスター頁面為準。</span>
     </section>
   </main>
 
@@ -128,6 +129,6 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="pairing.js?v=0.11.0-r1" defer></script>
+  <script src="pairing.js?v=0.11.0-r2" defer></script>
 </body>
 </html>
