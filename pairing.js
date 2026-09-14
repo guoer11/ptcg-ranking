@@ -8,6 +8,7 @@ const TEST_TID = '3000442';
 
 let pairingClient = null;
 let pairingSession = null;
+let pairingAuthorized = false;
 let lastPairing = null;
 
 const sourceInput = () => document.getElementById('pairingSourceUrl');
@@ -23,6 +24,59 @@ const testButton = () => document.getElementById('pairingTestButton');
 const finalTestButton = () => document.getElementById('pairingFinalTestButton');
 const startButton = () => document.getElementById('pairingStartButton');
 const stopButton = () => document.getElementById('pairingStopButton');
+
+function protectedPairingMain() {
+  return document.getElementById('pairingProtectedMain');
+}
+
+function pairingNavLink() {
+  return document.querySelector('.site-nav a[href="pairing.html"]');
+}
+
+function ensurePairingAccessGate() {
+  let main = protectedPairingMain();
+  if (!main) {
+    main = document.querySelector('main.pairing-main');
+    if (main) main.id = 'pairingProtectedMain';
+  }
+  if (main) main.hidden = true;
+  const nav = pairingNavLink();
+  if (nav) nav.hidden = true;
+
+  let denied = document.getElementById('pairingAccessDenied');
+  if (!denied) {
+    denied = document.createElement('main');
+    denied.id = 'pairingAccessDenied';
+    denied.className = 'wrap pairing-main';
+    denied.innerHTML = `
+      <section class="panel pairing-panel">
+        <h2>即時配對僅限授權帳號</h2>
+        <p id="pairingAccessDeniedText" class="section-note">正在確認登入權限…</p>
+        <a class="primary-btn" href="index.html">回玩家排行登入</a>
+      </section>`;
+    const footer = document.querySelector('footer.footer');
+    if (footer) footer.before(denied);
+    else document.body.appendChild(denied);
+  }
+  return denied;
+}
+
+function renderPairingAccess(allowed, message = '') {
+  pairingAuthorized = Boolean(allowed);
+  const main = protectedPairingMain();
+  const nav = pairingNavLink();
+  const denied = ensurePairingAccessGate();
+  const deniedText = document.getElementById('pairingAccessDeniedText');
+
+  if (main) main.hidden = !pairingAuthorized;
+  if (nav) nav.hidden = !pairingAuthorized;
+  if (denied) denied.hidden = pairingAuthorized;
+  if (!pairingAuthorized && deniedText) {
+    deniedText.textContent = message || '此功能僅開放指定的授權帳號使用。請先回玩家排行登入。';
+  }
+}
+
+ensurePairingAccessGate();
 
 function escPairing(value = '') {
   return String(value)
@@ -76,9 +130,15 @@ function normalizeRoundUrl(raw, roundOverride = null) {
 }
 
 async function fetchPairing(url, playerId) {
+  if (!pairingAuthorized || !pairingSession?.access_token) {
+    throw new Error('即時配對僅限授權帳號使用');
+  }
   const response = await fetch(PAIRING_FUNCTION_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Authorization': `Bearer ${pairingSession.access_token}`,
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({ url, player: playerId })
   });
   const data = await response.json().catch(() => ({}));
@@ -88,7 +148,7 @@ async function fetchPairing(url, playerId) {
 
 async function lookupRealNames(ids) {
   const map = {};
-  if (!pairingClient || !pairingSession) return map;
+  if (!pairingClient || !pairingSession || !pairingAuthorized) return map;
   const normalized = [...new Set((ids || []).map(normalizePlayerId).filter(Boolean))];
   if (!normalized.length) return map;
   try {
@@ -135,8 +195,8 @@ async function renderPairing(data) {
   const names = await lookupRealNames([match.player, match.opponent]);
   const playerId = normalizePlayerId(match.player);
   const opponentId = normalizePlayerId(match.opponent);
-  const playerName = names[playerId] || '';
-  const opponentName = names[opponentId] || '';
+  const playerName = names[playerId] || match.player_name || '';
+  const opponentName = names[opponentId] || match.opponent_name || '';
 
   box.className = 'pairing-result is-found';
   box.innerHTML = `
@@ -153,12 +213,12 @@ async function renderPairing(data) {
       <article>
         <span>你的玩家</span>
         <strong>${escPairing(playerName || playerId)}</strong>
-        ${playerName ? `<small>${escPairing(playerId)}</small>` : '<small>登入授權帳號後可顯示姓名</small>'}
+        ${playerName ? `<small>${escPairing(playerId)}</small>` : '<small>姓名資料未收錄</small>'}
       </article>
       <article>
         <span>對手</span>
         <strong>${escPairing(opponentName || opponentId)}</strong>
-        ${opponentName ? `<small>${escPairing(opponentId)}</small>` : '<small>登入授權帳號後可顯示姓名</small>'}
+        ${opponentName ? `<small>${escPairing(opponentId)}</small>` : '<small>姓名資料未收錄</small>'}
       </article>
       <article>
         <span>來源</span>
@@ -225,7 +285,7 @@ async function currentWatchInputs() {
 }
 
 async function authorizedWatchRequest(action, extra = {}) {
-  if (!pairingSession?.access_token) throw new Error('請先到玩家排行頁登入授權 Google 帳號');
+  if (!pairingAuthorized || !pairingSession?.access_token) throw new Error('即時配對僅限授權帳號使用');
   const response = await fetch(PAIRING_WATCH_URL, {
     method: 'POST',
     headers: {
@@ -263,7 +323,7 @@ function renderWatchStatus(watch) {
 }
 
 async function refreshWatchStatus() {
-  if (!pairingSession) {
+  if (!pairingAuthorized || !pairingSession) {
     renderWatchStatus(null);
     return;
   }
@@ -360,24 +420,46 @@ function loadHistoricalTest() {
   setPairingMessage('已載入 2026/9/12 高級球孩童組歷史測試場。可測 Round 配對通知或最終排名通知。');
 }
 
+async function verifyPairingAuthorization() {
+  if (!pairingSession || !pairingClient) return false;
+  try {
+    const { data, error } = await pairingClient.rpc('can_use_pairing');
+    if (error) throw error;
+    return data === true;
+  } catch (error) {
+    console.warn('即時配對權限確認失敗', error);
+    return false;
+  }
+}
+
+async function refreshPairingAuthorization() {
+  const allowed = await verifyPairingAuthorization();
+  renderPairingAccess(allowed, pairingSession
+    ? '目前登入的帳號沒有即時配對使用權限。此功能只開放指定的授權帳號。'
+    : '請先回玩家排行登入你的授權 Google 帳號，再使用即時配對。');
+
+  if (!allowed) {
+    if (authCopy()) authCopy().textContent = '目前帳號未授權使用即時配對。';
+    return;
+  }
+
+  if (authCopy()) authCopy().textContent = '已確認授權登入，可使用姓名對照、LINE 與網站推播。';
+  await refreshWatchStatus();
+}
+
 async function initPairingAuth() {
   if (!window.supabase?.createClient) {
-    if (authCopy()) authCopy().textContent = '登入服務載入失敗；仍可查配對，但無法顯示私人姓名或發送通知。';
+    renderPairingAccess(false, '登入服務載入失敗，暫時無法使用即時配對。');
     return;
   }
   pairingClient = window.supabase.createClient(PAIRING_SUPABASE_URL, PAIRING_SUPABASE_KEY);
   const { data } = await pairingClient.auth.getSession();
   pairingSession = data?.session || null;
-  if (authCopy()) {
-    authCopy().innerHTML = pairingSession
-      ? '已偵測到授權登入，可顯示姓名並使用 LINE / 網站推播。'
-      : '目前未登入；配對仍可查詢，但姓名與通知需先到 <a href="index.html">玩家排行</a> 登入。';
-  }
-  await refreshWatchStatus();
+  await refreshPairingAuthorization();
 
-  pairingClient.auth.onAuthStateChange((_event, session) => {
+  pairingClient.auth.onAuthStateChange(async (_event, session) => {
     pairingSession = session || null;
-    refreshWatchStatus();
+    await refreshPairingAuthorization();
   });
 }
 
@@ -390,6 +472,7 @@ function initPairingPage() {
   startButton()?.addEventListener('click', handleStartWatch);
   stopButton()?.addEventListener('click', handleStopWatch);
   document.getElementById('pairingOpenOfficialButton')?.addEventListener('click', () => {
+    if (!pairingAuthorized) return;
     try {
       const parsed = normalizeRoundUrl(sourceInput()?.value, Number(roundInput()?.value || 1));
       window.open(parsed.url, '_blank', 'noopener,noreferrer');
