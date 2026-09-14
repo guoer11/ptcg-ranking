@@ -239,7 +239,14 @@ function setupTournamentFilters() {
   tournamentSeason = seasons.includes(tournamentData.season) ? tournamentData.season : (seasons[0] || 'all');
   tournamentSeasonFilter.value = tournamentSeason;
 
-  const regions = [...new Set(events.map(event => event.region).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'zh-Hant'));
+  const preferredRegions = ['臺南市', '台南市', '高雄市', '嘉義市', '嘉義縣'];
+  const regions = [...new Set(events.map(event => event.region).filter(Boolean))].sort((a, b) => {
+    const aIndex = preferredRegions.indexOf(a);
+    const bIndex = preferredRegions.indexOf(b);
+    const aPriority = aIndex === -1 ? preferredRegions.length : aIndex;
+    const bPriority = bIndex === -1 ? preferredRegions.length : bIndex;
+    return aPriority - bPriority || a.localeCompare(b, 'zh-Hant');
+  });
   tournamentRegionFilter.innerHTML = '<option value="all">⌖ 全國</option>' + regions.map(region => `<option value="${tournamentEsc(region)}">⌖ ${tournamentEsc(region)}</option>`).join('');
   tournamentRegionFilter.value = 'all';
 }
