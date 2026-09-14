@@ -1,0 +1,28 @@
+.family-owner-card .pairing-watch-copy { line-height: 1.65; }
+.family-owner-form { display: grid; gap: 10px; margin-top: 12px; }
+.family-owner-form label { font-size: 13px; font-weight: 800; color: var(--text); }
+.family-owner-form .search-input { width: 100%; }
+.family-owner-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.family-owner-actions button { min-width: 120px; }
+.family-owner-invite { margin-top: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: #f8fafc; }
+.family-owner-invite[hidden] { display: none !important; }
+.family-owner-invite .search-input { width: 100%; font-size: 12px; }
+.family-owner-invite small { display: block; margin-top: 7px; color: var(--muted); line-height: 1.5; }
+.family-owner-message { margin-top: 10px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.family-owner-message.success { color: #137a47; }
+.family-owner-message.error { color: #b42318; }
+.family-owner-devices { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+.family-owner-devices-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.family-owner-devices-head strong { font-size: 14px; }
+.family-owner-devices-head span { color: var(--muted); font-size: 12px; }
+.family-owner-device { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid rgba(148,163,184,.18); }
+.family-owner-device:first-child { border-top: 0; }
+.family-owner-device strong, .family-owner-device small { display: block; }
+.family-owner-device small { margin-top: 3px; color: var(--muted); font-size: 12px; }
+.family-owner-remove { min-width: 64px; padding: 7px 10px; }
+.family-owner-empty { padding: 8px 0 2px; color: var(--muted); font-size: 13px; }
+@media (max-width: 620px) {
+  .family-owner-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .family-owner-actions button { width: 100%; min-width: 0; }
+  .family-owner-actions #familyCreateInviteButton { grid-column: 1 / -1; }
+}
