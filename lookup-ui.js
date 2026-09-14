@@ -196,3 +196,16 @@ async function handlePlayerLookup(event) {
   oldForm.replaceWith(form);
   form.addEventListener('submit', handlePlayerLookup);
 })();
+
+(function setupPairingNav() {
+  const nav = document.querySelector('.site-nav');
+  if (!nav || nav.querySelector('a[href="pairing.html"]')) return;
+  const link = document.createElement('a');
+  link.href = 'pairing.html';
+  link.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v3h3v4h-3v3h-4v3h-2v-3H7v-3H4V7h3V4Zm2 2v6h6V6H9Zm-3 3v0h1V9H6Zm11 0v0h1V9h-1Z"/></svg>即時配對';
+  const actions = nav.querySelector('.site-nav-actions');
+  nav.insertBefore(link, actions || null);
+
+  const notice = document.querySelector('.notice strong');
+  if (notice && /目前為 v/i.test(notice.textContent || '')) notice.textContent = '目前為 v0.11.0 測試版';
+})();
