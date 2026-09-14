@@ -4,6 +4,18 @@
 .family-notify-header h1 { margin: 4px 0 8px; font-size: clamp(28px, 7vw, 42px); }
 .family-notify-header p:not(.eyebrow) { margin: 0; max-width: 680px; color: #d8e3f6; line-height: 1.65; }
 .family-notify-main { padding-top: 22px; padding-bottom: 34px; }
+.family-match-summary { width: min(620px, 100%); margin: 0 auto 14px; padding: 20px; border: 1px solid #b8d5c6; border-radius: 20px; background: #eef9f3; box-shadow: 0 14px 34px rgba(15, 35, 70, .08); }
+.family-match-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+.family-match-heading span:first-child { display: block; color: #267355; font-size: 12px; font-weight: 800; }
+.family-match-heading h2 { margin: 3px 0 0; font-size: 24px; }
+.family-match-badge { flex: 0 0 auto; padding: 6px 10px; border-radius: 999px; background: #d9f0e3; color: #176644; font-size: 12px; font-weight: 800; }
+.family-match-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.family-match-grid article { min-width: 0; padding: 13px 14px; border: 1px solid #d3e6da; border-radius: 14px; background: rgba(255,255,255,.82); }
+.family-match-grid article.family-match-wide { grid-column: 1 / -1; }
+.family-match-grid span, .family-match-grid strong { display: block; }
+.family-match-grid span { margin-bottom: 4px; color: var(--muted); font-size: 12px; font-weight: 700; }
+.family-match-grid strong { overflow-wrap: anywhere; font-size: 17px; }
+.family-official-link { display: flex; width: 100%; min-height: 46px; margin-top: 14px; align-items: center; justify-content: center; box-sizing: border-box; text-decoration: none; }
 .family-notify-card { width: min(620px, 100%); margin: 0 auto; padding: 24px; border: 1px solid #d9e2ef; border-radius: 20px; background: #fff; box-shadow: 0 14px 34px rgba(15, 35, 70, .08); text-align: center; }
 .family-notify-status-icon { width: 64px; height: 64px; margin: 0 auto 14px; display: grid; place-items: center; border-radius: 18px; background: #eef4ff; font-size: 30px; }
 .family-notify-card h2 { margin: 0 0 8px; font-size: 22px; }
@@ -28,5 +40,6 @@
 @media (max-width: 620px) {
   .family-notify-header { padding: 24px 0 28px; }
   .family-notify-main { padding-top: 14px; }
-  .family-notify-card { padding: 20px 16px; border-radius: 16px; }
+  .family-match-summary, .family-notify-card { padding: 18px 16px; border-radius: 16px; }
+  .family-match-grid { grid-template-columns: 1fr 1fr; }
 }
