@@ -2,6 +2,7 @@ const FAMILY_NOTIFY_FUNCTION_URL = 'https://ceobnyikrudlxasyjukg.supabase.co/fun
 const FAMILY_INVITE_STORAGE_KEY = 'ptcgFamilyInviteToken';
 const FAMILY_LINKED_STORAGE_KEY = 'ptcgFamilyPushLinked';
 const FAMILY_MATCH_STORAGE_KEY = 'ptcgFamilyLatestMatch';
+const FAMILY_MATCH_TTL_MS = 24 * 60 * 60 * 1000;
 
 const familyNotifyCard = () => document.querySelector('.family-notify-card');
 const familyNotifyTitle = () => document.getElementById('familyNotifyTitle');
@@ -48,8 +49,16 @@ function familyLoadStoredSummary() {
     const raw = localStorage.getItem(FAMILY_MATCH_STORAGE_KEY);
     if (!raw) return null;
     const value = JSON.parse(raw);
-    return value && (value.type === 'round' || value.type === 'final') ? value : null;
+    if (!value || (value.type !== 'round' && value.type !== 'final')) return null;
+
+    const savedAt = Date.parse(value.saved_at || '');
+    if (!Number.isFinite(savedAt) || Date.now() - savedAt >= FAMILY_MATCH_TTL_MS) {
+      localStorage.removeItem(FAMILY_MATCH_STORAGE_KEY);
+      return null;
+    }
+    return value;
   } catch (_) {
+    localStorage.removeItem(FAMILY_MATCH_STORAGE_KEY);
     return null;
   }
 }
@@ -222,7 +231,7 @@ async function initFamilyNotify() {
 
   if (alreadyLinked) {
     familySetState('家庭通知已啟用', hasMatchSummary
-      ? '這支裝置已完成綁定；上方會保留最近一次配對或最終排名資訊。'
+      ? '這支裝置已完成綁定；上方會保留最近一次配對或最終排名資訊 24 小時。'
       : '這支裝置已完成綁定，Round 配對與最終排名公布時會收到網站推播。', 'success');
     if (button) {
       button.disabled = true;
@@ -233,7 +242,7 @@ async function initFamilyNotify() {
   }
 
   if (hasMatchSummary && !token) {
-    familySetState('配對資訊', '上方可查看最近一次通知的配對資料。若這支裝置尚未綁定，請重新使用家庭邀請連結設定。');
+    familySetState('配對資訊', '上方可查看最近一次通知的配對資料；資料會保留 24 小時。若這支裝置尚未綁定，請重新使用家庭邀請連結設定。');
     if (button) button.disabled = true;
     return;
   }
