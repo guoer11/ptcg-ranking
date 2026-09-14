@@ -1,3 +1,12 @@
+let lookupGroup = 'all';
+
+const LOOKUP_GROUP_LABELS = {
+  all: '全部',
+  Junior: '孩童組',
+  Senior: '少年組',
+  Master: '大師組'
+};
+
 function normalizeLookupValue(value = '') {
   return String(value).trim().toLowerCase().replace(/\s+/g, '');
 }
@@ -23,6 +32,10 @@ function lookupCandidateScore(candidate, key) {
   if (values.some(value => value === key)) return 0;
   if (values.some(value => value.startsWith(key))) return 1;
   return 2;
+}
+
+function lookupCandidateMatchesGroup(candidate) {
+  return lookupGroup === 'all' || candidate.group === lookupGroup;
 }
 
 function findLookupCandidates(raw) {
@@ -61,6 +74,7 @@ function findLookupCandidates(raw) {
   }
 
   return [...byId.values()]
+    .filter(lookupCandidateMatchesGroup)
     .sort((a, b) => lookupCandidateScore(a, key) - lookupCandidateScore(b, key)
       || String(a.real_name || a.name || a.player_id).localeCompare(String(b.real_name || b.name || b.player_id), 'zh-Hant'))
     .slice(0, 50);
@@ -85,7 +99,8 @@ function showLookupCandidates(query, candidates) {
   const items = candidates.map(candidate => {
     const primary = candidate.real_name || candidate.name || candidate.player_id;
     const nickname = candidate.name && candidate.name !== primary ? candidate.name : '';
-    const meta = [candidate.player_id, GROUP_LABELS[candidate.group] || '', candidate.region || '']
+    const groupLabel = candidate.group ? (GROUP_LABELS[candidate.group] || candidate.group) : '組別待官方排名確認';
+    const meta = [candidate.player_id, groupLabel, candidate.region || '']
       .filter(Boolean)
       .join(' · ');
     return `
@@ -115,6 +130,18 @@ async function handlePlayerLookup(event) {
 
   const compact = raw.replace(/\s+/g, '');
   if (/^tw\d+$/i.test(compact)) {
+    const ranking = lookupRankingInfo(compact);
+    if (lookupGroup !== 'all') {
+      const selectedGroupLabel = LOOKUP_GROUP_LABELS[lookupGroup] || lookupGroup;
+      if (!ranking?.group) {
+        showLookupMessage('組別尚待確認', `這位玩家目前尚未出現在本季官方排名，因此無法確認是否屬於${selectedGroupLabel}。請切換「全部」查詢。`);
+        return;
+      }
+      if (ranking.group !== lookupGroup) {
+        showLookupMessage('找不到符合的玩家', `此 PTCG ID 不在目前官方排名的${selectedGroupLabel}資料中。`);
+        return;
+      }
+    }
     await openPlayerModal(compact.toLowerCase());
     return;
   }
@@ -129,6 +156,12 @@ async function handlePlayerLookup(event) {
     return;
   }
 
+  if (lookupGroup !== 'all') {
+    const selectedGroupLabel = LOOKUP_GROUP_LABELS[lookupGroup] || lookupGroup;
+    showLookupMessage('找不到符合的玩家', `找不到目前已由本季官方排名確認為${selectedGroupLabel}的玩家。尚未出現在本季排名的玩家，請切換「全部」查詢。`);
+    return;
+  }
+
   if (!identityAuthorized) {
     showLookupMessage('找不到符合的玩家', '請確認暱稱或 PTCG ID 是否正確。');
     return;
@@ -138,6 +171,17 @@ async function handlePlayerLookup(event) {
 }
 
 (function setupEnhancedPlayerLookup() {
+  document.querySelectorAll('[data-lookup-group]').forEach(button => {
+    button.addEventListener('click', () => {
+      lookupGroup = button.dataset.lookupGroup || 'all';
+      document.querySelectorAll('[data-lookup-group]').forEach(item => {
+        const active = item === button;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+    });
+  });
+
   const oldForm = document.getElementById('playerLookupForm');
   if (!oldForm) return;
 
