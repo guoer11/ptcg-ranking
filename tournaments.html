@@ -157,7 +157,7 @@
     </section>
 
     <section class="notice tournament-version">
-      <strong>目前為 v0.10.0 測試版</strong>
+      <strong>目前為 v0.11.0 測試版</strong>
       <span>賽事頁用於整理與核算；正式積分與排名仍以官方資料為準。</span>
     </section>
   </main>
@@ -180,7 +180,7 @@
     <div class="wrap">非官方網站。本頁僅整理公開賽事資訊，Pokémon 相關商標屬原權利人所有。</div>
   </footer>
 
-  <script src="tournaments.js?v=0.8.1-r1" defer></script>
+  <script src="tournaments.js?v=0.11.0-r2" defer></script>
   <script>
     (() => {
       const checkEl = document.getElementById('tournamentLastCheckAt');
@@ -365,7 +365,6 @@
         });
       }
 
-      // 「可報名」是既有未舉行賽事的子集合，保留其他篩選條件後再套報名狀態。
       if (typeof window.filteredTournaments === 'function') {
         const baseFilteredTournaments = window.filteredTournaments;
         window.filteredTournaments = function () {
