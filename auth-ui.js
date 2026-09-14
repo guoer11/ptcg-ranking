@@ -5,28 +5,49 @@ const IDENTITY_REDIRECT_URL = 'https://guoer11.github.io/ptcg-ranking/';
 let identitySession = null;
 let identityAuthorized = false;
 let identityClient = null;
+let pairingNavRequestId = 0;
+let identityLoadRequestId = 0;
+
+function currentIdentityUserId() {
+  return String(identitySession?.user?.id || '');
+}
 
 function pairingNavLink() {
   return document.querySelector('.site-nav a[href="pairing.html"]');
 }
 
+function hidePairingNav() {
+  const link = pairingNavLink();
+  if (link) link.hidden = true;
+}
+
+function invalidatePairingNavAccess() {
+  pairingNavRequestId += 1;
+  hidePairingNav();
+}
+
 async function refreshPairingNavAccess() {
   const link = pairingNavLink();
   if (!link) return;
+
+  const requestId = ++pairingNavRequestId;
+  const userId = currentIdentityUserId();
   link.hidden = true;
-  if (!identitySession || !identityClient) return;
+  if (!userId || !identityClient) return;
 
   try {
     const { data, error } = await identityClient.rpc('can_use_pairing');
+    if (requestId !== pairingNavRequestId || currentIdentityUserId() !== userId) return;
     if (error) throw error;
     link.hidden = data !== true;
   } catch (error) {
+    if (requestId !== pairingNavRequestId || currentIdentityUserId() !== userId) return;
     console.warn('即時配對權限確認失敗', error);
     link.hidden = true;
   }
 }
 
-if (pairingNavLink()) pairingNavLink().hidden = true;
+hidePairingNav();
 
 function clearPrivateIdentities() {
   identityData = { updated_at: null, count: 0, players: {} };
@@ -87,8 +108,11 @@ function updateIdentityAuthUI(message = '') {
 }
 
 async function loadPrivateIdentities() {
+  const requestId = ++identityLoadRequestId;
+  const userId = currentIdentityUserId();
   clearPrivateIdentities();
-  if (!identitySession || !identityClient) {
+
+  if (!userId || !identityClient) {
     updateIdentityAuthUI();
     await refreshPairingNavAccess();
     renderRanking();
@@ -108,6 +132,7 @@ async function loadPrivateIdentities() {
         .order('player_id', { ascending: true })
         .range(from, from + pageSize - 1);
 
+      if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
       if (error) throw error;
       for (const row of data || []) {
         if (!row.player_id || !row.real_name) continue;
@@ -117,16 +142,19 @@ async function loadPrivateIdentities() {
       from += pageSize;
     }
 
+    if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
     const count = Object.keys(players).length;
     identityData = { updated_at: new Date().toISOString(), count, players };
     identityAuthorized = count > 0;
     updateIdentityAuthUI('已登入，點此登出');
   } catch (error) {
+    if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
     console.error('私人資料讀取失敗', error);
     clearPrivateIdentities();
     updateIdentityAuthUI('登入資料讀取失敗，點此登出');
   }
 
+  if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
   await refreshPairingNavAccess();
   renderRanking();
 }
@@ -158,6 +186,8 @@ async function startIdentityAuth() {
         return;
       }
 
+      invalidatePairingNavAccess();
+      identityLoadRequestId += 1;
       await identityClient.auth.signOut();
       identitySession = null;
       clearPrivateIdentities();
@@ -178,7 +208,10 @@ async function startIdentityAuth() {
   await loadPrivateIdentities();
 
   identityClient.auth.onAuthStateChange(async (event, session) => {
+    invalidatePairingNavAccess();
+    identityLoadRequestId += 1;
     identitySession = session || null;
+
     if (event === 'SIGNED_OUT' || !session) {
       clearPrivateIdentities();
       updateIdentityAuthUI();
@@ -186,6 +219,7 @@ async function startIdentityAuth() {
       renderRanking();
       return;
     }
+
     if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
       await loadPrivateIdentities();
     }
