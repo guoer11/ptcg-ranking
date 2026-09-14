@@ -7,6 +7,56 @@ let familyOwnerSession = null;
 let familyOwnerAuthorized = false;
 let familyOwnerBusy = false;
 
+function familyOwnerEnsureStyle() {
+  if (document.querySelector('link[data-family-owner-style]')) return;
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'family-owner-ui.css?v=0.12.0-r1';
+  link.dataset.familyOwnerStyle = 'true';
+  document.head.appendChild(link);
+}
+
+function familyOwnerEnsureCard() {
+  let card = document.getElementById('familyNotificationCard');
+  if (card) return card;
+
+  const aside = document.querySelector('.pairing-grid > aside');
+  if (!aside) return null;
+
+  card = document.createElement('section');
+  card.id = 'familyNotificationCard';
+  card.className = 'pairing-watch-card family-owner-card';
+  card.innerHTML = `
+    <div class="pairing-watch-head">
+      <strong>家庭通知裝置</strong>
+      <span id="familyDeviceCount" class="pairing-watch-status">0 台</span>
+    </div>
+    <div class="pairing-watch-copy">可讓家人的 iPhone 只接收 Round 配對與最終排名網站推播，不需要 Google 登入，也不增加 LINE 官方帳號訊息量。</div>
+    <div class="family-owner-form">
+      <label for="familyDeviceLabel">裝置名稱</label>
+      <input id="familyDeviceLabel" class="search-input" type="text" value="家庭 iPhone" maxlength="40" autocomplete="off" />
+      <div class="family-owner-actions">
+        <button id="familyCreateInviteButton" class="primary-btn" type="button">產生邀請連結</button>
+        <button id="familyShareInviteButton" class="secondary-btn" type="button">分享邀請</button>
+        <button id="familyCopyInviteButton" class="secondary-btn" type="button">複製連結</button>
+      </div>
+    </div>
+    <div id="familyInvitePanel" class="family-owner-invite" hidden>
+      <input id="familyInviteUrl" class="search-input" type="text" readonly aria-label="家庭通知邀請連結" />
+      <small id="familyInviteExpiry">邀請連結成功綁定後即失效。</small>
+    </div>
+    <div id="familyNotificationMessage" class="family-owner-message">正在確認家庭通知權限…</div>
+    <div class="family-owner-devices">
+      <div class="family-owner-devices-head"><strong>已綁定裝置</strong><span>只收配對通知</span></div>
+      <div id="familyDeviceList"><div class="family-owner-empty">讀取中…</div></div>
+    </div>`;
+
+  const historyNote = aside.querySelector('.pairing-history-note');
+  if (historyNote) historyNote.before(card);
+  else aside.appendChild(card);
+  return card;
+}
+
 function familyOwnerCard() {
   return document.getElementById('familyNotificationCard');
 }
@@ -135,7 +185,10 @@ async function createFamilyInvite() {
 async function copyFamilyInvite() {
   const input = document.getElementById('familyInviteUrl');
   const value = input?.value || '';
-  if (!value) return;
+  if (!value) {
+    familyOwnerMessage('請先產生邀請連結。');
+    return;
+  }
   try {
     await navigator.clipboard.writeText(value);
     familyOwnerMessage('邀請連結已複製。', 'success');
@@ -150,7 +203,10 @@ async function copyFamilyInvite() {
 async function shareFamilyInvite() {
   const input = document.getElementById('familyInviteUrl');
   const url = input?.value || '';
-  if (!url) return;
+  if (!url) {
+    familyOwnerMessage('請先產生邀請連結。');
+    return;
+  }
   if (navigator.share) {
     try {
       await navigator.share({
@@ -194,6 +250,8 @@ async function refreshFamilyOwnerAuth() {
 }
 
 async function initFamilyOwnerUI() {
+  familyOwnerEnsureStyle();
+  familyOwnerEnsureCard();
   if (!familyOwnerCard() || !window.supabase?.createClient) return;
   familyOwnerClient = window.supabase.createClient(FAMILY_OWNER_SUPABASE_URL, FAMILY_OWNER_SUPABASE_KEY);
 
