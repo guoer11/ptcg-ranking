@@ -312,7 +312,7 @@ function renderWatchStatus(watch) {
       return;
     }
     status.innerHTML = '<span class="pairing-watch-dot"></span>未監控';
-    copy.innerHTML = '正式比賽時，先查到目前 Round，再按「開始監控下一輪」。後端會每 <strong>10 秒</strong>檢查下一輪與最終排名。';
+    copy.innerHTML = '設定目前 Round 後即可開始監控；如果這一輪尚未公布，就直接等待本輪，若已公布則自動等待下一輪。後端每 <strong>10 秒</strong>檢查配對與最終排名。';
     return;
   }
 
@@ -392,7 +392,7 @@ async function handleStartWatch() {
     if (parsed.tid === TEST_TID) throw new Error('這是歷史測試場，為避免 Round 2、3、4…連續洗版，請使用測試通知按鈕，不要啟動連續監控。');
     const data = await authorizedWatchRequest('start', { url: parsed.url, player_id: playerId });
     renderWatchStatus(data.watch);
-    setPairingMessage(`已開始監控 Round ${data.watch.next_round} 與最終排名，後端每 10 秒檢查一次。iPhone 鎖屏後仍會繼續。`, 'success');
+    setPairingMessage(`已開始監控 Round ${data.watch.next_round} 與後續配對、最終排名，後端每 10 秒檢查一次。iPhone 鎖屏後仍會繼續。`, 'success');
   } catch (error) {
     setPairingMessage(error?.message || String(error), 'error');
   } finally {
@@ -405,7 +405,7 @@ async function handleStopWatch() {
   try {
     const data = await authorizedWatchRequest('stop');
     renderWatchStatus(data.watch);
-    setPairingMessage('已停止下一輪與最終排名監控。', 'success');
+    setPairingMessage('已停止配對與最終排名監控。', 'success');
   } catch (error) {
     setPairingMessage(error?.message || String(error), 'error');
   } finally {
