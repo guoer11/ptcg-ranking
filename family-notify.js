@@ -1,6 +1,7 @@
 const FAMILY_NOTIFY_FUNCTION_URL = 'https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-family-push';
 const FAMILY_INVITE_STORAGE_KEY = 'ptcgFamilyInviteToken';
 const FAMILY_LINKED_STORAGE_KEY = 'ptcgFamilyPushLinked';
+const FAMILY_MATCH_STORAGE_KEY = 'ptcgFamilyLatestMatch';
 
 const familyNotifyCard = () => document.querySelector('.family-notify-card');
 const familyNotifyTitle = () => document.getElementById('familyNotifyTitle');
@@ -17,10 +18,54 @@ function familyEscape(value = '') {
     .replaceAll("'", '&#039;');
 }
 
+function familySummaryFromParams(params) {
+  const type = params.get('type') || '';
+  if (type !== 'round' && type !== 'final') return null;
+
+  if (type === 'final') {
+    return {
+      type: 'final',
+      player: params.get('player') || '—',
+      rank: params.get('rank') || '—',
+      official: params.get('official') || '',
+      saved_at: new Date().toISOString()
+    };
+  }
+
+  return {
+    type: 'round',
+    round: params.get('round') || '—',
+    player: params.get('player') || '—',
+    table: params.get('table') || '—',
+    opponent: params.get('opponent') || '—',
+    official: params.get('official') || '',
+    saved_at: new Date().toISOString()
+  };
+}
+
+function familyLoadStoredSummary() {
+  try {
+    const raw = localStorage.getItem(FAMILY_MATCH_STORAGE_KEY);
+    if (!raw) return null;
+    const value = JSON.parse(raw);
+    return value && (value.type === 'round' || value.type === 'final') ? value : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function familyStoreSummary(summary) {
+  try {
+    localStorage.setItem(FAMILY_MATCH_STORAGE_KEY, JSON.stringify(summary));
+  } catch (_) {}
+}
+
 function familyRenderMatchSummary() {
   const params = new URLSearchParams(window.location.search);
-  const type = params.get('type') || '';
-  if (type !== 'round' && type !== 'final') return false;
+  const querySummary = familySummaryFromParams(params);
+  if (querySummary) familyStoreSummary(querySummary);
+  const data = querySummary || familyLoadStoredSummary();
+  if (!data) return false;
 
   const summary = document.getElementById('familyMatchSummary');
   const title = document.getElementById('familyMatchTitle');
@@ -30,12 +75,12 @@ function familyRenderMatchSummary() {
   const officialLink = document.getElementById('familyOfficialLink');
   if (!summary || !title || !badge || !eyebrow || !grid || !officialLink) return false;
 
-  const player = params.get('player') || '—';
-  const official = params.get('official') || '';
+  const player = data.player || '—';
+  const official = data.official || '';
 
-  if (type === 'final') {
-    const rank = params.get('rank') || '—';
-    eyebrow.textContent = '比賽完成';
+  if (data.type === 'final') {
+    const rank = data.rank || '—';
+    eyebrow.textContent = querySummary ? '比賽完成' : '最近結果';
     title.textContent = '最終排名';
     badge.textContent = 'Final rank';
     grid.innerHTML = `
@@ -43,10 +88,10 @@ function familyRenderMatchSummary() {
       <article><span>最終排名</span><strong>第 ${familyEscape(rank)} 名</strong></article>`;
     officialLink.textContent = '開啟官方排名';
   } else {
-    const round = params.get('round') || '—';
-    const table = params.get('table') || '—';
-    const opponent = params.get('opponent') || '—';
-    eyebrow.textContent = '最新配對';
+    const round = data.round || '—';
+    const table = data.table || '—';
+    const opponent = data.opponent || '—';
+    eyebrow.textContent = querySummary ? '最新配對' : '最近一次配對';
     title.textContent = `Round ${round}`;
     badge.textContent = `Round ${round}`;
     grid.innerHTML = `
@@ -177,7 +222,7 @@ async function initFamilyNotify() {
 
   if (alreadyLinked) {
     familySetState('家庭通知已啟用', hasMatchSummary
-      ? '這支裝置已完成綁定；上方是剛剛通知的配對資訊。'
+      ? '這支裝置已完成綁定；上方會保留最近一次配對或最終排名資訊。'
       : '這支裝置已完成綁定，Round 配對與最終排名公布時會收到網站推播。', 'success');
     if (button) {
       button.disabled = true;
@@ -188,7 +233,7 @@ async function initFamilyNotify() {
   }
 
   if (hasMatchSummary && !token) {
-    familySetState('配對資訊', '上方可查看這次通知的配對資料。若這支裝置尚未綁定，請重新使用家庭邀請連結設定。');
+    familySetState('配對資訊', '上方可查看最近一次通知的配對資料。若這支裝置尚未綁定，請重新使用家庭邀請連結設定。');
     if (button) button.disabled = true;
     return;
   }
