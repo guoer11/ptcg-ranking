@@ -35,13 +35,13 @@
         <div>
           <p class="eyebrow">Pokémon TCG Taiwan</p>
           <h1>即時配對</h1>
-          <p class="subtitle">TCG マイスター配對查詢、姓名對照、下一輪與最終排名通知</p>
+          <p class="subtitle">TCG マイスター配對查詢、姓名對照、各輪與最終排名通知</p>
         </div>
         <div class="status-card">
           <span class="status-dot"></span>
           <div>
             <strong>後端監控可用</strong>
-            <small>每 10 秒檢查下一輪 / Final rank</small>
+            <small>每 10 秒檢查配對 / Final rank</small>
             <small>LINE + 網站推播</small>
           </div>
         </div>
@@ -53,7 +53,7 @@
     <div class="pairing-grid">
       <section class="panel pairing-panel">
         <h2>配對查詢</h2>
-        <p class="section-note">比賽當天貼一次活動網址或任一 Round 配對網址。貼入 Round 配對網址時會自動同步右側 Round。正式監控會自動檢查下一輪；最終排名公布後也會通知並自動結束這場監控。</p>
+        <p class="section-note">比賽當天貼一次活動網址或任一 Round 配對網址。貼入 Round 配對網址時會自動同步右側 Round。開始監控時，若目前 Round 尚未公布就直接等待本輪；若已公布則自動等待下一輪，之後會一路監控到最終排名。</p>
 
         <div class="pairing-form">
           <div class="pairing-field">
@@ -95,12 +95,12 @@
       <aside>
         <section class="pairing-watch-card">
           <div class="pairing-watch-head">
-            <strong>下一輪 / 最終排名自動監控</strong>
+            <strong>配對 / 最終排名自動監控</strong>
             <span id="pairingWatchStatus" class="pairing-watch-status"><span class="pairing-watch-dot"></span>未監控</span>
           </div>
-          <div id="pairingWatchCopy" class="pairing-watch-copy">正式比賽時，先查到目前 Round，再按「開始監控下一輪」。後端會每 <strong>10 秒</strong>檢查下一輪與最終排名。</div>
+          <div id="pairingWatchCopy" class="pairing-watch-copy">設定目前 Round 後即可開始監控；如果這一輪尚未公布，就直接等待本輪，若已公布則自動等待下一輪。後端每 <strong>10 秒</strong>檢查配對與最終排名。</div>
           <div class="pairing-actions" style="margin-top:14px;">
-            <button id="pairingStartButton" class="primary-btn" type="button">開始監控下一輪</button>
+            <button id="pairingStartButton" class="primary-btn" type="button">開始監控配對</button>
             <button id="pairingStopButton" class="secondary-btn" type="button">停止監控</button>
           </div>
         </section>
@@ -119,7 +119,7 @@
     </div>
 
     <section class="notice" style="margin-top:20px;">
-      <strong>目前為 v0.11.2 測試版</strong>
+      <strong>目前為 v0.11.3 測試版</strong>
       <span>正式比賽配對與最終排名仍以現場主辦與 TCG マイスター頁面為準。</span>
     </section>
   </main>
@@ -129,7 +129,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="pairing.js?v=0.11.0-r3" defer></script>
+  <script src="pairing.js?v=0.11.3-r1" defer></script>
   <script src="site-account-ui.js?v=0.11.2-r1" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
