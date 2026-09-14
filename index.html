@@ -29,6 +29,10 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v2h3v4c0 2.76-2.24 5-5 5h-.17A5.02 5.02 0 0 1 13 15.58V19h4v2H7v-2h4v-3.42A5.02 5.02 0 0 1 9.17 14H9c-2.76 0-5-2.24-5-5V5h3V3Zm10 4v4a3 3 0 0 0 1-2V7h-1ZM6 7v2a3 3 0 0 0 1 2V7H6Z"/></svg>
           賽事資訊
         </a>
+        <a href="pairing.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v3h3v4h-3v3h-4v3h-2v-3H7v-3H4V7h3V4Zm2 2v6h6V6H9Zm-3 3v0h1V9H6Zm11 0v0h1V9h-1Z"/></svg>
+          即時配對
+        </a>
         <div class="site-nav-actions">
           <button id="pushNotificationButton" class="push-notification-icon" type="button" aria-label="通知設定" title="通知設定" hidden>
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -133,7 +137,7 @@
     </section>
 
     <section class="notice">
-      <strong>目前為 v0.10.0 測試版</strong>
+      <strong>目前為 v0.11.0 測試版</strong>
       <span id="versionNoticeText">排名、積分、暱稱與 PTCG ID 維持公開。</span>
     </section>
   </main>
@@ -195,7 +199,7 @@
           <label class="push-pref-row"><span>官方賽事成績公布</span><input id="pushPrefResults" data-push-pref type="checkbox" /></label>
         </section>
 
-        <p class="push-help">LINE 目前會通知官方排行榜公布／更新與新增聯盟賽事；LINE 用量直接向 LINE 官方 API 查詢，不由網站自行累計。網站推播則依上方勾選項目發送。iPhone 網站推播需從「加入主畫面」後的網站圖示開啟。</p>
+        <p class="push-help">LINE 目前會通知官方排行榜公布／更新與新增聯盟賽事；即時配對監控會在下一輪公布後另外通知。LINE 用量直接向 LINE 官方 API 查詢，不由網站自行累計。iPhone 網站推播需從「加入主畫面」後的網站圖示開啟。</p>
       </div>
     </section>
   </div>
@@ -208,7 +212,7 @@
   <script src="app.js?v=0.3-r1" defer></script>
   <script src="identity-ui.js?v=0.4-r1" defer></script>
   <script src="auth-ui.js?v=0.6-r1" defer></script>
-  <script src="lookup-ui.js?v=0.10.0-r2" defer></script>
+  <script src="lookup-ui.js?v=0.11.0-r1" defer></script>
   <script src="ranking-season-ui.js?v=0.4-r1" defer></script>
   <script src="push-ui.js?v=0.6-r1" defer></script>
   <script src="push-fix.js?v=0.6-r1" defer></script>
