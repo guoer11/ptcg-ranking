@@ -1,0 +1,231 @@
+.pairing-header { padding-top: 28px; }
+.pairing-main { padding: 28px 0 56px; }
+
+.pairing-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.pairing-panel {
+  padding: 18px;
+}
+
+.pairing-panel h2 {
+  margin: 0 0 5px;
+}
+
+.pairing-panel .section-note {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.pairing-form {
+  display: grid;
+  gap: 12px;
+}
+
+.pairing-field {
+  display: grid;
+  gap: 6px;
+}
+
+.pairing-field label {
+  font-size: 12px;
+  font-weight: 800;
+  color: #526078;
+}
+
+.pairing-field input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pairing-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 105px;
+  gap: 10px;
+}
+
+.pairing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.pairing-actions button {
+  min-height: 42px;
+}
+
+.pairing-test-btn {
+  background: #eef5ff;
+  border-color: #c6daf8;
+  color: #245fc7;
+}
+
+.pairing-result {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #dce3ee;
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+.pairing-result.is-found {
+  background: #eef9f3;
+  border-color: #b9e3ce;
+}
+
+.pairing-result.is-waiting {
+  background: #fff9e8;
+  border-color: #efd994;
+}
+
+.pairing-result.is-error {
+  background: #fff2f2;
+  border-color: #efc0c0;
+}
+
+.pairing-result-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.pairing-result-title strong {
+  font-size: 18px;
+}
+
+.pairing-round-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: #eaf1ff;
+  color: #245fc7;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.pairing-match-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pairing-match-grid article {
+  min-width: 0;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(207,217,232,.8);
+}
+
+.pairing-match-grid span {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.pairing-match-grid strong {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 16px;
+}
+
+.pairing-match-grid small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.pairing-watch-card {
+  padding: 16px;
+  border: 1px solid #d9e3f0;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.pairing-watch-card + .pairing-watch-card { margin-top: 12px; }
+
+.pairing-watch-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.pairing-watch-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: #eef2f8;
+  color: #596677;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.pairing-watch-status.active {
+  background: #e6f6ef;
+  color: #167153;
+}
+
+.pairing-watch-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.pairing-watch-copy {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.pairing-watch-copy strong { color: var(--text); }
+
+.pairing-history-note {
+  padding: 13px 14px;
+  border-radius: 13px;
+  background: #fff7dc;
+  color: #755700;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.pairing-message {
+  margin-top: 12px;
+  min-height: 20px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.pairing-message.success { color: #167153; }
+.pairing-message.error { color: #a22d2d; }
+
+@media (max-width: 820px) {
+  .pairing-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .pairing-main { padding-top: 18px; }
+  .pairing-panel { padding: 15px; }
+  .pairing-row { grid-template-columns: 1fr 88px; }
+  .pairing-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .pairing-actions button { width: 100%; }
+  .pairing-match-grid { grid-template-columns: 1fr; }
+}
