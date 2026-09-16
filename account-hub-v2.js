@@ -8,11 +8,11 @@
     gear: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.7 2h2.6l.5 2a8.2 8.2 0 0 1 1.8.8l1.8-1 1.8 1.8-1 1.8c.3.6.6 1.2.8 1.8l2 .5v2.6l-2 .5a8.2 8.2 0 0 1-.8 1.8l1 1.8-1.8 1.8-1.8-1a8.2 8.2 0 0 1-1.8.8l-.5 2h-2.6l-.5-2a8.2 8.2 0 0 1-1.8-.8l-1.8 1-1.8-1.8 1-1.8a8.2 8.2 0 0 1-.8-1.8l-2-.5V9.7l2-.5c.2-.6.5-1.2.8-1.8l-1-1.8 1.8-1.8 1.8 1a8.2 8.2 0 0 1 1.8-.8l.5-2ZM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/></svg>'
   };
 
-  function row(icon, tone, title, subtitle, target, extra = '') {
+  function row(icon, tone, title, subtitle, target) {
     return `<button class="account-app-row" type="button" data-app-target="${target}">
       <span class="account-app-row-icon ${tone}">${icon}</span>
       <span class="account-app-row-copy"><strong>${title}</strong><small>${subtitle}</small></span>
-      ${extra}<span class="account-app-chevron" aria-hidden="true">›</span>
+      <span class="account-app-chevron" aria-hidden="true">›</span>
     </button>`;
   }
 
@@ -43,23 +43,12 @@
     view.hidden = true;
     view.innerHTML = `
       <button class="account-back-row" type="button" data-account-back>‹ <span>帳號與通知</span></button>
-      <div class="account-family-card">
-        <span class="account-family-hero">${ICONS.family}</span>
-        <strong>家庭共享</strong>
-        <p>你其實已經有「家庭通知裝置」功能。家人的 iPhone 不用登入 Google，也能接收 Round 配對與最終排名推播。</p>
-        <button id="accountFamilyManageButton" class="account-family-manage" type="button">管理家庭通知裝置 <span>›</span></button>
+      <div id="familyNotificationCard" class="account-family-manager">
+        <div class="family-owner-empty">家庭通知裝置載入中…</div>
       </div>`;
     body.appendChild(view);
     view.querySelector('[data-account-back]')?.addEventListener('click', () => window.showAccountHubView?.('home'));
-    view.querySelector('#accountFamilyManageButton')?.addEventListener('click', () => {
-      const card = document.getElementById('familyNotificationCard');
-      if (card) {
-        document.querySelector('[data-close-push-modal]')?.click();
-        setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
-      } else {
-        window.location.href = 'pairing.html#familyNotificationCard';
-      }
-    });
+    document.dispatchEvent(new CustomEvent('account-family-view-ready'));
   }
 
   function splitNotificationViews(body) {
@@ -101,7 +90,7 @@
     const headings = {
       home: ['帳號與通知', '個人資料、家庭共享與通知設定'],
       account: ['個人資料', 'Google 帳號與登入狀態'],
-      family: ['家庭共享', '管理家人的配對通知'],
+      family: ['管理家庭通知裝置', '邀請、分享與移除家人的通知裝置'],
       web: ['網站推播通知', '推播狀態與接收項目'],
       line: ['LINE 通知', '連線狀態與測試發送']
     };
@@ -134,7 +123,7 @@
         </div>
         <div class="account-app-list">
           ${row(ICONS.account, 'account', '個人資料', 'Google 帳號 · 登入 / 登出', 'account')}
-          ${row(ICONS.family, 'family', '家庭共享', '家庭通知裝置 · 家人使用', 'family')}
+          ${row(ICONS.family, 'family', '家庭共享', '管理家庭通知裝置', 'family')}
         </div>
       </section>
       <section class="account-app-group account-app-group-notify">
@@ -150,6 +139,7 @@
       </section>`;
 
     home.querySelector('[data-app-target="account"] small').id = 'accountAppProfileStatus';
+    home.querySelector('[data-app-target="family"] small').id = 'accountAppFamilyStatus';
     home.querySelector('[data-app-target="web"] small').id = 'accountAppWebStatus';
     home.querySelector('[data-app-target="line"] small').id = 'accountAppLineStatus';
 
@@ -164,6 +154,7 @@
     watchTargets.forEach(target => observer.observe(target, { childList: true, subtree: true, characterData: true }));
     syncStatus();
     home.dataset.appStyleReady = '1';
+    document.dispatchEvent(new CustomEvent('account-hub-ready'));
     return true;
   }
 
