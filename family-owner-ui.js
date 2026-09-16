@@ -6,32 +6,35 @@ let familyOwnerClient = null;
 let familyOwnerSession = null;
 let familyOwnerAuthorized = false;
 let familyOwnerBusy = false;
+let familyOwnerAuthBound = false;
 
 function familyOwnerEnsureStyle() {
   if (document.querySelector('link[data-family-owner-style]')) return;
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'family-owner-ui.css?v=0.12.0-r1';
+  link.href = 'family-owner-ui.css?v=0.13.1-r1';
   link.dataset.familyOwnerStyle = 'true';
   document.head.appendChild(link);
 }
 
+function familyOwnerCard() {
+  return document.querySelector('[data-account-view="family"] #familyNotificationCard');
+}
+
 function familyOwnerEnsureCard() {
-  let card = document.getElementById('familyNotificationCard');
-  if (card) return card;
+  const card = familyOwnerCard();
+  if (!card) return null;
+  if (card.dataset.familyOwnerReady === '1') return card;
 
-  const aside = document.querySelector('.pairing-grid > aside');
-  if (!aside) return null;
-
-  card = document.createElement('section');
-  card.id = 'familyNotificationCard';
-  card.className = 'pairing-watch-card family-owner-card';
+  card.className = 'account-family-manager family-owner-card';
   card.innerHTML = `
-    <div class="pairing-watch-head">
-      <strong>家庭通知裝置</strong>
-      <span id="familyDeviceCount" class="pairing-watch-status">0 台</span>
+    <div class="family-owner-head">
+      <div>
+        <strong>家庭通知裝置</strong>
+        <span>家人的 iPhone 只接收 Round 配對與最終排名網站推播，不需要 Google 登入，也不增加 LINE 官方帳號訊息量。</span>
+      </div>
+      <span id="familyDeviceCount" class="family-owner-count">0 台</span>
     </div>
-    <div class="pairing-watch-copy">可讓家人的 iPhone 只接收 Round 配對與最終排名網站推播，不需要 Google 登入，也不增加 LINE 官方帳號訊息量。</div>
     <div class="family-owner-form">
       <label for="familyDeviceLabel">裝置名稱</label>
       <input id="familyDeviceLabel" class="search-input" type="text" value="家庭 iPhone" maxlength="40" autocomplete="off" />
@@ -40,6 +43,7 @@ function familyOwnerEnsureCard() {
         <button id="familyShareInviteButton" class="secondary-btn" type="button">分享邀請</button>
         <button id="familyCopyInviteButton" class="secondary-btn" type="button">複製連結</button>
       </div>
+      <small class="family-owner-tip">可產生一次性邀請連結，家庭裝置只會收到配對與最終排名網站推播。</small>
     </div>
     <div id="familyInvitePanel" class="family-owner-invite" hidden>
       <input id="familyInviteUrl" class="search-input" type="text" readonly aria-label="家庭通知邀請連結" />
@@ -50,15 +54,12 @@ function familyOwnerEnsureCard() {
       <div class="family-owner-devices-head"><strong>已綁定裝置</strong><span>只收配對通知</span></div>
       <div id="familyDeviceList"><div class="family-owner-empty">讀取中…</div></div>
     </div>`;
+  card.dataset.familyOwnerReady = '1';
 
-  const historyNote = aside.querySelector('.pairing-history-note');
-  if (historyNote) historyNote.before(card);
-  else aside.appendChild(card);
+  document.getElementById('familyCreateInviteButton')?.addEventListener('click', createFamilyInvite);
+  document.getElementById('familyCopyInviteButton')?.addEventListener('click', copyFamilyInvite);
+  document.getElementById('familyShareInviteButton')?.addEventListener('click', shareFamilyInvite);
   return card;
-}
-
-function familyOwnerCard() {
-  return document.getElementById('familyNotificationCard');
 }
 
 function familyOwnerMessage(text, type = '') {
@@ -72,9 +73,9 @@ function familyOwnerSetBusy(busy) {
   familyOwnerBusy = busy;
   ['familyCreateInviteButton', 'familyShareInviteButton', 'familyCopyInviteButton'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.disabled = busy;
+    if (el) el.disabled = busy || !familyOwnerAuthorized;
   });
-  document.querySelectorAll('[data-family-remove]').forEach(button => { button.disabled = busy; });
+  document.querySelectorAll('[data-family-remove]').forEach(button => { button.disabled = busy || !familyOwnerAuthorized; });
 }
 
 async function familyOwnerRequest(action, extra = {}) {
@@ -112,7 +113,9 @@ function familyOwnerEscape(value = '') {
 function renderFamilyDevices(devices = []) {
   const list = document.getElementById('familyDeviceList');
   const count = document.getElementById('familyDeviceCount');
+  const homeStatus = document.getElementById('accountAppFamilyStatus');
   if (count) count.textContent = `${devices.length} 台`;
+  if (homeStatus) homeStatus.textContent = devices.length ? `已綁定 ${devices.length} 台裝置` : '尚未綁定家庭裝置';
   if (!list) return;
 
   if (!devices.length) {
@@ -131,7 +134,7 @@ function renderFamilyDevices(devices = []) {
 
   list.querySelectorAll('[data-family-remove]').forEach(button => {
     button.addEventListener('click', async () => {
-      if (familyOwnerBusy) return;
+      if (familyOwnerBusy || !familyOwnerAuthorized) return;
       const id = Number(button.dataset.familyRemove);
       if (!Number.isInteger(id)) return;
       familyOwnerSetBusy(true);
@@ -223,13 +226,15 @@ async function shareFamilyInvite() {
 }
 
 async function refreshFamilyOwnerAuth() {
-  if (!familyOwnerClient) return;
+  if (!familyOwnerClient || !familyOwnerEnsureCard()) return;
   const { data } = await familyOwnerClient.auth.getSession();
   familyOwnerSession = data?.session || null;
   familyOwnerAuthorized = false;
+  familyOwnerSetBusy(false);
 
   if (!familyOwnerSession) {
-    familyOwnerMessage('請先以授權帳號登入。');
+    renderFamilyDevices([]);
+    familyOwnerMessage('請先到「個人資料」以授權 Google 帳號登入。');
     return;
   }
 
@@ -237,7 +242,9 @@ async function refreshFamilyOwnerAuth() {
     const { data: allowed, error } = await familyOwnerClient.rpc('can_use_pairing');
     if (error) throw error;
     familyOwnerAuthorized = allowed === true;
+    familyOwnerSetBusy(false);
     if (!familyOwnerAuthorized) {
+      renderFamilyDevices([]);
       familyOwnerMessage('目前帳號沒有家庭通知管理權限。', 'error');
       return;
     }
@@ -245,24 +252,36 @@ async function refreshFamilyOwnerAuth() {
     await refreshFamilyDevices();
   } catch (error) {
     console.warn('家庭通知權限確認失敗', error);
+    familyOwnerAuthorized = false;
+    familyOwnerSetBusy(false);
     familyOwnerMessage('家庭通知權限確認失敗。', 'error');
   }
 }
 
 async function initFamilyOwnerUI() {
   familyOwnerEnsureStyle();
-  familyOwnerEnsureCard();
-  if (!familyOwnerCard() || !window.supabase?.createClient) return;
-  familyOwnerClient = window.supabase.createClient(FAMILY_OWNER_SUPABASE_URL, FAMILY_OWNER_SUPABASE_KEY);
+  if (!familyOwnerEnsureCard() || !window.supabase?.createClient) return false;
 
-  document.getElementById('familyCreateInviteButton')?.addEventListener('click', createFamilyInvite);
-  document.getElementById('familyCopyInviteButton')?.addEventListener('click', copyFamilyInvite);
-  document.getElementById('familyShareInviteButton')?.addEventListener('click', shareFamilyInvite);
-
+  if (!familyOwnerClient) familyOwnerClient = window.supabase.createClient(FAMILY_OWNER_SUPABASE_URL, FAMILY_OWNER_SUPABASE_KEY);
+  if (!familyOwnerAuthBound) {
+    familyOwnerAuthBound = true;
+    familyOwnerClient.auth.onAuthStateChange(() => setTimeout(refreshFamilyOwnerAuth, 0));
+  }
   await refreshFamilyOwnerAuth();
-  familyOwnerClient.auth.onAuthStateChange(() => {
-    setTimeout(refreshFamilyOwnerAuth, 0);
-  });
+  return true;
 }
 
-document.addEventListener('DOMContentLoaded', initFamilyOwnerUI);
+function familyOwnerBoot() {
+  familyOwnerEnsureStyle();
+  let tries = 0;
+  const timer = setInterval(async () => {
+    tries += 1;
+    if (await initFamilyOwnerUI() || tries > 100) clearInterval(timer);
+  }, 60);
+  initFamilyOwnerUI();
+}
+
+document.addEventListener('account-family-view-ready', () => initFamilyOwnerUI());
+document.addEventListener('account-family-opened', () => refreshFamilyOwnerAuth());
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', familyOwnerBoot, { once: true });
+else familyOwnerBoot();
