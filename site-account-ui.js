@@ -55,7 +55,7 @@ function siteAccountEnsurePushModal() {
       <header class="modal-header">
         <div>
           <h2 id="pushModalTitle">帳號與通知</h2>
-          <small>登入、登出與通知設定集中在這裡</small>
+          <small>選擇要調整的項目</small>
         </div>
         <button class="modal-close" type="button" aria-label="關閉" data-close-push-modal>×</button>
       </header>
@@ -267,14 +267,14 @@ function siteAccountLoadScript(src, initName) {
 }
 
 function siteAccountInit() {
-  siteAccountEnsureStylesheet('site-nav.css?v=0.13.0-r1', 'nav');
-  siteAccountEnsureStylesheet('auth-ui.css?v=0.13.0-r1', 'auth');
-  siteAccountEnsureStylesheet('push-ui.css?v=0.13.0-r1', 'push');
+  siteAccountEnsureStylesheet('site-nav.css?v=0.13.1-r1', 'nav');
+  siteAccountEnsureStylesheet('auth-ui.css?v=0.13.1-r1', 'auth');
+  siteAccountEnsureStylesheet('push-ui.css?v=0.13.1-r1', 'push');
   siteAccountEnsureControls();
   siteAccountEnsurePushModal();
   siteAccountInitAuth();
 }
 
-siteAccountLoadScript('push-ui.js?v=0.13.0-r1', 'initPushUI');
-siteAccountLoadScript('line-ui.js?v=0.13.0-r1', 'initLineUI');
+siteAccountLoadScript('push-ui.js?v=0.13.1-r1', 'initPushUI');
+siteAccountLoadScript('line-ui.js?v=0.13.1-r1', 'initLineUI');
 document.addEventListener('DOMContentLoaded', siteAccountInit);
