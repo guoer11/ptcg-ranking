@@ -1,0 +1,151 @@
+/* v0.13.1：參考日系 App 的分組設定卡片；沿用網站功能，不使用圖片素材。 */
+.account-app-home { display: grid; gap: 14px; }
+.account-app-group {
+  overflow: hidden;
+  border: 1px solid rgba(226,232,240,.9);
+  border-radius: 24px;
+  background: rgba(255,255,255,.94);
+  box-shadow: 0 8px 22px rgba(15,23,42,.045);
+}
+.account-app-group-head {
+  min-height: 68px;
+  display: grid;
+  grid-template-columns: 44px minmax(0,1fr) auto;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 15px;
+}
+.account-app-group-account .account-app-group-head {
+  background: linear-gradient(105deg, #fff5d9 0%, #fffaf0 58%, #fff 100%);
+}
+.account-app-group-notify .account-app-group-head {
+  background: linear-gradient(105deg, #ffe8ed 0%, #fff3f6 58%, #fff 100%);
+}
+.account-app-group-head > strong {
+  color: #20242b;
+  font-size: 18px;
+  font-weight: 850;
+  letter-spacing: .01em;
+}
+.account-app-group-icon,
+.account-app-row-icon {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+.account-app-group-icon { width: 42px; height: 42px; }
+.account-app-group-icon svg { width: 24px; height: 24px; fill: currentColor; }
+.account-app-group-icon.account { color: #9a6a10; background: #ffedb9; }
+.account-app-group-icon.notify { color: #bd3f58; background: #ffd3dc; }
+.account-app-status {
+  justify-self: end;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #eef1f4;
+  color: #858b94;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.account-app-status.is-on { background: #dff7e9; color: #20a767; }
+.account-app-list { padding: 0 14px; background: rgba(255,255,255,.96); }
+.account-app-row {
+  width: 100%;
+  min-height: 70px;
+  display: grid;
+  grid-template-columns: 42px minmax(0,1fr) 20px;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 0;
+  border: 0;
+  border-bottom: 1px solid #edf0f3;
+  border-radius: 0;
+  background: transparent;
+  color: #20242b;
+  text-align: left;
+  box-shadow: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(47,111,237,.07);
+}
+.account-app-row:last-child { border-bottom: 0; }
+.account-app-row:active { opacity: .68; }
+.account-app-row-icon { width: 38px; height: 38px; }
+.account-app-row-icon svg { width: 23px; height: 23px; fill: currentColor; }
+.account-app-row-icon.account { color: #52606f; background: #eef3f8; }
+.account-app-row-icon.family { color: #5f72c8; background: #edf0ff; }
+.account-app-row-icon.web { color: #5a6776; background: #edf2f6; }
+.account-app-row-icon.line { color: #fff; background: #25c75a; }
+.account-app-row-copy { min-width: 0; }
+.account-app-row-copy strong {
+  display: block;
+  color: #20242b;
+  font-size: 16px;
+  font-weight: 800;
+}
+.account-app-row-copy small {
+  display: block;
+  overflow: hidden;
+  margin-top: 2px;
+  color: #8a9099;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account-app-chevron {
+  color: #8f959c;
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1;
+  text-align: right;
+}
+.account-family-card {
+  padding: 24px 18px 18px;
+  border: 1px solid #e8eaf2;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #f2f4ff 0%, #fff 68%);
+  text-align: center;
+}
+.account-family-hero {
+  width: 62px;
+  height: 62px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: #e7ebff;
+  color: #6276cf;
+}
+.account-family-hero svg { width: 34px; height: 34px; fill: currentColor; }
+.account-family-card > strong { display: block; color: #20242b; font-size: 19px; }
+.account-family-card p { margin: 8px auto 17px; max-width: 390px; color: #747b86; font-size: 12px; line-height: 1.65; }
+.account-family-manage {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  border: 1px solid #e5e8ef;
+  border-radius: 15px;
+  background: #fff;
+  color: #5369c7;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: none;
+}
+.account-family-manage span { color: #9aa0a8; font-size: 25px; font-weight: 300; }
+
+@media (max-width: 620px) {
+  .account-app-home { gap: 12px; }
+  .account-app-group { border-radius: 22px; }
+  .account-app-group-head { min-height: 62px; grid-template-columns: 40px minmax(0,1fr) auto; padding: 9px 12px; }
+  .account-app-group-icon { width: 38px; height: 38px; }
+  .account-app-group-head > strong { font-size: 17px; }
+  .account-app-list { padding: 0 12px; }
+  .account-app-row { min-height: 66px; grid-template-columns: 38px minmax(0,1fr) 18px; gap: 10px; }
+  .account-app-row-icon { width: 36px; height: 36px; }
+  .account-app-row-copy strong { font-size: 15px; }
+  .account-app-row-copy small { font-size: 11px; }
+}
