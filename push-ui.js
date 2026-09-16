@@ -46,6 +46,110 @@ function pushSetBusy(busy) {
   });
 }
 
+function pushHubIcon(type) {
+  if (type === 'account') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0H5Z"/></svg>';
+  return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0v4.6L4 16v1h16v-1l-2-2.4V9Zm-8.3 10a2.5 2.5 0 0 0 4.6 0H9.7Z"/></svg>';
+}
+
+function pushShowHubView(name = 'home') {
+  const modal = pushModal();
+  if (!modal) return;
+  modal.querySelectorAll('[data-account-view]').forEach(view => {
+    view.hidden = view.dataset.accountView !== name;
+  });
+  const title = document.getElementById('pushModalTitle');
+  const subtitle = modal.querySelector('.modal-header small');
+  if (title) title.textContent = name === 'account' ? '帳號設定' : name === 'notifications' ? '通知設定' : '帳號與通知';
+  if (subtitle) subtitle.textContent = name === 'account'
+    ? 'Google 帳號與授權狀態'
+    : name === 'notifications'
+      ? '網站推播、LINE 與通知項目'
+      : '選擇要調整的項目';
+  modal.querySelector('.modal-body')?.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+function pushEnsureHubLayout() {
+  const modal = pushModal();
+  const body = modal?.querySelector('.modal-body');
+  if (!modal || !body || body.dataset.accountHubReady === '1') return;
+
+  const accountStatus = document.getElementById('accountStatusTitle')?.closest('.push-status-box');
+  const accountActions = document.getElementById('accountAuthActionButton')?.closest('.push-actions');
+  const webStatus = document.getElementById('pushStatusTitle')?.closest('.push-status-box');
+  const webActions = document.getElementById('pushToggleButton')?.closest('.push-actions');
+  const lineStatus = document.getElementById('lineStatusText')?.closest('.push-status-box');
+  const lineActions = document.getElementById('lineTestButton')?.closest('.push-actions');
+  const preferences = body.querySelector('.push-preferences');
+  const help = body.querySelector('.push-help');
+  if (!accountStatus || !accountActions || !webStatus || !webActions || !lineStatus || !lineActions || !preferences) return;
+
+  const home = document.createElement('section');
+  home.className = 'account-hub-view';
+  home.dataset.accountView = 'home';
+  home.innerHTML = `
+    <div class="account-hub-profile">
+      <span class="account-hub-profile-icon">${pushHubIcon('account')}</span>
+      <div><strong>PTCG 個人設定</strong><small>帳號與通知集中管理</small></div>
+    </div>
+    <div class="account-hub-menu">
+      <button class="account-menu-row" type="button" data-account-target="account">
+        <span class="account-menu-icon account">${pushHubIcon('account')}</span>
+        <span class="account-menu-copy"><strong>帳號設定</strong><small id="accountMenuStatus">Google 帳號、登入與登出</small></span>
+        <span class="account-menu-chevron" aria-hidden="true">›</span>
+      </button>
+      <button class="account-menu-row" type="button" data-account-target="notifications">
+        <span class="account-menu-icon notification">${pushHubIcon('notification')}</span>
+        <span class="account-menu-copy"><strong>通知設定</strong><small id="notificationMenuStatus">網站推播、LINE 與通知項目</small></span>
+        <span class="account-menu-chevron" aria-hidden="true">›</span>
+      </button>
+    </div>`;
+
+  const accountView = document.createElement('section');
+  accountView.className = 'account-detail-view';
+  accountView.dataset.accountView = 'account';
+  accountView.hidden = true;
+  accountView.innerHTML = '<button class="account-back-row" type="button" data-account-back>‹ <span>帳號與通知</span></button><div class="account-detail-label">帳號</div>';
+  accountView.append(accountStatus, accountActions);
+
+  const notificationView = document.createElement('section');
+  notificationView.className = 'account-detail-view';
+  notificationView.dataset.accountView = 'notifications';
+  notificationView.hidden = true;
+  notificationView.innerHTML = '<button class="account-back-row" type="button" data-account-back>‹ <span>帳號與通知</span></button><div class="account-detail-label">網站推播</div>';
+  notificationView.append(webStatus, webActions);
+  const lineLabel = document.createElement('div');
+  lineLabel.className = 'account-detail-label';
+  lineLabel.textContent = 'LINE';
+  notificationView.append(lineLabel, lineStatus, lineActions, preferences);
+  if (help) notificationView.append(help);
+
+  body.replaceChildren(home, accountView, notificationView);
+  body.dataset.accountHubReady = '1';
+
+  body.querySelectorAll('[data-account-target]').forEach(button => {
+    button.addEventListener('click', () => pushShowHubView(button.dataset.accountTarget));
+  });
+  body.querySelectorAll('[data-account-back]').forEach(button => {
+    button.addEventListener('click', () => pushShowHubView('home'));
+  });
+
+  const accountTitle = document.getElementById('accountStatusTitle');
+  const accountMenuStatus = document.getElementById('accountMenuStatus');
+  if (accountTitle && accountMenuStatus) {
+    const sync = () => { accountMenuStatus.textContent = accountTitle.textContent || 'Google 帳號、登入與登出'; };
+    new MutationObserver(sync).observe(accountTitle, { childList: true, subtree: true, characterData: true });
+    sync();
+  }
+  const notificationTitle = pushStatusTitle();
+  const notificationMenuStatus = document.getElementById('notificationMenuStatus');
+  if (notificationTitle && notificationMenuStatus) {
+    const sync = () => { notificationMenuStatus.textContent = notificationTitle.textContent || '網站推播、LINE 與通知項目'; };
+    new MutationObserver(sync).observe(notificationTitle, { childList: true, subtree: true, characterData: true });
+    sync();
+  }
+  pushShowHubView('home');
+}
+
 function pushBase64ToUint8Array(value) {
   const padding = '='.repeat((4 - value.length % 4) % 4);
   const base64 = (value + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -195,7 +299,7 @@ async function pushRefreshStatus() {
   const allowed = Boolean(identitySession && identityAuthorized);
   if (!allowed) {
     pushSubscription = null;
-    pushSetMessage('網站推播', identitySession ? '目前登入的帳號沒有通知設定權限。' : '請先在上方登入授權 Google 帳號。');
+    pushSetMessage('網站推播', identitySession ? '目前登入的帳號沒有通知設定權限。' : '請先在帳號設定登入授權 Google 帳號。');
     if (pushToggleButton()) pushToggleButton().textContent = '開啟通知';
     pushSetBusy(false);
     return;
@@ -222,7 +326,7 @@ async function pushRefreshStatus() {
     pushSetMessage('請從主畫面開啟', 'iPhone 的網站推播需要先加入主畫面，再從主畫面圖示開啟。');
     if (pushToggleButton()) pushToggleButton().textContent = '開啟通知';
   } else {
-    pushSetMessage('尚未開啟通知', '按下「開啟通知」後，iPhone 會詢問是否允許推播。');
+    pushSetMessage('尚未開啟通知', '進入通知設定後即可開啟 iPhone 網站推播。');
     if (pushToggleButton()) pushToggleButton().textContent = '開啟通知';
   }
 
@@ -232,6 +336,8 @@ async function pushRefreshStatus() {
 function pushOpenModal() {
   const modal = pushModal();
   if (!modal) return;
+  pushEnsureHubLayout();
+  pushShowHubView('home');
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('modal-open');
@@ -244,6 +350,7 @@ function pushCloseModal() {
   modal.classList.remove('open');
   modal.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('modal-open');
+  pushShowHubView('home');
 }
 
 async function pushHandleToggle() {
@@ -285,6 +392,14 @@ async function pushHandleTest() {
 }
 
 function initPushUI() {
+  const modal = pushModal();
+  if (!modal) return;
+  pushEnsureHubLayout();
+  if (modal.dataset.pushUiReady === '1') {
+    pushRefreshStatus();
+    return;
+  }
+  modal.dataset.pushUiReady = '1';
   pushToggleButton()?.addEventListener('click', pushHandleToggle);
   pushTestButton()?.addEventListener('click', pushHandleTest);
   document.querySelectorAll('[data-close-push-modal]').forEach(item => item.addEventListener('click', pushCloseModal));
@@ -306,5 +421,6 @@ function initPushUI() {
 }
 
 window.openAccountNotificationModal = pushOpenModal;
-window.updatePushUI = () => { pushRefreshStatus(); };
+window.showAccountHubView = pushShowHubView;
+window.updatePushUI = () => { pushEnsureHubLayout(); pushRefreshStatus(); };
 document.addEventListener('DOMContentLoaded', initPushUI);
