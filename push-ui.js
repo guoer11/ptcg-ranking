@@ -4,7 +4,6 @@ let pushRegistration = null;
 let pushSubscription = null;
 let pushBusy = false;
 
-const pushButton = () => document.getElementById('pushNotificationButton');
 const pushModal = () => document.getElementById('pushModal');
 const pushStatusTitle = () => document.getElementById('pushStatusTitle');
 const pushStatusText = () => document.getElementById('pushStatusText');
@@ -39,10 +38,10 @@ function pushSetMessage(title, text) {
 
 function pushSetBusy(busy) {
   pushBusy = busy;
-  if (pushToggleButton()) pushToggleButton().disabled = busy;
-  if (pushTestButton()) pushTestButton().disabled = busy || !pushSubscription;
+  if (pushToggleButton()) pushToggleButton().disabled = busy || !identityAuthorized;
+  if (pushTestButton()) pushTestButton().disabled = busy || !identityAuthorized || !pushSubscription;
   document.querySelectorAll('[data-push-pref]').forEach(input => {
-    input.disabled = busy || !pushSubscription;
+    input.disabled = busy || !identityAuthorized || !pushSubscription;
     input.closest('.push-pref-row')?.classList.toggle('is-disabled', input.disabled);
   });
 }
@@ -193,18 +192,18 @@ async function pushSavePreferences() {
 }
 
 async function pushRefreshStatus() {
-  const button = pushButton();
-  if (!button) return;
   const allowed = Boolean(identitySession && identityAuthorized);
-  button.hidden = !allowed;
   if (!allowed) {
     pushSubscription = null;
+    pushSetMessage('網站推播', identitySession ? '目前登入的帳號沒有通知設定權限。' : '請先在上方登入授權 Google 帳號。');
+    if (pushToggleButton()) pushToggleButton().textContent = '開啟通知';
+    pushSetBusy(false);
     return;
   }
 
   if (!pushSupportsWebPush()) {
-    button.classList.remove('is-enabled');
     pushSetMessage('此裝置不支援推播', '目前的瀏覽器無法使用網站通知。');
+    pushSetBusy(false);
     return;
   }
 
@@ -212,9 +211,6 @@ async function pushRefreshStatus() {
   if (pushSubscription) await pushLoadPreferences();
 
   const enabled = Boolean(pushSubscription && Notification.permission === 'granted');
-  button.classList.toggle('is-enabled', enabled);
-  button.title = enabled ? '通知已開啟' : '通知設定';
-  button.setAttribute('aria-label', enabled ? '通知已開啟，點此設定' : '通知設定');
 
   if (enabled) {
     pushSetMessage('通知已開啟', '有新的官方排名或你勾選的聯盟賽事時，會推播到這支 iPhone。');
@@ -235,7 +231,7 @@ async function pushRefreshStatus() {
 
 function pushOpenModal() {
   const modal = pushModal();
-  if (!modal || !identityAuthorized) return;
+  if (!modal) return;
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('modal-open');
@@ -251,7 +247,7 @@ function pushCloseModal() {
 }
 
 async function pushHandleToggle() {
-  if (pushBusy) return;
+  if (pushBusy || !identityAuthorized) return;
   pushSetBusy(true);
   try {
     await pushGetCurrentSubscription();
@@ -274,7 +270,7 @@ async function pushHandleToggle() {
 }
 
 async function pushHandleTest() {
-  if (pushBusy) return;
+  if (pushBusy || !identityAuthorized) return;
   pushSetBusy(true);
   pushSetMessage('正在發送測試通知', '請稍候幾秒。');
   try {
@@ -289,7 +285,6 @@ async function pushHandleTest() {
 }
 
 function initPushUI() {
-  pushButton()?.addEventListener('click', pushOpenModal);
   pushToggleButton()?.addEventListener('click', pushHandleToggle);
   pushTestButton()?.addEventListener('click', pushHandleTest);
   document.querySelectorAll('[data-close-push-modal]').forEach(item => item.addEventListener('click', pushCloseModal));
@@ -310,5 +305,6 @@ function initPushUI() {
   pushRefreshStatus();
 }
 
+window.openAccountNotificationModal = pushOpenModal;
 window.updatePushUI = () => { pushRefreshStatus(); };
 document.addEventListener('DOMContentLoaded', initPushUI);
