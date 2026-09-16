@@ -8,143 +8,198 @@
   background: rgba(255,255,255,.08);
   color: #fff;
   cursor: pointer;
-  transition: background .16s ease, border-color .16s ease, transform .16s ease;
 }
-.push-notification-icon:hover { background: rgba(255,255,255,.14); transform: translateY(-1px); }
 .push-notification-icon svg { width: 22px; height: 22px; fill: currentColor; }
-.push-notification-icon.is-enabled { color: #6ee7b7; border-color: rgba(110,231,183,.5); }
 .push-notification-icon[hidden] { display: none !important; }
 
-/* v0.13.0：帳號＋通知維持同一功能，改為日系 App 的柔和分組卡片風格。 */
+/* v0.13.1：帳號與通知改為「主選單 → 次層設定」的 App 式導覽。 */
 .push-modal-card {
-  width: min(560px, calc(100% - 24px));
-  max-height: min(88vh, 820px);
+  width: min(520px, calc(100% - 20px));
+  max-height: min(88vh, 800px);
   overflow: hidden;
-  border: 1px solid rgba(203,213,225,.78);
+  border: 1px solid #e6e9ee;
   border-radius: 28px;
-  background: #f6f8fb;
+  background: #f5f6f8;
   box-shadow: 0 24px 70px rgba(15,23,42,.24);
 }
-
 #pushModal .modal-header {
-  padding: 19px 20px 16px;
+  padding: 20px 20px 17px;
   border-bottom: 0;
-  background: linear-gradient(115deg, #e9f6ff 0%, #fff8df 100%);
+  background: linear-gradient(115deg, #eaf7ff 0%, #fff8d9 100%);
 }
-#pushModal .modal-header h2 { margin: 0; font-size: 21px; letter-spacing: .01em; }
-#pushModal .modal-header small { display: block; margin-top: 3px; color: #64748b; font-size: 12px; }
+#pushModal .modal-header h2 { margin: 0; color: #171a20; font-size: 22px; letter-spacing: .01em; }
+#pushModal .modal-header small { display: block; margin-top: 4px; color: #737983; font-size: 12px; }
 #pushModal .modal-close {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
   border: 0;
-  background: rgba(255,255,255,.76);
-  color: #334155;
-  box-shadow: 0 2px 10px rgba(15,23,42,.07);
+  border-radius: 50%;
+  background: rgba(255,255,255,.8);
+  color: #333942;
+  box-shadow: 0 2px 9px rgba(15,23,42,.07);
 }
 #pushModal .modal-body {
   padding: 16px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: #f6f8fb;
+  background: #f5f6f8;
 }
+[data-account-view][hidden] { display: none !important; }
 
-.push-status-box {
-  position: relative;
-  margin: 0;
-  padding: 16px 16px 12px 58px;
-  border: 1px solid #dbe7f2;
-  border-bottom: 0;
-  border-radius: 20px 20px 0 0;
-  background: linear-gradient(110deg, #edf7ff 0%, #f7fbff 100%);
+.account-hub-profile {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 14px;
+  padding: 16px;
+  border-radius: 22px;
+  background: linear-gradient(110deg, #eaf7ff 0%, #fff9df 100%);
 }
-.push-status-box::before {
-  position: absolute;
-  left: 15px;
-  top: 14px;
-  width: 32px;
-  height: 32px;
+.account-hub-profile-icon {
+  width: 48px;
+  height: 48px;
   display: grid;
   place-items: center;
+  flex: 0 0 48px;
   border-radius: 50%;
-  background: rgba(255,255,255,.82);
-  box-shadow: 0 2px 8px rgba(15,23,42,.06);
-  font-size: 16px;
-  line-height: 1;
+  background: rgba(255,255,255,.92);
+  color: #2f6fed;
+  box-shadow: 0 3px 12px rgba(15,23,42,.08);
 }
-.push-status-box:has(#accountStatusTitle)::before { content: '♙'; color: #2563eb; font-size: 22px; font-weight: 800; }
-.push-status-box:has(#pushStatusTitle) {
-  border-color: #f0d9df;
-  background: linear-gradient(110deg, #fff0f3 0%, #fff8fa 100%);
-}
-.push-status-box:has(#pushStatusTitle)::before { content: '●'; color: #e85b75; font-size: 14px; box-shadow: inset 0 0 0 7px #fff, 0 2px 8px rgba(15,23,42,.06); }
-.push-status-box:has(#lineStatusText) {
-  border-color: #d5eadc;
-  background: linear-gradient(110deg, #eefaf2 0%, #f8fdf9 100%);
-}
-.push-status-box:has(#lineStatusText)::before { content: 'LINE'; color: #16a34a; font-size: 8px; font-weight: 900; letter-spacing: -.03em; }
-.push-status-box strong { display: block; margin-bottom: 3px; color: #172033; font-size: 16px; }
-.push-status-box span { display: block; color: #718096; font-size: 12px; line-height: 1.5; }
+.account-hub-profile-icon svg { width: 25px; height: 25px; fill: currentColor; }
+.account-hub-profile strong { display: block; color: #171a20; font-size: 17px; }
+.account-hub-profile small { display: block; margin-top: 3px; color: #737983; font-size: 12px; }
 
+.account-hub-menu {
+  overflow: hidden;
+  border: 1px solid #eceef1;
+  border-radius: 22px;
+  background: #fff;
+}
+.account-menu-row {
+  width: 100%;
+  min-height: 76px;
+  display: grid;
+  grid-template-columns: 44px minmax(0,1fr) 22px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border: 0;
+  border-bottom: 1px solid #eceef1;
+  border-radius: 0;
+  background: #fff;
+  color: #171a20;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: none;
+  -webkit-tap-highlight-color: rgba(47,111,237,.08);
+}
+.account-menu-row:last-child { border-bottom: 0; }
+.account-menu-row:active { background: #f7f8fa; }
+.account-menu-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+}
+.account-menu-icon.account { background: #eaf3ff; color: #3976d9; }
+.account-menu-icon.notification { background: #fff0d8; color: #e58b20; }
+.account-menu-icon svg { width: 23px; height: 23px; fill: currentColor; }
+.account-menu-copy { min-width: 0; }
+.account-menu-copy strong { display: block; color: #171a20; font-size: 16px; font-weight: 800; }
+.account-menu-copy small { display: block; overflow: hidden; margin-top: 4px; color: #8a9099; font-size: 12px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.account-menu-chevron { color: #a3a7ad; font-size: 32px; font-weight: 300; line-height: 1; text-align: right; }
+
+.account-back-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin: -4px 0 12px;
+  padding: 6px 4px;
+  border: 0;
+  background: transparent;
+  color: #3976d9;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: none;
+  cursor: pointer;
+}
+.account-back-row:first-letter { font-size: 25px; font-weight: 400; }
+.account-detail-label {
+  margin: 13px 5px 7px;
+  color: #8a9099;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+/* 次層設定仍保留原有功能 ID，但外觀改成設定列，不再像一堆大按鈕。 */
+.push-status-box {
+  margin: 0;
+  padding: 14px 15px 11px;
+  border: 1px solid #eceef1;
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+  background: #fff;
+}
+.push-status-box strong { display: block; margin-bottom: 4px; color: #171a20; font-size: 15px; }
+.push-status-box span { display: block; color: #858b94; font-size: 12px; line-height: 1.5; }
 .push-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  gap: 0;
   margin: 0 0 14px;
-  padding: 0 14px 14px;
-  border: 1px solid #dbe7f2;
+  padding: 0 14px;
+  overflow: hidden;
+  border: 1px solid #eceef1;
   border-top: 0;
-  border-radius: 0 0 20px 20px;
-  background: linear-gradient(110deg, #edf7ff 0%, #f7fbff 100%);
-}
-.push-status-box:has(#pushStatusTitle) + .push-actions {
-  border-color: #f0d9df;
-  background: linear-gradient(110deg, #fff0f3 0%, #fff8fa 100%);
-}
-.push-status-box:has(#lineStatusText) + .push-actions {
-  border-color: #d5eadc;
-  background: linear-gradient(110deg, #eefaf2 0%, #f8fdf9 100%);
+  border-radius: 0 0 18px 18px;
+  background: #fff;
 }
 .push-actions button {
-  min-width: 128px;
-  min-height: 40px;
-  border-radius: 13px;
-  box-shadow: none;
+  position: relative;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 28px 10px 0;
+  border: 0 !important;
+  border-top: 1px solid #f0f1f3 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #2f6fed !important;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 750;
+  box-shadow: none !important;
 }
+.push-actions button::after {
+  content: '›';
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  color: #a3a7ad;
+  font-size: 25px;
+  font-weight: 300;
+  transform: translateY(-52%);
+}
+.push-actions button:disabled { opacity: .42; }
 
 .push-preferences {
   display: grid;
   gap: 0;
-  margin-top: 2px;
+  margin-top: 14px;
   padding: 0;
   overflow: hidden;
-  border: 1px solid #e7dfc9;
-  border-radius: 20px;
-  background: rgba(255,255,255,.92);
+  border: 1px solid #eceef1;
+  border-radius: 18px;
+  background: #fff;
 }
 .push-preferences h3 {
-  position: relative;
   margin: 0;
-  padding: 15px 16px 13px 52px;
-  border-bottom: 1px solid #eee7d8;
-  background: linear-gradient(110deg, #fff8e5 0%, #fffdf7 100%);
-  color: #172033;
-  font-size: 16px;
-}
-.push-preferences h3::before {
-  content: '✓';
-  position: absolute;
-  left: 15px;
-  top: 11px;
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
+  padding: 14px 15px 11px;
+  border-bottom: 1px solid #eceef1;
   background: #fff;
-  color: #b7791f;
-  font-weight: 900;
-  box-shadow: 0 2px 8px rgba(15,23,42,.05);
+  color: #171a20;
+  font-size: 15px;
 }
 .push-pref-row {
   display: flex;
@@ -153,11 +208,11 @@
   gap: 14px;
   min-height: 52px;
   margin: 0 14px;
-  padding: 9px 2px;
-  border-bottom: 1px solid #edf0f3;
+  padding: 9px 1px;
+  border-bottom: 1px solid #eceef1;
 }
 .push-pref-row:last-child { border-bottom: 0; }
-.push-pref-row span { color: #263244; font-size: 14px; font-weight: 700; }
+.push-pref-row span { color: #292d33; font-size: 14px; font-weight: 650; }
 .push-pref-row input {
   appearance: none;
   -webkit-appearance: none;
@@ -168,7 +223,7 @@
   margin: 0;
   border: 0;
   border-radius: 999px;
-  background: #cbd5e1;
+  background: #cfd3d8;
   cursor: pointer;
   transition: background .18s ease;
 }
@@ -181,35 +236,26 @@
   height: 20px;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(15,23,42,.22);
+  box-shadow: 0 1px 4px rgba(15,23,42,.2);
   transition: transform .18s ease;
 }
-.push-pref-row input:checked { background: #35c77b; }
+.push-pref-row input:checked { background: #34c778; }
 .push-pref-row input:checked::after { transform: translateX(18px); }
-.push-pref-row input:focus-visible { outline: 3px solid rgba(59,130,246,.22); outline-offset: 2px; }
 .push-pref-row.is-disabled { opacity: .5; }
 .push-help {
-  margin: 14px 2px 2px;
-  padding: 11px 13px;
-  border-radius: 14px;
-  background: #eef2f7;
-  color: #718096;
+  margin: 12px 2px 2px;
+  padding: 10px 12px;
+  color: #8a9099;
   font-size: 11px;
   line-height: 1.55;
 }
 
 @media (max-width: 620px) {
   .push-notification-icon { width: 42px; height: 42px; border-radius: 12px; }
-  .push-modal-card {
-    width: calc(100% - 16px);
-    max-height: 90vh;
-    border-radius: 26px;
-  }
+  .push-modal-card { width: calc(100% - 14px); max-height: 90vh; border-radius: 26px; }
   #pushModal .modal-header { padding: 17px 17px 14px; }
   #pushModal .modal-body { padding: 12px; }
-  .push-status-box { padding: 14px 13px 10px 54px; }
-  .push-status-box::before { left: 13px; top: 12px; }
-  .push-actions { display: grid; grid-template-columns: 1fr; padding: 0 12px 12px; }
-  .push-actions button { width: 100%; min-height: 42px; }
-  .push-pref-row { min-height: 50px; margin: 0 12px; }
+  .account-hub-profile { padding: 14px; border-radius: 20px; }
+  .account-menu-row { min-height: 72px; padding: 11px 13px; }
+  .account-hub-menu { border-radius: 20px; }
 }
