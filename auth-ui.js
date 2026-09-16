@@ -8,6 +8,8 @@ let identityClient = null;
 let pairingNavRequestId = 0;
 let identityLoadRequestId = 0;
 
+const IDENTITY_ACCOUNT_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm0 2C5.91 13 3 14.79 3 17v2h10.1a5.9 5.9 0 0 1-.1-1c0-1.96.95-3.7 2.42-4.79A11.2 11.2 0 0 0 9.5 13Zm9.25-2.5a1.25 1.25 0 0 0-2.5 0v.55A3.75 3.75 0 0 0 14 14.5V17l-1 1v.75h7.5V18l-1-1v-2.5a3.75 3.75 0 0 0-2.25-3.45v-.55Zm-1.25 10.25a1.25 1.25 0 0 0 1.2-1h-2.4a1.25 1.25 0 0 0 1.2 1Z"/></svg>';
+
 function currentIdentityUserId() {
   return String(identitySession?.user?.id || '');
 }
@@ -60,6 +62,36 @@ function identityAuthButton() {
 
 function accountAuthActionButton() {
   return document.getElementById('accountAuthActionButton');
+}
+
+function ensureCombinedAccountPanel() {
+  document.getElementById('pushNotificationButton')?.remove();
+  const button = identityAuthButton();
+  if (button) {
+    button.innerHTML = IDENTITY_ACCOUNT_ICON;
+    button.setAttribute('aria-label', '帳號與通知設定');
+    button.title = '帳號與通知設定';
+  }
+
+  const modal = document.getElementById('pushModal');
+  if (!modal) return;
+  const modalTitle = document.getElementById('pushModalTitle');
+  if (modalTitle) modalTitle.textContent = '帳號與通知';
+  const modalSubtitle = modal.querySelector('.modal-header small');
+  if (modalSubtitle) modalSubtitle.textContent = '登入、登出與通知設定集中在這裡';
+
+  const body = modal.querySelector('.modal-body');
+  if (!body || document.getElementById('accountAuthActionButton')) return;
+  const accountBlock = document.createElement('div');
+  accountBlock.innerHTML = `
+    <div class="push-status-box">
+      <strong id="accountStatusTitle">帳號</strong>
+      <span id="accountStatusText">正在檢查登入狀態。</span>
+    </div>
+    <div class="push-actions">
+      <button id="accountAuthActionButton" class="primary-btn" type="button">Google 登入</button>
+    </div>`;
+  while (accountBlock.firstChild) body.insertBefore(accountBlock.firstChild, body.firstChild);
 }
 
 function openAccountModal() {
@@ -220,6 +252,7 @@ async function handleAccountAuthAction() {
 }
 
 async function startIdentityAuth() {
+  ensureCombinedAccountPanel();
   const button = identityAuthButton();
   if (!button) return;
 
