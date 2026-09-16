@@ -6,6 +6,8 @@ let identityAuthorized = false;
 let identityClient = null;
 let siteAccountAuthGeneration = 0;
 
+const SITE_ACCOUNT_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm0 2C5.91 13 3 14.79 3 17v2h10.1a5.9 5.9 0 0 1-.1-1c0-1.96.95-3.7 2.42-4.79A11.2 11.2 0 0 0 9.5 13Zm9.25-2.5a1.25 1.25 0 0 0-2.5 0v.55A3.75 3.75 0 0 0 14 14.5V17l-1 1v.75h7.5V18l-1-1v-2.5a3.75 3.75 0 0 0-2.25-3.45v-.55Zm-1.25 10.25a1.25 1.25 0 0 0 1.2-1h-2.4a1.25 1.25 0 0 0 1.2 1Z"/></svg>';
+
 function siteAccountEnsureStylesheet(href, marker) {
   if (document.querySelector(`link[data-site-account-style="${marker}"]`)) return;
   const link = document.createElement('link');
@@ -26,28 +28,19 @@ function siteAccountEnsureControls() {
     nav.appendChild(actions);
   }
 
-  if (!document.getElementById('pushNotificationButton')) {
-    const button = document.createElement('button');
-    button.id = 'pushNotificationButton';
-    button.className = 'push-notification-icon';
-    button.type = 'button';
-    button.setAttribute('aria-label', '通知設定');
-    button.title = '通知設定';
-    button.hidden = true;
-    button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6v-5a7 7 0 0 0-5-6.71V3a2 2 0 0 0-4 0v1.29A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2Z" /></svg>';
-    actions.appendChild(button);
-  }
+  document.getElementById('pushNotificationButton')?.remove();
 
-  if (!document.getElementById('identityAuthButton')) {
-    const button = document.createElement('button');
+  let button = document.getElementById('identityAuthButton');
+  if (!button) {
+    button = document.createElement('button');
     button.id = 'identityAuthButton';
     button.className = 'identity-auth-icon';
     button.type = 'button';
-    button.setAttribute('aria-label', 'Google 登入');
-    button.title = 'Google 登入';
-    button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" /></svg>';
     actions.appendChild(button);
   }
+  button.setAttribute('aria-label', '帳號與通知設定');
+  button.title = '帳號與通知設定';
+  button.innerHTML = SITE_ACCOUNT_ICON;
 }
 
 function siteAccountEnsurePushModal() {
@@ -61,12 +54,19 @@ function siteAccountEnsurePushModal() {
     <section class="modal-card push-modal-card" role="dialog" aria-modal="true" aria-labelledby="pushModalTitle">
       <header class="modal-header">
         <div>
-          <h2 id="pushModalTitle">通知設定</h2>
-          <small>僅你的授權帳號可設定</small>
+          <h2 id="pushModalTitle">帳號與通知</h2>
+          <small>登入、登出與通知設定集中在這裡</small>
         </div>
         <button class="modal-close" type="button" aria-label="關閉" data-close-push-modal>×</button>
       </header>
       <div class="modal-body">
+        <div class="push-status-box">
+          <strong id="accountStatusTitle">帳號</strong>
+          <span id="accountStatusText">正在檢查登入狀態。</span>
+        </div>
+        <div class="push-actions">
+          <button id="accountAuthActionButton" class="primary-btn" type="button">Google 登入</button>
+        </div>
         <div class="push-status-box">
           <strong id="pushStatusTitle">網站推播</strong>
           <span id="pushStatusText">正在檢查通知狀態。</span>
@@ -92,7 +92,7 @@ function siteAccountEnsurePushModal() {
           <label class="push-pref-row"><span>新增大師球賽事</span><input id="pushPrefMaster" data-push-pref type="checkbox" checked /></label>
           <label class="push-pref-row"><span>官方賽事成績公布</span><input id="pushPrefResults" data-push-pref type="checkbox" /></label>
         </section>
-        <p class="push-help">LINE 目前會通知官方排行榜公布／更新與新增聯盟賽事；即時配對監控會在配對公布後另外通知。LINE 用量直接向 LINE 官方 API 查詢，不由網站自行累計。iPhone 網站推播需從「加入主畫面」後的網站圖示開啟。</p>
+        <p class="push-help">網站推播與 LINE 狀態都集中在這個視窗。即時配對監控會在配對公布後另外通知；iPhone 網站推播需從「加入主畫面」後的網站圖示開啟。</p>
       </div>
     </section>`;
   const footer = document.querySelector('footer.footer');
@@ -104,18 +104,56 @@ function siteAccountAuthButton() {
   return document.getElementById('identityAuthButton');
 }
 
+function siteAccountActionButton() {
+  return document.getElementById('accountAuthActionButton');
+}
+
+function siteAccountOpenPanel() {
+  if (typeof window.openAccountNotificationModal === 'function') {
+    window.openAccountNotificationModal();
+  } else {
+    const modal = document.getElementById('pushModal');
+    if (!modal) return;
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+  }
+  if (typeof window.updatePushUI === 'function') window.updatePushUI();
+  if (typeof window.updateLineUI === 'function') window.updateLineUI();
+}
+
+function siteAccountSyncPanel(message = '') {
+  const title = document.getElementById('accountStatusTitle');
+  const text = document.getElementById('accountStatusText');
+  const action = siteAccountActionButton();
+  if (!title || !text || !action) return;
+
+  if (!identitySession) {
+    title.textContent = '尚未登入';
+    text.textContent = message || '登入 Google 帳號後，可使用授權功能與通知設定。';
+    action.textContent = 'Google 登入';
+    action.disabled = false;
+    return;
+  }
+
+  title.textContent = identityAuthorized ? '已登入授權帳號' : '已登入';
+  text.textContent = message || (identityAuthorized
+    ? '帳號已驗證，可使用即時配對與通知設定。'
+    : '此 Google 帳號目前沒有進階功能權限。');
+  action.textContent = '登出';
+  action.disabled = false;
+}
+
 function siteAccountSyncUI(message = '') {
   const button = siteAccountAuthButton();
   if (button) {
     button.classList.toggle('is-signed-in', Boolean(identitySession));
     button.classList.toggle('is-authorized', Boolean(identitySession && identityAuthorized));
-    button.setAttribute('aria-label', identitySession ? '已登入，點此登出' : 'Google 登入');
-    button.title = message || (identitySession ? '已登入，點此登出' : 'Google 登入');
+    button.setAttribute('aria-label', '帳號與通知設定');
+    button.title = identitySession ? '帳號與通知設定（已登入）' : '帳號與通知設定';
   }
 
-  const pushButton = document.getElementById('pushNotificationButton');
-  if (pushButton) pushButton.hidden = !(identitySession && identityAuthorized);
-
+  siteAccountSyncPanel(message);
   if (typeof window.updatePushUI === 'function') window.updatePushUI();
   if (typeof window.updateLineUI === 'function') window.updateLineUI();
 }
@@ -145,7 +183,7 @@ async function siteAccountRefreshAuthorization() {
   const generation = ++siteAccountAuthGeneration;
   const userId = identitySession?.user?.id || '';
   identityAuthorized = false;
-  siteAccountSyncUI(identitySession ? '正在確認帳號權限…' : 'Google 登入');
+  siteAccountSyncUI(identitySession ? '正在確認帳號權限…' : '');
   if (!identitySession || !identityClient) return;
 
   try {
@@ -153,12 +191,35 @@ async function siteAccountRefreshAuthorization() {
     if (error) throw error;
     if (generation !== siteAccountAuthGeneration || identitySession?.user?.id !== userId) return;
     identityAuthorized = data === true;
-    siteAccountSyncUI(identityAuthorized ? '已登入授權帳號，點此登出' : '已登入，點此登出');
+    siteAccountSyncUI();
   } catch (error) {
     if (generation !== siteAccountAuthGeneration || identitySession?.user?.id !== userId) return;
     console.warn('共用帳號權限確認失敗', error);
     identityAuthorized = false;
-    siteAccountSyncUI('登入權限確認失敗，點此登出');
+    siteAccountSyncUI('登入權限確認失敗，請稍後再試。');
+  }
+}
+
+async function siteAccountHandleAuthAction() {
+  const action = siteAccountActionButton();
+  if (!action || !identityClient) return;
+  action.disabled = true;
+  try {
+    if (identitySession) {
+      await identityClient.auth.signOut();
+    } else {
+      const redirectTo = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+      const { error } = await identityClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo }
+      });
+      if (error) throw error;
+    }
+  } catch (error) {
+    console.error(identitySession ? '登出失敗' : 'Google 登入失敗', error);
+    siteAccountSyncPanel(identitySession ? '登出失敗，請稍後再試。' : 'Google 登入失敗，請稍後再試。');
+  } finally {
+    action.disabled = false;
   }
 }
 
@@ -166,39 +227,20 @@ async function siteAccountInitAuth() {
   const button = siteAccountAuthButton();
   if (!button) return;
 
+  button.addEventListener('click', siteAccountOpenPanel);
+  siteAccountActionButton()?.addEventListener('click', siteAccountHandleAuthAction);
+
   try {
     await siteAccountEnsureSupabase();
   } catch (error) {
     console.warn(error);
     button.disabled = true;
-    button.title = 'Google 登入暫時無法使用';
+    button.title = '帳號功能暫時無法使用';
+    siteAccountSyncPanel('Google 登入暫時無法使用。');
     return;
   }
 
   identityClient = siteAccountExistingClient() || window.supabase.createClient(SITE_ACCOUNT_SUPABASE_URL, SITE_ACCOUNT_SUPABASE_KEY);
-
-  button.addEventListener('click', async () => {
-    button.disabled = true;
-    button.classList.add('is-busy');
-    try {
-      if (identitySession) {
-        await identityClient.auth.signOut();
-      } else {
-        const redirectTo = `${window.location.origin}${window.location.pathname}${window.location.search}`;
-        const { error } = await identityClient.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo }
-        });
-        if (error) throw error;
-      }
-    } catch (error) {
-      console.error(identitySession ? '登出失敗' : 'Google 登入失敗', error);
-      siteAccountSyncUI(identitySession ? '登出失敗，請稍後再試' : 'Google 登入失敗，請稍後再試');
-    } finally {
-      button.disabled = false;
-      button.classList.remove('is-busy');
-    }
-  });
 
   const { data } = await identityClient.auth.getSession();
   identitySession = data?.session || null;
@@ -225,14 +267,14 @@ function siteAccountLoadScript(src, initName) {
 }
 
 function siteAccountInit() {
-  siteAccountEnsureStylesheet('site-nav.css?v=0.12.0-r1', 'nav');
-  siteAccountEnsureStylesheet('auth-ui.css?v=0.12.0-r1', 'auth');
-  siteAccountEnsureStylesheet('push-ui.css?v=0.12.0-r1', 'push');
+  siteAccountEnsureStylesheet('site-nav.css?v=0.13.0-r1', 'nav');
+  siteAccountEnsureStylesheet('auth-ui.css?v=0.13.0-r1', 'auth');
+  siteAccountEnsureStylesheet('push-ui.css?v=0.13.0-r1', 'push');
   siteAccountEnsureControls();
   siteAccountEnsurePushModal();
   siteAccountInitAuth();
 }
 
-siteAccountLoadScript('push-ui.js?v=0.12.0-r1', 'initPushUI');
-siteAccountLoadScript('line-ui.js?v=0.12.0-r1', 'initLineUI');
+siteAccountLoadScript('push-ui.js?v=0.13.0-r1', 'initPushUI');
+siteAccountLoadScript('line-ui.js?v=0.13.0-r1', 'initLineUI');
 document.addEventListener('DOMContentLoaded', siteAccountInit);
