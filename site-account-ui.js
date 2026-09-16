@@ -20,16 +20,13 @@ function siteAccountEnsureStylesheet(href, marker) {
 function siteAccountEnsureControls() {
   const nav = document.querySelector('.site-nav');
   if (!nav) return;
-
   let actions = nav.querySelector('.site-nav-actions');
   if (!actions) {
     actions = document.createElement('div');
     actions.className = 'site-nav-actions';
     nav.appendChild(actions);
   }
-
   document.getElementById('pushNotificationButton')?.remove();
-
   let button = document.getElementById('identityAuthButton');
   if (!button) {
     button = document.createElement('button');
@@ -53,36 +50,16 @@ function siteAccountEnsurePushModal() {
     <div class="modal-backdrop" data-close-push-modal></div>
     <section class="modal-card push-modal-card" role="dialog" aria-modal="true" aria-labelledby="pushModalTitle">
       <header class="modal-header">
-        <div>
-          <h2 id="pushModalTitle">帳號與通知</h2>
-          <small>選擇要調整的項目</small>
-        </div>
+        <div><h2 id="pushModalTitle">帳號與通知</h2><small>選擇要調整的項目</small></div>
         <button class="modal-close" type="button" aria-label="關閉" data-close-push-modal>×</button>
       </header>
       <div class="modal-body">
-        <div class="push-status-box">
-          <strong id="accountStatusTitle">帳號</strong>
-          <span id="accountStatusText">正在檢查登入狀態。</span>
-        </div>
-        <div class="push-actions">
-          <button id="accountAuthActionButton" class="primary-btn" type="button">Google 登入</button>
-        </div>
-        <div class="push-status-box">
-          <strong id="pushStatusTitle">網站推播</strong>
-          <span id="pushStatusText">正在檢查通知狀態。</span>
-        </div>
-        <div class="push-actions">
-          <button id="pushToggleButton" class="primary-btn" type="button">開啟通知</button>
-          <button id="pushTestButton" class="secondary-btn" type="button" disabled>發送網站測試通知</button>
-        </div>
-        <div class="push-status-box">
-          <strong>LINE 通知</strong>
-          <span id="lineStatusText">正在檢查 LINE 連線。</span>
-          <span id="lineUsageText">LINE 官方用量：讀取中…</span>
-        </div>
-        <div class="push-actions">
-          <button id="lineTestButton" class="secondary-btn" type="button" disabled>發送 LINE 測試通知</button>
-        </div>
+        <div class="push-status-box"><strong id="accountStatusTitle">帳號</strong><span id="accountStatusText">正在檢查登入狀態。</span></div>
+        <div class="push-actions"><button id="accountAuthActionButton" class="primary-btn" type="button">Google 登入</button></div>
+        <div class="push-status-box"><strong id="pushStatusTitle">網站推播</strong><span id="pushStatusText">正在檢查通知狀態。</span></div>
+        <div class="push-actions"><button id="pushToggleButton" class="primary-btn" type="button">開啟通知</button><button id="pushTestButton" class="secondary-btn" type="button" disabled>發送網站測試通知</button></div>
+        <div class="push-status-box"><strong>LINE 通知</strong><span id="lineStatusText">正在檢查 LINE 連線。</span><span id="lineUsageText">LINE 官方用量：讀取中…</span></div>
+        <div class="push-actions"><button id="lineTestButton" class="secondary-btn" type="button" disabled>發送 LINE 測試通知</button></div>
         <section class="push-preferences" aria-label="網站推播項目">
           <h3>網站推播項目</h3>
           <label class="push-pref-row"><span>官方排行榜公布 / 更新</span><input id="pushPrefRanking" data-push-pref type="checkbox" checked /></label>
@@ -100,18 +77,12 @@ function siteAccountEnsurePushModal() {
   else document.body.appendChild(modal);
 }
 
-function siteAccountAuthButton() {
-  return document.getElementById('identityAuthButton');
-}
-
-function siteAccountActionButton() {
-  return document.getElementById('accountAuthActionButton');
-}
+function siteAccountAuthButton() { return document.getElementById('identityAuthButton'); }
+function siteAccountActionButton() { return document.getElementById('accountAuthActionButton'); }
 
 function siteAccountOpenPanel() {
-  if (typeof window.openAccountNotificationModal === 'function') {
-    window.openAccountNotificationModal();
-  } else {
+  if (typeof window.openAccountNotificationModal === 'function') window.openAccountNotificationModal();
+  else {
     const modal = document.getElementById('pushModal');
     if (!modal) return;
     modal.classList.add('open');
@@ -127,7 +98,6 @@ function siteAccountSyncPanel(message = '') {
   const text = document.getElementById('accountStatusText');
   const action = siteAccountActionButton();
   if (!title || !text || !action) return;
-
   if (!identitySession) {
     title.textContent = '尚未登入';
     text.textContent = message || '登入 Google 帳號後，可使用授權功能與通知設定。';
@@ -135,11 +105,8 @@ function siteAccountSyncPanel(message = '') {
     action.disabled = false;
     return;
   }
-
   title.textContent = identityAuthorized ? '已登入授權帳號' : '已登入';
-  text.textContent = message || (identityAuthorized
-    ? '帳號已驗證，可使用即時配對與通知設定。'
-    : '此 Google 帳號目前沒有進階功能權限。');
+  text.textContent = message || (identityAuthorized ? '帳號已驗證，可使用即時配對與通知設定。' : '此 Google 帳號目前沒有進階功能權限。');
   action.textContent = '登出';
   action.disabled = false;
 }
@@ -152,19 +119,14 @@ function siteAccountSyncUI(message = '') {
     button.setAttribute('aria-label', '帳號與通知設定');
     button.title = identitySession ? '帳號與通知設定（已登入）' : '帳號與通知設定';
   }
-
   siteAccountSyncPanel(message);
   if (typeof window.updatePushUI === 'function') window.updatePushUI();
   if (typeof window.updateLineUI === 'function') window.updateLineUI();
 }
 
 function siteAccountExistingClient() {
-  try {
-    if (typeof pairingClient !== 'undefined' && pairingClient) return pairingClient;
-  } catch (_) {}
-  try {
-    if (typeof tournamentPairingClient !== 'undefined' && tournamentPairingClient) return tournamentPairingClient;
-  } catch (_) {}
+  try { if (typeof pairingClient !== 'undefined' && pairingClient) return pairingClient; } catch (_) {}
+  try { if (typeof tournamentPairingClient !== 'undefined' && tournamentPairingClient) return tournamentPairingClient; } catch (_) {}
   return null;
 }
 
@@ -185,7 +147,6 @@ async function siteAccountRefreshAuthorization() {
   identityAuthorized = false;
   siteAccountSyncUI(identitySession ? '正在確認帳號權限…' : '');
   if (!identitySession || !identityClient) return;
-
   try {
     const { data, error } = await identityClient.rpc('can_use_pairing');
     if (error) throw error;
@@ -205,47 +166,35 @@ async function siteAccountHandleAuthAction() {
   if (!action || !identityClient) return;
   action.disabled = true;
   try {
-    if (identitySession) {
-      await identityClient.auth.signOut();
-    } else {
+    if (identitySession) await identityClient.auth.signOut();
+    else {
       const redirectTo = `${window.location.origin}${window.location.pathname}${window.location.search}`;
-      const { error } = await identityClient.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo }
-      });
+      const { error } = await identityClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
       if (error) throw error;
     }
   } catch (error) {
     console.error(identitySession ? '登出失敗' : 'Google 登入失敗', error);
     siteAccountSyncPanel(identitySession ? '登出失敗，請稍後再試。' : 'Google 登入失敗，請稍後再試。');
-  } finally {
-    action.disabled = false;
-  }
+  } finally { action.disabled = false; }
 }
 
 async function siteAccountInitAuth() {
   const button = siteAccountAuthButton();
   if (!button) return;
-
   button.addEventListener('click', siteAccountOpenPanel);
   siteAccountActionButton()?.addEventListener('click', siteAccountHandleAuthAction);
-
-  try {
-    await siteAccountEnsureSupabase();
-  } catch (error) {
+  try { await siteAccountEnsureSupabase(); }
+  catch (error) {
     console.warn(error);
     button.disabled = true;
     button.title = '帳號功能暫時無法使用';
     siteAccountSyncPanel('Google 登入暫時無法使用。');
     return;
   }
-
   identityClient = siteAccountExistingClient() || window.supabase.createClient(SITE_ACCOUNT_SUPABASE_URL, SITE_ACCOUNT_SUPABASE_KEY);
-
   const { data } = await identityClient.auth.getSession();
   identitySession = data?.session || null;
   await siteAccountRefreshAuthorization();
-
   identityClient.auth.onAuthStateChange((_event, session) => {
     identitySession = session || null;
     identityAuthorized = false;
@@ -261,7 +210,7 @@ function siteAccountLoadScript(src, initName) {
   script.src = src;
   script.async = false;
   script.addEventListener('load', () => {
-    if (document.readyState !== 'loading' && typeof window[initName] === 'function') window[initName]();
+    if (document.readyState !== 'loading' && initName && typeof window[initName] === 'function') window[initName]();
   }, { once: true });
   document.body.appendChild(script);
 }
@@ -277,4 +226,5 @@ function siteAccountInit() {
 
 siteAccountLoadScript('push-ui.js?v=0.13.1-r1', 'initPushUI');
 siteAccountLoadScript('line-ui.js?v=0.13.1-r1', 'initLineUI');
+siteAccountLoadScript('account-hub-v2.js?v=0.13.1-r1', '');
 document.addEventListener('DOMContentLoaded', siteAccountInit);
