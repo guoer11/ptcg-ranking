@@ -58,6 +58,42 @@ function identityAuthButton() {
   return document.getElementById('identityAuthButton');
 }
 
+function accountAuthActionButton() {
+  return document.getElementById('accountAuthActionButton');
+}
+
+function openAccountModal() {
+  const modal = document.getElementById('pushModal');
+  if (!modal) return;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+  if (typeof window.updatePushUI === 'function') window.updatePushUI();
+  if (typeof window.updateLineUI === 'function') window.updateLineUI();
+}
+
+function updateAccountPanel(message = '') {
+  const title = document.getElementById('accountStatusTitle');
+  const text = document.getElementById('accountStatusText');
+  const action = accountAuthActionButton();
+  if (!title || !text || !action) return;
+
+  if (!identitySession) {
+    title.textContent = '尚未登入';
+    text.textContent = message || '登入 Google 帳號後，可使用授權功能與通知設定。';
+    action.textContent = 'Google 登入';
+    action.disabled = false;
+    return;
+  }
+
+  title.textContent = identityAuthorized ? '已登入授權帳號' : '已登入';
+  text.textContent = message || (identityAuthorized
+    ? '帳號已驗證，可使用私人姓名、即時配對與通知設定。'
+    : '此 Google 帳號目前沒有進階功能權限。');
+  action.textContent = '登出';
+  action.disabled = false;
+}
+
 function updateIdentityTextUI() {
   const lookupDescription = document.getElementById('playerLookupDescription');
   const lookupInput = document.getElementById('playerIdInput');
@@ -82,6 +118,7 @@ function updateIdentityTextUI() {
 
 function refreshPushAuthUI() {
   if (typeof window.updatePushUI === 'function') window.updatePushUI();
+  if (typeof window.updateLineUI === 'function') window.updateLineUI();
 }
 
 function updateIdentityAuthUI(message = '') {
@@ -90,18 +127,10 @@ function updateIdentityAuthUI(message = '') {
 
   button.classList.toggle('is-signed-in', Boolean(identitySession));
   button.classList.toggle('is-authorized', Boolean(identitySession && identityAuthorized));
+  button.setAttribute('aria-label', '帳號與通知設定');
+  button.title = identitySession ? '帳號與通知設定（已登入）' : '帳號與通知設定';
 
-  if (!identitySession) {
-    button.setAttribute('aria-label', 'Google 登入');
-    button.title = message || 'Google 登入';
-    updateIdentityTextUI();
-    refreshPushAuthUI();
-    refreshPairingNavAccess();
-    return;
-  }
-
-  button.setAttribute('aria-label', '已登入，點此登出');
-  button.title = message || '已登入，點此登出';
+  updateAccountPanel(message);
   updateIdentityTextUI();
   refreshPushAuthUI();
   refreshPairingNavAccess();
@@ -146,12 +175,12 @@ async function loadPrivateIdentities() {
     const count = Object.keys(players).length;
     identityData = { updated_at: new Date().toISOString(), count, players };
     identityAuthorized = count > 0;
-    updateIdentityAuthUI('已登入，點此登出');
+    updateIdentityAuthUI();
   } catch (error) {
     if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
     console.error('私人資料讀取失敗', error);
     clearPrivateIdentities();
-    updateIdentityAuthUI('登入資料讀取失敗，點此登出');
+    updateIdentityAuthUI('登入資料讀取失敗，請稍後再試。');
   }
 
   if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
@@ -159,49 +188,52 @@ async function loadPrivateIdentities() {
   renderRanking();
 }
 
+async function handleAccountAuthAction() {
+  const action = accountAuthActionButton();
+  if (!action || !identityClient) return;
+  action.disabled = true;
+
+  try {
+    if (!identitySession) {
+      const { error } = await identityClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: IDENTITY_REDIRECT_URL }
+      });
+      if (error) throw error;
+      return;
+    }
+
+    invalidatePairingNavAccess();
+    identityLoadRequestId += 1;
+    await identityClient.auth.signOut();
+    identitySession = null;
+    clearPrivateIdentities();
+    updateIdentityAuthUI();
+    await refreshPairingNavAccess();
+    renderRanking();
+  } catch (error) {
+    console.error(identitySession ? '登出失敗' : 'Google 登入失敗', error);
+    updateAccountPanel(identitySession ? '登出失敗，請稍後再試。' : 'Google 登入失敗，請稍後再試。');
+  } finally {
+    action.disabled = false;
+  }
+}
+
 async function startIdentityAuth() {
   const button = identityAuthButton();
   if (!button) return;
 
+  button.addEventListener('click', openAccountModal);
+  accountAuthActionButton()?.addEventListener('click', handleAccountAuthAction);
+
   if (!window.supabase?.createClient) {
     button.disabled = true;
-    button.setAttribute('aria-label', 'Google 登入暫時無法使用');
-    button.title = 'Google 登入暫時無法使用';
+    button.title = '帳號功能暫時無法使用';
+    updateAccountPanel('Google 登入暫時無法使用。');
     return;
   }
 
   identityClient = window.supabase.createClient(IDENTITY_SUPABASE_URL, IDENTITY_SUPABASE_KEY);
-
-  button.addEventListener('click', async () => {
-    button.disabled = true;
-    button.classList.add('is-busy');
-
-    try {
-      if (!identitySession) {
-        const { error } = await identityClient.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: IDENTITY_REDIRECT_URL }
-        });
-        if (error) throw error;
-        return;
-      }
-
-      invalidatePairingNavAccess();
-      identityLoadRequestId += 1;
-      await identityClient.auth.signOut();
-      identitySession = null;
-      clearPrivateIdentities();
-      updateIdentityAuthUI();
-      await refreshPairingNavAccess();
-      renderRanking();
-    } catch (error) {
-      console.error(identitySession ? '登出失敗' : 'Google 登入失敗', error);
-      updateIdentityAuthUI(identitySession ? '登出失敗，請稍後再試' : 'Google 登入失敗，請稍後再試');
-    } finally {
-      button.disabled = false;
-      button.classList.remove('is-busy');
-    }
-  });
 
   const { data } = await identityClient.auth.getSession();
   identitySession = data?.session || null;
