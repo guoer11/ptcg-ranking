@@ -17,34 +17,13 @@
   <header class="site-header pairing-header">
     <div class="wrap">
       <nav class="site-nav" aria-label="網站功能">
-        <a href="index.html">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10l8-7 8 7v10h-5v-6H9v6H4Z"/></svg>
-          玩家排行
-        </a>
-        <a href="tournaments.html">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v2h3v4c0 2.76-2.24 5-5 5h-.17A5.02 5.02 0 0 1 13 15.58V19h4v2H7v-2h4v-3.42A5.02 5.02 0 0 1 9.17 14H9c-2.76 0-5-2.24-5-5V5h3V3Zm10 4v4a3 3 0 0 0 1-2V7h-1ZM6 7v2a3 3 0 0 0 1 2V7H6Z"/></svg>
-          賽事資訊
-        </a>
-        <a class="active" href="pairing.html" aria-current="page" hidden>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v3h3v4h-3v3h-4v3h-2v-3H7v-3H4V7h3V4Zm2 2v6h6V6H9Zm-3 3v0h1V9H6Zm11 0v0h1V9h-1Z"/></svg>
-          即時配對
-        </a>
+        <a href="index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10l8-7 8 7v10h-5v-6H9v6H4Z"/></svg>玩家排行</a>
+        <a href="tournaments.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v2h3v4c0 2.76-2.24 5-5 5h-.17A5.02 5.02 0 0 1 13 15.58V19h4v2H7v-2h4v-3.42A5.02 5.02 0 0 1 9.17 14H9c-2.76 0-5-2.24-5-5V5h3V3Zm10 4v4a3 3 0 0 0 1-2V7h-1ZM6 7v2a3 3 0 0 0 1 2V7H6Z"/></svg>賽事資訊</a>
+        <a class="active" href="pairing.html" aria-current="page" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v3h3v4h-3v3h-4v3h-2v-3H7v-3H4V7h3V4Zm2 2v6h6V6H9Zm-3 3v0h1V9H6Zm11 0v0h1V9h-1Z"/></svg>即時配對</a>
       </nav>
-
       <div class="header-inner">
-        <div>
-          <p class="eyebrow">Pokémon TCG Taiwan</p>
-          <h1>即時配對</h1>
-          <p class="subtitle">TCG マイスター配對查詢、姓名對照、各輪與最終排名通知</p>
-        </div>
-        <div class="status-card">
-          <span class="status-dot"></span>
-          <div>
-            <strong>後端監控可用</strong>
-            <small>每 10 秒檢查配對 / Final rank</small>
-            <small>LINE + 網站推播</small>
-          </div>
-        </div>
+        <div><p class="eyebrow">Pokémon TCG Taiwan</p><h1>即時配對</h1><p class="subtitle">TCG マイスター配對查詢、姓名對照、各輪與最終排名通知</p></div>
+        <div class="status-card"><span class="status-dot"></span><div><strong>後端監控可用</strong><small>每 10 秒檢查配對 / Final rank</small><small>LINE + 網站推播</small></div></div>
       </div>
     </div>
   </header>
@@ -54,24 +33,12 @@
       <section class="panel pairing-panel">
         <h2>配對查詢</h2>
         <p class="section-note">比賽當天貼一次活動網址或任一 Round 配對網址。貼入 Round 配對網址時會自動同步右側 Round。開始監控時，若目前 Round 尚未公布就直接等待本輪；若已公布則自動等待下一輪，之後會一路監控到最終排名。</p>
-
         <div class="pairing-form">
-          <div class="pairing-field">
-            <label for="pairingSourceUrl">活動網址 / Round 配對網址</label>
-            <input id="pairingSourceUrl" class="search-input" type="url" inputmode="url" placeholder="https://tcg.sfc-jpn.jp/tour.asp?tid=..." autocomplete="off" />
-          </div>
-
+          <div class="pairing-field"><label for="pairingSourceUrl">活動網址 / Round 配對網址</label><input id="pairingSourceUrl" class="search-input" type="url" inputmode="url" placeholder="https://tcg.sfc-jpn.jp/tour.asp?tid=..." autocomplete="off" /></div>
           <div class="pairing-row">
-            <div class="pairing-field">
-              <label for="pairingPlayerId">追蹤玩家 PTCG ID</label>
-              <input id="pairingPlayerId" class="search-input" type="text" value="tw39371632" autocomplete="off" autocapitalize="none" />
-            </div>
-            <div class="pairing-field">
-              <label for="pairingRound">Round</label>
-              <input id="pairingRound" class="search-input" type="number" min="1" step="1" value="1" inputmode="numeric" />
-            </div>
+            <div class="pairing-field"><label for="pairingPlayerId">追蹤玩家 PTCG ID</label><input id="pairingPlayerId" class="search-input" type="text" value="tw39371632" autocomplete="off" autocapitalize="none" /></div>
+            <div class="pairing-field"><label for="pairingRound">Round</label><input id="pairingRound" class="search-input" type="number" min="1" step="1" value="1" inputmode="numeric" /></div>
           </div>
-
           <div class="pairing-actions">
             <button id="pairingLookupButton" class="primary-btn" type="button">查詢這一輪</button>
             <button id="pairingOpenOfficialButton" class="secondary-btn" type="button">開官方配對頁</button>
@@ -80,83 +47,47 @@
             <button id="pairingFinalTestButton" class="secondary-btn pairing-test-btn" type="button">測試最終排名通知</button>
           </div>
         </div>
-
-        <div id="pairingResult" class="pairing-result is-waiting">
-          <div class="pairing-result-title">
-            <strong>尚未查詢</strong>
-            <span class="pairing-round-badge">等待輸入</span>
-          </div>
-          <div class="pairing-watch-copy">可先按「載入歷史測試場」，用 2026/9/12 高級球孩童組驗證配對與最終排名通知。</div>
-        </div>
-
+        <div id="pairingResult" class="pairing-result is-waiting"><div class="pairing-result-title"><strong>尚未查詢</strong><span class="pairing-round-badge">等待輸入</span></div><div class="pairing-watch-copy">可先按「載入歷史測試場」，用 2026/9/12 高級球孩童組驗證配對與最終排名通知。</div></div>
         <div id="pairingMessage" class="pairing-message"></div>
       </section>
 
       <aside>
         <section class="pairing-watch-card">
-          <div class="pairing-watch-head">
-            <strong>配對 / 最終排名自動監控</strong>
-            <span id="pairingWatchStatus" class="pairing-watch-status"><span class="pairing-watch-dot"></span>未監控</span>
-          </div>
+          <div class="pairing-watch-head"><strong>配對 / 最終排名自動監控</strong><span id="pairingWatchStatus" class="pairing-watch-status"><span class="pairing-watch-dot"></span>未監控</span></div>
           <div id="pairingWatchCopy" class="pairing-watch-copy">設定目前 Round 後即可開始監控；如果這一輪尚未公布，就直接等待本輪，若已公布則自動等待下一輪。後端每 <strong>10 秒</strong>檢查配對與最終排名。</div>
-          <div class="pairing-actions" style="margin-top:14px;">
-            <button id="pairingStartButton" class="primary-btn" type="button">開始監控配對</button>
-            <button id="pairingStopButton" class="secondary-btn" type="button">停止監控</button>
-          </div>
+          <div class="pairing-actions" style="margin-top:14px;"><button id="pairingStartButton" class="primary-btn" type="button">開始監控配對</button><button id="pairingStopButton" class="secondary-btn" type="button">停止監控</button></div>
         </section>
-
-        <section class="pairing-watch-card">
-          <div class="pairing-watch-head"><strong>通知與姓名</strong></div>
-          <div id="pairingAuthCopy" class="pairing-watch-copy">正在確認登入狀態…</div>
-          <div class="pairing-watch-copy" style="margin-top:8px;">配對頁本身只提供 PTCG ID。登入你目前網站的授權帳號後，系統會用現有私人資料補上玩家真實姓名。</div>
-        </section>
-
-        <section class="pairing-history-note" style="margin-top:12px;">
-          <strong>歷史測試場</strong><br>
-          2026/9/12 高級球孩童組（tid=3000442）可用來測 Round 1 配對通知與 Final rank 通知。Final rank 測試只顯示最終名次，不顯示總分。為避免已存在的 Round 2、3、4…一次全部發送，歷史測試場不允許啟動連續監控。
-        </section>
+        <section class="pairing-watch-card"><div class="pairing-watch-head"><strong>通知與姓名</strong></div><div id="pairingAuthCopy" class="pairing-watch-copy">正在確認登入狀態…</div><div class="pairing-watch-copy" style="margin-top:8px;">配對頁本身只提供 PTCG ID。登入你目前網站的授權帳號後，系統會用現有私人資料補上玩家真實姓名。</div></section>
+        <section class="pairing-history-note" style="margin-top:12px;"><strong>歷史測試場</strong><br>2026/9/12 高級球孩童組（tid=3000442）可用來測 Round 1 配對通知與 Final rank 通知。Final rank 測試只顯示最終名次，不顯示總分。為避免已存在的 Round 2、3、4…一次全部發送，歷史測試場不允許啟動連續監控。</section>
       </aside>
     </div>
-
-    <section class="notice" style="margin-top:20px;">
-      <strong>目前為 v0.12.2 測試版</strong>
-      <span>正式比賽配對與最終排名仍以現場主辦與 TCG マイスター頁面為準。</span>
-    </section>
+    <section class="notice" style="margin-top:20px;"><strong>目前為 v0.13.0 測試版</strong><span>正式比賽配對與最終排名仍以現場主辦與 TCG マイスター頁面為準。</span></section>
   </main>
 
-  <footer class="footer">
-    <div class="wrap">非官方網站。本頁僅協助整理公開配對資訊，Pokémon 相關商標屬原權利人所有。</div>
-  </footer>
-
+  <footer class="footer"><div class="wrap">非官方網站。本頁僅協助整理公開配對資訊，Pokémon 相關商標屬原權利人所有。</div></footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script src="pairing.js?v=0.11.3-r1" defer></script>
-  <script src="site-account-ui.js?v=0.12.0-r1" defer></script>
+  <script src="site-account-ui.js?v=0.13.0-r1" defer></script>
   <script src="family-owner-ui.js?v=0.12.0-r1" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const source = document.getElementById('pairingSourceUrl');
       const round = document.getElementById('pairingRound');
       if (!source || !round) return;
-
       const syncRoundFromUrl = () => {
         const raw = source.value.trim();
         if (!raw) return;
         try {
           const url = new URL(raw);
           if (url.hostname !== 'tcg.sfc-jpn.jp') return;
-
           if (/\/tourround\.asp$/i.test(url.pathname)) {
             const kno = Number(url.searchParams.get('kno'));
             if (Number.isInteger(kno) && kno >= 1) round.value = String(kno);
             return;
           }
-
           if (/\/tour\.asp$/i.test(url.pathname)) round.value = '1';
-        } catch (_) {
-          // 使用者仍在輸入網址時不顯示錯誤，查詢時再由既有驗證處理。
-        }
+        } catch (_) {}
       };
-
       source.addEventListener('input', syncRoundFromUrl);
       source.addEventListener('change', syncRoundFromUrl);
       syncRoundFromUrl();
