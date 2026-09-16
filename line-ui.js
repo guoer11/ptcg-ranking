@@ -30,7 +30,7 @@ function lineSetUsage(usage) {
 }
 
 function lineSetBusy(busy) {
-  if (lineTestButton()) lineTestButton().disabled = busy;
+  if (lineTestButton()) lineTestButton().disabled = busy || !identityAuthorized;
 }
 
 async function lineRequest(action) {
@@ -50,7 +50,7 @@ async function lineRequest(action) {
 
 async function lineRefreshStatus() {
   if (!identityAuthorized || !identitySession) {
-    lineSetStatus('請先以授權帳號登入。');
+    lineSetStatus(identitySession ? '目前登入的帳號沒有 LINE 通知設定權限。' : '請先在上方登入授權 Google 帳號。');
     lineSetUsage(null);
     lineSetBusy(true);
     return;
@@ -95,7 +95,7 @@ async function lineHandleTest() {
 
 function initLineUI() {
   lineTestButton()?.addEventListener('click', lineHandleTest);
-  document.getElementById('pushNotificationButton')?.addEventListener('click', () => {
+  document.getElementById('identityAuthButton')?.addEventListener('click', () => {
     setTimeout(lineRefreshStatus, 50);
   });
   lineRefreshStatus();
