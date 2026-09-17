@@ -175,6 +175,7 @@
   function injectQuickLookup() {
     if (document.getElementById('pairingQuickLookup') || !document.querySelector('.pairing-panel')) return;
     const result = document.getElementById('pairingResult');
+    const message = document.getElementById('pairingMessage');
     if (!result) return;
     const section = document.createElement('section');
     section.id = 'pairingQuickLookup';
@@ -193,7 +194,7 @@
       </div>
       <div id="pairingQuickResult" class="pairing-quick-result is-idle"><strong>輸入桌號即可看這桌是誰對誰</strong><span>只做單次查詢，不會變更上方的自動監控玩家。</span></div>
       <div id="pairingQuickMessage" class="pairing-quick-message"></div>`;
-    result.before(section);
+    (message || result).after(section);
 
     section.querySelectorAll('[data-pairing-quick-mode]').forEach(button => button.addEventListener('click', () => setQuickMode(button.dataset.pairingQuickMode)));
     quickButton()?.addEventListener('click', handleQuickLookup);
