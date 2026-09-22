@@ -42,6 +42,11 @@ function tournamentEsc(value = '') {
     .replaceAll("'", '&#039;');
 }
 
+function tournamentGoogleMapsUrl(address = '') {
+  const query = String(address || '').trim();
+  return query ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}` : '';
+}
+
 function ensureTournamentSupabase() {
   if (window.supabase?.createClient) return Promise.resolve();
   return new Promise((resolve, reject) => {
@@ -261,8 +266,9 @@ function renderTournamentList() {
   tournamentList.innerHTML = events.map(event => {
     const date = formatEventDate(event.date, event.time || '');
     const status = eventStatus(event);
-    const venue = eventVenueLabel(event);
-    const venueParts = event.league === 'Ultra' ? splitUltraAddress(venue) : { main: venue, note: '' };
+    const venue = String(event.venue || '').trim();
+    const address = String(event.address || '').trim();
+    const mapUrl = tournamentGoogleMapsUrl(address);
     const hasResults = eventHasResults(event);
     return `
       <article class="tournament-card">
@@ -284,8 +290,8 @@ function renderTournamentList() {
         <h3>${tournamentEsc(event.title || `官方活動 ${event.event_id || ''}`)}</h3>
 
         <div class="tournament-card-info">
-          ${venueParts.main ? `<span title="${tournamentEsc(venue)}">⌂ ${tournamentEsc(venueParts.main)}</span>` : ''}
-          ${venueParts.note ? `<span class="tournament-address-note" title="${tournamentEsc(venue)}">${tournamentEsc(venueParts.note)}</span>` : ''}
+          ${venue ? `<span title="${tournamentEsc(venue)}">⌂ ${tournamentEsc(venue)}</span>` : ''}
+          ${address ? `<a class="tournament-address-link" href="${tournamentEsc(mapUrl)}" target="_blank" rel="noopener noreferrer" title="在 Google 地圖開啟：${tournamentEsc(address)}" aria-label="在 Google 地圖開啟 ${tournamentEsc(address)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-12A7 7 0 1 0 5 9c0 5.9 7 12 7 12Zm0-9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg><span>${tournamentEsc(address)}</span></a>` : ''}
           ${event.capacity ? `<span>♟ ${tournamentEsc(event.capacity)} 人</span>` : ''}
           ${event.group && event.group !== 'Open' ? `<span>${tournamentEsc(eventGroupLabel(event.group))}</span>` : ''}
         </div>
