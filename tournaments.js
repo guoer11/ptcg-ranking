@@ -43,8 +43,9 @@ function tournamentEsc(value = '') {
 }
 
 function tournamentGoogleMapsUrl(address = '') {
-  const query = String(address || '').trim();
-  return query ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}` : '';
+  const fullAddress = String(address || '').trim();
+  const streetNumber = fullAddress.match(/^(.+?號)/)?.[1]?.trim() || fullAddress;
+  return streetNumber ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(streetNumber)}` : '';
 }
 
 function ensureTournamentSupabase() {
