@@ -24,6 +24,11 @@
     .result-badge.registration-open { background: #dcecff; color: #1859b8; }
     .result-badge.registration-closed { background: #e7ecf2; color: #596677; }
     .tournament-registration-deadline { font-weight: 700; color: #1859b8; }
+    .tournament-card-info .tournament-address-link { display: flex; align-items: center; gap: 5px; min-width: 0; color: #2f6fed; text-decoration: none; }
+    .tournament-card-info .tournament-address-link svg { width: 14px; height: 14px; flex: 0 0 14px; fill: currentColor; }
+    .tournament-card-info .tournament-address-link span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tournament-card-info .tournament-address-link:hover span { text-decoration: underline; }
+    .tournament-card-info .tournament-address-link:focus-visible { outline: 2px solid rgba(47,111,237,.35); outline-offset: 2px; border-radius: 4px; }
   </style>
 </head>
 <body>
@@ -43,14 +48,14 @@
       <div class="league-tabs" role="tablist" aria-label="選擇賽事類型"><button class="league-tab active" type="button" data-league="all">全部</button><button class="league-tab" type="button" data-league="Great">超級球</button><button class="league-tab" type="button" data-league="Ultra">高級球</button><button class="league-tab" type="button" data-league="Premier">紀念球</button><button class="league-tab" type="button" data-league="Master">大師球</button></div>
       <div id="tournamentList" class="tournament-list"><div class="empty-state"><strong>賽事資料載入中</strong><span>請稍候。</span></div></div>
     </section>
-    <section class="notice tournament-version"><strong>目前為 v0.14.0 測試版</strong><span>賽事頁用於整理與核算；正式積分與排名仍以官方資料為準。</span></section>
+    <section class="notice tournament-version"><strong>目前為 v0.15.0 測試版</strong><span>賽事頁用於整理與核算；正式積分與排名仍以官方資料為準。</span></section>
   </main>
 
   <div id="tournamentModal" class="modal" aria-hidden="true"><div class="modal-backdrop" data-close-tournament-modal></div><section class="modal-card tournament-modal-card" role="dialog" aria-modal="true" aria-labelledby="tournamentModalTitle"><header class="modal-header"><div><h2 id="tournamentModalTitle">賽事詳情</h2><small id="tournamentModalSubtitle">—</small></div><button class="modal-close" type="button" aria-label="關閉" data-close-tournament-modal>×</button></header><div id="tournamentModalBody" class="modal-body"></div></section></div>
   <footer class="footer"><div class="wrap">非官方網站。本頁僅整理公開賽事資訊，Pokémon 相關商標屬原權利人所有。</div></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="tournaments.js?v=0.11.1-r1" defer></script>
+  <script src="tournaments.js?v=0.15.0-r1" defer></script>
   <script src="site-account-ui.js?v=0.13.1-r3" defer></script>
   <script>
     (() => {
