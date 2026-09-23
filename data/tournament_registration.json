@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-10T08:42:00+08:00",
+  "updated_at": "2026-09-23T17:14:06+08:00",
   "source": "https://asia.pokemon-card.com/tw/event-search/list/",
   "events": {
     "66951": {
@@ -347,6 +347,121 @@
       "registration_end_at": "2026-09-14T12:00:00+08:00",
       "registration_period": "08.07.2026 - 09.14.2026 12:00"
     },
+    "67655": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "68104": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "68116": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "68317": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "67540": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "67609": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "67743": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "67537": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "68119": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-16T00:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.16.2026 00:00"
+    },
+    "68226": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-15T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.15.2026 12:00"
+    },
+    "68315": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "68688": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "69000": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-09-28T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 09.28.2026 12:00"
+    },
+    "67538": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "67679": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "67696": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "67806": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "69264": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "67742": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "67970": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "68205": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "68438": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "68479": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
     "64989": {
       "registration_start_at": "2026-08-07T00:00:00+08:00",
       "registration_end_at": "2026-10-08T00:00:00+08:00",
@@ -361,6 +476,66 @@
       "registration_start_at": "2026-08-07T00:00:00+08:00",
       "registration_end_at": "2026-10-08T00:00:00+08:00",
       "registration_period": "08.07.2026 - 10.08.2026 00:00"
+    },
+    "68408": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "68677": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "68686": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "68739": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "68812": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-11-06T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 11.06.2026 12:00"
+    },
+    "67607": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "67801": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "67803": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "67808": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "68017": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T00:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 00:00"
+    },
+    "68405": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "69010": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
     },
     "66990": {
       "registration_start_at": "2026-08-24T00:00:00+08:00",
