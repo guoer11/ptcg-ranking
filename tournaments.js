@@ -134,6 +134,8 @@ function todayTaipei() {
 }
 
 function eventStatus(event) {
+  if (event?.official_status === 'removed') return 'removed';
+  if (event?.official_status === 'unavailable') return 'unavailable';
   if (Array.isArray(event.results) && event.results.length) return 'results';
   const date = String(event.date || '').slice(0, 10);
   if (date && date < todayTaipei()) return 'waiting';
@@ -141,6 +143,8 @@ function eventStatus(event) {
 }
 
 function eventStatusLabel(status) {
+  if (status === 'removed') return '官方已下架';
+  if (status === 'unavailable') return '官方頁面暫時無法確認';
   if (status === 'results') return '已有官方成績';
   if (status === 'waiting') return '等待官方成績';
   return '未舉行';
@@ -271,8 +275,9 @@ function renderTournamentList() {
     const address = String(event.address || '').trim();
     const mapUrl = tournamentGoogleMapsUrl(address);
     const hasResults = eventHasResults(event);
+    const officialStateClass = event.official_status === 'removed' ? ' tournament-card-official-removed' : (event.official_status === 'unavailable' ? ' tournament-card-official-unavailable' : '');
     return `
-      <article class="tournament-card">
+      <article class="tournament-card${officialStateClass}">
         <div class="tournament-card-top">
           <div class="tournament-card-badges">
             <span class="league-badge ${tournamentEsc(event.league || '')}">${tournamentEsc(TOURNAMENT_LEAGUE_LABELS[event.league] || event.league || '聯盟賽')}</span>
