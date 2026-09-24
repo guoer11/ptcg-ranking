@@ -48,6 +48,8 @@ HISTORY_LIMIT = 3
 
 
 def clean_text(node) -> str:
+    if isinstance(node, str):
+        return " ".join(node.split()).strip()
     return " ".join(node.stripped_strings).strip()
 
 
