@@ -15,6 +15,7 @@ const TOURNAMENT_GROUP_LABELS = {
 const PAIRING_ACCESS_SUPABASE_URL = 'https://ceobnyikrudlxasyjukg.supabase.co';
 const PAIRING_ACCESS_SUPABASE_KEY = 'sb_publishable_6uVBALI1T3lMZoFEUiLK4g__R7gv0fz';
 let tournamentPairingClient = null;
+let tournamentIdentityMap = {};
 
 let tournamentData = { season: '2026-27', updated_at: null, events: [] };
 let tournamentLeague = 'all';
@@ -74,7 +75,7 @@ function removeTournamentPairingNav() {
 function insertTournamentPairingNav() {
   if (document.querySelector('.site-nav a[data-pairing-nav]')) return;
   const nav = document.querySelector('.site-nav');
-  const tournamentLink = nav?.querySelector('a[href="tournaments.html"]');
+  const tournamentLink = nav?.querySelector('a[href^="tournaments.html"]');
   if (!nav || !tournamentLink) return;
 
   const link = document.createElement('a');
@@ -101,11 +102,50 @@ async function refreshTournamentPairingNav() {
     if (!sessionData?.session) return;
     const { data: allowed, error } = await tournamentPairingClient.rpc('can_use_pairing');
     if (error) throw error;
-    if (allowed === true) insertTournamentPairingNav();
+    if (allowed === true) {
+      insertTournamentPairingNav();
+      await loadTournamentPrivateIdentities();
+    } else {
+      tournamentIdentityMap = {};
+    }
   } catch (error) {
     console.warn('即時配對導覽權限確認失敗', error);
     removeTournamentPairingNav();
   }
+}
+
+async function loadTournamentPrivateIdentities() {
+  if (!tournamentPairingClient) return;
+  const players = {};
+  const pageSize = 1000;
+  let from = 0;
+  try {
+    while (true) {
+      const { data, error } = await tournamentPairingClient
+        .from('player_identities')
+        .select('player_id, real_name')
+        .order('player_id', { ascending: true })
+        .range(from, from + pageSize - 1);
+      if (error) throw error;
+      for (const row of data || []) {
+        if (!row?.player_id || !row?.real_name) continue;
+        players[String(row.player_id).toLowerCase()] = String(row.real_name);
+      }
+      if (!data || data.length < pageSize) break;
+      from += pageSize;
+    }
+    tournamentIdentityMap = players;
+    const openModal = tournamentModal?.classList.contains('open');
+    const eventId = tournamentModal?.dataset.eventId;
+    if (openModal && eventId) openTournamentModal(eventId);
+  } catch (error) {
+    console.warn('賽事頁真實姓名讀取失敗', error);
+    tournamentIdentityMap = {};
+  }
+}
+
+function tournamentRealName(playerId = '') {
+  return tournamentIdentityMap[String(playerId || '').toLowerCase()] || '';
 }
 
 function tournamentFormatUpdate(iso) {
@@ -317,7 +357,7 @@ function renderTournamentResults(event) {
   const rows = results.map(row => `
     <tr>
       <td>${tournamentEsc(row.rank ?? '—')}</td>
-      <td>${tournamentEsc(row.name || '—')}</td>
+      <td>${tournamentEsc(row.name || '—')}${tournamentRealName(row.player_id) ? `<div class="player-real-name">${tournamentEsc(tournamentRealName(row.player_id))}</div>` : ''}</td>
       <td>${tournamentEsc(row.player_id || '—')}</td>
       <td>${tournamentEsc(row.region || '—')}</td>
       <td><strong>${tournamentEsc(row.points ?? '—')} pt</strong></td>
@@ -339,6 +379,7 @@ function openTournamentModal(eventId) {
   const detailAddress = String(event.address || '').trim();
   const showAddress = detailAddress && detailAddress !== venue;
 
+  tournamentModal.dataset.eventId = String(eventId);
   tournamentModal.classList.add('open');
   tournamentModal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('modal-open');
@@ -363,6 +404,7 @@ function openTournamentModal(eventId) {
 }
 
 function closeTournamentModal() {
+  delete tournamentModal.dataset.eventId;
   tournamentModal.classList.remove('open');
   tournamentModal.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('modal-open');
