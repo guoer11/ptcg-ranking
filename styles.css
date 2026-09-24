@@ -419,6 +419,25 @@ h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
 .event-table th { position: sticky; top: 0; z-index: 1; background: #f8fafc; font-size: 13px; }
 .event-table tr:last-child td { border-bottom: 0; }
 .event-points { font-weight: 800; text-align: right !important; }
+.event-mobile-list { display: none; }
+.event-mobile-card {
+  padding: 14px 15px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+.event-mobile-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.event-mobile-head strong { min-width: 0; font-size: 16px; line-height: 1.35; }
+.event-mobile-head > span { flex: 0 0 auto; color: #126b4d; font-size: 17px; font-weight: 800; }
+.event-mobile-location { margin-top: 7px; color: #40506a; font-size: 14px; line-height: 1.35; }
+.event-mobile-meta { display: flex; align-items: center; gap: 9px; margin-top: 8px; color: var(--muted); font-size: 12px; }
+.event-mobile-rank::before { content: "｜"; margin-right: 9px; color: #c1c9d6; }
+
 .detail-unavailable { padding: 40px 10px 52px; text-align: center; }
 .detail-unavailable strong { font-size: 20px; }
 .detail-unavailable p { color: var(--muted); margin: 10px auto 18px; max-width: 560px; }
@@ -446,4 +465,6 @@ h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
   .top8-card { padding: 16px; }
   .top8-formula { font-size: 15px; line-height: 1.6; }
   .events-title-row { align-items: flex-start; flex-direction: column; }
+  .event-table-scroll { display: none; }
+  .event-mobile-list { display: grid; gap: 9px; }
 }
