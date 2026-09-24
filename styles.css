@@ -21,7 +21,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
 }
 
-body.modal-open { overflow: hidden; }
+body.modal-open { position: fixed; left: 0; right: 0; width: 100%; overflow: hidden; overscroll-behavior: none; }
 button, input { font: inherit; }
 
 .wrap {
@@ -306,6 +306,7 @@ h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
   position: relative;
   width: min(1000px, calc(100% - 28px));
   max-height: min(820px, calc(100vh - 32px));
+  max-height: min(820px, calc(100dvh - 32px));
   margin: 16px auto;
   background: #fff;
   border-radius: 20px;
@@ -458,7 +459,7 @@ h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
   .update-toolbar { align-items: flex-start; flex-direction: column; }
   .update-actions { width: 100%; }
   .secondary-btn { flex: 1 1 auto; }
-  .modal-card { width: calc(100% - 12px); margin: 6px auto; max-height: calc(100vh - 12px); border-radius: 15px; }
+  .modal-card { width: calc(100% - 12px); margin: 6px auto; max-height: calc(100vh - 12px); max-height: calc(100dvh - 12px); border-radius: 15px; }
   .modal-header { padding: 14px 15px; }
   .modal-body { padding: 14px; }
   .player-stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
