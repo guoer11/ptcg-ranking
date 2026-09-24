@@ -53,9 +53,11 @@ jobs:
         run: python enrich_registration_windows.py
 
       - name: Commit tournament changes
+        id: commit
         run: |
           if [[ -z "$(git status --porcelain -- data/tournaments.json data/tournament_registration.json)" ]]; then
             echo "No tournament changes."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "github-actions[bot]"
@@ -64,3 +66,20 @@ jobs:
           git commit -m "Update official tournament data"
           git pull --rebase origin main
           git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Notify immediately after tournament data changes
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+          # 通知後端改讀 GitHub main 的原始 JSON，因此不必等待 GitHub Pages 部署完成。
+          sleep 3
+          curl --fail-with-body --silent --show-error \
+            -X POST "https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-line" \
+            -H "Content-Type: application/json" \
+            -d '{"action":"poll"}'
+          echo
+          curl --fail-with-body --silent --show-error \
+            -X POST "https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-push" \
+            -H "Content-Type: application/json" \
+            -d '{"action":"poll"}'
+          echo
