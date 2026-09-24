@@ -460,6 +460,15 @@ def main() -> int:
                 else "unavailable"
             )
 
+        # 已經舉行的活動不套用「官方頁面無法確認 / 已下架」狀態。
+        # 官方可能會移除舊活動頁，但仍需保留「等待官方成績 / 已有官方成績」流程。
+        event_date = str(item.get("date") or "")[:10]
+        today = now_dt.date().isoformat()
+        if event_date and event_date < today:
+            item["official_status"] = "active"
+            item.pop("official_missing_since", None)
+            item.pop("official_missing_checks", None)
+
         if item.get("season") != SEASON or item.get("league") not in CSP_LEAGUES.values():
             continue
         if item.get("date") and not (SEASON_START <= item["date"] <= SEASON_END):
