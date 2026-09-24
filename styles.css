@@ -310,6 +310,7 @@ h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
   background: #fff;
   border-radius: 20px;
   overflow: hidden;
+  overscroll-behavior: none;
   box-shadow: 0 28px 70px rgba(0,0,0,.3);
   display: flex;
   flex-direction: column;
@@ -334,7 +335,7 @@ h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
   cursor: pointer;
 }
 .modal-close:hover { color: #fff; }
-.modal-body { padding: 20px; overflow-y: auto; }
+.modal-body { min-height: 0; padding: 20px; overflow-y: auto; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
 .modal-loading { padding: 70px 20px; text-align: center; color: var(--muted); }
 
 .identity-note {
