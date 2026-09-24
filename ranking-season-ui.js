@@ -179,10 +179,24 @@ function rankingTrendHtml(playerId) {
       </section>`;
   }
 
-  const chronological = snapshots.map(snapshot => ({
+  const chronologicalRaw = snapshots.map(snapshot => ({
     updated_at: snapshot.updated_at,
     player: findPlayerInSnapshot(snapshot, playerId)
   }));
+
+  // 排名歷史是全站快照；其他玩家的暱稱或資料變動也可能產生新快照。
+  // 玩家趨勢只保留「這位玩家自己」的排名、積分、組別或上/離榜狀態變化。
+  const chronological = chronologicalRaw.filter((entry, index) => {
+    if (index === 0) return true;
+    const previous = chronologicalRaw[index - 1];
+    const currentPlayer = entry.player;
+    const previousPlayer = previous.player;
+    if (!currentPlayer && !previousPlayer) return false;
+    if (!currentPlayer || !previousPlayer) return true;
+    return String(currentPlayer.group || '') !== String(previousPlayer.group || '')
+      || Number(currentPlayer.rank) !== Number(previousPlayer.rank)
+      || Number(currentPlayer.points) !== Number(previousPlayer.points);
+  });
 
   const meaningful = chronological.some(item => item.player);
   if (!meaningful) {
