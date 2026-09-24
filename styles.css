@@ -384,6 +384,21 @@ h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
 .top8-formula strong { color: #ffe55b; }
 .top8-empty { padding: 18px; color: var(--muted); background: #f6f8fb; border-radius: 14px; }
 
+.calculated-points-card {
+  margin: 0 0 22px;
+  padding: 18px;
+  border: 1px solid #d7e0ef;
+  border-radius: 18px;
+  background: #f8fbff;
+}
+.calculated-points-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.calculated-points-head strong { font-size: 19px; }
+.calculated-points-head span { color: var(--muted); font-size: 12px; }
+.calculated-points-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+.calculated-points-grid > div { padding: 13px; border-radius: 12px; background: #fff; border: 1px solid var(--line); }
+.calculated-points-grid strong { display: block; font-size: 22px; }
+.calculated-points-grid span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+.calculated-points-card p { margin: 12px 0 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
 .events-section { margin-top: 22px; }
 .events-title-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 10px; }
 .events-title-row h3 { margin: 0; font-size: 20px; }
