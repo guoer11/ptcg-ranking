@@ -155,7 +155,7 @@ def parse_rows(soup: BeautifulSoup) -> list[dict]:
         if not player_id and inline_id:
             player_id = inline_id.group(1).lower()
         if inline_id:
-            name = clean_text(name[: inline_id.start()] + " " + name[inline_id.end() :])
+            name = " ".join((name[: inline_id.start()] + " " + name[inline_id.end() :]).split())
         if player_id and not player_url:
             player_url = f"{BASE_URL}/tw/users/{player_id}/"
 
