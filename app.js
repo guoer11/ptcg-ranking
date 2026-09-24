@@ -300,7 +300,11 @@ async function loadTournamentData() {
 function calculatedEventsForPlayer(tournaments, playerId) {
   const key = String(playerId || '').trim().toLowerCase();
   if (!key) return [];
+  const currentSeason = String(tournaments?.season || '').trim();
   return (tournaments?.events || []).flatMap(event => {
+    // 玩家頁只計入目前賽季；舊賽季資料仍可保留在資料檔中，但不可混入本季積分與賽事紀錄。
+    const eventSeason = String(event.season || '').trim();
+    if (currentSeason && eventSeason && eventSeason !== currentSeason) return [];
     const result = (event.results || []).find(row => String(row.player_id || '').trim().toLowerCase() === key);
     if (!result) return [];
     const points = Number(result.points);
