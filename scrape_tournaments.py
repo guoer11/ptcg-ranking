@@ -491,7 +491,7 @@ def main() -> int:
         "updated_at": now,
         "source": "https://asia.pokemon-card.com/tw/event-search/list/",
         "authority_note": "本資料供賽事整理與積分核算輔助；正式積分與排名以 Pokémon Asia 官方排行榜為準。",
-        "schedule": ["00:01", "12:01"],
+        "schedule": ["00:01", "12:01", "17:01"],
         "events": events,
     }
 
