@@ -459,6 +459,21 @@ h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
   .update-toolbar { align-items: flex-start; flex-direction: column; }
   .update-actions { width: 100%; }
   .secondary-btn { flex: 1 1 auto; }
+  /* 手機排名表：組別已由上方分頁顯示，因此隱藏重複欄位，保留可讀字級並避免橫向捲動。 */
+  .ranking-container .table-scroll { overflow-x: visible; }
+  .ranking-table { min-width: 0; table-layout: fixed; }
+  .ranking-table th, .ranking-table td { padding: 12px 5px; }
+  .ranking-table th:nth-child(1), .ranking-table td:nth-child(1) { width: 48px; }
+  .ranking-table th:nth-child(2), .ranking-table td:nth-child(2) { width: auto; }
+  .ranking-table th:nth-child(3), .ranking-table td:nth-child(3) { width: 58px; white-space: nowrap; }
+  .ranking-table th:nth-child(4), .ranking-table td:nth-child(4) { display: none; }
+  .ranking-table th:nth-child(5), .ranking-table td:nth-child(5) { width: 54px; white-space: nowrap; }
+  .ranking-table th:nth-child(6), .ranking-table td:nth-child(6) { width: 42px; padding-left: 2px; padding-right: 2px; }
+  .ranking-table td:nth-child(2) { overflow-wrap: anywhere; }
+  .ranking-table .rank-badge { min-width: 32px; height: 32px; }
+  .ranking-table .detail-btn { width: 36px; height: 36px; border-radius: 10px; font-size: 22px; }
+  .ranking-table .player-real-name { font-size: 13px; }
+  .ranking-table .row-id { font-size: 12px; white-space: nowrap; }
   .modal-card { width: calc(100% - 12px); margin: 6px auto; max-height: calc(100vh - 12px); max-height: calc(100dvh - 12px); border-radius: 15px; }
   .modal-header { padding: 14px 15px; }
   .modal-body { padding: 14px; }
