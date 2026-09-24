@@ -254,6 +254,23 @@ def cleanup_legacy_history() -> None:
         path.unlink()
 
 
+def ranking_state_signature(groups: dict) -> dict:
+    """只比較會影響排名趨勢的欄位，忽略暱稱、地區、玩家頁網址等文字變動。"""
+    signature = {}
+    for group in GROUPS:
+        rows = []
+        for item in groups.get(group, []) or []:
+            rows.append(
+                (
+                    str(item.get("player_id") or item.get("name") or "").lower(),
+                    item.get("rank"),
+                    item.get("points"),
+                )
+            )
+        signature[group] = rows
+    return signature
+
+
 def append_history_snapshot(payload: dict) -> None:
     if not groups_have_players(payload.get("groups", {})):
         print("目前仍是空榜，不建立歷史排名快照。")
@@ -265,8 +282,8 @@ def append_history_snapshot(payload: dict) -> None:
     )
     snapshots = history.get("snapshots") or []
 
-    if snapshots and snapshots[-1].get("groups") == payload.get("groups"):
-        print("歷史快照內容未變，不重複新增。")
+    if snapshots and ranking_state_signature(snapshots[-1].get("groups", {})) == ranking_state_signature(payload.get("groups", {})):
+        print("排名／積分狀態未變，不建立新的歷史快照。")
         return
 
     snapshots.append(payload)
