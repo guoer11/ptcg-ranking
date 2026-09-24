@@ -256,7 +256,7 @@ function top8Html(top8) {
   const total = top8?.total ?? points.reduce((sum, v) => sum + (Number(v) || 0), 0);
   return `
     <section class="top8-card">
-      <div class="top8-head"><strong>⚡ 前 8 場高積分賽事</strong><span>TOP 8</span></div>
+      <div class="top8-head"><strong>⚡ 前 8 場高積分賽事</strong></div>
       <div class="top8-formula"><span>${points.length} 場合計</span> ${esc(formula)} = <strong>${esc(total)}分</strong></div>
     </section>`;
 }
