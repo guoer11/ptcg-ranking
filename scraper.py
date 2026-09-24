@@ -267,7 +267,7 @@ def ranking_state_signature(groups: dict) -> dict:
                     item.get("points"),
                 )
             )
-        signature[group] = rows
+        signature[group] = sorted(rows, key=lambda row: row[0])
     return signature
 
 
