@@ -148,6 +148,17 @@ def parse_rows(soup: BeautifulSoup) -> list[dict]:
             if match:
                 player_id = match.group(1)
 
+        # 2026-09 起官方排名頁有時不再提供玩家頁連結，而是把 PTCG ID
+        # 直接附在「用戶名」欄位，例如 "Yuzuna tw80392170"。
+        # 仍需拆出 player_id，否則私人姓名對照與玩家詳細資料都無法運作。
+        inline_id = re.search(r"\\b(tw\\d+)\\b", name, flags=re.I)
+        if not player_id and inline_id:
+            player_id = inline_id.group(1).lower()
+        if inline_id:
+            name = clean_text(name[: inline_id.start()] + " " + name[inline_id.end() :])
+        if player_id and not player_url:
+            player_url = f"{BASE_URL}/tw/users/{player_id}/"
+
         players.append(
             {
                 "rank": number(rank_text),
