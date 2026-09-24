@@ -296,9 +296,9 @@ function renderTournamentList() {
         <h3>${tournamentEsc(event.title || `官方活動 ${event.event_id || ''}`)}</h3>
 
         <div class="tournament-card-info">
-          ${venue ? `<span title="${tournamentEsc(venue)}">⌂ ${tournamentEsc(venue)}</span>` : ''}
+          ${venue ? `<span title="${tournamentEsc(venue)}"><i class="tournament-info-icon" aria-hidden="true">⌂</i><span>${tournamentEsc(venue)}</span></span>` : ''}
           ${address ? `<a class="tournament-address-link" href="${tournamentEsc(mapUrl)}" target="_blank" rel="noopener noreferrer" title="在 Google 地圖開啟：${tournamentEsc(address)}" aria-label="在 Google 地圖開啟 ${tournamentEsc(address)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-12A7 7 0 1 0 5 9c0 5.9 7 12 7 12Zm0-9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg><span>${tournamentEsc(address)}</span></a>` : ''}
-          ${event.capacity ? `<span>♟ ${tournamentEsc(event.capacity)} 人</span>` : ''}
+          ${event.capacity ? `<span><i class="tournament-info-icon" aria-hidden="true">♟</i><span>${tournamentEsc(event.capacity)} 人</span></span>` : ''}
           ${event.group && event.group !== 'Open' ? `<span>${tournamentEsc(eventGroupLabel(event.group))}</span>` : ''}
         </div>
       </article>`;
