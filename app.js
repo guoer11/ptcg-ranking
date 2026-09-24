@@ -406,6 +406,16 @@ function eventsHtml(data) {
 }
 
 function renderPlayerDetail(data, calculatedEvents = null) {
+  // 正式玩家一律以目前賽季的 tournaments.json 計算結果顯示賽事；
+  // 避免早期 data/players 示範檔中的 2025-26 靜態資料混入新賽季。
+  if (!data.demo && Array.isArray(calculatedEvents)) {
+    data = {
+      ...data,
+      events: calculatedEvents,
+      total_events: calculatedEvents.length,
+      events_note: ''
+    };
+  }
   const identity = identityFor(data.player_id);
   const realName = data.real_name || identity?.real_name;
   modalTitle.textContent = data.name || data.player_id || '玩家詳細資料';
