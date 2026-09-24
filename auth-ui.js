@@ -272,7 +272,10 @@ async function startIdentityAuth() {
   identitySession = data?.session || null;
   await loadPrivateIdentities();
 
-  identityClient.auth.onAuthStateChange(async (event, session) => {
+  identityClient.auth.onAuthStateChange((event, session) => {
+    // Do not await Supabase queries inside the auth callback. Supabase holds an
+    // internal auth lock while this callback runs; querying here can leave the
+    // authorized UI stuck after Google sign-in/token refresh.
     invalidatePairingNavAccess();
     identityLoadRequestId += 1;
     identitySession = session || null;
@@ -280,13 +283,13 @@ async function startIdentityAuth() {
     if (event === 'SIGNED_OUT' || !session) {
       clearPrivateIdentities();
       updateIdentityAuthUI();
-      await refreshPairingNavAccess();
       renderRanking();
+      setTimeout(() => refreshPairingNavAccess(), 0);
       return;
     }
 
     if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
-      await loadPrivateIdentities();
+      setTimeout(() => loadPrivateIdentities(), 0);
     }
   });
 }
