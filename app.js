@@ -312,6 +312,29 @@ function calculatedPointsHtml(events, officialPoints) {
     </section>`;
 }
 
+function compactEventName(name) {
+  const raw = String(name || '').trim();
+  if (!raw) return '—';
+  const seasonMatch = raw.match(/(?:Taiwan\s+)?(Great|Ultra|Premier|Master)\s+Ball\s+League(?:\s+Season\s+(\d+))?/i);
+  if (seasonMatch) {
+    const labels = { great: '超級球季賽', ultra: '高級球季賽', premier: '紀念球賽', master: '大師球賽' };
+    const label = labels[seasonMatch[1].toLowerCase()] || raw;
+    return seasonMatch[2] ? `${label} ${seasonMatch[2]}` : label;
+  }
+  return raw
+    .replace(/^2026-27\s+Taiwan\s+/i, '')
+    .replace(/Great Ball League/ig, '超級球季賽')
+    .replace(/Ultra Ball League/ig, '高級球季賽')
+    .replace(/Premier Ball League/ig, '紀念球賽')
+    .replace(/Master Ball League/ig, '大師球賽')
+    .replace(/Season\s*(\d+)/ig, '$1');
+}
+
+function formatEventDate(date) {
+  const match = String(date || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return match ? `${match[1]}/${match[2]}/${match[3]}` : (date || '—');
+}
+
 function eventsHtml(data) {
   const events = Array.isArray(data.events) ? data.events : [];
   if (!events.length) {
@@ -324,13 +347,30 @@ function eventsHtml(data) {
       <td>${esc(event.location || '—')}</td>
       <td class="event-points">${esc(event.points ?? '—')}</td>
     </tr>`).join('');
+  const cards = events.map(event => {
+    const rank = Number(event.rank);
+    const rankText = Number.isFinite(rank) && rank > 0 ? `第 ${rank} 名` : '';
+    return `
+      <article class="event-mobile-card">
+        <div class="event-mobile-head">
+          <strong>${esc(compactEventName(event.name))}</strong>
+          <span>${esc(event.points ?? '—')} pt</span>
+        </div>
+        <div class="event-mobile-location">${esc(event.location || '—')}</div>
+        <div class="event-mobile-meta">
+          <span>${esc(formatEventDate(event.date))}</span>
+          ${rankText ? `<span class="event-mobile-rank">${esc(rankText)}</span>` : ''}
+        </div>
+      </article>`;
+  }).join('');
   return `
     <div class="event-table-scroll">
       <table class="event-table">
         <thead><tr><th>賽事</th><th>日期</th><th>地點</th><th>積分</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
-    </div>`;
+    </div>
+    <div class="event-mobile-list">${cards}</div>`;
 }
 
 function renderPlayerDetail(data, calculatedEvents = null) {
