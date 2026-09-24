@@ -11,6 +11,7 @@ let rankingData = { updated_at: null, groups: { Master: [], Senior: [], Junior: 
 let identityData = { updated_at: null, count: 0, players: {} };
 let activeGroup = 'Junior';
 let searchKeyword = '';
+let tournamentDataCache = null;
 
 const container = document.getElementById('rankingContainer');
 const searchInput = document.getElementById('rankingSearch');
@@ -260,6 +261,48 @@ function top8Html(top8) {
     </section>`;
 }
 
+async function loadTournamentData() {
+  if (tournamentDataCache) return tournamentDataCache;
+  const response = await fetch(`data/tournaments.json?v=${Date.now()}`, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`tournaments HTTP ${response.status}`);
+  tournamentDataCache = await response.json();
+  return tournamentDataCache;
+}
+
+function calculatedEventsForPlayer(tournaments, playerId) {
+  const key = String(playerId || '').trim().toLowerCase();
+  if (!key) return [];
+  return (tournaments?.events || []).flatMap(event => {
+    const result = (event.results || []).find(row => String(row.player_id || '').trim().toLowerCase() === key);
+    if (!result) return [];
+    const points = Number(result.points);
+    return [{
+      name: event.title || '官方賽事',
+      date: event.date || '—',
+      location: event.venue || event.region || '—',
+      points: Number.isFinite(points) ? points : 0,
+      rank: result.rank ?? null,
+      url: event.url || ''
+    }];
+  }).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+}
+
+function calculatedPointsHtml(events, officialPoints) {
+  const values = events.map(event => Number(event.points)).filter(Number.isFinite);
+  const total = values.reduce((sum, value) => sum + value, 0);
+  const official = Number(officialPoints);
+  const officialText = Number.isFinite(official) ? `${official} pt` : '尚未公布';
+  return `
+    <section class="calculated-points-card">
+      <div class="calculated-points-head"><strong>本站積分試算</strong><span>依官方賽事結果</span></div>
+      <div class="calculated-points-grid">
+        <div><strong>${esc(officialText)}</strong><span>官方目前積分</span></div>
+        <div><strong>${esc(total)} pt</strong><span>本站已知賽事試算</span></div>
+      </div>
+      <p>${events.length ? `目前找到 ${esc(events.length)} 場有積分的官方賽事紀錄。` : '目前尚未找到這位玩家的官方賽事積分紀錄。'} 實際積分與排名仍以 Pokémon Asia 官方公布為準。</p>
+    </section>`;
+}
+
 function eventsHtml(data) {
   const events = Array.isArray(data.events) ? data.events : [];
   if (!events.length) {
@@ -281,7 +324,7 @@ function eventsHtml(data) {
     </div>`;
 }
 
-function renderPlayerDetail(data) {
+function renderPlayerDetail(data, calculatedEvents = null) {
   const identity = identityFor(data.player_id);
   const realName = data.real_name || identity?.real_name;
   modalTitle.textContent = data.name || data.player_id || '玩家詳細資料';
@@ -302,6 +345,7 @@ function renderPlayerDetail(data) {
       <article><strong>${esc(data.region || '—')}</strong><span>地區</span></article>
     </section>
 
+    ${Array.isArray(calculatedEvents) ? calculatedPointsHtml(calculatedEvents, data.official_points) : ''}
     ${top8Html(data.top8)}
 
     <section class="events-section">
@@ -355,19 +399,43 @@ async function openPlayerModal(playerId) {
     const response = await fetch(`data/players/${encodeURIComponent(playerId)}.json?v=${Date.now()}`, { cache: 'no-store' });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    renderPlayerDetail(data);
+    let calculatedEvents = [];
+    try {
+      const tournaments = await loadTournamentData();
+      calculatedEvents = calculatedEventsForPlayer(tournaments, playerId);
+    } catch (tournamentError) {
+      console.warn('無法載入本站賽事積分試算：', tournamentError);
+    }
+    renderPlayerDetail(data, calculatedEvents);
   } catch (error) {
     console.warn('本站尚無玩家詳細資料：', playerId, error);
     const identity = identityFor(playerId);
     modalTitle.textContent = identity?.real_name ? `${playerId}｜${identity.real_name}` : playerId;
-    modalUpdated.textContent = '本站尚未建立此玩家詳細資料';
+    modalUpdated.textContent = '本站賽事資料試算';
+    let calculatedEvents = [];
+    try {
+      const tournaments = await loadTournamentData();
+      calculatedEvents = calculatedEventsForPlayer(tournaments, playerId);
+    } catch (tournamentError) {
+      console.warn('無法載入本站賽事積分試算：', tournamentError);
+    }
+    const rankingInfo = Object.entries(rankingData.groups || {}).flatMap(([group, rows]) =>
+      (rows || []).map(row => ({ ...row, group }))
+    ).find(row => String(row.player_id || '').toLowerCase() === String(playerId).toLowerCase());
     modalBody.innerHTML = `
       ${identity?.real_name ? `<div class="identity-note"><strong>${esc(identity.real_name)}</strong><span>歷史公開賽事姓名</span></div>` : ''}
-      <div class="detail-unavailable">
-        <strong>這位玩家目前只有排行榜／姓名對照資料</strong>
-        <p>等玩家公開賽事抓取功能完成後，這裡會顯示 Top 8 與所有賽事紀錄。</p>
-        <a class="primary-btn link-btn" href="${esc(playerOfficialUrl(playerId))}" target="_blank" rel="noopener">先開啟官方玩家頁</a>
-      </div>`;
+      <section class="player-stat-grid">
+        <article><strong>${esc(rankingInfo?.points ?? '—')}pt</strong><span>官方目前積分</span></article>
+        <article><strong class="player-id-value">${esc(playerId)}</strong><span>PTCG ID</span></article>
+        <article><strong>${esc(rankingInfo?.group ? GROUP_LABELS[rankingInfo.group] : '待確認')}</strong><span>組別</span></article>
+        <article><strong>${esc(rankingInfo?.region || '—')}</strong><span>地區</span></article>
+      </section>
+      ${calculatedPointsHtml(calculatedEvents, rankingInfo?.points)}
+      <section class="events-section">
+        <div class="events-title-row"><h3>▣ 本站已知官方賽事 <span>(${esc(calculatedEvents.length)} 場)</span></h3>
+        <a class="official-link" href="${esc(playerOfficialUrl(playerId))}" target="_blank" rel="noopener">官方玩家頁 ↗</a></div>
+        ${eventsHtml({ events: calculatedEvents })}
+      </section>`;
   }
 }
 
