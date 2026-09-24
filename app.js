@@ -287,9 +287,18 @@ function calculatedEventsForPlayer(tournaments, playerId) {
   }).sort((a, b) => String(b.date).localeCompare(String(a.date)));
 }
 
+function calculatedTop8(events) {
+  const points = (events || [])
+    .map(event => Number(event.points))
+    .filter(Number.isFinite)
+    .sort((a, b) => b - a)
+    .slice(0, 8);
+  return { points, total: points.reduce((sum, value) => sum + value, 0) };
+}
+
 function calculatedPointsHtml(events, officialPoints) {
-  const values = events.map(event => Number(event.points)).filter(Number.isFinite);
-  const total = values.reduce((sum, value) => sum + value, 0);
+  const top8 = calculatedTop8(events);
+  const total = top8.total;
   const official = Number(officialPoints);
   const officialText = Number.isFinite(official) ? `${official} pt` : '尚未公布';
   return `
@@ -346,7 +355,7 @@ function renderPlayerDetail(data, calculatedEvents = null) {
     </section>
 
     ${Array.isArray(calculatedEvents) ? calculatedPointsHtml(calculatedEvents, data.official_points) : ''}
-    ${top8Html(data.top8)}
+    ${Array.isArray(calculatedEvents) ? top8Html(calculatedTop8(calculatedEvents)) : top8Html(data.top8)}
 
     <section class="events-section">
       <div class="events-title-row">
@@ -431,6 +440,7 @@ async function openPlayerModal(playerId) {
         <article><strong>${esc(rankingInfo?.region || '—')}</strong><span>地區</span></article>
       </section>
       ${calculatedPointsHtml(calculatedEvents, rankingInfo?.points)}
+      ${top8Html(calculatedTop8(calculatedEvents))}
       <section class="events-section">
         <div class="events-title-row"><h3>▣ 本站已知官方賽事 <span>(${esc(calculatedEvents.length)} 場)</span></h3>
         <a class="official-link" href="${esc(playerOfficialUrl(playerId))}" target="_blank" rel="noopener">官方玩家頁 ↗</a></div>
