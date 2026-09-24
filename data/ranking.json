@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-09-25T00:05:37+08:00",
+  "updated_at": "2026-09-25T03:58:45+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -1392,6 +1392,14 @@
       },
       {
         "rank": 138,
+        "name": "Ming tw21601458",
+        "player_id": null,
+        "region": "高雄市",
+        "points": 6,
+        "player_url": null
+      },
+      {
+        "rank": 138,
         "name": "Monkeyz tw36173804",
         "player_id": null,
         "region": "彰化縣",
@@ -1603,14 +1611,6 @@
         "name": "lwq_simon tw11485810",
         "player_id": null,
         "region": "臺中市",
-        "points": 6,
-        "player_url": null
-      },
-      {
-        "rank": 138,
-        "name": "mingchia tw21601458",
-        "player_id": null,
-        "region": "高雄市",
         "points": 6,
         "player_url": null
       },
