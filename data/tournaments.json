@@ -1,11 +1,11 @@
 {
   "season": "2026-27",
-  "updated_at": "2026-09-23T17:13:05+08:00",
+  "updated_at": "2026-09-24T15:01:15+08:00",
   "source": "https://asia.pokemon-card.com/tw/event-search/list/",
   "authority_note": "本資料供賽事整理與積分核算輔助；正式積分與排名以 Pokémon Asia 官方排行榜為準。",
   "schedule": [
-    "00:05",
-    "12:05"
+    "00:01",
+    "12:01"
   ],
   "events": [
     {
@@ -24,7 +24,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T15:01:03+08:00",
-      "checked_at": "2026-09-23T17:11:58+08:00"
+      "checked_at": "2026-09-24T15:01:09+08:00"
     },
     {
       "event_id": "66339",
@@ -42,7 +42,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T15:01:04+08:00",
-      "checked_at": "2026-09-23T17:11:58+08:00"
+      "checked_at": "2026-09-24T15:01:09+08:00"
     },
     {
       "event_id": "66340",
@@ -60,7 +60,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T15:01:04+08:00",
-      "checked_at": "2026-09-23T17:11:59+08:00"
+      "checked_at": "2026-09-24T15:01:10+08:00"
     },
     {
       "event_id": "66341",
@@ -78,7 +78,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T15:01:05+08:00",
-      "checked_at": "2026-09-23T17:12:00+08:00"
+      "checked_at": "2026-09-24T15:01:10+08:00"
     },
     {
       "event_id": "66342",
@@ -96,7 +96,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T15:01:05+08:00",
-      "checked_at": "2026-09-23T17:12:01+08:00"
+      "checked_at": "2026-09-24T15:01:11+08:00"
     },
     {
       "event_id": "66343",
@@ -114,7 +114,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T15:01:06+08:00",
-      "checked_at": "2026-09-23T17:12:01+08:00"
+      "checked_at": "2026-09-24T15:01:12+08:00"
     },
     {
       "event_id": "66344",
@@ -132,7 +132,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T15:01:06+08:00",
-      "checked_at": "2026-09-23T17:12:02+08:00"
+      "checked_at": "2026-09-24T15:01:12+08:00"
     },
     {
       "event_id": "66345",
@@ -150,7 +150,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T15:01:06+08:00",
-      "checked_at": "2026-09-23T17:12:02+08:00"
+      "checked_at": "2026-09-24T15:01:13+08:00"
     },
     {
       "event_id": "66346",
@@ -168,7 +168,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T15:01:07+08:00",
-      "checked_at": "2026-09-23T17:12:03+08:00"
+      "checked_at": "2026-09-24T15:01:13+08:00"
     },
     {
       "event_id": "66347",
@@ -186,7 +186,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T15:01:07+08:00",
-      "checked_at": "2026-09-23T17:12:03+08:00"
+      "checked_at": "2026-09-24T15:01:14+08:00"
     },
     {
       "event_id": "66348",
@@ -204,7 +204,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T15:01:08+08:00",
-      "checked_at": "2026-09-23T17:12:04+08:00"
+      "checked_at": "2026-09-24T15:01:14+08:00"
     },
     {
       "event_id": "66349",
@@ -222,7 +222,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T15:01:08+08:00",
-      "checked_at": "2026-09-23T17:12:04+08:00"
+      "checked_at": "2026-09-24T15:01:15+08:00"
     },
     {
       "event_id": "66951",
@@ -240,7 +240,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:34+08:00",
-      "checked_at": "2026-09-23T17:12:16+08:00"
+      "checked_at": "2026-09-24T15:00:18+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66949",
@@ -258,7 +261,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:33+08:00",
-      "checked_at": "2026-09-23T17:12:15+08:00"
+      "checked_at": "2026-09-24T15:00:17+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66950",
@@ -276,7 +282,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:34+08:00",
-      "checked_at": "2026-09-23T17:12:15+08:00"
+      "checked_at": "2026-09-24T15:00:17+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66350",
@@ -294,7 +303,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:46+08:00",
-      "checked_at": "2026-09-23T17:12:05+08:00"
+      "checked_at": "2026-09-24T15:00:05+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66351",
@@ -312,7 +324,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:46+08:00",
-      "checked_at": "2026-09-23T17:12:05+08:00"
+      "checked_at": "2026-09-24T15:00:06+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66352",
@@ -330,7 +345,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:47+08:00",
-      "checked_at": "2026-09-23T17:12:06+08:00"
+      "checked_at": "2026-09-24T15:00:06+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66353",
@@ -348,7 +366,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:48+08:00",
-      "checked_at": "2026-09-23T17:12:07+08:00"
+      "checked_at": "2026-09-24T15:00:07+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66354",
@@ -366,7 +387,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:48+08:00",
-      "checked_at": "2026-09-23T17:12:07+08:00"
+      "checked_at": "2026-09-24T15:00:08+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66355",
@@ -384,7 +408,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:49+08:00",
-      "checked_at": "2026-09-23T17:12:08+08:00"
+      "checked_at": "2026-09-24T15:00:08+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67511",
@@ -402,7 +429,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:59+08:00",
-      "checked_at": "2026-09-23T17:12:23+08:00"
+      "checked_at": "2026-09-24T15:00:26+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66356",
@@ -420,7 +450,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:50+08:00",
-      "checked_at": "2026-09-23T17:12:08+08:00"
+      "checked_at": "2026-09-24T15:00:09+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66357",
@@ -438,7 +471,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:51+08:00",
-      "checked_at": "2026-09-23T17:12:09+08:00"
+      "checked_at": "2026-09-24T15:00:09+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66358",
@@ -456,7 +492,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:51+08:00",
-      "checked_at": "2026-09-23T17:12:09+08:00"
+      "checked_at": "2026-09-24T15:00:10+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66359",
@@ -474,7 +513,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:52+08:00",
-      "checked_at": "2026-09-23T17:12:10+08:00"
+      "checked_at": "2026-09-24T15:00:10+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66360",
@@ -492,7 +534,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:53+08:00",
-      "checked_at": "2026-09-23T17:12:10+08:00"
+      "checked_at": "2026-09-24T15:00:11+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66361",
@@ -510,7 +555,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:53+08:00",
-      "checked_at": "2026-09-23T17:12:11+08:00"
+      "checked_at": "2026-09-24T15:00:12+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66362",
@@ -528,7 +576,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:54+08:00",
-      "checked_at": "2026-09-23T17:12:12+08:00"
+      "checked_at": "2026-09-24T15:00:12+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66363",
@@ -546,7 +597,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:54+08:00",
-      "checked_at": "2026-09-23T17:12:12+08:00"
+      "checked_at": "2026-09-24T15:00:13+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66364",
@@ -564,7 +618,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:55+08:00",
-      "checked_at": "2026-09-23T17:12:13+08:00"
+      "checked_at": "2026-09-24T15:00:14+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66365",
@@ -582,7 +639,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:55+08:00",
-      "checked_at": "2026-09-23T17:12:13+08:00"
+      "checked_at": "2026-09-24T15:00:14+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66366",
@@ -600,7 +660,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:56+08:00",
-      "checked_at": "2026-09-23T17:12:14+08:00"
+      "checked_at": "2026-09-24T15:00:15+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66382",
@@ -618,7 +681,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:57+08:00",
-      "checked_at": "2026-09-23T17:12:14+08:00"
+      "checked_at": "2026-09-24T15:00:16+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67539",
@@ -636,7 +702,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:03+08:00",
-      "checked_at": "2026-09-23T17:12:27+08:00"
+      "checked_at": "2026-09-24T15:00:30+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67654",
@@ -654,7 +721,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:05+08:00",
-      "checked_at": "2026-09-23T17:12:31+08:00"
+      "checked_at": "2026-09-24T15:00:34+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67678",
@@ -672,7 +740,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:05+08:00",
-      "checked_at": "2026-09-23T17:12:32+08:00"
+      "checked_at": "2026-09-24T15:00:35+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68314",
@@ -690,7 +759,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:16+08:00",
-      "checked_at": "2026-09-23T17:12:50+08:00"
+      "checked_at": "2026-09-24T15:00:53+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67533",
@@ -708,7 +778,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:00+08:00",
-      "checked_at": "2026-09-23T17:12:24+08:00"
+      "checked_at": "2026-09-24T15:00:27+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67534",
@@ -726,7 +797,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:01+08:00",
-      "checked_at": "2026-09-23T17:12:25+08:00"
+      "checked_at": "2026-09-24T15:00:27+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67959",
@@ -744,7 +816,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:11+08:00",
-      "checked_at": "2026-09-23T17:12:42+08:00"
+      "checked_at": "2026-09-24T15:00:45+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68103",
@@ -762,7 +835,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:11+08:00",
-      "checked_at": "2026-09-23T17:12:44+08:00"
+      "checked_at": "2026-09-24T15:00:47+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68227",
@@ -780,7 +854,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:15+08:00",
-      "checked_at": "2026-09-23T17:12:49+08:00"
+      "checked_at": "2026-09-24T15:00:52+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67532",
@@ -798,7 +873,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:59+08:00",
-      "checked_at": "2026-09-23T17:12:23+08:00"
+      "checked_at": "2026-09-24T15:00:26+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67741",
@@ -816,7 +892,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:08+08:00",
-      "checked_at": "2026-09-23T17:12:36+08:00"
+      "checked_at": "2026-09-24T15:00:39+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68115",
@@ -834,7 +911,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:13+08:00",
-      "checked_at": "2026-09-23T17:12:46+08:00"
+      "checked_at": "2026-09-24T15:00:48+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68406",
@@ -852,7 +930,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:18+08:00",
-      "checked_at": "2026-09-23T17:12:54+08:00"
+      "checked_at": "2026-09-24T15:00:57+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67535",
@@ -870,7 +949,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:02+08:00",
-      "checked_at": "2026-09-23T17:12:25+08:00"
+      "checked_at": "2026-09-24T15:00:28+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67644",
@@ -888,7 +968,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:04+08:00",
-      "checked_at": "2026-09-23T17:12:31+08:00"
+      "checked_at": "2026-09-24T15:00:33+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67695",
@@ -906,7 +987,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:06+08:00",
-      "checked_at": "2026-09-23T17:12:34+08:00"
+      "checked_at": "2026-09-24T15:00:36+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68687",
@@ -924,7 +1006,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:21+08:00",
-      "checked_at": "2026-09-23T17:13:00+08:00"
+      "checked_at": "2026-09-24T15:01:03+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "66954",
@@ -942,7 +1025,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:36+08:00",
-      "checked_at": "2026-09-23T17:12:18+08:00"
+      "checked_at": "2026-09-24T15:00:20+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "66952",
@@ -960,7 +1044,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:35+08:00",
-      "checked_at": "2026-09-23T17:12:17+08:00"
+      "checked_at": "2026-09-24T15:00:18+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "66953",
@@ -978,7 +1063,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:36+08:00",
-      "checked_at": "2026-09-23T17:12:17+08:00"
+      "checked_at": "2026-09-24T15:00:19+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67510",
@@ -996,7 +1082,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:58+08:00",
-      "checked_at": "2026-09-23T17:12:22+08:00"
+      "checked_at": "2026-09-24T15:00:25+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67802",
@@ -1014,7 +1101,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:09+08:00",
-      "checked_at": "2026-09-23T17:12:39+08:00"
+      "checked_at": "2026-09-24T15:00:42+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67807",
@@ -1032,7 +1120,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:09+08:00",
-      "checked_at": "2026-09-23T17:12:40+08:00"
+      "checked_at": "2026-09-24T15:00:43+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68114",
@@ -1050,7 +1139,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:12+08:00",
-      "checked_at": "2026-09-23T17:12:45+08:00"
+      "checked_at": "2026-09-24T15:00:48+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68478",
@@ -1068,7 +1158,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:20+08:00",
-      "checked_at": "2026-09-23T17:12:57+08:00"
+      "checked_at": "2026-09-24T15:01:00+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68811",
@@ -1086,7 +1177,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:22+08:00",
-      "checked_at": "2026-09-23T17:13:02+08:00"
+      "checked_at": "2026-09-24T15:01:05+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67703",
@@ -1104,7 +1196,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:07+08:00",
-      "checked_at": "2026-09-23T17:12:35+08:00"
+      "checked_at": "2026-09-24T15:00:37+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67748",
@@ -1122,7 +1215,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:08+08:00",
-      "checked_at": "2026-09-23T17:12:37+08:00"
+      "checked_at": "2026-09-24T15:00:41+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68242",
@@ -1140,7 +1234,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:16+08:00",
-      "checked_at": "2026-09-23T17:12:50+08:00"
+      "checked_at": "2026-09-24T15:00:53+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68118",
@@ -1158,7 +1253,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:13+08:00",
-      "checked_at": "2026-09-23T17:12:47+08:00"
+      "checked_at": "2026-09-24T15:00:49+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68316",
@@ -1176,7 +1272,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:17+08:00",
-      "checked_at": "2026-09-23T17:12:51+08:00"
+      "checked_at": "2026-09-24T15:00:55+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68407",
@@ -1194,7 +1291,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:18+08:00",
-      "checked_at": "2026-09-23T17:12:54+08:00"
+      "checked_at": "2026-09-24T15:00:58+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68472",
@@ -1212,7 +1310,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:19+08:00",
-      "checked_at": "2026-09-23T17:12:56+08:00"
+      "checked_at": "2026-09-24T15:01:00+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68676",
@@ -1230,7 +1329,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:21+08:00",
-      "checked_at": "2026-09-23T17:12:58+08:00"
+      "checked_at": "2026-09-24T15:01:02+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68738",
@@ -1248,7 +1348,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:22+08:00",
-      "checked_at": "2026-09-23T17:13:01+08:00"
+      "checked_at": "2026-09-24T15:01:04+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67606",
@@ -1266,7 +1367,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:04+08:00",
-      "checked_at": "2026-09-23T17:12:29+08:00"
+      "checked_at": "2026-09-24T15:00:32+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67879",
@@ -1284,7 +1386,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:10+08:00",
-      "checked_at": "2026-09-23T17:12:41+08:00"
+      "checked_at": "2026-09-24T15:00:44+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68437",
@@ -1302,7 +1405,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:19+08:00",
-      "checked_at": "2026-09-23T17:12:55+08:00"
+      "checked_at": "2026-09-24T15:00:59+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68813",
@@ -1320,7 +1424,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:23+08:00",
-      "checked_at": "2026-09-23T17:13:03+08:00"
+      "checked_at": "2026-09-24T15:01:06+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "66987",
@@ -1338,7 +1443,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:39+08:00",
-      "checked_at": "2026-09-23T17:12:19+08:00"
+      "checked_at": "2026-09-24T15:00:22+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "66985",
@@ -1356,7 +1462,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:37+08:00",
-      "checked_at": "2026-09-23T17:12:18+08:00"
+      "checked_at": "2026-09-24T15:00:20+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "66986",
@@ -1374,7 +1481,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:38+08:00",
-      "checked_at": "2026-09-23T17:12:19+08:00"
+      "checked_at": "2026-09-24T15:00:21+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67509",
@@ -1392,7 +1500,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:58+08:00",
-      "checked_at": "2026-09-23T17:12:22+08:00"
+      "checked_at": "2026-09-24T15:00:24+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67536",
@@ -1410,7 +1519,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:02+08:00",
-      "checked_at": "2026-09-23T17:12:26+08:00"
+      "checked_at": "2026-09-24T15:00:28+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67704",
@@ -1428,7 +1538,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:07+08:00",
-      "checked_at": "2026-09-23T17:12:35+08:00"
+      "checked_at": "2026-09-24T15:00:38+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68204",
@@ -1446,7 +1557,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:14+08:00",
-      "checked_at": "2026-09-23T17:12:48+08:00"
+      "checked_at": "2026-09-24T15:00:50+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "68404",
@@ -1464,7 +1576,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:17+08:00",
-      "checked_at": "2026-09-23T17:12:52+08:00"
+      "checked_at": "2026-09-24T15:00:56+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67569",
@@ -1482,7 +1595,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:28+08:00",
-      "checked_at": "2026-09-23T17:12:28+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67655",
@@ -1500,7 +1616,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:32+08:00",
-      "checked_at": "2026-09-23T17:12:32+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68104",
@@ -1518,7 +1637,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:45+08:00",
-      "checked_at": "2026-09-23T17:12:45+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68116",
@@ -1536,7 +1658,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:46+08:00",
-      "checked_at": "2026-09-23T17:12:46+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68317",
@@ -1554,7 +1679,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:52+08:00",
-      "checked_at": "2026-09-23T17:12:52+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67540",
@@ -1572,7 +1700,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:28+08:00",
-      "checked_at": "2026-09-23T17:12:28+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67609",
@@ -1590,7 +1721,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:30+08:00",
-      "checked_at": "2026-09-23T17:12:30+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67743",
@@ -1608,7 +1742,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:37+08:00",
-      "checked_at": "2026-09-23T17:12:37+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68937",
@@ -1626,7 +1763,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:03+08:00",
-      "checked_at": "2026-09-23T17:13:03+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67537",
@@ -1644,7 +1784,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:26+08:00",
-      "checked_at": "2026-09-23T17:12:26+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68119",
@@ -1662,7 +1805,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:47+08:00",
-      "checked_at": "2026-09-23T17:12:47+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68226",
@@ -1680,7 +1826,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:49+08:00",
-      "checked_at": "2026-09-23T17:12:49+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68315",
@@ -1698,7 +1847,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:51+08:00",
-      "checked_at": "2026-09-23T17:12:51+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68688",
@@ -1716,7 +1868,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:00+08:00",
-      "checked_at": "2026-09-23T17:13:00+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "69000",
@@ -1734,7 +1889,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:04+08:00",
-      "checked_at": "2026-09-23T17:13:04+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67538",
@@ -1752,7 +1910,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:27+08:00",
-      "checked_at": "2026-09-23T17:12:27+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67679",
@@ -1770,7 +1931,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:33+08:00",
-      "checked_at": "2026-09-23T17:12:33+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67696",
@@ -1788,7 +1952,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:34+08:00",
-      "checked_at": "2026-09-23T17:12:34+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67806",
@@ -1806,7 +1973,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:40+08:00",
-      "checked_at": "2026-09-23T17:12:40+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "69264",
@@ -1824,7 +1994,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:05+08:00",
-      "checked_at": "2026-09-23T17:13:05+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67742",
@@ -1842,7 +2015,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:36+08:00",
-      "checked_at": "2026-09-23T17:12:36+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67970",
@@ -1860,7 +2036,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:43+08:00",
-      "checked_at": "2026-09-23T17:12:43+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68205",
@@ -1878,7 +2057,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:48+08:00",
-      "checked_at": "2026-09-23T17:12:48+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68438",
@@ -1896,7 +2078,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:56+08:00",
-      "checked_at": "2026-09-23T17:12:56+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68479",
@@ -1914,7 +2099,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:57+08:00",
-      "checked_at": "2026-09-23T17:12:57+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "64989",
@@ -1932,7 +2120,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:43+08:00",
-      "checked_at": "2026-09-23T17:11:56+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "64991",
@@ -1950,7 +2139,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:45+08:00",
-      "checked_at": "2026-09-23T17:11:57+08:00"
+      "checked_at": "2026-09-24T14:59:56+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "64990",
@@ -1968,7 +2158,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:44+08:00",
-      "checked_at": "2026-09-23T17:11:57+08:00"
+      "checked_at": "2026-09-24T14:59:56+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "67960",
@@ -1986,7 +2177,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:42+08:00",
-      "checked_at": "2026-09-23T17:12:42+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68408",
@@ -2004,7 +2198,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:55+08:00",
-      "checked_at": "2026-09-23T17:12:55+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68677",
@@ -2022,7 +2219,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:59+08:00",
-      "checked_at": "2026-09-23T17:12:59+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68686",
@@ -2040,7 +2240,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:59+08:00",
-      "checked_at": "2026-09-23T17:12:59+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68739",
@@ -2058,7 +2261,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:01+08:00",
-      "checked_at": "2026-09-23T17:13:01+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68812",
@@ -2076,7 +2282,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:02+08:00",
-      "checked_at": "2026-09-23T17:13:02+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67607",
@@ -2094,7 +2303,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:29+08:00",
-      "checked_at": "2026-09-23T17:12:29+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67801",
@@ -2112,7 +2324,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:38+08:00",
-      "checked_at": "2026-09-23T17:12:38+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67803",
@@ -2130,7 +2345,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:39+08:00",
-      "checked_at": "2026-09-23T17:12:39+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "67808",
@@ -2148,7 +2366,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:41+08:00",
-      "checked_at": "2026-09-23T17:12:41+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68017",
@@ -2166,7 +2387,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:43+08:00",
-      "checked_at": "2026-09-23T17:12:43+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "68405",
@@ -2184,7 +2408,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:53+08:00",
-      "checked_at": "2026-09-23T17:12:53+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "69010",
@@ -2202,7 +2429,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:05+08:00",
-      "checked_at": "2026-09-23T17:13:05+08:00"
+      "checked_at": "2026-09-24T14:59:55+08:00",
+      "official_missing_since": "2026-09-24T14:59:55+08:00",
+      "official_missing_checks": 1,
+      "official_status": "unavailable"
     },
     {
       "event_id": "66990",
@@ -2220,7 +2450,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:41+08:00",
-      "checked_at": "2026-09-23T17:12:21+08:00"
+      "checked_at": "2026-09-24T15:00:23+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "66988",
@@ -2238,7 +2469,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:39+08:00",
-      "checked_at": "2026-09-23T17:12:20+08:00"
+      "checked_at": "2026-09-24T15:00:22+08:00",
+      "official_status": "active"
     },
     {
       "event_id": "66989",
@@ -2256,7 +2488,8 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:40+08:00",
-      "checked_at": "2026-09-23T17:12:21+08:00"
+      "checked_at": "2026-09-24T15:00:23+08:00",
+      "official_status": "active"
     }
   ]
 }
