@@ -3,8 +3,9 @@ name: Update PTCG ranking
 on:
   workflow_dispatch:
   schedule:
-    # GitHub Actions cron 使用 UTC；16:05 UTC = 台灣時間隔日 00:05
-    - cron: "5 16 * * *"
+    # Supabase Cron 於台灣時間 00:05 主動觸發 workflow_dispatch。
+    # GitHub schedule 僅作台灣時間 00:15 備援；cron 使用 UTC。
+    - cron: "15 16 * * *"
   push:
     branches:
       - main
@@ -71,9 +72,11 @@ jobs:
         run: python scraper.py
 
       - name: Commit data changes
+        id: commit
         run: |
           if git diff --quiet; then
             echo "No data changes."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "github-actions[bot]"
@@ -82,3 +85,20 @@ jobs:
           git commit -m "Update ranking history and encrypted player identity data"
           git pull --rebase origin main
           git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Notify immediately after ranking data changes
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+          # 排名更新後立即觸發 LINE 與網站 Push，不等待固定通知輪詢。
+          sleep 3
+          curl --fail-with-body --silent --show-error \
+            -X POST "https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-line" \
+            -H "Content-Type: application/json" \
+            -d '{"action":"poll"}'
+          echo
+          curl --fail-with-body --silent --show-error \
+            -X POST "https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-push" \
+            -H "Content-Type: application/json" \
+            -d '{"action":"poll"}'
+          echo
