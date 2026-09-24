@@ -134,11 +134,11 @@ function todayTaipei() {
 }
 
 function eventStatus(event) {
-  if (event?.official_status === 'removed') return 'removed';
-  if (event?.official_status === 'unavailable') return 'unavailable';
   if (Array.isArray(event.results) && event.results.length) return 'results';
   const date = String(event.date || '').slice(0, 10);
   if (date && date < todayTaipei()) return 'waiting';
+  if (event?.official_status === 'removed') return 'removed';
+  if (event?.official_status === 'unavailable') return 'unavailable';
   return 'upcoming';
 }
 
