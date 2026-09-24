@@ -231,17 +231,45 @@ function bindDetailButtons() {
   });
 }
 
+let modalPageScrollY = 0;
+let modalTouchY = null;
+
 function openModalShell() {
+  modalPageScrollY = window.scrollY || window.pageYOffset || 0;
+  document.body.style.top = `-${modalPageScrollY}px`;
+  document.body.classList.add('modal-open');
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('modal-open');
 }
 
 function closePlayerModal() {
   modal.classList.remove('open');
   modal.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('modal-open');
+  document.body.style.top = '';
+  window.scrollTo(0, modalPageScrollY);
+  modalTouchY = null;
 }
+
+modalBody.addEventListener('touchstart', event => {
+  if (event.touches.length === 1) modalTouchY = event.touches[0].clientY;
+}, { passive: true });
+
+modalBody.addEventListener('touchmove', event => {
+  if (event.touches.length !== 1 || modalTouchY === null) return;
+  const currentY = event.touches[0].clientY;
+  const deltaY = currentY - modalTouchY;
+  const atTop = modalBody.scrollTop <= 0;
+  const atBottom = modalBody.scrollTop + modalBody.clientHeight >= modalBody.scrollHeight - 1;
+
+  if ((atTop && deltaY > 0) || (atBottom && deltaY < 0)) {
+    event.preventDefault();
+  }
+  modalTouchY = currentY;
+}, { passive: false });
+
+modalBody.addEventListener('touchend', () => { modalTouchY = null; }, { passive: true });
+modalBody.addEventListener('touchcancel', () => { modalTouchY = null; }, { passive: true });
 
 function playerOfficialUrl(id) {
   return `https://asia.pokemon-card.com/tw/users/${encodeURIComponent(id)}/`;
