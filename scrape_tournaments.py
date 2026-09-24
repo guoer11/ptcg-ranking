@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 import re
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 from zoneinfo import ZoneInfo
@@ -44,6 +44,7 @@ CSP_LEAGUES = {
 }
 MAX_PAGES_PER_CSP = 8
 REQUEST_DELAY = 0.12
+OFFICIAL_MISSING_DAYS = 3
 
 LEAGUE_ALIASES = {
     "Great": ("Great Ball League", "臺灣超級球聯盟賽", "台湾超级球联盟赛"),
@@ -388,8 +389,10 @@ def main() -> int:
     }
 
     discovered = discover_events(session)
+    discovered_ids = set(discovered)
+    now_dt = datetime.now(TAIPEI)
 
-    # 舊資料保留，避免官方搜尋頁暫時異常時整批消失。
+    # 舊資料保留，避免官方搜尋頁短暫異常時整批消失；但記錄是否已從官方清單消失。
     for event_id, old in old_events.items():
         if event_id not in discovered:
             discovered[event_id] = {
@@ -403,14 +406,59 @@ def main() -> int:
     events: list[dict] = []
     for index, (event_id, seed) in enumerate(sorted(discovered.items(), key=lambda pair: int(pair[0]))):
         old = old_events.get(event_id)
+        listed_now = event_id in discovered_ids
         try:
             item = parse_event_detail(session, seed, old)
+            # 官方清單與詳情頁都恢復正常時，立即清除下架狀態。
+            if listed_now:
+                item["official_status"] = "active"
+                item.pop("official_missing_since", None)
+                item.pop("official_missing_checks", None)
+        except requests.HTTPError as exc:
+            status_code = exc.response.status_code if exc.response is not None else None
+            print(f"警告：活動 {event_id} 詳情抓取失敗：{exc}")
+            if old:
+                item = dict(old)
+                if status_code in (404, 410) or not listed_now:
+                    missing_since = old.get("official_missing_since") or now_dt.isoformat(timespec="seconds")
+                    try:
+                        missing_dt = datetime.fromisoformat(missing_since)
+                    except ValueError:
+                        missing_dt = now_dt
+                        missing_since = now_dt.isoformat(timespec="seconds")
+                    item["official_missing_since"] = missing_since
+                    item["official_missing_checks"] = int(old.get("official_missing_checks") or 0) + 1
+                    item["official_status"] = (
+                        "removed"
+                        if now_dt - missing_dt >= timedelta(days=OFFICIAL_MISSING_DAYS)
+                        else "unavailable"
+                    )
+                    item["checked_at"] = now_dt.isoformat(timespec="seconds")
+            else:
+                continue
         except Exception as exc:
             print(f"警告：活動 {event_id} 詳情抓取失敗：{exc}")
             if old:
-                item = old
+                item = dict(old)
             else:
                 continue
+
+        # 若活動已從官方搜尋清單消失，即使舊網址仍回 200，也視為待確認；
+        # 連續滿 3 天後標記官方已下架，但永遠保留歷史資料。
+        if old and not listed_now and item.get("official_status") not in ("unavailable", "removed"):
+            missing_since = old.get("official_missing_since") or now_dt.isoformat(timespec="seconds")
+            try:
+                missing_dt = datetime.fromisoformat(missing_since)
+            except ValueError:
+                missing_dt = now_dt
+                missing_since = now_dt.isoformat(timespec="seconds")
+            item["official_missing_since"] = missing_since
+            item["official_missing_checks"] = int(old.get("official_missing_checks") or 0) + 1
+            item["official_status"] = (
+                "removed"
+                if now_dt - missing_dt >= timedelta(days=OFFICIAL_MISSING_DAYS)
+                else "unavailable"
+            )
 
         if item.get("season") != SEASON or item.get("league") not in CSP_LEAGUES.values():
             continue
@@ -434,7 +482,7 @@ def main() -> int:
         "updated_at": now,
         "source": "https://asia.pokemon-card.com/tw/event-search/list/",
         "authority_note": "本資料供賽事整理與積分核算輔助；正式積分與排名以 Pokémon Asia 官方排行榜為準。",
-        "schedule": ["00:05", "12:05"],
+        "schedule": ["00:01", "12:01"],
         "events": events,
     }
 
