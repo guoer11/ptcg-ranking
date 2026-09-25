@@ -177,6 +177,19 @@ async function handlePlayerLookup(event) {
   showLookupMessage('找不到符合的玩家', '請確認姓名、暱稱或 PTCG ID 是否正確。');
 }
 
+(function setupAdvancedLookupToggle() {
+  const toggle = document.getElementById('advancedLookupToggle');
+  const panel = document.getElementById('advancedPlayerLookup');
+  if (!toggle || !panel) return;
+  toggle.addEventListener('click', () => {
+    const opening = panel.hidden;
+    panel.hidden = !opening;
+    toggle.setAttribute('aria-expanded', opening ? 'true' : 'false');
+    toggle.textContent = opening ? '進階查詢⌃' : '進階查詢⌄';
+    if (opening) requestAnimationFrame(() => document.getElementById('playerIdInput')?.focus());
+  });
+})();
+
 (function setupEnhancedPlayerLookup() {
   document.querySelectorAll('[data-lookup-group]').forEach(button => {
     button.addEventListener('click', () => {
