@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-09-25T06:13:55+08:00",
+  "updated_at": "2026-09-26T00:05:44+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -384,7 +384,7 @@
       },
       {
         "rank": 38,
-        "name": "Ted.Lai",
+        "name": "Ted.Judy",
         "player_id": "tw69293104",
         "region": "臺南市",
         "points": 12,
@@ -912,14 +912,6 @@
       },
       {
         "rank": 87,
-        "name": "Lion",
-        "player_id": "tw69196106",
-        "region": "屏東縣",
-        "points": 8,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw69196106/"
-      },
-      {
-        "rank": 87,
         "name": "Luyajing",
         "player_id": "tw16992270",
         "region": "嘉義市",
@@ -1045,6 +1037,14 @@
         "region": "臺南市",
         "points": 8,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw50239297/"
+      },
+      {
+        "rank": 87,
+        "name": "devil",
+        "player_id": "tw69196106",
+        "region": "屏東縣",
+        "points": 8,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw69196106/"
       },
       {
         "rank": 87,
@@ -5098,7 +5098,7 @@
         "rank": 303,
         "name": "Jia",
         "player_id": "tw84991038",
-        "region": "雲林縣",
+        "region": "臺南市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw84991038/"
       },
@@ -9914,7 +9914,7 @@
     "Senior": [
       {
         "rank": 1,
-        "name": "AndrewChung",
+        "name": "YenTso.C",
         "player_id": "tw89973725",
         "region": "高雄市",
         "points": 30,
