@@ -69,16 +69,13 @@ jobs:
           git push origin HEAD:main
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
-      - name: Notify immediately after tournament data changes
+      - name: Refresh website Push after tournament data changes
         if: steps.commit.outputs.changed == 'true'
         run: |
-          # 通知後端改讀 GitHub main 的原始 JSON，因此不必等待 GitHub Pages 部署完成。
+          # 賽事資料更新不再立即觸發 LINE poll。
+          # LINE poll 會同時檢查排行榜，曾造成只有 checked_at 變動時誤發「排行榜已更新」。
+          # LINE 仍由 Supabase Cron 定期檢查；真正的排行榜變動則由 update-ranking.yml 立即觸發。
           sleep 3
-          curl --fail-with-body --silent --show-error \
-            -X POST "https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-line" \
-            -H "Content-Type: application/json" \
-            -d '{"action":"poll"}'
-          echo
           curl --fail-with-body --silent --show-error \
             -X POST "https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-push" \
             -H "Content-Type: application/json" \
