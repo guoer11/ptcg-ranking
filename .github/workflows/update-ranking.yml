@@ -77,7 +77,13 @@ jobs:
           if git diff --quiet; then
             echo "No data changes."
             echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "ranking_changed=false" >> "$GITHUB_OUTPUT"
             exit 0
+          fi
+          if git diff --quiet -- data/ranking_history.json; then
+            ranking_changed=false
+          else
+            ranking_changed=true
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -86,11 +92,13 @@ jobs:
           git pull --rebase origin main
           git push origin HEAD:main
           echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "ranking_changed=$ranking_changed" >> "$GITHUB_OUTPUT"
 
-      - name: Notify immediately after ranking data changes
-        if: steps.commit.outputs.changed == 'true'
+      - name: Notify immediately after effective ranking changes
+        if: steps.commit.outputs.ranking_changed == 'true'
         run: |
-          # 排名更新後立即觸發 LINE 與網站 Push，不等待固定通知輪詢。
+          # 只有排名／積分／玩家進出榜等有效排名變動才立即通知。
+          # 暱稱、地區、加密姓名資料或時間戳更新不觸發通知。
           sleep 3
           curl --fail-with-body --silent --show-error \
             -X POST "https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-line" \
