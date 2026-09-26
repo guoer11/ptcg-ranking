@@ -49,11 +49,6 @@
     <section id="pairingDeckScout" class="panel pairing-scout-panel">
       <div class="pairing-scout-head">
         <div><h2>牌組偵察</h2><p>逐桌快速選擇牌組；選完即自動儲存，同一場比賽同一玩家只需記一次。</p></div>
-        <button id="pairingScoutManageToggle" class="secondary-btn" type="button" aria-expanded="false">牌組清單</button>
-      </div>
-      <div id="pairingScoutDeckManager" class="pairing-scout-manager" hidden>
-        <div class="pairing-scout-add"><input id="pairingScoutDeckName" class="search-input" type="text" maxlength="40" placeholder="例如：多龍、忍蛙、索羅亞克" autocomplete="off"><button id="pairingScoutAddDeck" class="primary-btn" type="button">新增</button></div>
-        <div id="pairingScoutDeckList" class="pairing-scout-deck-list"></div>
       </div>
       <div class="pairing-scout-controls">
         <button id="pairingScoutPrev" class="secondary-btn" type="button">← 上一桌</button>
@@ -73,8 +68,8 @@
   <script src="site-version.js?v=0.18.0-r1" defer></script>
   <script src="pairing.js?v=0.18.0-r1" defer></script>
   <script src="pairing-quick-lookup.js?v=0.14.0-r3" defer></script>
-  <script src="pairing-deck-scout.js?v=0.18.0-r2" defer></script>
-  <script src="site-account-ui.js?v=0.18.0-r2" defer></script>
+  <script src="pairing-deck-scout.js?v=0.18.0-r3" defer></script>
+  <script src="site-account-ui.js?v=0.18.0-r3" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const source = document.getElementById('pairingSourceUrl'); const round = document.getElementById('pairingRound'); if (!source || !round) return;
