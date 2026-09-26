@@ -226,6 +226,9 @@ async function renderPairing(data) {
         <small>${escPairing(data.title || '')}</small>
       </article>
     </div>`;
+  document.dispatchEvent(new CustomEvent('pairing:match-rendered', {
+    detail: { data, playerId, opponentId }
+  }));
 }
 
 async function renderFinalRank(ranking, notification = null) {
@@ -440,11 +443,13 @@ async function refreshPairingAuthorization() {
 
   if (!allowed) {
     if (authCopy()) authCopy().textContent = '目前帳號未授權使用即時配對。';
+    document.dispatchEvent(new CustomEvent('pairing:auth-ready', { detail: { allowed: false } }));
     return;
   }
 
   if (authCopy()) authCopy().textContent = '已確認授權登入，可使用姓名對照、LINE 與網站推播。';
   await refreshWatchStatus();
+  document.dispatchEvent(new CustomEvent('pairing:auth-ready', { detail: { allowed: true } }));
 }
 
 async function initPairingAuth() {
