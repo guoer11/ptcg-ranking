@@ -40,6 +40,7 @@ function familySummaryFromParams(params) {
     table: params.get('table') || '—',
     opponent: params.get('opponent') || '—',
     deck: params.get('deck') || '',
+    possible_deck: params.get('possible_deck') || '',
     official: params.get('official') || '',
     saved_at: new Date().toISOString()
   };
@@ -102,6 +103,7 @@ function familyRenderMatchSummary() {
     const table = data.table || '—';
     const opponent = data.opponent || '—';
     const deck = data.deck || '';
+    const possibleDeck = data.possible_deck || '';
     eyebrow.textContent = querySummary ? '最新配對' : '最近一次配對';
     title.textContent = `Round ${round}`;
     badge.textContent = `Round ${round}`;
@@ -109,7 +111,8 @@ function familyRenderMatchSummary() {
       <article><span>玩家</span><strong>${familyEscape(player)}</strong></article>
       <article><span>桌號</span><strong>${familyEscape(table)}</strong></article>
       <article class="family-match-wide"><span>對手</span><strong>${familyEscape(opponent)}</strong></article>
-      ${deck ? `<article class="family-match-wide"><span>對手牌組</span><strong>${familyEscape(deck)}</strong></article>` : ''}`;
+      ${deck ? `<article class="family-match-wide"><span>對手牌組</span><strong>${familyEscape(deck)}</strong></article>` : ''}
+      ${!deck && possibleDeck ? `<article class="family-match-wide"><span>可能牌組</span><strong>${familyEscape(possibleDeck)}</strong></article>` : ''}`;
     officialLink.textContent = '開啟官方配對';
   }
 
