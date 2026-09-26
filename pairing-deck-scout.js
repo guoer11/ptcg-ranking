@@ -202,18 +202,26 @@
     }
 
     const ids = [normalizePlayerId(match.player), normalizePlayerId(match.opponent)].filter(Boolean);
-    const [names, saved, pairSaved] = await Promise.all([
+    const [names, saved, allPairs] = await Promise.all([
       lookupRealNames(ids),
-      scoutRows(data.tid, ids),
-      pairObservation(data.tid, data.round, match.table || table)
+      scoutRows(data.tid),
+      pairObservationRows(data.tid)
     ]);
+    const pairSaved = allPairs.find(row =>
+      Number(row.round_no) === Number(data.round) &&
+      String(row.table_no) === String(match.table || table)
+    ) || null;
     const savedMap = Object.fromEntries(saved.map(row => [normalizePlayerId(row.player_id), row.deck_name]));
     const cards = ids.map((id, index) => {
       const display = playerLabel(id, index, names, match);
       const selected = savedMap[id] || '';
+      const knowledge = possibleDecksForPlayer(id, saved, allPairs);
+      const possible = !selected && knowledge.possible.length
+        ? `<em class="pairing-scout-player-possible">可能：${knowledge.possible.map(esc).join(' / ')}</em>`
+        : '';
       return `
         <article class="pairing-scout-player">
-          <div><span>玩家 ${index + 1}</span><strong>${esc(display)}</strong><small>${esc(id)}</small></div>
+          <div><span>玩家 ${index + 1}</span><strong>${esc(display)}</strong><small>${esc(id)}</small>${possible}</div>
           <select data-scout-player="${esc(id)}" ${deckCatalog.length ? '' : 'disabled'}>
             ${deckOptions(selected)}
           </select>
