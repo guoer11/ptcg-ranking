@@ -1,5 +1,6 @@
 /* v0.13.1：帳號與通知首頁改為日系 App 分組設定風格。 */
 (() => {
+  const SITE_VERSION = 'v0.18.0';
   const ICONS = {
     account: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0H5Z"/></svg>',
     family: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.2 11a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Zm7.8-.8a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2ZM2.8 19v-1.2c0-3 2.4-5.4 5.4-5.4s5.4 2.4 5.4 5.4V19H2.8Zm11.7 0v-1.1c0-1.8-.7-3.4-1.8-4.6.9-.7 2-1.1 3.3-1.1 2.9 0 5.2 2.3 5.2 5.2V19h-6.7Z"/></svg>',
@@ -83,6 +84,20 @@
     lineView.querySelector('[data-account-back]')?.addEventListener('click', () => window.showAccountHubView?.('home'));
   }
 
+  function ensureVersionBadge(modal) {
+    if (!modal) return;
+    let badge = modal.querySelector('.account-app-version-badge');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'account-app-version-badge';
+      const close = modal.querySelector('.modal-header .modal-close');
+      if (close) close.before(badge);
+      else modal.querySelector('.modal-header')?.appendChild(badge);
+    }
+    badge.textContent = SITE_VERSION;
+    badge.title = `目前版本 ${SITE_VERSION}`;
+  }
+
   function setViewHeading(name) {
     const modal = document.getElementById('pushModal');
     const title = document.getElementById('pushModalTitle');
@@ -97,6 +112,7 @@
     const [heading, copy] = headings[name] || headings.home;
     if (title) title.textContent = heading;
     if (subtitle) subtitle.textContent = copy;
+    ensureVersionBadge(modal);
   }
 
   function enhance() {
@@ -162,7 +178,7 @@
     if (document.querySelector('link[data-account-app-style]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'account-hub-v2.css?v=0.13.1-r1';
+    link.href = 'account-hub-v2.css?v=0.18.0-r1';
     link.dataset.accountAppStyle = 'true';
     document.head.appendChild(link);
   }
