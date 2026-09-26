@@ -92,3 +92,5 @@
   .pairing-scout-pair-decks{grid-template-columns:1fr}
   .pairing-scout-pair-decks>b{padding:0;text-align:center}
 }
+
+.pairing-scout-player-possible{display:block;margin-top:5px;color:#9a6700;font-size:10px;font-style:normal;font-weight:800;line-height:1.35}
