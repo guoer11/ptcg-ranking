@@ -185,8 +185,17 @@
     watchTargets.forEach(target => observer.observe(target, { childList: true, subtree: true, characterData: true }));
     syncStatus();
     home.dataset.appStyleReady = '1';
+    ensureDeckSettingsScript();
     document.dispatchEvent(new CustomEvent('account-hub-ready'));
     return true;
+  }
+
+  function ensureDeckSettingsScript() {
+    if ([...document.scripts].some(script => script.src.includes('deck-settings-ui.js'))) return;
+    const script = document.createElement('script');
+    script.src = 'deck-settings-ui.js?v=0.18.0-r1';
+    script.defer = true;
+    document.body.appendChild(script);
   }
 
   function ensureStyle() {
