@@ -222,6 +222,15 @@ async function handleFamilyEnable() {
 }
 
 async function initFamilyNotify() {
+  if ('serviceWorker' in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register('./sw.js', { scope: './', updateViaCache: 'none' });
+      registration.update().catch(() => {});
+    } catch (error) {
+      console.warn('家庭通知 Service Worker 更新失敗', error);
+    }
+  }
+
   const params = new URLSearchParams(window.location.search);
   const queryToken = params.get('token');
   if (queryToken) localStorage.setItem(FAMILY_INVITE_STORAGE_KEY, queryToken);
