@@ -18,6 +18,9 @@
 .account-app-group-account .account-app-group-head {
   background: linear-gradient(105deg, #fff5d9 0%, #fffaf0 58%, #fff 100%);
 }
+.account-app-group-deck .account-app-group-head {
+  background: linear-gradient(105deg, #e9f1ff 0%, #f4f7ff 58%, #fff 100%);
+}
 .account-app-group-notify .account-app-group-head {
   background: linear-gradient(105deg, #ffe8ed 0%, #fff3f6 58%, #fff 100%);
 }
@@ -36,6 +39,7 @@
 .account-app-group-icon { width: 42px; height: 42px; }
 .account-app-group-icon svg { width: 24px; height: 24px; fill: currentColor; }
 .account-app-group-icon.account { color: #9a6a10; background: #ffedb9; }
+.account-app-group-icon.deck { color: #3968b8; background: #dce9ff; }
 .account-app-group-icon.notify { color: #bd3f58; background: #ffd3dc; }
 .account-app-status {
   justify-self: end;
@@ -73,6 +77,7 @@
 .account-app-row-icon svg { width: 23px; height: 23px; fill: currentColor; }
 .account-app-row-icon.account { color: #52606f; background: #eef3f8; }
 .account-app-row-icon.family { color: #5f72c8; background: #edf0ff; }
+.account-app-row-icon.deck { color: #3968b8; background: #e7efff; }
 .account-app-row-icon.web { color: #5a6776; background: #edf2f6; }
 .account-app-row-icon.line { color: #fff; background: #25c75a; }
 .account-app-row-copy { min-width: 0; }
