@@ -274,32 +274,38 @@
   }
 
   function inject() {
-    if ($('pairingDeckScout')) return;
     const main = document.querySelector('main.pairing-main');
     const grid = main?.querySelector('.pairing-grid');
     if (!main || !grid) return;
-    const section = document.createElement('section');
-    section.id = 'pairingDeckScout';
-    section.className = 'panel pairing-scout-panel';
-    section.innerHTML = `
-      <div class="pairing-scout-head">
-        <div><h2>牌組偵察</h2><p>逐桌快速選擇牌組；選完即自動儲存，同一場比賽同一玩家只需記一次。</p></div>
-        <button id="pairingScoutManageToggle" class="secondary-btn" type="button" aria-expanded="false">牌組清單</button>
-      </div>
-      <div id="pairingScoutDeckManager" class="pairing-scout-manager" hidden>
-        <div class="pairing-scout-add"><input id="pairingScoutDeckName" class="search-input" type="text" maxlength="40" placeholder="例如：多龍、忍蛙、索羅亞克" autocomplete="off"><button id="pairingScoutAddDeck" class="primary-btn" type="button">新增</button></div>
-        <div id="pairingScoutDeckList" class="pairing-scout-deck-list"></div>
-      </div>
-      <div class="pairing-scout-controls">
-        <button id="pairingScoutPrev" class="secondary-btn" type="button">← 上一桌</button>
-        <label><span>桌號</span><input id="pairingScoutTable" class="search-input" type="number" min="1" step="1" value="1" inputmode="numeric"></label>
-        <button id="pairingScoutLoad" class="primary-btn" type="button">載入這桌</button>
-        <button id="pairingScoutNext" class="secondary-btn" type="button">下一桌 →</button>
-      </div>
-      <div id="pairingScoutResult" class="pairing-scout-result is-idle"><strong>準備好了</strong><span>先設定上方活動網址與 Round，再從第 1 桌開始。</span></div>
-      <div id="pairingScoutMessage" class="pairing-scout-message"></div>
-      <div id="pairingScoutStats" class="pairing-scout-stats"><div class="pairing-scout-stats-empty">載入任一桌後會顯示這場比賽的牌組分布。</div></div>`;
-    grid.after(section);
+
+    let section = $('pairingDeckScout');
+    if (!section) {
+      section = document.createElement('section');
+      section.id = 'pairingDeckScout';
+      section.className = 'panel pairing-scout-panel';
+      section.innerHTML = `
+        <div class="pairing-scout-head">
+          <div><h2>牌組偵察</h2><p>逐桌快速選擇牌組；選完即自動儲存，同一場比賽同一玩家只需記一次。</p></div>
+          <button id="pairingScoutManageToggle" class="secondary-btn" type="button" aria-expanded="false">牌組清單</button>
+        </div>
+        <div id="pairingScoutDeckManager" class="pairing-scout-manager" hidden>
+          <div class="pairing-scout-add"><input id="pairingScoutDeckName" class="search-input" type="text" maxlength="40" placeholder="例如：多龍、忍蛙、索羅亞克" autocomplete="off"><button id="pairingScoutAddDeck" class="primary-btn" type="button">新增</button></div>
+          <div id="pairingScoutDeckList" class="pairing-scout-deck-list"></div>
+        </div>
+        <div class="pairing-scout-controls">
+          <button id="pairingScoutPrev" class="secondary-btn" type="button">← 上一桌</button>
+          <label><span>桌號</span><input id="pairingScoutTable" class="search-input" type="number" min="1" step="1" value="1" inputmode="numeric"></label>
+          <button id="pairingScoutLoad" class="primary-btn" type="button">載入這桌</button>
+          <button id="pairingScoutNext" class="secondary-btn" type="button">下一桌 →</button>
+        </div>
+        <div id="pairingScoutResult" class="pairing-scout-result is-idle"><strong>準備好了</strong><span>先設定上方活動網址與 Round，再從第 1 桌開始。</span></div>
+        <div id="pairingScoutMessage" class="pairing-scout-message"></div>
+        <div id="pairingScoutStats" class="pairing-scout-stats"><div class="pairing-scout-stats-empty">載入任一桌後會顯示這場比賽的牌組分布。</div></div>`;
+      grid.after(section);
+    }
+
+    if (section.dataset.scoutBound === '1') return;
+    section.dataset.scoutBound = '1';
 
     $('pairingScoutManageToggle')?.addEventListener('click', () => {
       const panel = $('pairingScoutDeckManager');
