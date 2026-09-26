@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-09-26T00:05:44+08:00",
+  "updated_at": "2026-09-27T00:05:43+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -384,7 +384,7 @@
       },
       {
         "rank": 38,
-        "name": "Ted.Judy",
+        "name": "Ted.Lai",
         "player_id": "tw69293104",
         "region": "臺南市",
         "points": 12,
@@ -938,7 +938,7 @@
         "rank": 87,
         "name": "Omelet",
         "player_id": "tw51756189",
-        "region": "其它地區",
+        "region": "嘉義縣",
         "points": 8,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw51756189/"
       },
