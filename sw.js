@@ -29,11 +29,13 @@ function buildPairingSummaryUrl(payload = {}) {
   const roundMatch = title.match(/Round\s*(\d+)/i);
   const tableLine = lines.find(line => /^桌號：/.test(line)) || '';
   const opponentLine = lines.find(line => /^對手：/.test(line)) || '';
+  const deckLine = lines.find(line => /^已記錄牌組：/.test(line)) || '';
   params.set('type', 'round');
   if (roundMatch?.[1]) params.set('round', roundMatch[1]);
   if (player) params.set('player', player);
   if (tableLine) params.set('table', tableLine.replace(/^桌號：/, '').trim());
   if (opponentLine) params.set('opponent', opponentLine.replace(/^對手：/, '').trim());
+  if (deckLine) params.set('deck', deckLine.replace(/^已記錄牌組：/, '').trim());
   if (official) params.set('official', official);
   return `/ptcg-ranking/family-notify.html?${params.toString()}`;
 }
