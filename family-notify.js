@@ -39,6 +39,7 @@ function familySummaryFromParams(params) {
     player: params.get('player') || '—',
     table: params.get('table') || '—',
     opponent: params.get('opponent') || '—',
+    deck: params.get('deck') || '',
     official: params.get('official') || '',
     saved_at: new Date().toISOString()
   };
@@ -100,13 +101,15 @@ function familyRenderMatchSummary() {
     const round = data.round || '—';
     const table = data.table || '—';
     const opponent = data.opponent || '—';
+    const deck = data.deck || '';
     eyebrow.textContent = querySummary ? '最新配對' : '最近一次配對';
     title.textContent = `Round ${round}`;
     badge.textContent = `Round ${round}`;
     grid.innerHTML = `
       <article><span>玩家</span><strong>${familyEscape(player)}</strong></article>
       <article><span>桌號</span><strong>${familyEscape(table)}</strong></article>
-      <article class="family-match-wide"><span>對手</span><strong>${familyEscape(opponent)}</strong></article>`;
+      <article class="family-match-wide"><span>對手</span><strong>${familyEscape(opponent)}</strong></article>
+      ${deck ? `<article class="family-match-wide"><span>對手牌組</span><strong>${familyEscape(deck)}</strong></article>` : ''}`;
     officialLink.textContent = '開啟官方配對';
   }
 
