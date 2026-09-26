@@ -69,3 +69,26 @@
   .pairing-scout-add{grid-template-columns:minmax(0,1fr) 70px}
   .pairing-scout-player{grid-template-columns:1fr}
 }
+.pairing-scout-unknown-toggle{display:flex;align-items:flex-start;gap:10px;margin:0 0 10px;padding:11px 12px;border:1px solid #dfe6ef;border-radius:12px;background:#f8fbff;cursor:pointer}
+.pairing-scout-unknown-toggle input{width:18px;height:18px;flex:0 0 18px;margin:1px 0 0}
+.pairing-scout-unknown-toggle span{display:block;min-width:0}
+.pairing-scout-unknown-toggle strong,.pairing-scout-unknown-toggle small{display:block}
+.pairing-scout-unknown-toggle strong{font-size:13px;color:#283548}
+.pairing-scout-unknown-toggle small{margin-top:2px;color:var(--muted);font-size:11px;line-height:1.4}
+#pairingScoutExactMode[hidden],#pairingScoutPairMode[hidden]{display:none}
+.pairing-scout-pair-mode{padding:12px;border:1px solid #cfdcf0;border-radius:12px;background:#f5f8ff}
+.pairing-scout-pair-people{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.pairing-scout-pair-people>span{width:100%;color:var(--muted);font-size:10px;font-weight:800}
+.pairing-scout-pair-people strong{font-size:12px;color:#344054;overflow-wrap:anywhere}
+.pairing-scout-pair-people b{color:#98a2b3;font-size:11px}
+.pairing-scout-pair-people small{width:100%;color:var(--muted);font-size:10px}
+.pairing-scout-pair-decks{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:end}
+.pairing-scout-pair-decks label span{display:block;margin-bottom:5px;color:var(--muted);font-size:10px;font-weight:800}
+.pairing-scout-pair-decks select{width:100%;min-height:42px;padding:8px 10px;border:1px solid #ccd7e5;border-radius:10px;background:#fff;color:var(--text)}
+.pairing-scout-pair-decks>b{align-self:center;padding-top:16px;color:#7a8798;font-size:11px}
+.pairing-scout-pair-tip{display:block;margin-top:8px;color:var(--muted);font-size:10px;line-height:1.45}
+.pairing-scout-known.possible{background:#fff6df;color:#8a5a00}
+@media(max-width:420px){
+  .pairing-scout-pair-decks{grid-template-columns:1fr}
+  .pairing-scout-pair-decks>b{padding:0;text-align:center}
+}
