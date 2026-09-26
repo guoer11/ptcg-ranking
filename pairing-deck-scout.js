@@ -32,7 +32,7 @@
   }
 
   function setBusy(busy) {
-    ['pairingScoutLoad','pairingScoutPrev','pairingScoutNext','pairingScoutAddDeck']
+    ['pairingScoutLoad','pairingScoutPrev','pairingScoutNext']
       .map($).filter(Boolean).forEach(el => { el.disabled = busy; });
   }
 
@@ -45,62 +45,9 @@
       .order('id', { ascending: true });
     if (error) throw error;
     deckCatalog = data || [];
-    renderCatalog();
     if (!deckCatalog.length) {
-      const manager = $('pairingScoutDeckManager');
-      if (manager) manager.hidden = false;
-      const toggle = $('pairingScoutManageToggle');
-      if (toggle) toggle.setAttribute('aria-expanded', 'true');
+      setStatus('尚未設定牌組清單，請到右上角 ICON → 牌組設定新增。', 'error');
     }
-  }
-
-  function renderCatalog() {
-    const list = $('pairingScoutDeckList');
-    if (!list) return;
-    if (!deckCatalog.length) {
-      list.innerHTML = '<span class="pairing-scout-empty">尚未建立牌組清單，先新增幾副常見牌組。</span>';
-      return;
-    }
-    list.innerHTML = deckCatalog.map(item => `
-      <span class="pairing-scout-deck-chip">
-        ${esc(item.name)}
-        <button type="button" data-scout-delete-deck="${item.id}" aria-label="刪除 ${esc(item.name)}">×</button>
-      </span>`).join('');
-    list.querySelectorAll('[data-scout-delete-deck]').forEach(button => {
-      button.addEventListener('click', () => deleteDeck(Number(button.dataset.scoutDeleteDeck)));
-    });
-  }
-
-  async function addDeck() {
-    const input = $('pairingScoutDeckName');
-    const name = String(input?.value || '').trim();
-    if (!name) return setStatus('請輸入牌組名稱。', 'error');
-    if (!currentUserId()) return setStatus('請先登入授權帳號。', 'error');
-    if (deckCatalog.some(item => item.name.toLowerCase() === name.toLowerCase())) {
-      return setStatus('這個名稱已經在牌組清單裡。', 'error');
-    }
-    setBusy(true);
-    const { error } = await pairingClient.from('pairing_deck_catalog').insert({
-      user_id: currentUserId(),
-      name,
-      sort_order: deckCatalog.length,
-    });
-    setBusy(false);
-    if (error) return setStatus(`新增失敗：${error.message}`, 'error');
-    if (input) input.value = '';
-    await loadCatalog();
-    if (currentContext) await renderScoutMatch(currentContext.data, currentContext.table);
-    setStatus(`已新增「${name}」。`, 'success');
-  }
-
-  async function deleteDeck(id) {
-    const item = deckCatalog.find(x => Number(x.id) === Number(id));
-    if (!item) return;
-    if (!confirm(`刪除牌組選項「${item.name}」？已經記錄過的玩家資料不會被刪除。`)) return;
-    const { error } = await pairingClient.from('pairing_deck_catalog').delete().eq('id', id);
-    if (error) return setStatus(`刪除失敗：${error.message}`, 'error');
-    await loadCatalog();
-    if (currentContext) await renderScoutMatch(currentContext.data, currentContext.table);
   }
 
   function deckOptions(selected = '') {
@@ -286,11 +233,6 @@
       section.innerHTML = `
         <div class="pairing-scout-head">
           <div><h2>牌組偵察</h2><p>逐桌快速選擇牌組；選完即自動儲存，同一場比賽同一玩家只需記一次。</p></div>
-          <button id="pairingScoutManageToggle" class="secondary-btn" type="button" aria-expanded="false">牌組清單</button>
-        </div>
-        <div id="pairingScoutDeckManager" class="pairing-scout-manager" hidden>
-          <div class="pairing-scout-add"><input id="pairingScoutDeckName" class="search-input" type="text" maxlength="40" placeholder="例如：多龍、忍蛙、索羅亞克" autocomplete="off"><button id="pairingScoutAddDeck" class="primary-btn" type="button">新增</button></div>
-          <div id="pairingScoutDeckList" class="pairing-scout-deck-list"></div>
         </div>
         <div class="pairing-scout-controls">
           <button id="pairingScoutPrev" class="secondary-btn" type="button">← 上一桌</button>
@@ -307,19 +249,6 @@
     if (section.dataset.scoutBound === '1') return;
     section.dataset.scoutBound = '1';
 
-    $('pairingScoutManageToggle')?.addEventListener('click', () => {
-      const panel = $('pairingScoutDeckManager');
-      if (!panel) return;
-      panel.hidden = !panel.hidden;
-      $('pairingScoutManageToggle')?.setAttribute('aria-expanded', String(!panel.hidden));
-      if (!panel.hidden) $('pairingScoutDeckName')?.focus();
-    });
-    $('pairingScoutAddDeck')?.addEventListener('click', addDeck);
-    $('pairingScoutDeckName')?.addEventListener('keydown', event => {
-      if (event.key !== 'Enter') return;
-      event.preventDefault();
-      addDeck();
-    });
     $('pairingScoutLoad')?.addEventListener('click', () => loadTable($('pairingScoutTable')?.value));
     $('pairingScoutPrev')?.addEventListener('click', () => loadTable(Math.max(1, Number($('pairingScoutTable')?.value || 1) - 1)));
     $('pairingScoutNext')?.addEventListener('click', () => loadTable(Number($('pairingScoutTable')?.value || 1) + 1));
@@ -334,6 +263,15 @@
   }
 
   document.addEventListener('pairing:auth-ready', onAuthorized);
+  document.addEventListener('deck-catalog-updated', async () => {
+    if (!pairingAuthorized || !pairingSession?.user?.id) return;
+    try {
+      await loadCatalog();
+      if (currentContext) await renderScoutMatch(currentContext.data, currentContext.table);
+    } catch (error) {
+      setStatus(`牌組清單讀取失敗：${error?.message || error}`, 'error');
+    }
+  });
   document.addEventListener('pairing:match-rendered', event => decorateMainPairing(event.detail));
   document.addEventListener('DOMContentLoaded', () => {
     inject();
