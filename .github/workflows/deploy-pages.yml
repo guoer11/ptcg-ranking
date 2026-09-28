@@ -6,8 +6,14 @@ on:
   push:
     branches:
       - main
+  workflow_run:
+    workflows:
+      - "Update PTCG ranking"
+      - "Update PTCG tournaments"
+    types:
+      - completed
   schedule:
-    # 資料排程在台灣時間 00:01 / 12:00 執行；Pages 於 00:15 / 12:15 重新發布最新資料與報名期間。
+    # 資料工作完成後會立即重新部署；以下 00:15 / 12:15 僅作 GitHub 排程備援。
     - cron: "15 16 * * *"
     - cron: "15 4 * * *"
 
@@ -22,6 +28,7 @@ concurrency:
 
 jobs:
   build:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
