@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-09-29T00:05:51+08:00",
+  "updated_at": "2026-09-29T05:56:37+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -2417,6 +2417,14 @@
       {
         "rank": 302,
         "name": "********************",
+        "player_id": "tw04018784",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw04018784/"
+      },
+      {
+        "rank": 302,
+        "name": "********************",
         "player_id": "tw51241042",
         "region": "苗栗縣",
         "points": 0,
@@ -2464,14 +2472,6 @@
       },
       {
         "rank": 302,
-        "name": "33",
-        "player_id": "tw75755528",
-        "region": "臺中市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw75755528/"
-      },
-      {
-        "rank": 302,
         "name": "75",
         "player_id": "tw40188987",
         "region": "雲林縣",
@@ -2480,11 +2480,11 @@
       },
       {
         "rank": 302,
-        "name": "579",
-        "player_id": "tw35119266",
-        "region": "臺中市",
+        "name": "571",
+        "player_id": "tw28634769",
+        "region": "桃園市",
         "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw35119266/"
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw28634769/"
       },
       {
         "rank": 302,
@@ -2496,11 +2496,35 @@
       },
       {
         "rank": 302,
+        "name": "666869",
+        "player_id": "tw05270520",
+        "region": "新北市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw05270520/"
+      },
+      {
+        "rank": 302,
+        "name": "111100009999",
+        "player_id": "tw62984443",
+        "region": "臺北市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw62984443/"
+      },
+      {
+        "rank": 302,
         "name": "168168tom",
         "player_id": "tw87903680",
         "region": "嘉義縣",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw87903680/"
+      },
+      {
+        "rank": 302,
+        "name": "33",
+        "player_id": "tw75755528",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw75755528/"
       },
       {
         "rank": 302,
@@ -2520,27 +2544,11 @@
       },
       {
         "rank": 302,
-        "name": "571",
-        "player_id": "tw28634769",
-        "region": "桃園市",
+        "name": "579",
+        "player_id": "tw35119266",
+        "region": "臺中市",
         "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw28634769/"
-      },
-      {
-        "rank": 302,
-        "name": "666869",
-        "player_id": "tw05270520",
-        "region": "新北市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw05270520/"
-      },
-      {
-        "rank": 302,
-        "name": "111100009999",
-        "player_id": "tw62984443",
-        "region": "臺北市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw62984443/"
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw35119266/"
       },
       {
         "rank": 302,
@@ -9549,14 +9557,6 @@
         "region": "嘉義縣",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw77464471/"
-      },
-      {
-        "rank": 302,
-        "name": "tianma",
-        "player_id": "tw04018784",
-        "region": "臺中市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw04018784/"
       },
       {
         "rank": 302,
