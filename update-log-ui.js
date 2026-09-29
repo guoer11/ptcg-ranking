@@ -54,6 +54,7 @@
             <span class="update-log-notify ${entry.notified ? 'is-notified' : ''}">${entry.notified ? '符合通知條件' : '未達通知條件'}</span>
           </header>
           <strong>${esc(entry.summary || entry.title || '資料更新')}</strong>
+          <div class="update-log-source"><span>觸發來源</span><b>${esc(entry.trigger_source || '舊紀錄（未記錄來源）')}</b></div>
           ${details.length ? `<div class="update-log-detail-title">更新細節</div><ul>${details.map(item => `<li>${esc(item)}</li>`).join('')}</ul>` : '<p class="update-log-no-detail">本次只有更新檢查時間／內部狀態，沒有可見資料差異。</p>'}
         </article>`;
     }).join('');
