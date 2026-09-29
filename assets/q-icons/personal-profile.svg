@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="gCard" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B9E8FF"/><stop offset="1" stop-color="#79A6FF"/></linearGradient>
+  </defs>
+  <g stroke="#5B4A3A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="20" y="23" width="88" height="84" rx="20" fill="url(#gCard)"/>
+    <circle cx="64" cy="53" r="15" fill="#FFF9ED"/>
+    <path d="M39 91c4-16 13-24 25-24s21 8 25 24" fill="#FFF9ED"/>
+    <path d="M31 36h15" stroke="#FFF" opacity=".75"/>
+  </g>
+  <g fill="#FFE56F" stroke="#6F5426" stroke-width="3">
+    <path d="M101 14l3 8 8 3-8 3-3 8-3-8-8-3 8-3 3-8z"/>
+    <circle cx="25" cy="98" r="5"/>
+  </g>
+</svg>
