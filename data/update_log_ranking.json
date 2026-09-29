@@ -11,7 +11,8 @@
         "Master：暱稱 1",
         "Master｜tw04018784｜暱稱 tianma → ********************"
       ],
-      "notified": false
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
     },
     {
       "id": "ranking-2026-09-29T00:05:51+08:00",
@@ -24,7 +25,8 @@
         "Master｜tw42126524｜暱稱 issei → Hsinchan",
         "Master｜tw23935088｜暱稱 Baoger → Wuyilin"
       ],
-      "notified": false
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
     }
   ]
 }
