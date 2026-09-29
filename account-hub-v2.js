@@ -122,7 +122,7 @@
       account: ['個人資料', 'Google 帳號與登入狀態'],
       family: ['管理家庭通知裝置', '邀請、分享與移除家人的通知裝置'],
       deck: ['牌組設定', '管理牌組偵察的下拉選單'],
-      updates: ['最近更新紀錄', '查看排行榜與賽事最近 5 筆資料變動'],
+      updates: ['最近更新紀錄', '排行榜與賽事各保留最近 5 筆資料變動'],
       web: ['網站推播通知', '推播狀態與接收項目'],
       line: ['LINE 通知', '連線狀態與測試發送']
     };
@@ -176,7 +176,7 @@
           <strong>資料更新</strong>
         </div>
         <div class="account-app-list">
-          ${row(ICONS.update, 'update', '最近更新紀錄', '排行榜與賽事 · 最近 5 筆', 'updates')}
+          ${row(ICONS.update, 'update', '最近更新紀錄', '排行榜 5 筆 · 賽事 5 筆', 'updates')}
         </div>
       </section>
       <section class="account-app-group account-app-group-notify">
@@ -230,7 +230,7 @@
   function ensureUpdateLogScript() {
     if ([...document.scripts].some(script => script.src.includes('update-log-ui.js'))) return;
     const script = document.createElement('script');
-    script.src = 'update-log-ui.js?v=0.19.0-r1';
+    script.src = 'update-log-ui.js?v=0.19.0-r2';
     script.defer = true;
     document.body.appendChild(script);
   }
@@ -239,7 +239,7 @@
     if (document.querySelector('link[data-account-app-style]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'account-hub-v2.css?v=0.19.0-r1';
+    link.href = 'account-hub-v2.css?v=0.19.0-r2';
     link.dataset.accountAppStyle = 'true';
     document.head.appendChild(link);
   }
