@@ -22,3 +22,7 @@
 .account-app-group-update .account-app-group-head{background:linear-gradient(105deg,#eaf8f5 0%,#f5fbf9 58%,#fff 100%)}
 .account-app-group-icon.update{color:#257963;background:#dff5ee}
 .account-app-row-icon.update{color:#257963;background:#e8f8f3}
+
+.update-log-source{display:flex;align-items:center;gap:7px;margin-top:8px;color:#667085;font-size:10px;line-height:1.4}
+.update-log-source span{color:#98a2b3}
+.update-log-source b{font-weight:800;color:#475467}
