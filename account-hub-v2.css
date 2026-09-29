@@ -196,9 +196,12 @@
 /* v0.19.1：遊戲 Q 版功能 ICON */
 .account-app-group-head { grid-template-columns: 48px minmax(0,1fr) auto; }
 .account-app-row { grid-template-columns: 44px minmax(0,1fr) 20px; }
+.account-app-group-icon.account,
 .account-app-group-icon.deck,
 .account-app-group-icon.update,
 .account-app-group-icon.notify,
+.account-app-row-icon.account,
+.account-app-row-icon.family,
 .account-app-row-icon.deck,
 .account-app-row-icon.update,
 .account-app-row-icon.web {
@@ -206,12 +209,15 @@
   box-shadow: none;
   overflow: visible;
 }
+.account-app-group-icon.account,
 .account-app-group-icon.deck,
 .account-app-group-icon.update,
 .account-app-group-icon.notify {
   width: 48px;
   height: 48px;
 }
+.account-app-row-icon.account,
+.account-app-row-icon.family,
 .account-app-row-icon.deck,
 .account-app-row-icon.update,
 .account-app-row-icon.web {
@@ -231,9 +237,12 @@
 @media (max-width: 620px) {
   .account-app-group-head { grid-template-columns: 44px minmax(0,1fr) auto; }
   .account-app-row { grid-template-columns: 42px minmax(0,1fr) 18px; }
+  .account-app-group-icon.account,
   .account-app-group-icon.deck,
   .account-app-group-icon.update,
   .account-app-group-icon.notify { width: 44px; height: 44px; }
+  .account-app-row-icon.account,
+  .account-app-row-icon.family,
   .account-app-row-icon.deck,
   .account-app-row-icon.update,
   .account-app-row-icon.web { width: 40px; height: 40px; }
