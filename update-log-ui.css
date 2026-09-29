@@ -1,15 +1,23 @@
 .update-log-note{margin-bottom:12px;padding:12px 14px;border:1px solid #e4e9f0;border-radius:15px;background:#f8fafc;color:#667085;font-size:11px;line-height:1.55}
+.update-log-note strong{color:#344054}
+.update-log-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;padding:4px;border-radius:14px;background:#eef2f6}
+.update-log-tabs button{min-height:40px;border:0;border-radius:11px;background:transparent;color:#667085;font-size:13px;font-weight:800;cursor:pointer}
+.update-log-tabs button.active{background:#fff;color:#202939;box-shadow:0 1px 5px rgba(15,23,42,.08)}
+.update-log-tabs span{display:inline-grid;place-items:center;min-width:20px;height:20px;margin-left:4px;padding:0 5px;border-radius:999px;background:#dde4ec;color:#667085;font-size:10px}
+.update-log-tabs button.active span{background:#e8efff;color:#4263b5}
 .update-log-list{display:grid;gap:10px}
 .update-log-item{padding:14px;border:1px solid #e2e8f0;border-radius:16px;background:#fff}
 .update-log-item.ranking{border-left:4px solid #5b7cfa}
 .update-log-item.tournaments{border-left:4px solid #25a46f}
 .update-log-item header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
-.update-log-type{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:#eef2ff;color:#4258b5;font-size:10px;font-weight:800}
-.update-log-item.tournaments .update-log-type{background:#eaf8f1;color:#257654}
-.update-log-item time{color:#8b95a4;font-size:10px;font-weight:700}
+.update-log-item time{color:#667085;font-size:11px;font-weight:800}
+.update-log-notify{padding:4px 7px;border-radius:999px;background:#f2f4f7;color:#98a2b3;font-size:9px;font-weight:800;white-space:nowrap}
+.update-log-notify.is-notified{background:#e8f7ef;color:#21845d}
 .update-log-item>strong{display:block;color:#202939;font-size:14px;line-height:1.5}
-.update-log-item ul{margin:8px 0 0;padding-left:18px;color:#667085;font-size:11px;line-height:1.55}
-.update-log-item>small{display:block;margin-top:9px;color:#98a2b3;font-size:10px}
+.update-log-detail-title{margin-top:10px;color:#475467;font-size:10px;font-weight:900;letter-spacing:.03em}
+.update-log-item ul{margin:6px 0 0;padding-left:18px;color:#667085;font-size:11px;line-height:1.6;overflow-wrap:anywhere}
+.update-log-item li+li{margin-top:4px}
+.update-log-no-detail{margin:8px 0 0;color:#98a2b3;font-size:10px;line-height:1.5}
 .update-log-empty{padding:20px 12px;color:#858b94;font-size:12px;text-align:center}
 .account-app-group-update .account-app-group-head{background:linear-gradient(105deg,#eaf8f5 0%,#f5fbf9 58%,#fff 100%)}
 .account-app-group-icon.update{color:#257963;background:#dff5ee}
