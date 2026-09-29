@@ -243,7 +243,7 @@
     if (document.querySelector('link[data-account-app-style]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'account-hub-v2.css?v=1.9.1-r2';
+    link.href = 'account-hub-v2.css?v=1.9.1-r3';
     link.dataset.accountAppStyle = 'true';
     document.head.appendChild(link);
   }
