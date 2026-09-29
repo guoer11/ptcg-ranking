@@ -53,17 +53,20 @@ jobs:
       - name: Fetch official registration windows
         run: python enrich_registration_windows.py
 
+      - name: Build tournament update log
+        run: python update_log.py tournaments
+
       - name: Commit tournament changes
         id: commit
         run: |
-          if [[ -z "$(git status --porcelain -- data/tournaments.json data/tournament_registration.json)" ]]; then
+          if [[ -z "$(git status --porcelain -- data/tournaments.json data/tournament_registration.json data/update_log_tournaments.json)" ]]; then
             echo "No tournament changes."
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/tournaments.json data/tournament_registration.json
+          git add data/tournaments.json data/tournament_registration.json data/update_log_tournaments.json
           git commit -m "Update official tournament data"
           git pull --rebase origin main
           git push origin HEAD:main
