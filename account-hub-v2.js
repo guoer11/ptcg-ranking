@@ -230,7 +230,7 @@
   function ensureUpdateLogScript() {
     if ([...document.scripts].some(script => script.src.includes('update-log-ui.js'))) return;
     const script = document.createElement('script');
-    script.src = 'update-log-ui.js?v=0.19.0-r2';
+    script.src = 'update-log-ui.js?v=0.19.0-r3';
     script.defer = true;
     document.body.appendChild(script);
   }
@@ -239,7 +239,7 @@
     if (document.querySelector('link[data-account-app-style]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'account-hub-v2.css?v=0.19.0-r2';
+    link.href = 'account-hub-v2.css?v=0.19.0-r3';
     link.dataset.accountAppStyle = 'true';
     document.head.appendChild(link);
   }
