@@ -3,8 +3,8 @@
 
 """產生網站最近更新紀錄。
 
-排名與賽事各自維護獨立 JSON，避免兩個 GitHub Actions 同時執行時互相衝突。
-前端再合併兩份紀錄，只顯示最近 5 筆。
+排行榜與賽事各自維護最近 5 筆，避免兩個 GitHub Actions 同時執行時互相衝突。
+紀錄會保留足夠細節，讓右上角「最近更新紀錄」可以查到實際改了哪些玩家／賽事。
 """
 
 from __future__ import annotations
@@ -18,6 +18,7 @@ from zoneinfo import ZoneInfo
 
 TAIPEI = ZoneInfo("Asia/Taipei")
 MAX_PER_SOURCE = 5
+MAX_DETAIL_LINES = 20
 RANKING_FILE = Path("data/ranking.json")
 TOURNAMENT_FILE = Path("data/tournaments.json")
 REGISTRATION_FILE = Path("data/tournament_registration.json")
@@ -25,6 +26,17 @@ RANKING_LOG = Path("data/update_log_ranking.json")
 TOURNAMENT_LOG = Path("data/update_log_tournaments.json")
 GROUPS = ("Master", "Senior", "Junior")
 LEAGUE_LABELS = {"Great": "超級球", "Ultra": "高級球", "Premier": "紀念球", "Master": "大師球"}
+FIELD_LABELS = {
+    "title": "名稱",
+    "date": "日期",
+    "time": "時間",
+    "venue": "店家／場地",
+    "region": "地區",
+    "address": "地址",
+    "capacity": "人數",
+    "league": "賽事類型",
+    "group": "組別",
+}
 
 
 def read_json(path: Path, fallback):
@@ -67,6 +79,12 @@ def player_key(item: dict) -> str:
     return str(item.get("player_id") or item.get("name") or "").lower()
 
 
+def shown(value) -> str:
+    if value is None or value == "":
+        return "—"
+    return str(value)
+
+
 def ranking_entry() -> dict | None:
     if not changed_in_worktree(RANKING_FILE):
         return None
@@ -77,8 +95,8 @@ def ranking_entry() -> dict | None:
     new_groups = new.get("groups") or {}
 
     total_rank = total_points = total_entered = total_left = total_name = total_region = 0
-    details: list[str] = []
-    examples: list[str] = []
+    group_summaries: list[str] = []
+    player_changes: list[str] = []
 
     for group in GROUPS:
         old_map = {player_key(item): item for item in (old_groups.get(group) or [])}
@@ -87,27 +105,41 @@ def ranking_entry() -> dict | None:
 
         for key, item in new_map.items():
             before = old_map.get(key)
+            player_id = item.get("player_id") or before.get("player_id") if before else item.get("player_id")
+            player_id = player_id or key
+            latest_name = item.get("name") or "—"
+
             if before is None:
                 entered += 1
-                if len(examples) < 4:
-                    examples.append(f"{group} 進榜：{item.get('name') or item.get('player_id') or key}")
+                player_changes.append(
+                    f"{group}｜{player_id}｜{latest_name}｜進榜：第 {shown(item.get('rank'))} 名 / {shown(item.get('points'))} pt"
+                )
                 continue
+
+            changes: list[str] = []
             if before.get("rank") != item.get("rank"):
                 rank += 1
+                changes.append(f"名次 {shown(before.get('rank'))} → {shown(item.get('rank'))}")
             if before.get("points") != item.get("points"):
                 points += 1
+                changes.append(f"積分 {shown(before.get('points'))} → {shown(item.get('points'))}")
             if before.get("name") != item.get("name"):
                 names += 1
-                if len(examples) < 4:
-                    examples.append(f"{group} 暱稱：{before.get('name') or '—'} → {item.get('name') or '—'}")
+                changes.append(f"暱稱 {shown(before.get('name'))} → {shown(item.get('name'))}")
             if before.get("region") != item.get("region"):
                 regions += 1
+                changes.append(f"地區 {shown(before.get('region'))} → {shown(item.get('region'))}")
+
+            if changes:
+                player_changes.append(f"{group}｜{player_id}｜" + "；".join(changes))
 
         for key, item in old_map.items():
             if key not in new_map:
                 left += 1
-                if len(examples) < 4:
-                    examples.append(f"{group} 離榜：{item.get('name') or item.get('player_id') or key}")
+                player_id = item.get("player_id") or key
+                player_changes.append(
+                    f"{group}｜{player_id}｜{item.get('name') or '—'}｜離榜：原第 {shown(item.get('rank'))} 名 / {shown(item.get('points'))} pt"
+                )
 
         total_rank += rank
         total_points += points
@@ -130,7 +162,7 @@ def ranking_entry() -> dict | None:
         if regions:
             bits.append(f"地區 {regions}")
         if bits:
-            details.append(f"{group}：" + "、".join(bits))
+            group_summaries.append(f"{group}：" + "、".join(bits))
 
     effective = total_rank + total_points + total_entered + total_left
     if effective:
@@ -143,6 +175,10 @@ def ranking_entry() -> dict | None:
     else:
         summary = "排行榜資料內容無可見變動"
 
+    details = (group_summaries + player_changes)[:MAX_DETAIL_LINES]
+    if len(group_summaries) + len(player_changes) > MAX_DETAIL_LINES:
+        details.append(f"其餘 {len(group_summaries) + len(player_changes) - MAX_DETAIL_LINES} 筆細節省略")
+
     updated_at = new.get("updated_at") or datetime.now(TAIPEI).isoformat(timespec="seconds")
     return {
         "id": f"ranking-{updated_at}",
@@ -150,7 +186,7 @@ def ranking_entry() -> dict | None:
         "title": "排行榜資料更新",
         "updated_at": updated_at,
         "summary": summary,
-        "details": (details + examples)[:7],
+        "details": details,
         "notified": bool(effective),
     }
 
@@ -158,6 +194,24 @@ def ranking_entry() -> dict | None:
 def registration_events(payload: dict) -> dict:
     events = payload.get("events") if isinstance(payload, dict) else {}
     return events if isinstance(events, dict) else {}
+
+
+def event_label(item: dict) -> str:
+    if not item:
+        return "未知賽事"
+    event_id = item.get("event_id") or "—"
+    date = item.get("date") or "—"
+    venue = item.get("venue") or item.get("title") or "未命名"
+    region = item.get("region") or ""
+    return f"#{event_id}｜{date}｜{venue}" + (f"｜{region}" if region else "")
+
+
+def registration_label(item: dict) -> str:
+    if not item:
+        return "—"
+    return item.get("registration_period") or (
+        f"{shown(item.get('registration_start_at'))} ～ {shown(item.get('registration_end_at'))}"
+    )
 
 
 def tournament_entry() -> dict | None:
@@ -176,35 +230,46 @@ def tournament_entry() -> dict | None:
     removed: list[dict] = []
     restored: list[dict] = []
     results: list[dict] = []
-    detail_changed: list[dict] = []
-    status_changed: list[dict] = []
+    detail_changes: list[tuple[dict, list[str]]] = []
+    status_changes: list[tuple[dict, object, object]] = []
 
-    visible_keys = ("title", "date", "time", "venue", "region", "address", "capacity", "league", "group")
+    visible_keys = tuple(FIELD_LABELS)
 
     for event_id, item in new_map.items():
         before = old_map.get(event_id)
         if before is None:
             added.append(item)
             continue
+
         old_status = before.get("official_status")
         new_status = item.get("official_status")
         if old_status in ("removed", "unavailable") and new_status == "active":
             restored.append(item)
         elif old_status != new_status:
-            status_changed.append(item)
+            status_changes.append((item, old_status, new_status))
+
         if not (before.get("results") or []) and (item.get("results") or []):
             results.append(item)
-        if any(before.get(key) != item.get(key) for key in visible_keys):
-            detail_changed.append(item)
+
+        changed_fields = []
+        for key in visible_keys:
+            if before.get(key) != item.get(key):
+                changed_fields.append(
+                    f"{FIELD_LABELS[key]} {shown(before.get(key))} → {shown(item.get(key))}"
+                )
+        if changed_fields:
+            detail_changes.append((item, changed_fields))
 
     for event_id, item in old_map.items():
         if event_id not in new_map:
             removed.append(item)
 
-    registration_changed = 0
-    for event_id in set(old_registration) | set(new_registration):
-        if old_registration.get(event_id) != new_registration.get(event_id):
-            registration_changed += 1
+    registration_changes: list[tuple[str, dict, dict]] = []
+    for event_id in sorted(set(old_registration) | set(new_registration)):
+        before = old_registration.get(event_id) or {}
+        after = new_registration.get(event_id) or {}
+        if before != after:
+            registration_changes.append((event_id, before, after))
 
     bits = []
     if added:
@@ -215,37 +280,46 @@ def tournament_entry() -> dict | None:
         bits.append(f"新增成績 {len(results)} 場")
     if removed:
         bits.append(f"移除 {len(removed)} 場")
-    if detail_changed:
-        bits.append(f"資料修正 {len(detail_changed)} 場")
-    if status_changed and not restored:
-        bits.append(f"狀態變更 {len(status_changed)} 場")
-    if registration_changed:
-        bits.append(f"報名期間更新 {registration_changed} 場")
+    if detail_changes:
+        bits.append(f"資料修正 {len(detail_changes)} 場")
+    if status_changes:
+        bits.append(f"狀態變更 {len(status_changes)} 場")
+    if registration_changes:
+        bits.append(f"報名期間更新 {len(registration_changes)} 場")
 
     summary = "；".join(bits) if bits else "例行檢查完成；賽事可見內容無變動"
     details: list[str] = []
 
-    if added:
-        league_counts: dict[str, int] = {}
-        for item in added:
-            label = LEAGUE_LABELS.get(item.get("league"), item.get("league") or "其他")
-            league_counts[label] = league_counts.get(label, 0) + 1
-        details.append("新增賽事：" + "、".join(f"{key} {value}" for key, value in league_counts.items()))
+    for item in added:
+        league = LEAGUE_LABELS.get(item.get("league"), item.get("league") or "其他")
+        details.append(
+            f"新增｜{event_label(item)}｜{league}｜{shown(item.get('capacity'))} 人"
+        )
 
-    if restored:
-        names = [f"{item.get('date') or '—'} {item.get('venue') or item.get('title') or '未命名'}" for item in restored[:3]]
-        details.append("恢復上架：" + "、".join(names) + (f" 等 {len(restored)} 場" if len(restored) > 3 else ""))
+    for item in restored:
+        details.append(f"恢復上架｜{event_label(item)}")
 
-    if results:
-        names = [item.get("venue") or item.get("title") or "未命名" for item in results[:3]]
-        details.append("新增官方成績：" + "、".join(names) + (f" 等 {len(results)} 場" if len(results) > 3 else ""))
+    for item in results:
+        details.append(f"新增官方成績｜{event_label(item)}｜{len(item.get('results') or [])} 筆")
 
-    if detail_changed:
-        names = [item.get("venue") or item.get("title") or "未命名" for item in detail_changed[:3]]
-        details.append("資料修正：" + "、".join(names) + (f" 等 {len(detail_changed)} 場" if len(detail_changed) > 3 else ""))
+    for item in removed:
+        details.append(f"移除｜{event_label(item)}")
 
-    if registration_changed:
-        details.append(f"官方報名期間資料異動：{registration_changed} 場")
+    for item, old_status, new_status in status_changes:
+        details.append(f"狀態｜{event_label(item)}｜{shown(old_status)} → {shown(new_status)}")
+
+    for item, changes in detail_changes:
+        details.append(f"資料修正｜{event_label(item)}｜" + "；".join(changes))
+
+    for event_id, before, after in registration_changes:
+        item = new_map.get(event_id) or old_map.get(event_id) or {"event_id": event_id}
+        details.append(
+            f"報名期間｜{event_label(item)}｜{registration_label(before)} → {registration_label(after)}"
+        )
+
+    if len(details) > MAX_DETAIL_LINES:
+        omitted = len(details) - MAX_DETAIL_LINES
+        details = details[:MAX_DETAIL_LINES] + [f"其餘 {omitted} 筆細節省略"]
 
     updated_at = new.get("updated_at") or datetime.now(TAIPEI).isoformat(timespec="seconds")
     return {
@@ -254,7 +328,7 @@ def tournament_entry() -> dict | None:
         "title": "賽事資訊更新",
         "updated_at": updated_at,
         "summary": summary,
-        "details": details[:7],
+        "details": details,
         "notified": bool(added or results),
     }
 
