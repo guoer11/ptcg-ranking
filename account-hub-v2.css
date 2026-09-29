@@ -259,4 +259,29 @@
   pointer-events:none;
   user-select:none;
 }
-.account-q-svg-settings{ transform:translateX(2px); }
+.account-q-svg-settings{
+  transform:none;
+}
+
+
+/* v0.19.1-r6：放大帳號區 Q 版 ICON，修正帳號設定視覺重心。 */
+.account-app-group-icon.account .account-q-svg{
+  width:52px;
+  height:52px;
+}
+.account-app-row-icon.account .account-q-svg,
+.account-app-row-icon.family .account-q-svg{
+  width:46px;
+  height:46px;
+}
+@media (max-width:620px){
+  .account-app-group-icon.account .account-q-svg{
+    width:50px;
+    height:50px;
+  }
+  .account-app-row-icon.account .account-q-svg,
+  .account-app-row-icon.family .account-q-svg{
+    width:44px;
+    height:44px;
+  }
+}
