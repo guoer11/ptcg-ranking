@@ -8,7 +8,8 @@
       "updated_at": "2026-09-29T08:38:45+08:00",
       "summary": "例行檢查完成；賽事可見內容無變動",
       "details": [],
-      "notified": false
+      "notified": false,
+      "trigger_source": "程式更新觸發"
     },
     {
       "id": "tournaments-2026-09-29T08:19:02+08:00",
@@ -17,7 +18,8 @@
       "updated_at": "2026-09-29T08:19:02+08:00",
       "summary": "例行檢查完成；賽事可見內容無變動",
       "details": [],
-      "notified": false
+      "notified": false,
+      "trigger_source": "程式更新觸發"
     },
     {
       "id": "tournaments-2026-09-29T05:59:15+08:00",
@@ -26,7 +28,8 @@
       "updated_at": "2026-09-29T05:59:15+08:00",
       "summary": "例行檢查完成；賽事可見內容無變動",
       "details": [],
-      "notified": false
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
     },
     {
       "id": "tournaments-2026-09-29T01:38:58+08:00",
@@ -35,7 +38,8 @@
       "updated_at": "2026-09-29T01:38:58+08:00",
       "summary": "例行檢查完成；賽事可見內容無變動",
       "details": [],
-      "notified": false
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
     },
     {
       "id": "tournaments-2026-09-29T00:03:55+08:00",
@@ -44,7 +48,8 @@
       "updated_at": "2026-09-29T00:03:55+08:00",
       "summary": "例行檢查完成；賽事可見內容無變動",
       "details": [],
-      "notified": false
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
     }
   ]
 }
