@@ -1,6 +1,6 @@
 {
   "season": "2026-27",
-  "updated_at": "2026-09-29T12:03:30+08:00",
+  "updated_at": "2026-09-29T17:03:33+08:00",
   "source": "https://asia.pokemon-card.com/tw/event-search/list/",
   "authority_note": "本資料供賽事整理與積分核算輔助；正式積分與排名以 Pokémon Asia 官方排行榜為準。",
   "schedule": [
@@ -18,14 +18,239 @@
       "date": "2026-09-05",
       "time": "11:00-16:00",
       "venue": "諾亞方舟益智遊戲",
-      "region": "臺中市",
+      "region": "新北市",
       "address": "台中市西屯區台灣大道二段910號5樓之1",
       "capacity": 90,
       "url": "https://asia.pokemon-card.com/tw/event-search/66338/",
-      "results": [],
-      "result_count": 0,
+      "results": [
+        {
+          "rank": 1,
+          "points": 20,
+          "name": "20 pt",
+          "player_id": "tw36759052",
+          "region": "臺中市"
+        },
+        {
+          "rank": 2,
+          "points": 12,
+          "name": "12 pt",
+          "player_id": "tw59054436",
+          "region": "臺中市"
+        },
+        {
+          "rank": 3,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw32214798",
+          "region": "雲林縣"
+        },
+        {
+          "rank": 4,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw26175828",
+          "region": "臺中市"
+        },
+        {
+          "rank": 5,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw18028837",
+          "region": "臺中市"
+        },
+        {
+          "rank": 6,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw12738380",
+          "region": "臺中市"
+        },
+        {
+          "rank": 7,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw41563340",
+          "region": "臺中市"
+        },
+        {
+          "rank": 8,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw67759215",
+          "region": "新北市"
+        },
+        {
+          "rank": 9,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw74945392",
+          "region": "臺中市"
+        },
+        {
+          "rank": 10,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw09490592",
+          "region": "新北市"
+        },
+        {
+          "rank": 11,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw91677599",
+          "region": "新北市"
+        },
+        {
+          "rank": 12,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw50567676",
+          "region": "苗栗縣"
+        },
+        {
+          "rank": 13,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw43380150",
+          "region": "臺中市"
+        },
+        {
+          "rank": 14,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw75380665",
+          "region": "臺中市"
+        },
+        {
+          "rank": 15,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw01111702",
+          "region": "臺中市"
+        },
+        {
+          "rank": 16,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw77123317",
+          "region": "臺中市"
+        },
+        {
+          "rank": 17,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw55210501",
+          "region": "苗栗縣"
+        },
+        {
+          "rank": 18,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw69376751",
+          "region": "臺中市"
+        },
+        {
+          "rank": 19,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw57767899",
+          "region": "桃園市"
+        },
+        {
+          "rank": 20,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw88140982",
+          "region": "臺中市"
+        },
+        {
+          "rank": 21,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw87745948",
+          "region": "苗栗縣"
+        },
+        {
+          "rank": 22,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw72244502",
+          "region": "苗栗縣"
+        },
+        {
+          "rank": 23,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw47551870",
+          "region": "臺中市"
+        },
+        {
+          "rank": 24,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw52194649",
+          "region": "臺中市"
+        },
+        {
+          "rank": 25,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw79702513",
+          "region": "新竹縣"
+        },
+        {
+          "rank": 26,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw35119266",
+          "region": "臺中市"
+        },
+        {
+          "rank": 27,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw99926791",
+          "region": "嘉義市"
+        },
+        {
+          "rank": 28,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw17137276",
+          "region": "臺中市"
+        },
+        {
+          "rank": 29,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw44821842",
+          "region": "臺中市"
+        },
+        {
+          "rank": 30,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw93551526",
+          "region": "臺中市"
+        },
+        {
+          "rank": 31,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw99229780",
+          "region": "南投縣"
+        },
+        {
+          "rank": 32,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw61183916",
+          "region": "臺中市"
+        }
+      ],
+      "result_count": 32,
       "discovered_at": "2026-09-09T15:01:03+08:00",
-      "checked_at": "2026-09-29T12:03:10+08:00"
+      "checked_at": "2026-09-29T17:03:14+08:00"
     },
     {
       "event_id": "66339",
@@ -268,7 +493,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T15:01:04+08:00",
-      "checked_at": "2026-09-29T12:03:12+08:00"
+      "checked_at": "2026-09-29T17:03:16+08:00"
     },
     {
       "event_id": "66340",
@@ -343,7 +568,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T15:01:04+08:00",
-      "checked_at": "2026-09-29T12:03:13+08:00"
+      "checked_at": "2026-09-29T17:03:17+08:00"
     },
     {
       "event_id": "66341",
@@ -586,7 +811,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T15:01:05+08:00",
-      "checked_at": "2026-09-29T12:03:15+08:00"
+      "checked_at": "2026-09-29T17:03:19+08:00"
     },
     {
       "event_id": "66342",
@@ -717,7 +942,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T15:01:05+08:00",
-      "checked_at": "2026-09-29T12:03:17+08:00"
+      "checked_at": "2026-09-29T17:03:20+08:00"
     },
     {
       "event_id": "66343",
@@ -960,7 +1185,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T15:01:06+08:00",
-      "checked_at": "2026-09-29T12:03:20+08:00"
+      "checked_at": "2026-09-29T17:03:22+08:00"
     },
     {
       "event_id": "66344",
@@ -1203,7 +1428,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T15:01:06+08:00",
-      "checked_at": "2026-09-29T12:03:22+08:00"
+      "checked_at": "2026-09-29T17:03:24+08:00"
     },
     {
       "event_id": "66345",
@@ -1334,7 +1559,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T15:01:06+08:00",
-      "checked_at": "2026-09-29T12:03:23+08:00"
+      "checked_at": "2026-09-29T17:03:26+08:00"
     },
     {
       "event_id": "66346",
@@ -1577,7 +1802,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T15:01:07+08:00",
-      "checked_at": "2026-09-29T12:03:26+08:00"
+      "checked_at": "2026-09-29T17:03:28+08:00"
     },
     {
       "event_id": "66347",
@@ -1652,7 +1877,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T15:01:07+08:00",
-      "checked_at": "2026-09-29T12:03:27+08:00"
+      "checked_at": "2026-09-29T17:03:29+08:00"
     },
     {
       "event_id": "66348",
@@ -1895,7 +2120,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T15:01:08+08:00",
-      "checked_at": "2026-09-29T12:03:29+08:00"
+      "checked_at": "2026-09-29T17:03:31+08:00"
     },
     {
       "event_id": "66349",
@@ -2026,7 +2251,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T15:01:08+08:00",
-      "checked_at": "2026-09-29T12:03:30+08:00"
+      "checked_at": "2026-09-29T17:03:33+08:00"
     },
     {
       "event_id": "66951",
@@ -2044,7 +2269,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:34+08:00",
-      "checked_at": "2026-09-29T12:02:07+08:00",
+      "checked_at": "2026-09-29T17:02:06+08:00",
       "official_status": "active"
     },
     {
@@ -2063,7 +2288,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:33+08:00",
-      "checked_at": "2026-09-29T12:02:06+08:00",
+      "checked_at": "2026-09-29T17:02:05+08:00",
       "official_status": "active"
     },
     {
@@ -2082,7 +2307,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:34+08:00",
-      "checked_at": "2026-09-29T12:02:06+08:00",
+      "checked_at": "2026-09-29T17:02:05+08:00",
       "official_status": "active"
     },
     {
@@ -2158,7 +2383,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T10:20:46+08:00",
-      "checked_at": "2026-09-29T12:01:42+08:00",
+      "checked_at": "2026-09-29T17:01:43+08:00",
       "official_status": "active"
     },
     {
@@ -2290,7 +2515,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:20:46+08:00",
-      "checked_at": "2026-09-29T12:01:44+08:00",
+      "checked_at": "2026-09-29T17:01:44+08:00",
       "official_status": "active"
     },
     {
@@ -2309,7 +2534,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:47+08:00",
-      "checked_at": "2026-09-29T12:01:44+08:00",
+      "checked_at": "2026-09-29T17:01:45+08:00",
       "official_status": "active"
     },
     {
@@ -2441,7 +2666,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:20:48+08:00",
-      "checked_at": "2026-09-29T12:01:46+08:00",
+      "checked_at": "2026-09-29T17:01:47+08:00",
       "official_status": "active"
     },
     {
@@ -2685,7 +2910,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:20:48+08:00",
-      "checked_at": "2026-09-29T12:01:48+08:00",
+      "checked_at": "2026-09-29T17:01:49+08:00",
       "official_status": "active"
     },
     {
@@ -2704,7 +2929,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:49+08:00",
-      "checked_at": "2026-09-29T12:01:49+08:00",
+      "checked_at": "2026-09-29T17:01:49+08:00",
       "official_status": "active"
     },
     {
@@ -2723,7 +2948,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:59+08:00",
-      "checked_at": "2026-09-29T12:02:15+08:00",
+      "checked_at": "2026-09-29T17:02:13+08:00",
       "official_status": "active"
     },
     {
@@ -2967,7 +3192,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:20:50+08:00",
-      "checked_at": "2026-09-29T12:01:52+08:00",
+      "checked_at": "2026-09-29T17:01:51+08:00",
       "official_status": "active"
     },
     {
@@ -3211,7 +3436,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:20:51+08:00",
-      "checked_at": "2026-09-29T12:01:54+08:00",
+      "checked_at": "2026-09-29T17:01:53+08:00",
       "official_status": "active"
     },
     {
@@ -3230,7 +3455,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:51+08:00",
-      "checked_at": "2026-09-29T12:01:54+08:00",
+      "checked_at": "2026-09-29T17:01:54+08:00",
       "official_status": "active"
     },
     {
@@ -3306,7 +3531,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T10:20:52+08:00",
-      "checked_at": "2026-09-29T12:01:55+08:00",
+      "checked_at": "2026-09-29T17:01:55+08:00",
       "official_status": "active"
     },
     {
@@ -3438,7 +3663,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:20:53+08:00",
-      "checked_at": "2026-09-29T12:01:57+08:00",
+      "checked_at": "2026-09-29T17:01:56+08:00",
       "official_status": "active"
     },
     {
@@ -3682,7 +3907,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:20:53+08:00",
-      "checked_at": "2026-09-29T12:01:59+08:00",
+      "checked_at": "2026-09-29T17:01:59+08:00",
       "official_status": "active"
     },
     {
@@ -3701,7 +3926,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:54+08:00",
-      "checked_at": "2026-09-29T12:02:00+08:00",
+      "checked_at": "2026-09-29T17:02:00+08:00",
       "official_status": "active"
     },
     {
@@ -3945,7 +4170,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:20:54+08:00",
-      "checked_at": "2026-09-29T12:02:02+08:00",
+      "checked_at": "2026-09-29T17:02:02+08:00",
       "official_status": "active"
     },
     {
@@ -3964,7 +4189,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:55+08:00",
-      "checked_at": "2026-09-29T12:02:03+08:00",
+      "checked_at": "2026-09-29T17:02:03+08:00",
       "official_status": "active"
     },
     {
@@ -3983,7 +4208,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:55+08:00",
-      "checked_at": "2026-09-29T12:02:04+08:00",
+      "checked_at": "2026-09-29T17:02:03+08:00",
       "official_status": "active"
     },
     {
@@ -4002,7 +4227,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:56+08:00",
-      "checked_at": "2026-09-29T12:02:04+08:00",
+      "checked_at": "2026-09-29T17:02:04+08:00",
       "official_status": "active"
     },
     {
@@ -4021,7 +4246,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:57+08:00",
-      "checked_at": "2026-09-29T12:02:05+08:00",
+      "checked_at": "2026-09-29T17:02:04+08:00",
       "official_status": "active"
     },
     {
@@ -4040,7 +4265,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:03+08:00",
-      "checked_at": "2026-09-29T12:02:20+08:00",
+      "checked_at": "2026-09-29T17:02:20+08:00",
       "official_status": "active"
     },
     {
@@ -4052,14 +4277,239 @@
       "date": "2026-09-25",
       "time": "13:30-18:30",
       "venue": "松梅桌遊",
-      "region": "高雄市",
+      "region": "新北市",
       "address": "高雄市苓雅區自強三路2號3F(諾貝爾大樓)",
       "capacity": 128,
       "url": "https://asia.pokemon-card.com/tw/event-search/67654/",
-      "results": [],
-      "result_count": 0,
+      "results": [
+        {
+          "rank": 1,
+          "points": 20,
+          "name": "20 pt",
+          "player_id": "tw50680843",
+          "region": "高雄市"
+        },
+        {
+          "rank": 2,
+          "points": 12,
+          "name": "12 pt",
+          "player_id": "tw32020032",
+          "region": "高雄市"
+        },
+        {
+          "rank": 3,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw05980017",
+          "region": "彰化縣"
+        },
+        {
+          "rank": 4,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw02559687",
+          "region": "高雄市"
+        },
+        {
+          "rank": 5,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw60273793",
+          "region": "高雄市"
+        },
+        {
+          "rank": 6,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw05602573",
+          "region": "高雄市"
+        },
+        {
+          "rank": 7,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw71003592",
+          "region": "高雄市"
+        },
+        {
+          "rank": 8,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw91797530",
+          "region": "屏東縣"
+        },
+        {
+          "rank": 9,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw08270549",
+          "region": "高雄市"
+        },
+        {
+          "rank": 10,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw56605426",
+          "region": "臺南市"
+        },
+        {
+          "rank": 11,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw42740359",
+          "region": "高雄市"
+        },
+        {
+          "rank": 12,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw69538820",
+          "region": "高雄市"
+        },
+        {
+          "rank": 13,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw79188375",
+          "region": "高雄市"
+        },
+        {
+          "rank": 14,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw71084142",
+          "region": "高雄市"
+        },
+        {
+          "rank": 15,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw36617899",
+          "region": "高雄市"
+        },
+        {
+          "rank": 16,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw42163963",
+          "region": "臺南市"
+        },
+        {
+          "rank": 17,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw45806310",
+          "region": "高雄市"
+        },
+        {
+          "rank": 18,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw11670647",
+          "region": "高雄市"
+        },
+        {
+          "rank": 19,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw09261132",
+          "region": "高雄市"
+        },
+        {
+          "rank": 20,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw89343025",
+          "region": "臺中市"
+        },
+        {
+          "rank": 21,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw04722294",
+          "region": "高雄市"
+        },
+        {
+          "rank": 22,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw78657682",
+          "region": "高雄市"
+        },
+        {
+          "rank": 23,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw97885633",
+          "region": "臺南市"
+        },
+        {
+          "rank": 24,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw73106123",
+          "region": "高雄市"
+        },
+        {
+          "rank": 25,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw85568194",
+          "region": "高雄市"
+        },
+        {
+          "rank": 26,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw17953874",
+          "region": "高雄市"
+        },
+        {
+          "rank": 27,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw21601458",
+          "region": "高雄市"
+        },
+        {
+          "rank": 28,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw84991038",
+          "region": "臺南市"
+        },
+        {
+          "rank": 29,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw75037148",
+          "region": "高雄市"
+        },
+        {
+          "rank": 30,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw77598098",
+          "region": "高雄市"
+        },
+        {
+          "rank": 31,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw95570205",
+          "region": "新北市"
+        },
+        {
+          "rank": 32,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw39371632",
+          "region": "臺南市"
+        }
+      ],
+      "result_count": 32,
       "discovered_at": "2026-09-09T10:21:05+08:00",
-      "checked_at": "2026-09-29T12:02:24+08:00",
+      "checked_at": "2026-09-29T17:02:27+08:00",
       "official_status": "active"
     },
     {
@@ -4075,10 +4525,123 @@
       "address": "1F., No. 133, Shezhong St.,",
       "capacity": 40,
       "url": "https://asia.pokemon-card.com/tw/event-search/67678/",
-      "results": [],
-      "result_count": 0,
+      "results": [
+        {
+          "rank": 1,
+          "points": 20,
+          "name": "20 pt",
+          "player_id": "tw69848864",
+          "region": "新北市"
+        },
+        {
+          "rank": 2,
+          "points": 12,
+          "name": "12 pt",
+          "player_id": "tw81886933",
+          "region": "臺北市"
+        },
+        {
+          "rank": 3,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw79280986",
+          "region": "臺北市"
+        },
+        {
+          "rank": 4,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw22756831",
+          "region": "新北市"
+        },
+        {
+          "rank": 5,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw29377361",
+          "region": "臺北市"
+        },
+        {
+          "rank": 6,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw48512422",
+          "region": "新北市"
+        },
+        {
+          "rank": 7,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw40722297",
+          "region": "臺北市"
+        },
+        {
+          "rank": 8,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw64460639",
+          "region": "新北市"
+        },
+        {
+          "rank": 9,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw97703685",
+          "region": "新北市"
+        },
+        {
+          "rank": 10,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw13462937",
+          "region": "臺北市"
+        },
+        {
+          "rank": 11,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw27943796",
+          "region": "臺北市"
+        },
+        {
+          "rank": 12,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw64903698",
+          "region": "臺北市"
+        },
+        {
+          "rank": 13,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw37855988",
+          "region": "臺北市"
+        },
+        {
+          "rank": 14,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw43700622",
+          "region": "雲林縣"
+        },
+        {
+          "rank": 15,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw17896772",
+          "region": "臺北市"
+        },
+        {
+          "rank": 16,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw91677599",
+          "region": "新北市"
+        }
+      ],
+      "result_count": 16,
       "discovered_at": "2026-09-09T10:21:05+08:00",
-      "checked_at": "2026-09-29T12:02:26+08:00",
+      "checked_at": "2026-09-29T17:02:29+08:00",
       "official_status": "active"
     },
     {
@@ -4097,7 +4660,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:16+08:00",
-      "checked_at": "2026-09-29T12:02:47+08:00",
+      "checked_at": "2026-09-29T17:02:53+08:00",
       "official_status": "active"
     },
     {
@@ -4113,10 +4676,67 @@
       "address": "台北市士林區中山北路七段24號B1",
       "capacity": 32,
       "url": "https://asia.pokemon-card.com/tw/event-search/67533/",
-      "results": [],
-      "result_count": 0,
+      "results": [
+        {
+          "rank": 1,
+          "points": 20,
+          "name": "20 pt",
+          "player_id": "tw75551324",
+          "region": "苗栗縣"
+        },
+        {
+          "rank": 2,
+          "points": 12,
+          "name": "12 pt",
+          "player_id": "tw11292760",
+          "region": "臺北市"
+        },
+        {
+          "rank": 3,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw52127289",
+          "region": "新北市"
+        },
+        {
+          "rank": 4,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw28431329",
+          "region": "臺北市"
+        },
+        {
+          "rank": 5,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw61583819",
+          "region": "新北市"
+        },
+        {
+          "rank": 6,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw42619935",
+          "region": "臺南市"
+        },
+        {
+          "rank": 7,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw81599190",
+          "region": "新竹市"
+        },
+        {
+          "rank": 8,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw66007671",
+          "region": "新北市"
+        }
+      ],
+      "result_count": 8,
       "discovered_at": "2026-09-09T10:21:00+08:00",
-      "checked_at": "2026-09-29T12:02:16+08:00",
+      "checked_at": "2026-09-29T17:02:15+08:00",
       "official_status": "active"
     },
     {
@@ -4128,14 +4748,127 @@
       "date": "2026-09-26",
       "time": "14:00-20:00",
       "venue": "鬥陣",
-      "region": "彰化縣",
+      "region": "新北市",
       "address": "彰化縣彰化市永樂街12號",
       "capacity": 64,
       "url": "https://asia.pokemon-card.com/tw/event-search/67534/",
-      "results": [],
-      "result_count": 0,
+      "results": [
+        {
+          "rank": 1,
+          "points": 20,
+          "name": "20 pt",
+          "player_id": "tw23764220",
+          "region": "彰化縣"
+        },
+        {
+          "rank": 2,
+          "points": 12,
+          "name": "12 pt",
+          "player_id": "tw41286139",
+          "region": "新竹市"
+        },
+        {
+          "rank": 3,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw55000893",
+          "region": "臺中市"
+        },
+        {
+          "rank": 4,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw11739209",
+          "region": "臺中市"
+        },
+        {
+          "rank": 5,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw52124494",
+          "region": "彰化縣"
+        },
+        {
+          "rank": 6,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw44853577",
+          "region": "宜蘭縣"
+        },
+        {
+          "rank": 7,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw72630270",
+          "region": "新北市"
+        },
+        {
+          "rank": 8,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw17190126",
+          "region": "彰化縣"
+        },
+        {
+          "rank": 9,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw18638755",
+          "region": "彰化縣"
+        },
+        {
+          "rank": 10,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw64656626",
+          "region": "基隆市"
+        },
+        {
+          "rank": 11,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw64567116",
+          "region": "臺中市"
+        },
+        {
+          "rank": 12,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw51241042",
+          "region": "苗栗縣"
+        },
+        {
+          "rank": 13,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw42309306",
+          "region": "臺中市"
+        },
+        {
+          "rank": 14,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw08952821",
+          "region": "新竹市"
+        },
+        {
+          "rank": 15,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw26175828",
+          "region": "臺中市"
+        },
+        {
+          "rank": 16,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw04390409",
+          "region": "彰化縣"
+        }
+      ],
+      "result_count": 16,
       "discovered_at": "2026-09-09T10:21:01+08:00",
-      "checked_at": "2026-09-29T12:02:17+08:00",
+      "checked_at": "2026-09-29T17:02:17+08:00",
       "official_status": "active"
     },
     {
@@ -4147,14 +4880,239 @@
       "date": "2026-09-26",
       "time": "10:30-16:00",
       "venue": "松鼠窩桌遊館",
-      "region": "新北市",
+      "region": "臺北市",
       "address": "新北市三重區重新路一段78號2樓",
       "capacity": 70,
       "url": "https://asia.pokemon-card.com/tw/event-search/67959/",
-      "results": [],
-      "result_count": 0,
+      "results": [
+        {
+          "rank": 1,
+          "points": 20,
+          "name": "20 pt",
+          "player_id": "tw29536370",
+          "region": "新北市"
+        },
+        {
+          "rank": 2,
+          "points": 12,
+          "name": "12 pt",
+          "player_id": "tw10467123",
+          "region": "臺北市"
+        },
+        {
+          "rank": 3,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw18276049",
+          "region": "新北市"
+        },
+        {
+          "rank": 4,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw50328610",
+          "region": "新北市"
+        },
+        {
+          "rank": 5,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw67199394",
+          "region": "新北市"
+        },
+        {
+          "rank": 6,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw89368672",
+          "region": "新北市"
+        },
+        {
+          "rank": 7,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw10410998",
+          "region": "新北市"
+        },
+        {
+          "rank": 8,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw77414759",
+          "region": "臺北市"
+        },
+        {
+          "rank": 9,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw51496473",
+          "region": "桃園市"
+        },
+        {
+          "rank": 10,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw22529091",
+          "region": "臺北市"
+        },
+        {
+          "rank": 11,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw82494238",
+          "region": "臺北市"
+        },
+        {
+          "rank": 12,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw76132946",
+          "region": "新北市"
+        },
+        {
+          "rank": 13,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw29377361",
+          "region": "臺北市"
+        },
+        {
+          "rank": 14,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw46738666",
+          "region": "臺北市"
+        },
+        {
+          "rank": 15,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw44127879",
+          "region": "新北市"
+        },
+        {
+          "rank": 16,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw58040892",
+          "region": "新北市"
+        },
+        {
+          "rank": 17,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw09468385",
+          "region": "臺北市"
+        },
+        {
+          "rank": 18,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw21922568",
+          "region": "臺北市"
+        },
+        {
+          "rank": 19,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw18197442",
+          "region": "臺北市"
+        },
+        {
+          "rank": 20,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw50702110",
+          "region": "桃園市"
+        },
+        {
+          "rank": 21,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw69197193",
+          "region": "臺北市"
+        },
+        {
+          "rank": 22,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw26734862",
+          "region": "新北市"
+        },
+        {
+          "rank": 23,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw06195770",
+          "region": "新北市"
+        },
+        {
+          "rank": 24,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw15968109",
+          "region": "新北市"
+        },
+        {
+          "rank": 25,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw51677666",
+          "region": "新北市"
+        },
+        {
+          "rank": 26,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw14788730",
+          "region": "臺北市"
+        },
+        {
+          "rank": 27,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw60311204",
+          "region": "臺北市"
+        },
+        {
+          "rank": 28,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw24694611",
+          "region": "臺北市"
+        },
+        {
+          "rank": 29,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw84828731",
+          "region": "新北市"
+        },
+        {
+          "rank": 30,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw90786092",
+          "region": "臺北市"
+        },
+        {
+          "rank": 31,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw21654272",
+          "region": "新北市"
+        },
+        {
+          "rank": 32,
+          "points": 4,
+          "name": "4 pt",
+          "player_id": "tw84957647",
+          "region": "臺北市"
+        }
+      ],
+      "result_count": 32,
       "discovered_at": "2026-09-09T10:21:11+08:00",
-      "checked_at": "2026-09-29T12:02:37+08:00",
+      "checked_at": "2026-09-29T17:02:42+08:00",
       "official_status": "active"
     },
     {
@@ -4166,14 +5124,127 @@
       "date": "2026-09-26",
       "time": "10:00-18:00",
       "venue": "模羊玩具店",
-      "region": "宜蘭縣",
+      "region": "臺北市",
       "address": "宜蘭市 民族路159號",
       "capacity": 42,
       "url": "https://asia.pokemon-card.com/tw/event-search/68103/",
-      "results": [],
-      "result_count": 0,
+      "results": [
+        {
+          "rank": 1,
+          "points": 20,
+          "name": "20 pt",
+          "player_id": "tw47904340",
+          "region": "宜蘭縣"
+        },
+        {
+          "rank": 2,
+          "points": 12,
+          "name": "12 pt",
+          "player_id": "tw38080173",
+          "region": "高雄市"
+        },
+        {
+          "rank": 3,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw66459371",
+          "region": "臺北市"
+        },
+        {
+          "rank": 4,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw96234784",
+          "region": "新北市"
+        },
+        {
+          "rank": 5,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw39894258",
+          "region": "新北市"
+        },
+        {
+          "rank": 6,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw97165922",
+          "region": "新竹市"
+        },
+        {
+          "rank": 7,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw23930741",
+          "region": "宜蘭縣"
+        },
+        {
+          "rank": 8,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw77975837",
+          "region": "桃園市"
+        },
+        {
+          "rank": 9,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw97666473",
+          "region": "新北市"
+        },
+        {
+          "rank": 10,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw02856732",
+          "region": "臺南市"
+        },
+        {
+          "rank": 11,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw28186951",
+          "region": "新北市"
+        },
+        {
+          "rank": 12,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw11247537",
+          "region": "宜蘭縣"
+        },
+        {
+          "rank": 13,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw45696531",
+          "region": "臺北市"
+        },
+        {
+          "rank": 14,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw90996252",
+          "region": "宜蘭縣"
+        },
+        {
+          "rank": 15,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw84778743",
+          "region": "臺北市"
+        },
+        {
+          "rank": 16,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw61792938",
+          "region": "臺中市"
+        }
+      ],
+      "result_count": 16,
       "discovered_at": "2026-09-09T10:21:11+08:00",
-      "checked_at": "2026-09-29T12:02:40+08:00",
+      "checked_at": "2026-09-29T17:02:45+08:00",
       "official_status": "active"
     },
     {
@@ -4192,7 +5263,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:15+08:00",
-      "checked_at": "2026-09-29T12:02:46+08:00",
+      "checked_at": "2026-09-29T17:02:52+08:00",
       "official_status": "active"
     },
     {
@@ -4211,7 +5282,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:59+08:00",
-      "checked_at": "2026-09-29T12:02:15+08:00",
+      "checked_at": "2026-09-29T17:02:14+08:00",
       "official_status": "active"
     },
     {
@@ -4223,14 +5294,127 @@
       "date": "2026-09-27",
       "time": "11:00-16:00",
       "venue": "貓腳印-彰化店",
-      "region": "彰化縣",
+      "region": "臺北市",
       "address": "彰化縣員林市莒光路398號2樓",
       "capacity": 64,
       "url": "https://asia.pokemon-card.com/tw/event-search/67741/",
-      "results": [],
-      "result_count": 0,
+      "results": [
+        {
+          "rank": 1,
+          "points": 20,
+          "name": "20 pt",
+          "player_id": "tw42309306",
+          "region": "臺中市"
+        },
+        {
+          "rank": 2,
+          "points": 12,
+          "name": "12 pt",
+          "player_id": "tw30267620",
+          "region": "臺中市"
+        },
+        {
+          "rank": 3,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw01909140",
+          "region": "彰化縣"
+        },
+        {
+          "rank": 4,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw11739209",
+          "region": "臺中市"
+        },
+        {
+          "rank": 5,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw43248631",
+          "region": "臺中市"
+        },
+        {
+          "rank": 6,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw11481352",
+          "region": "彰化縣"
+        },
+        {
+          "rank": 7,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw45713741",
+          "region": "新竹市"
+        },
+        {
+          "rank": 8,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw02658166",
+          "region": "彰化縣"
+        },
+        {
+          "rank": 9,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw33344901",
+          "region": "彰化縣"
+        },
+        {
+          "rank": 10,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw09658991",
+          "region": "臺中市"
+        },
+        {
+          "rank": 11,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw73917548",
+          "region": "臺北市"
+        },
+        {
+          "rank": 12,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw36759052",
+          "region": "臺中市"
+        },
+        {
+          "rank": 13,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw91677599",
+          "region": "新北市"
+        },
+        {
+          "rank": 14,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw08952821",
+          "region": "新竹市"
+        },
+        {
+          "rank": 15,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw23764220",
+          "region": "彰化縣"
+        },
+        {
+          "rank": 16,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw56970260",
+          "region": "臺中市"
+        }
+      ],
+      "result_count": 16,
       "discovered_at": "2026-09-09T10:21:08+08:00",
-      "checked_at": "2026-09-29T12:02:30+08:00",
+      "checked_at": "2026-09-29T17:02:34+08:00",
       "official_status": "active"
     },
     {
@@ -4246,10 +5430,123 @@
       "address": "台北市南港區忠孝東路七段625巷33號",
       "capacity": 44,
       "url": "https://asia.pokemon-card.com/tw/event-search/68115/",
-      "results": [],
-      "result_count": 0,
+      "results": [
+        {
+          "rank": 1,
+          "points": 20,
+          "name": "20 pt",
+          "player_id": "tw49759795",
+          "region": "新北市"
+        },
+        {
+          "rank": 2,
+          "points": 12,
+          "name": "12 pt",
+          "player_id": "tw08069127",
+          "region": "新北市"
+        },
+        {
+          "rank": 3,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw33544977",
+          "region": "新北市"
+        },
+        {
+          "rank": 4,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw75551324",
+          "region": "苗栗縣"
+        },
+        {
+          "rank": 5,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw05197795",
+          "region": "新北市"
+        },
+        {
+          "rank": 6,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw04057117",
+          "region": "臺北市"
+        },
+        {
+          "rank": 7,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw53413653",
+          "region": "新北市"
+        },
+        {
+          "rank": 8,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw76309421",
+          "region": "新北市"
+        },
+        {
+          "rank": 9,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw44127879",
+          "region": "新北市"
+        },
+        {
+          "rank": 10,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw16132632",
+          "region": "宜蘭縣"
+        },
+        {
+          "rank": 11,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw56976478",
+          "region": "新北市"
+        },
+        {
+          "rank": 12,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw37208259",
+          "region": "臺北市"
+        },
+        {
+          "rank": 13,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw64460639",
+          "region": "新北市"
+        },
+        {
+          "rank": 14,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw06637395",
+          "region": "新北市"
+        },
+        {
+          "rank": 15,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw04530685",
+          "region": "臺北市"
+        },
+        {
+          "rank": 16,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw79411276",
+          "region": "新北市"
+        }
+      ],
+      "result_count": 16,
       "discovered_at": "2026-09-09T10:21:13+08:00",
-      "checked_at": "2026-09-29T12:02:42+08:00",
+      "checked_at": "2026-09-29T17:02:48+08:00",
       "official_status": "active"
     },
     {
@@ -4261,14 +5558,127 @@
       "date": "2026-09-27",
       "time": "14:00-18:00",
       "venue": "PLAY ONE 壹樂研究所",
-      "region": "桃園市",
+      "region": "臺北市",
       "address": "桃園市中壢區廣安街44號",
       "capacity": 48,
       "url": "https://asia.pokemon-card.com/tw/event-search/68406/",
-      "results": [],
-      "result_count": 0,
+      "results": [
+        {
+          "rank": 1,
+          "points": 20,
+          "name": "20 pt",
+          "player_id": "tw00387540",
+          "region": "桃園市"
+        },
+        {
+          "rank": 2,
+          "points": 12,
+          "name": "12 pt",
+          "player_id": "tw59914357",
+          "region": "桃園市"
+        },
+        {
+          "rank": 3,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw49877892",
+          "region": "桃園市"
+        },
+        {
+          "rank": 4,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw84957647",
+          "region": "臺北市"
+        },
+        {
+          "rank": 5,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw28566073",
+          "region": "臺北市"
+        },
+        {
+          "rank": 6,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw98211582",
+          "region": "桃園市"
+        },
+        {
+          "rank": 7,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw93754264",
+          "region": "新北市"
+        },
+        {
+          "rank": 8,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw71060818",
+          "region": "桃園市"
+        },
+        {
+          "rank": 9,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw93517915",
+          "region": "桃園市"
+        },
+        {
+          "rank": 10,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw50858481",
+          "region": "桃園市"
+        },
+        {
+          "rank": 11,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw07841936",
+          "region": "桃園市"
+        },
+        {
+          "rank": 12,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw58450010",
+          "region": "桃園市"
+        },
+        {
+          "rank": 13,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw72908156",
+          "region": "花蓮縣"
+        },
+        {
+          "rank": 14,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw91132904",
+          "region": "桃園市"
+        },
+        {
+          "rank": 15,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw96922965",
+          "region": "屏東縣"
+        },
+        {
+          "rank": 16,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw77679011",
+          "region": "桃園市"
+        }
+      ],
+      "result_count": 16,
       "discovered_at": "2026-09-09T10:21:18+08:00",
-      "checked_at": "2026-09-29T12:02:51+08:00",
+      "checked_at": "2026-09-29T17:02:58+08:00",
       "official_status": "active"
     },
     {
@@ -4287,7 +5697,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:02+08:00",
-      "checked_at": "2026-09-29T12:02:17+08:00",
+      "checked_at": "2026-09-29T17:02:17+08:00",
       "official_status": "active"
     },
     {
@@ -4299,14 +5709,127 @@
       "date": "2026-09-28",
       "time": "11:00-15:00",
       "venue": "一新書局",
-      "region": "高雄市",
+      "region": "臺北市",
       "address": "高雄市苓雅區廣州一街143-6號",
       "capacity": 64,
       "url": "https://asia.pokemon-card.com/tw/event-search/67644/",
-      "results": [],
-      "result_count": 0,
+      "results": [
+        {
+          "rank": 1,
+          "points": 20,
+          "name": "20 pt",
+          "player_id": "tw32020032",
+          "region": "高雄市"
+        },
+        {
+          "rank": 2,
+          "points": 12,
+          "name": "12 pt",
+          "player_id": "tw77699656",
+          "region": "高雄市"
+        },
+        {
+          "rank": 3,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw85147749",
+          "region": "臺北市"
+        },
+        {
+          "rank": 4,
+          "points": 10,
+          "name": "10 pt",
+          "player_id": "tw89973725",
+          "region": "高雄市"
+        },
+        {
+          "rank": 5,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw71084142",
+          "region": "高雄市"
+        },
+        {
+          "rank": 6,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw04722294",
+          "region": "高雄市"
+        },
+        {
+          "rank": 7,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw01012666",
+          "region": "新北市"
+        },
+        {
+          "rank": 8,
+          "points": 8,
+          "name": "8 pt",
+          "player_id": "tw26582888",
+          "region": "高雄市"
+        },
+        {
+          "rank": 9,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw05925639",
+          "region": "臺中市"
+        },
+        {
+          "rank": 10,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw42740359",
+          "region": "高雄市"
+        },
+        {
+          "rank": 11,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw89343025",
+          "region": "臺中市"
+        },
+        {
+          "rank": 12,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw46076033",
+          "region": "高雄市"
+        },
+        {
+          "rank": 13,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw54760232",
+          "region": "高雄市"
+        },
+        {
+          "rank": 14,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw38962597",
+          "region": "高雄市"
+        },
+        {
+          "rank": 15,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw97066779",
+          "region": "高雄市"
+        },
+        {
+          "rank": 16,
+          "points": 6,
+          "name": "6 pt",
+          "player_id": "tw17953874",
+          "region": "高雄市"
+        }
+      ],
+      "result_count": 16,
       "discovered_at": "2026-09-09T10:21:04+08:00",
-      "checked_at": "2026-09-29T12:02:23+08:00",
+      "checked_at": "2026-09-29T17:02:24+08:00",
       "official_status": "active"
     },
     {
@@ -4325,7 +5848,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:06+08:00",
-      "checked_at": "2026-09-29T12:02:27+08:00",
+      "checked_at": "2026-09-29T17:02:30+08:00",
       "official_status": "active"
     },
     {
@@ -4344,7 +5867,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:21+08:00",
-      "checked_at": "2026-09-29T12:02:59+08:00",
+      "checked_at": "2026-09-29T17:03:04+08:00",
       "official_status": "active"
     },
     {
@@ -4363,7 +5886,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:36+08:00",
-      "checked_at": "2026-09-29T12:02:09+08:00",
+      "checked_at": "2026-09-29T17:02:08+08:00",
       "official_status": "active"
     },
     {
@@ -4382,7 +5905,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:35+08:00",
-      "checked_at": "2026-09-29T12:02:08+08:00",
+      "checked_at": "2026-09-29T17:02:07+08:00",
       "official_status": "active"
     },
     {
@@ -4401,7 +5924,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:36+08:00",
-      "checked_at": "2026-09-29T12:02:08+08:00",
+      "checked_at": "2026-09-29T17:02:08+08:00",
       "official_status": "active"
     },
     {
@@ -4420,7 +5943,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:58+08:00",
-      "checked_at": "2026-09-29T12:02:14+08:00",
+      "checked_at": "2026-09-29T17:02:13+08:00",
       "official_status": "active"
     },
     {
@@ -4439,7 +5962,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:09+08:00",
-      "checked_at": "2026-09-29T12:02:33+08:00",
+      "checked_at": "2026-09-29T17:02:37+08:00",
       "official_status": "active"
     },
     {
@@ -4458,7 +5981,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:09+08:00",
-      "checked_at": "2026-09-29T12:02:35+08:00",
+      "checked_at": "2026-09-29T17:02:38+08:00",
       "official_status": "active"
     },
     {
@@ -4477,7 +6000,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:12+08:00",
-      "checked_at": "2026-09-29T12:02:41+08:00",
+      "checked_at": "2026-09-29T17:02:47+08:00",
       "official_status": "active"
     },
     {
@@ -4496,7 +6019,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:20+08:00",
-      "checked_at": "2026-09-29T12:02:55+08:00",
+      "checked_at": "2026-09-29T17:03:01+08:00",
       "official_status": "active"
     },
     {
@@ -4515,7 +6038,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:22+08:00",
-      "checked_at": "2026-09-29T12:03:02+08:00",
+      "checked_at": "2026-09-29T17:03:06+08:00",
       "official_status": "active"
     },
     {
@@ -4534,7 +6057,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:07+08:00",
-      "checked_at": "2026-09-29T12:02:29+08:00",
+      "checked_at": "2026-09-29T17:02:32+08:00",
       "official_status": "active"
     },
     {
@@ -4553,7 +6076,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:08+08:00",
-      "checked_at": "2026-09-29T12:02:32+08:00",
+      "checked_at": "2026-09-29T17:02:35+08:00",
       "official_status": "active"
     },
     {
@@ -4572,7 +6095,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:16+08:00",
-      "checked_at": "2026-09-29T12:02:47+08:00",
+      "checked_at": "2026-09-29T17:02:53+08:00",
       "official_status": "active"
     },
     {
@@ -4591,7 +6114,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:13+08:00",
-      "checked_at": "2026-09-29T12:02:43+08:00",
+      "checked_at": "2026-09-29T17:02:49+08:00",
       "official_status": "active"
     },
     {
@@ -4610,7 +6133,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:17+08:00",
-      "checked_at": "2026-09-29T12:02:49+08:00",
+      "checked_at": "2026-09-29T17:02:55+08:00",
       "official_status": "active"
     },
     {
@@ -4629,7 +6152,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:18+08:00",
-      "checked_at": "2026-09-29T12:02:52+08:00",
+      "checked_at": "2026-09-29T17:02:58+08:00",
       "official_status": "active"
     },
     {
@@ -4648,7 +6171,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:19+08:00",
-      "checked_at": "2026-09-29T12:02:55+08:00",
+      "checked_at": "2026-09-29T17:03:01+08:00",
       "official_status": "active"
     },
     {
@@ -4667,7 +6190,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:21+08:00",
-      "checked_at": "2026-09-29T12:02:57+08:00",
+      "checked_at": "2026-09-29T17:03:02+08:00",
       "official_status": "active"
     },
     {
@@ -4686,7 +6209,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:22+08:00",
-      "checked_at": "2026-09-29T12:03:01+08:00",
+      "checked_at": "2026-09-29T17:03:05+08:00",
       "official_status": "active"
     },
     {
@@ -4705,7 +6228,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:04+08:00",
-      "checked_at": "2026-09-29T12:02:21+08:00",
+      "checked_at": "2026-09-29T17:02:21+08:00",
       "official_status": "active"
     },
     {
@@ -4724,7 +6247,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:10+08:00",
-      "checked_at": "2026-09-29T12:02:36+08:00",
+      "checked_at": "2026-09-29T17:02:40+08:00",
       "official_status": "active"
     },
     {
@@ -4743,7 +6266,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:19+08:00",
-      "checked_at": "2026-09-29T12:02:54+08:00",
+      "checked_at": "2026-09-29T17:02:59+08:00",
       "official_status": "active"
     },
     {
@@ -4762,7 +6285,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:23+08:00",
-      "checked_at": "2026-09-29T12:03:04+08:00",
+      "checked_at": "2026-09-29T17:03:07+08:00",
       "official_status": "active"
     },
     {
@@ -4781,7 +6304,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:39+08:00",
-      "checked_at": "2026-09-29T12:02:11+08:00",
+      "checked_at": "2026-09-29T17:02:10+08:00",
       "official_status": "active"
     },
     {
@@ -4800,7 +6323,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:37+08:00",
-      "checked_at": "2026-09-29T12:02:10+08:00",
+      "checked_at": "2026-09-29T17:02:09+08:00",
       "official_status": "active"
     },
     {
@@ -4819,7 +6342,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:38+08:00",
-      "checked_at": "2026-09-29T12:02:11+08:00",
+      "checked_at": "2026-09-29T17:02:09+08:00",
       "official_status": "active"
     },
     {
@@ -4838,7 +6361,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:58+08:00",
-      "checked_at": "2026-09-29T12:02:14+08:00",
+      "checked_at": "2026-09-29T17:02:12+08:00",
       "official_status": "active"
     },
     {
@@ -4857,7 +6380,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:02+08:00",
-      "checked_at": "2026-09-29T12:02:18+08:00",
+      "checked_at": "2026-09-29T17:02:18+08:00",
       "official_status": "active"
     },
     {
@@ -4876,7 +6399,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:07+08:00",
-      "checked_at": "2026-09-29T12:02:29+08:00",
+      "checked_at": "2026-09-29T17:02:32+08:00",
       "official_status": "active"
     },
     {
@@ -4895,7 +6418,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:14+08:00",
-      "checked_at": "2026-09-29T12:02:44+08:00",
+      "checked_at": "2026-09-29T17:02:50+08:00",
       "official_status": "active"
     },
     {
@@ -4914,7 +6437,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:17+08:00",
-      "checked_at": "2026-09-29T12:02:50+08:00",
+      "checked_at": "2026-09-29T17:02:56+08:00",
       "official_status": "active"
     },
     {
@@ -4933,7 +6456,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:28+08:00",
-      "checked_at": "2026-09-29T12:02:21+08:00",
+      "checked_at": "2026-09-29T17:02:21+08:00",
       "official_status": "active"
     },
     {
@@ -4952,7 +6475,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:32+08:00",
-      "checked_at": "2026-09-29T12:02:25+08:00",
+      "checked_at": "2026-09-29T17:02:27+08:00",
       "official_status": "active"
     },
     {
@@ -4971,7 +6494,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:45+08:00",
-      "checked_at": "2026-09-29T12:02:40+08:00",
+      "checked_at": "2026-09-29T17:02:46+08:00",
       "official_status": "active"
     },
     {
@@ -4990,7 +6513,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:46+08:00",
-      "checked_at": "2026-09-29T12:02:42+08:00",
+      "checked_at": "2026-09-29T17:02:49+08:00",
       "official_status": "active"
     },
     {
@@ -5009,7 +6532,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:52+08:00",
-      "checked_at": "2026-09-29T12:02:50+08:00",
+      "checked_at": "2026-09-29T17:02:55+08:00",
       "official_status": "active"
     },
     {
@@ -5028,7 +6551,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-28T12:03:01+08:00",
-      "checked_at": "2026-09-29T12:03:08+08:00",
+      "checked_at": "2026-09-29T17:03:11+08:00",
       "official_status": "active"
     },
     {
@@ -5047,7 +6570,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:28+08:00",
-      "checked_at": "2026-09-29T12:02:20+08:00",
+      "checked_at": "2026-09-29T17:02:20+08:00",
       "official_status": "active"
     },
     {
@@ -5066,7 +6589,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:30+08:00",
-      "checked_at": "2026-09-29T12:02:23+08:00",
+      "checked_at": "2026-09-29T17:02:23+08:00",
       "official_status": "active"
     },
     {
@@ -5085,7 +6608,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:37+08:00",
-      "checked_at": "2026-09-29T12:02:31+08:00",
+      "checked_at": "2026-09-29T17:02:35+08:00",
       "official_status": "active"
     },
     {
@@ -5104,7 +6627,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:03+08:00",
-      "checked_at": "2026-09-29T12:03:05+08:00",
+      "checked_at": "2026-09-29T17:03:08+08:00",
       "official_status": "active"
     },
     {
@@ -5123,7 +6646,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:26+08:00",
-      "checked_at": "2026-09-29T12:02:18+08:00",
+      "checked_at": "2026-09-29T17:02:18+08:00",
       "official_status": "active"
     },
     {
@@ -5142,7 +6665,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:47+08:00",
-      "checked_at": "2026-09-29T12:02:43+08:00",
+      "checked_at": "2026-09-29T17:02:50+08:00",
       "official_status": "active"
     },
     {
@@ -5161,7 +6684,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:49+08:00",
-      "checked_at": "2026-09-29T12:02:46+08:00",
+      "checked_at": "2026-09-29T17:02:51+08:00",
       "official_status": "active"
     },
     {
@@ -5180,7 +6703,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:51+08:00",
-      "checked_at": "2026-09-29T12:02:48+08:00",
+      "checked_at": "2026-09-29T17:02:54+08:00",
       "official_status": "active"
     },
     {
@@ -5199,7 +6722,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:00+08:00",
-      "checked_at": "2026-09-29T12:03:00+08:00",
+      "checked_at": "2026-09-29T17:03:05+08:00",
       "official_status": "active"
     },
     {
@@ -5218,7 +6741,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:04+08:00",
-      "checked_at": "2026-09-29T12:03:05+08:00",
+      "checked_at": "2026-09-29T17:03:09+08:00",
       "official_status": "active"
     },
     {
@@ -5237,7 +6760,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:27+08:00",
-      "checked_at": "2026-09-29T12:02:19+08:00",
+      "checked_at": "2026-09-29T17:02:19+08:00",
       "official_status": "active"
     },
     {
@@ -5256,7 +6779,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:33+08:00",
-      "checked_at": "2026-09-29T12:02:27+08:00",
+      "checked_at": "2026-09-29T17:02:29+08:00",
       "official_status": "active"
     },
     {
@@ -5275,7 +6798,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:34+08:00",
-      "checked_at": "2026-09-29T12:02:28+08:00",
+      "checked_at": "2026-09-29T17:02:31+08:00",
       "official_status": "active"
     },
     {
@@ -5294,7 +6817,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:40+08:00",
-      "checked_at": "2026-09-29T12:02:34+08:00",
+      "checked_at": "2026-09-29T17:02:38+08:00",
       "official_status": "active"
     },
     {
@@ -5313,7 +6836,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:05+08:00",
-      "checked_at": "2026-09-29T12:03:07+08:00",
+      "checked_at": "2026-09-29T17:03:10+08:00",
       "official_status": "active"
     },
     {
@@ -5332,7 +6855,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:36+08:00",
-      "checked_at": "2026-09-29T12:02:30+08:00",
+      "checked_at": "2026-09-29T17:02:34+08:00",
       "official_status": "active"
     },
     {
@@ -5351,7 +6874,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:43+08:00",
-      "checked_at": "2026-09-29T12:02:38+08:00",
+      "checked_at": "2026-09-29T17:02:43+08:00",
       "official_status": "active"
     },
     {
@@ -5370,7 +6893,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:48+08:00",
-      "checked_at": "2026-09-29T12:02:45+08:00",
+      "checked_at": "2026-09-29T17:02:51+08:00",
       "official_status": "active"
     },
     {
@@ -5389,7 +6912,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:56+08:00",
-      "checked_at": "2026-09-29T12:02:54+08:00",
+      "checked_at": "2026-09-29T17:03:00+08:00",
       "official_status": "active"
     },
     {
@@ -5408,7 +6931,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:57+08:00",
-      "checked_at": "2026-09-29T12:02:56+08:00",
+      "checked_at": "2026-09-29T17:03:02+08:00",
       "official_status": "active"
     },
     {
@@ -5427,7 +6950,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-28T12:03:02+08:00",
-      "checked_at": "2026-09-29T12:03:08+08:00",
+      "checked_at": "2026-09-29T17:03:11+08:00",
       "official_status": "active"
     },
     {
@@ -5446,7 +6969,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-28T12:03:03+08:00",
-      "checked_at": "2026-09-29T12:03:09+08:00",
+      "checked_at": "2026-09-29T17:03:12+08:00",
       "official_status": "active"
     },
     {
@@ -5465,7 +6988,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:43+08:00",
-      "checked_at": "2026-09-29T12:01:18+08:00",
+      "checked_at": "2026-09-29T17:01:18+08:00",
       "official_status": "active"
     },
     {
@@ -5484,7 +7007,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:45+08:00",
-      "checked_at": "2026-09-29T12:01:19+08:00",
+      "checked_at": "2026-09-29T17:01:19+08:00",
       "official_status": "active"
     },
     {
@@ -5503,7 +7026,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:44+08:00",
-      "checked_at": "2026-09-29T12:01:18+08:00",
+      "checked_at": "2026-09-29T17:01:18+08:00",
       "official_status": "active"
     },
     {
@@ -5522,7 +7045,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:42+08:00",
-      "checked_at": "2026-09-29T12:02:38+08:00",
+      "checked_at": "2026-09-29T17:02:43+08:00",
       "official_status": "active"
     },
     {
@@ -5541,7 +7064,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:55+08:00",
-      "checked_at": "2026-09-29T12:02:53+08:00",
+      "checked_at": "2026-09-29T17:02:59+08:00",
       "official_status": "active"
     },
     {
@@ -5560,7 +7083,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:59+08:00",
-      "checked_at": "2026-09-29T12:02:58+08:00",
+      "checked_at": "2026-09-29T17:03:03+08:00",
       "official_status": "active"
     },
     {
@@ -5579,7 +7102,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:59+08:00",
-      "checked_at": "2026-09-29T12:02:59+08:00",
+      "checked_at": "2026-09-29T17:03:04+08:00",
       "official_status": "active"
     },
     {
@@ -5598,7 +7121,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:01+08:00",
-      "checked_at": "2026-09-29T12:03:01+08:00",
+      "checked_at": "2026-09-29T17:03:06+08:00",
       "official_status": "active"
     },
     {
@@ -5617,7 +7140,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:02+08:00",
-      "checked_at": "2026-09-29T12:03:03+08:00",
+      "checked_at": "2026-09-29T17:03:07+08:00",
       "official_status": "active"
     },
     {
@@ -5636,7 +7159,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:29+08:00",
-      "checked_at": "2026-09-29T12:02:22+08:00",
+      "checked_at": "2026-09-29T17:02:22+08:00",
       "official_status": "active"
     },
     {
@@ -5655,7 +7178,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:38+08:00",
-      "checked_at": "2026-09-29T12:02:32+08:00",
+      "checked_at": "2026-09-29T17:02:36+08:00",
       "official_status": "active"
     },
     {
@@ -5674,7 +7197,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:39+08:00",
-      "checked_at": "2026-09-29T12:02:34+08:00",
+      "checked_at": "2026-09-29T17:02:37+08:00",
       "official_status": "active"
     },
     {
@@ -5693,7 +7216,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:41+08:00",
-      "checked_at": "2026-09-29T12:02:35+08:00",
+      "checked_at": "2026-09-29T17:02:39+08:00",
       "official_status": "active"
     },
     {
@@ -5712,7 +7235,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:43+08:00",
-      "checked_at": "2026-09-29T12:02:39+08:00",
+      "checked_at": "2026-09-29T17:02:44+08:00",
       "official_status": "active"
     },
     {
@@ -5731,7 +7254,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:53+08:00",
-      "checked_at": "2026-09-29T12:02:51+08:00",
+      "checked_at": "2026-09-29T17:02:56+08:00",
       "official_status": "active"
     },
     {
@@ -5750,7 +7273,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:05+08:00",
-      "checked_at": "2026-09-29T12:03:07+08:00",
+      "checked_at": "2026-09-29T17:03:09+08:00",
       "official_status": "active"
     },
     {
@@ -5769,7 +7292,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:41+08:00",
-      "checked_at": "2026-09-29T12:02:13+08:00",
+      "checked_at": "2026-09-29T17:02:11+08:00",
       "official_status": "active"
     },
     {
@@ -5788,7 +7311,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:39+08:00",
-      "checked_at": "2026-09-29T12:02:12+08:00",
+      "checked_at": "2026-09-29T17:02:10+08:00",
       "official_status": "active"
     },
     {
@@ -5807,7 +7330,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:40+08:00",
-      "checked_at": "2026-09-29T12:02:13+08:00",
+      "checked_at": "2026-09-29T17:02:11+08:00",
       "official_status": "active"
     }
   ]
