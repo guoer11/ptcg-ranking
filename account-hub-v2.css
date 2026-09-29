@@ -277,3 +277,14 @@
   height:100%;
 }
 .account-q-svg-settings{ transform:none; }
+
+
+/* v1.9.1-r2：主區塊標題與下方功能列文字左緣對齊。 */
+.account-app-group-head{
+  gap:6px;
+}
+@media (max-width:620px){
+  .account-app-group-head{
+    gap:8px;
+  }
+}
