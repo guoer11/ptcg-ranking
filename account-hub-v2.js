@@ -1,8 +1,8 @@
 /* v0.13.1：帳號與通知首頁改為日系 App 分組設定風格。 */
 (() => {
   const ICONS = {
-    account: '<img class="account-q-icon" src="assets/q-icons/personal-profile.svg?v=0.19.1-r3" alt="" aria-hidden="true" />',
-    family: '<img class="account-q-icon" src="assets/q-icons/family-share.svg?v=0.19.1-r3" alt="" aria-hidden="true" />',
+    account: '<img class="account-q-icon" src="assets/q-icons/personal-profile.webp?v=0.19.1-r4" alt="" aria-hidden="true" />',
+    family: '<img class="account-q-icon" src="assets/q-icons/family-share.webp?v=0.19.1-r4" alt="" aria-hidden="true" />',
     bell: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 15.8h9.8l-1.2-1.7V10a3.7 3.7 0 0 0-7.4 0v4.1l-1.2 1.7Z"/><path d="M10 18.1c.4 1.2 1.1 1.8 2 1.8s1.6-.6 2-1.8"/><path d="M17.7 5.4l.4.9.9.4-.9.4-.4.9-.4-.9-.9-.4.9-.4.4-.9Z" class="cute-spark"/></svg>',
     notifySettings: '<img class="account-q-icon" src="assets/q-icons/notification-settings.webp?v=0.19.1-r2" alt="" aria-hidden="true" />',
     web: '<img class="account-q-icon" src="assets/q-icons/web-push.webp?v=0.19.1-r2" alt="" aria-hidden="true" />',
@@ -11,7 +11,7 @@
     deckList: '<img class="account-q-icon" src="assets/q-icons/deck-list.webp?v=0.19.1-r2" alt="" aria-hidden="true" />',
     updateGroup: '<img class="account-q-icon" src="assets/q-icons/data-update.webp?v=0.19.1-r2" alt="" aria-hidden="true" />',
     updateLog: '<img class="account-q-icon" src="assets/q-icons/update-log.webp?v=0.19.1-r2" alt="" aria-hidden="true" />',
-    gear: '<img class="account-q-icon" src="assets/q-icons/account-settings.svg?v=0.19.1-r3" alt="" aria-hidden="true" />'
+    gear: '<img class="account-q-icon" src="assets/q-icons/account-settings.webp?v=0.19.1-r4" alt="" aria-hidden="true" />'
   };
 
   function row(icon, tone, title, subtitle, target) {
@@ -243,7 +243,7 @@
     if (document.querySelector('link[data-account-app-style]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'account-hub-v2.css?v=0.19.1-r3';
+    link.href = 'account-hub-v2.css?v=0.19.1-r4';
     link.dataset.accountAppStyle = 'true';
     document.head.appendChild(link);
   }
