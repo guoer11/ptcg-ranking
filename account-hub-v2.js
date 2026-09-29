@@ -4,13 +4,13 @@
     account: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.1"/><path d="M6.5 19c.5-3.2 2.5-5 5.5-5s5 1.8 5.5 5"/><path d="M18.4 5.4l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5.5-1.2Z" class="cute-spark"/></svg>',
     family: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8.2" cy="8.4" r="2.7"/><circle cx="16.2" cy="8.9" r="2.2"/><path d="M3.8 19c.3-3.1 2-4.8 4.4-4.8s4.1 1.7 4.4 4.8"/><path d="M13.2 18.8c.3-2.4 1.5-3.7 3.3-3.7 1.7 0 3 1.2 3.4 3.4"/><path d="M12 12.6s-1.9-1-1.9-2.3c0-.8.6-1.4 1.4-1.4.5 0 .9.2 1.2.7.3-.5.7-.7 1.2-.7.8 0 1.4.6 1.4 1.4 0 1.3-1.9 2.3-1.9 2.3L12 13.4l-1.4-.8Z" class="cute-heart"/></svg>',
     bell: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 15.8h9.8l-1.2-1.7V10a3.7 3.7 0 0 0-7.4 0v4.1l-1.2 1.7Z"/><path d="M10 18.1c.4 1.2 1.1 1.8 2 1.8s1.6-.6 2-1.8"/><path d="M17.7 5.4l.4.9.9.4-.9.4-.4.9-.4-.9-.9-.4.9-.4.4-.9Z" class="cute-spark"/></svg>',
-    notifySettings: '<img class="account-q-icon" src="assets/q-icons/notification-settings.webp?v=0.19.1-r1" alt="" aria-hidden="true" />',
-    web: '<img class="account-q-icon" src="assets/q-icons/web-push.webp?v=0.19.1-r1" alt="" aria-hidden="true" />',
+    notifySettings: '<img class="account-q-icon" src="assets/q-icons/notification-settings.webp?v=0.19.1-r2" alt="" aria-hidden="true" />',
+    web: '<img class="account-q-icon" src="assets/q-icons/web-push.webp?v=0.19.1-r2" alt="" aria-hidden="true" />',
     line: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.7 2 11.2c0 4 3.5 7.3 8.2 8 .3.1.8.2.9.5.1.2.1.6 0 1l-.2 1.2c0 .3-.2 1.3 1.1.7 1.3-.5 6.8-4 9.3-6.9.5-.7.7-1.4.7-2.2C22 8.9 17.5 3 12 3Z"/></svg>',
-    deckGroup: '<img class="account-q-icon" src="assets/q-icons/deck-settings.webp?v=0.19.1-r1" alt="" aria-hidden="true" />',
-    deckList: '<img class="account-q-icon" src="assets/q-icons/deck-list.webp?v=0.19.1-r1" alt="" aria-hidden="true" />',
-    updateGroup: '<img class="account-q-icon" src="assets/q-icons/data-update.webp?v=0.19.1-r1" alt="" aria-hidden="true" />',
-    updateLog: '<img class="account-q-icon" src="assets/q-icons/update-log.webp?v=0.19.1-r1" alt="" aria-hidden="true" />',
+    deckGroup: '<img class="account-q-icon" src="assets/q-icons/deck-settings.webp?v=0.19.1-r2" alt="" aria-hidden="true" />',
+    deckList: '<img class="account-q-icon" src="assets/q-icons/deck-list.webp?v=0.19.1-r2" alt="" aria-hidden="true" />',
+    updateGroup: '<img class="account-q-icon" src="assets/q-icons/data-update.webp?v=0.19.1-r2" alt="" aria-hidden="true" />',
+    updateLog: '<img class="account-q-icon" src="assets/q-icons/update-log.webp?v=0.19.1-r2" alt="" aria-hidden="true" />',
     gear: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.8 4.2h4.4l.5 1.8c.5.2 1 .4 1.4.8l1.7-.7 2.1 3.6-1.4 1.1c.1.6.1 1.1 0 1.7l1.4 1.1-2.1 3.6-1.7-.7c-.4.3-.9.6-1.4.8l-.5 1.8H9.8l-.5-1.8c-.5-.2-1-.4-1.4-.8l-1.7.7-2.1-3.6 1.4-1.1a7 7 0 0 1 0-1.7L4.1 9.7l2.1-3.6 1.7.7c.4-.3.9-.6 1.4-.8l.5-1.8Z"/><circle cx="12" cy="11.7" r="2.4" class="cute-hole"/></svg>'
   };
 
@@ -243,7 +243,7 @@
     if (document.querySelector('link[data-account-app-style]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'account-hub-v2.css?v=0.19.1-r1';
+    link.href = 'account-hub-v2.css?v=0.19.1-r2';
     link.dataset.accountAppStyle = 'true';
     document.head.appendChild(link);
   }
