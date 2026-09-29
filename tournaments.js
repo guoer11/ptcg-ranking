@@ -258,15 +258,49 @@ function eventSearchTerms(event) {
   return terms.map(value => String(value || '').toLowerCase());
 }
 
+function eventDateKey(event) {
+  const match = String(event?.date || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return match ? `${match[1]}-${match[2]}-${match[3]}` : '';
+}
+
+function eventStartMinutes(event) {
+  const match = String(event?.time || '').match(/^\s*(\d{1,2}):(\d{2})/);
+  if (!match) return 24 * 60 + 1;
+  const hour = Number(match[1]);
+  const minute = Number(match[2]);
+  return Number.isFinite(hour) && Number.isFinite(minute) ? hour * 60 + minute : 24 * 60 + 1;
+}
+
+function compareTournamentDisplayOrder(a, b, today) {
+  const aDate = eventDateKey(a);
+  const bDate = eventDateKey(b);
+  const aBucket = !aDate ? 2 : (aDate < today ? 1 : 0);
+  const bBucket = !bDate ? 2 : (bDate < today ? 1 : 0);
+
+  if (aBucket !== bBucket) return aBucket - bBucket;
+
+  if (aDate !== bDate) {
+    if (aBucket === 1) return bDate.localeCompare(aDate);
+    return aDate.localeCompare(bDate);
+  }
+
+  const timeDiff = eventStartMinutes(a) - eventStartMinutes(b);
+  if (timeDiff) return timeDiff;
+
+  return String(a.title || '').localeCompare(String(b.title || ''), 'zh-Hant')
+    || String(a.event_id || '').localeCompare(String(b.event_id || ''));
+}
+
 function filteredTournaments() {
   const key = tournamentKeyword.toLowerCase();
+  const today = todayTaipei();
   return (tournamentData.events || [])
     .filter(event => tournamentLeague === 'all' || event.league === tournamentLeague)
     .filter(event => tournamentStatus === 'all' || eventStatus(event) === tournamentStatus)
     .filter(event => tournamentSeason === 'all' || String(event.season || tournamentData.season || '') === tournamentSeason)
     .filter(event => tournamentRegion === 'all' || event.region === tournamentRegion)
     .filter(event => !key || eventSearchTerms(event).some(value => value.includes(key)))
-    .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')) || String(a.title || '').localeCompare(String(b.title || ''), 'zh-Hant'));
+    .sort((a, b) => compareTournamentDisplayOrder(a, b, today));
 }
 
 function updateTournamentSummary() {
@@ -308,7 +342,26 @@ function renderTournamentList() {
     return;
   }
 
+  const today = todayTaipei();
+  const hasCurrentOrFuture = events.some(event => {
+    const dateKey = eventDateKey(event);
+    return dateKey && dateKey >= today;
+  });
+  const hasPast = events.some(event => {
+    const dateKey = eventDateKey(event);
+    return dateKey && dateKey < today;
+  });
+  let pastDividerAdded = false;
+
   tournamentList.innerHTML = events.map(event => {
+    const dateKey = eventDateKey(event);
+    const isPast = dateKey && dateKey < today;
+    let divider = '';
+    if (hasCurrentOrFuture && hasPast && isPast && !pastDividerAdded) {
+      pastDividerAdded = true;
+      divider = '<div class="tournament-past-divider" role="separator"><span>已結束賽事</span></div>';
+    }
+
     const date = formatEventDate(event.date, event.time || '');
     const status = eventStatus(event);
     const venue = String(event.venue || '').trim();
@@ -316,7 +369,7 @@ function renderTournamentList() {
     const mapUrl = tournamentGoogleMapsUrl(address);
     const hasResults = eventHasResults(event);
     const officialStateClass = event.official_status === 'removed' ? ' tournament-card-official-removed' : (event.official_status === 'unavailable' ? ' tournament-card-official-unavailable' : '');
-    return `
+    return `${divider}
       <article class="tournament-card${officialStateClass}">
         <div class="tournament-card-top">
           <div class="tournament-card-badges">

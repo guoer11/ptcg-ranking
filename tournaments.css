@@ -125,6 +125,28 @@
   margin-top: 16px;
 }
 .tournament-grid-empty { grid-column: 1 / -1; }
+.tournament-past-divider {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 6px 0 2px;
+  color: #8a94a3;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+.tournament-past-divider::before,
+.tournament-past-divider::after {
+  content: '';
+  height: 1px;
+  flex: 1 1 auto;
+  background: #e3e8ef;
+}
+.tournament-past-divider span {
+  flex: 0 0 auto;
+  padding: 0 4px;
+}
 .tournament-card {
   display: flex;
   flex-direction: column;
