@@ -1,3 +1,4 @@
+@import url("update-log-ui.css?v=0.19.0-r1");
 /* v0.13.1：參考日系 App 的分組設定卡片；沿用網站功能，不使用圖片素材。 */
 .account-app-home { display: grid; gap: 14px; }
 .account-app-group {
@@ -155,5 +156,3 @@
   .account-app-row-copy small { font-size: 11px; }
 }
 
-
-@import url("update-log-ui.css?v=0.19.0-r1");
