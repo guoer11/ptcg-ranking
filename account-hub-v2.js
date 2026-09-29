@@ -1,13 +1,16 @@
 /* v0.13.1：帳號與通知首頁改為日系 App 分組設定風格。 */
 (() => {
   const ICONS = {
-    account: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0H5Z"/></svg>',
-    family: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.2 11a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Zm7.8-.8a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2ZM2.8 19v-1.2c0-3 2.4-5.4 5.4-5.4s5.4 2.4 5.4 5.4V19H2.8Zm11.7 0v-1.1c0-1.8-.7-3.4-1.8-4.6.9-.7 2-1.1 3.3-1.1 2.9 0 5.2 2.3 5.2 5.2V19h-6.7Z"/></svg>',
-    bell: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0v4.6L4 16v1h16v-1l-2-2.4V9Zm-8.3 10a2.5 2.5 0 0 0 4.6 0H9.7Z"/></svg>',
+    account: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.1"/><path d="M6.5 19c.5-3.2 2.5-5 5.5-5s5 1.8 5.5 5"/><path d="M18.4 5.4l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5.5-1.2Z" class="cute-spark"/></svg>',
+    family: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8.2" cy="8.4" r="2.7"/><circle cx="16.2" cy="8.9" r="2.2"/><path d="M3.8 19c.3-3.1 2-4.8 4.4-4.8s4.1 1.7 4.4 4.8"/><path d="M13.2 18.8c.3-2.4 1.5-3.7 3.3-3.7 1.7 0 3 1.2 3.4 3.4"/><path d="M12 12.6s-1.9-1-1.9-2.3c0-.8.6-1.4 1.4-1.4.5 0 .9.2 1.2.7.3-.5.7-.7 1.2-.7.8 0 1.4.6 1.4 1.4 0 1.3-1.9 2.3-1.9 2.3L12 13.4l-1.4-.8Z" class="cute-heart"/></svg>',
+    bell: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 15.8h9.8l-1.2-1.7V10a3.7 3.7 0 0 0-7.4 0v4.1l-1.2 1.7Z"/><path d="M10 18.1c.4 1.2 1.1 1.8 2 1.8s1.6-.6 2-1.8"/><path d="M17.7 5.4l.4.9.9.4-.9.4-.4.9-.4-.9-.9-.4.9-.4.4-.9Z" class="cute-spark"/></svg>',
+    web: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5.3" width="16" height="12.8" rx="3"/><path d="M7.2 9h9.6M8.4 12.5h4.8"/><path d="M16.8 13.6v2.6M15.4 15.2h2.8" class="cute-accent"/></svg>',
     line: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.7 2 11.2c0 4 3.5 7.3 8.2 8 .3.1.8.2.9.5.1.2.1.6 0 1l-.2 1.2c0 .3-.2 1.3 1.1.7 1.3-.5 6.8-4 9.3-6.9.5-.7.7-1.4.7-2.2C22 8.9 17.5 3 12 3Z"/></svg>',
-    deck: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h11a2 2 0 0 1 2 2v12h-2V5H6V3Zm-2 4h11a2 2 0 0 1 2 2v12H6a2 2 0 0 1-2-2V7Zm2 2v10h9V9H6Zm2 2h5v2H8v-2Zm0 4h5v2H8v-2Z"/></svg>',
-    update: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v2H5V4Zm0 7h14v2H5v-2Zm0 7h9v2H5v-2Zm12-2 4 3-4 3v-2h-2v-2h2v-2Z"/></svg>',
-    gear: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.7 2h2.6l.5 2a8.2 8.2 0 0 1 1.8.8l1.8-1 1.8 1.8-1 1.8c.3.6.6 1.2.8 1.8l2 .5v2.6l-2 .5a8.2 8.2 0 0 1-.8 1.8l1 1.8-1.8 1.8-1.8-1a8.2 8.2 0 0 1-1.8.8l-.5 2h-2.6l-.5-2a8.2 8.2 0 0 1-1.8-.8l-1.8 1-1.8-1.8 1-1.8a8.2 8.2 0 0 1-.8-1.8l-2-.5V9.7l2-.5c.2-.6.5-1.2.8-1.8l-1-1.8 1.8-1.8 1.8 1a8.2 8.2 0 0 1 1.8-.8l.5-2ZM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/></svg>'
+    deckGroup: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="7.3" y="4.2" width="10.5" height="14.2" rx="2.2" transform="rotate(5 12.5 11.3)"/><rect x="5.1" y="5.8" width="10.5" height="14.2" rx="2.2" transform="rotate(-5 10.3 12.9)"/><path d="M11.9 9.2l.6 1.3 1.3.6-1.3.6-.6 1.3-.6-1.3-1.3-.6 1.3-.6.6-1.3Z" class="cute-spark"/></svg>',
+    deckList: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4.5" width="14" height="15" rx="2.6"/><circle cx="8.4" cy="9" r=".8" class="cute-dot"/><circle cx="8.4" cy="13" r=".8" class="cute-dot"/><circle cx="8.4" cy="17" r=".8" class="cute-dot"/><path d="M11 9h4.8M11 13h4.8M11 17h3.4"/></svg>',
+    updateGroup: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.2 9.1A6.5 6.5 0 0 0 7 7.3L5.6 9"/><path d="M5.6 5.8V9h3.2"/><path d="M5.8 14.9A6.5 6.5 0 0 0 17 16.7l1.4-1.7"/><path d="M18.4 18.2V15h-3.2"/><path d="M17.8 4.3l.4 1 .9.4-.9.4-.4 1-.4-1-.9-.4.9-.4.4-1Z" class="cute-spark"/></svg>',
+    updateLog: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.3"/><path d="M12 8.1v4.3l2.8 1.8"/><path d="M5.2 5.5H2.9v2.3"/><path d="M4 7A9.2 9.2 0 0 1 7 4.7"/></svg>',
+    gear: '<svg class="cute-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.8 4.2h4.4l.5 1.8c.5.2 1 .4 1.4.8l1.7-.7 2.1 3.6-1.4 1.1c.1.6.1 1.1 0 1.7l1.4 1.1-2.1 3.6-1.7-.7c-.4.3-.9.6-1.4.8l-.5 1.8H9.8l-.5-1.8c-.5-.2-1-.4-1.4-.8l-1.7.7-2.1-3.6 1.4-1.1a7 7 0 0 1 0-1.7L4.1 9.7l2.1-3.6 1.7.7c.4-.3.9-.6 1.4-.8l.5-1.8Z"/><circle cx="12" cy="11.7" r="2.4" class="cute-hole"/></svg>'
   };
 
   function row(icon, tone, title, subtitle, target) {
@@ -163,20 +166,20 @@
       </section>
       <section class="account-app-group account-app-group-deck">
         <div class="account-app-group-head">
-          <span class="account-app-group-icon deck">${ICONS.deck}</span>
+          <span class="account-app-group-icon deck">${ICONS.deckGroup}</span>
           <strong>牌組設定</strong>
         </div>
         <div class="account-app-list">
-          ${row(ICONS.deck, 'deck', '牌組清單', '管理牌組偵察下拉選單', 'deck')}
+          ${row(ICONS.deckList, 'deck', '牌組清單', '管理牌組偵察下拉選單', 'deck')}
         </div>
       </section>
       <section class="account-app-group account-app-group-update">
         <div class="account-app-group-head">
-          <span class="account-app-group-icon update">${ICONS.update}</span>
+          <span class="account-app-group-icon update">${ICONS.updateGroup}</span>
           <strong>資料更新</strong>
         </div>
         <div class="account-app-list">
-          ${row(ICONS.update, 'update', '最近更新紀錄', '排行榜 5 筆 · 賽事 5 筆', 'updates')}
+          ${row(ICONS.updateLog, 'update', '最近更新紀錄', '排行榜 5 筆 · 賽事 5 筆', 'updates')}
         </div>
       </section>
       <section class="account-app-group account-app-group-notify">
@@ -186,7 +189,7 @@
           <span id="accountAppNotifyBadge" class="account-app-status">未開啟</span>
         </div>
         <div class="account-app-list">
-          ${row(ICONS.bell, 'web', '網站推播通知', '推播狀態與接收項目', 'web')}
+          ${row(ICONS.web, 'web', '網站推播通知', '推播狀態與接收項目', 'web')}
           ${row(ICONS.line, 'line', 'LINE 通知', '綁定狀態 · 測試發送', 'line')}
         </div>
       </section>`;
@@ -239,7 +242,7 @@
     if (document.querySelector('link[data-account-app-style]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'account-hub-v2.css?v=0.19.0-r3';
+    link.href = 'account-hub-v2.css?v=0.19.0-r4';
     link.dataset.accountAppStyle = 'true';
     document.head.appendChild(link);
   }
