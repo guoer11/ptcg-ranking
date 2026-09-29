@@ -11,7 +11,7 @@
     deckList: '<img class="account-q-icon" src="assets/q-icons/deck-list.webp?v=1.9.1-r1" alt="" aria-hidden="true" />',
     updateGroup: '<img class="account-q-icon" src="assets/q-icons/data-update.webp?v=1.9.1-r1" alt="" aria-hidden="true" />',
     updateLog: '<img class="account-q-icon" src="assets/q-icons/update-log.webp?v=1.9.1-r1" alt="" aria-hidden="true" />',
-    gear: '<svg class="account-q-svg account-q-svg-settings" viewBox="0 0 128 128" aria-hidden="true"><defs><linearGradient id="as-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe58a"/><stop offset="1" stop-color="#ffb84d"/></linearGradient><linearGradient id="as-c" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff7d7"/><stop offset="1" stop-color="#ffe7a6"/></linearGradient></defs><g stroke="#6b4b2a" stroke-linecap="round" stroke-linejoin="round"><path d="M64 20l8 8 12-2 4 12 11 5-3 11 8 10-8 10 3 11-11 5-4 12-12-2-8 8-8-8-12 2-4-12-11-5 3-11-8-10 8-10-3-11 11-5 4-12 12 2 8-8z" fill="url(#as-g)" stroke-width="6"/><circle cx="64" cy="64" r="25" fill="url(#as-c)" stroke-width="5"/><circle cx="64" cy="64" r="11" fill="#77b7ff" stroke-width="5"/></g><path d="M103 16l3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7z" fill="#fff07b" stroke="#6f5426" stroke-width="3" stroke-linejoin="round"/></svg>'
+    gear: '<svg class="account-q-svg account-q-svg-settings" viewBox="0 0 128 128" aria-hidden="true"><defs><linearGradient id="as-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe58a"/><stop offset="1" stop-color="#ffb84d"/></linearGradient><linearGradient id="as-c" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff7d7"/><stop offset="1" stop-color="#ffe7a6"/></linearGradient></defs><g stroke="#6b4b2a" stroke-linecap="round" stroke-linejoin="round"><path d="M64 18l9 9 12-2 4 12 12 5-3 12 8 10-8 10 3 12-12 5-4 12-12-2-9 9-9-9-12 2-4-12-12-5 3-12-8-10 8-10-3-12 12-5 4-12 12 2 9-9z" fill="url(#as-g)" stroke-width="6"/><circle cx="64" cy="64" r="25" fill="url(#as-c)" stroke-width="5"/><circle cx="64" cy="64" r="11" fill="#77b7ff" stroke-width="5"/></g></svg>'
   };
 
   function row(icon, tone, title, subtitle, target) {
@@ -243,7 +243,7 @@
     if (document.querySelector('link[data-account-app-style]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'account-hub-v2.css?v=1.9.1-r3';
+    link.href = 'account-hub-v2.css?v=1.9.1-r4';
     link.dataset.accountAppStyle = 'true';
     document.head.appendChild(link);
   }
