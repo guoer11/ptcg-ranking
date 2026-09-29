@@ -11,6 +11,7 @@ on:
       - main
     paths:
       - "scraper.py"
+      - "update_log.py"
       - "scrape_identity.py"
       - "scrape_identity_preflight.py"
       - "sync_identity_supabase.py"
