@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime
@@ -83,6 +84,26 @@ def shown(value) -> str:
     if value is None or value == "":
         return "—"
     return str(value)
+
+
+def trigger_source(kind: str) -> str:
+    """將 GitHub Actions 事件轉成容易看懂的觸發來源。"""
+    event_name = os.getenv("GITHUB_EVENT_NAME", "").strip()
+
+    if event_name == "schedule":
+        return "GitHub 備援排程"
+    if event_name == "push":
+        return "程式更新觸發"
+    if event_name == "workflow_dispatch":
+        # Supabase 主排程是透過 workflow_dispatch 呼叫 GitHub Actions。
+        # 若未來人工手動執行，也會是同一事件，因此用執行時間輔助判斷。
+        now = datetime.now(TAIPEI)
+        minute_of_day = now.hour * 60 + now.minute
+        expected = [5] if kind == "ranking" else [1, 12 * 60 + 1, 17 * 60 + 1]
+        if any(0 <= minute_of_day - target <= 20 for target in expected):
+            return "主排程（Supabase）"
+        return "手動／主動觸發"
+    return event_name or "未知來源"
 
 
 def ranking_entry() -> dict | None:
@@ -340,6 +361,8 @@ def main() -> int:
 
     kind = sys.argv[1]
     entry = ranking_entry() if kind == "ranking" else tournament_entry()
+    if entry:
+        entry["trigger_source"] = trigger_source(kind)
     if not entry:
         print(f"{kind}: 沒有對應資料變更，不新增更新紀錄。")
         return 0
