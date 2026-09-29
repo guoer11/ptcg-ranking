@@ -13,6 +13,7 @@ on:
       - main
     paths:
       - "scrape_tournaments.py"
+      - "update_log.py"
       - "backfill_early_tournaments.py"
       - "enrich_registration_windows.py"
       - "requirements.txt"
