@@ -71,6 +71,9 @@ jobs:
           POKEMON_PASSWORD: ${{ secrets.POKEMON_PASSWORD }}
         run: python scraper.py
 
+      - name: Build ranking update log
+        run: python update_log.py ranking
+
       - name: Commit data changes
         id: commit
         run: |
