@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE58A"/><stop offset="1" stop-color="#FFB84D"/></linearGradient>
+    <linearGradient id="gBlue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7ED6FF"/><stop offset="1" stop-color="#4E86F7"/></linearGradient>
+  </defs>
+  <g stroke="#6B4B2A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path fill="url(#gGold)" d="M64 12l8 8 11-2 4 11 10 4-2 11 8 8-8 8 2 11-10 4-4 11-11-2-8 8-8-8-11 2-4-11-10-4 2-11-8-8 8-8-2-11 10-4 4-11 11 2 8-8z"/>
+    <circle cx="64" cy="52" r="24" fill="#FFF7D7"/>
+    <rect x="47" y="42" width="34" height="29" rx="9" fill="url(#gBlue)"/>
+    <circle cx="64" cy="51" r="7" fill="#FFF" stroke-width="4"/>
+    <path d="M54 66c2-6 6-9 10-9s8 3 10 9" fill="#FFF" stroke-width="4"/>
+  </g>
+  <g fill="#FFF6A8" stroke="#7A5A20" stroke-width="3" stroke-linejoin="round">
+    <path d="M103 19l3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7z"/>
+    <path d="M24 88l2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5z"/>
+  </g>
+</svg>
