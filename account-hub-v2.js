@@ -6,6 +6,7 @@
     bell: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0v4.6L4 16v1h16v-1l-2-2.4V9Zm-8.3 10a2.5 2.5 0 0 0 4.6 0H9.7Z"/></svg>',
     line: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.7 2 11.2c0 4 3.5 7.3 8.2 8 .3.1.8.2.9.5.1.2.1.6 0 1l-.2 1.2c0 .3-.2 1.3 1.1.7 1.3-.5 6.8-4 9.3-6.9.5-.7.7-1.4.7-2.2C22 8.9 17.5 3 12 3Z"/></svg>',
     deck: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h11a2 2 0 0 1 2 2v12h-2V5H6V3Zm-2 4h11a2 2 0 0 1 2 2v12H6a2 2 0 0 1-2-2V7Zm2 2v10h9V9H6Zm2 2h5v2H8v-2Zm0 4h5v2H8v-2Z"/></svg>',
+    update: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v2H5V4Zm0 7h14v2H5v-2Zm0 7h9v2H5v-2Zm12-2 4 3-4 3v-2h-2v-2h2v-2Z"/></svg>',
     gear: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.7 2h2.6l.5 2a8.2 8.2 0 0 1 1.8.8l1.8-1 1.8 1.8-1 1.8c.3.6.6 1.2.8 1.8l2 .5v2.6l-2 .5a8.2 8.2 0 0 1-.8 1.8l1 1.8-1.8 1.8-1.8-1a8.2 8.2 0 0 1-1.8.8l-.5 2h-2.6l-.5-2a8.2 8.2 0 0 1-1.8-.8l-1.8 1-1.8-1.8 1-1.8a8.2 8.2 0 0 1-.8-1.8l-2-.5V9.7l2-.5c.2-.6.5-1.2.8-1.8l-1-1.8 1.8-1.8 1.8 1a8.2 8.2 0 0 1 1.8-.8l.5-2ZM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/></svg>'
   };
 
@@ -66,6 +67,20 @@
     document.dispatchEvent(new CustomEvent('account-deck-view-ready'));
   }
 
+  function addUpdateLogView(body) {
+    if (body.querySelector('[data-account-view="updates"]')) return;
+    const view = document.createElement('section');
+    view.className = 'account-detail-view';
+    view.dataset.accountView = 'updates';
+    view.hidden = true;
+    view.innerHTML = `
+      <button class="account-back-row" type="button" data-account-back>‹ <span>帳號與通知</span></button>
+      <div id="updateLogCard"><div class="update-log-empty">更新紀錄載入中…</div></div>`;
+    body.appendChild(view);
+    view.querySelector('[data-account-back]')?.addEventListener('click', () => window.showAccountHubView?.('home'));
+    document.dispatchEvent(new CustomEvent('account-update-log-view-ready'));
+  }
+
   function splitNotificationViews(body) {
     const notifications = body.querySelector('[data-account-view="notifications"]');
     if (!notifications || body.querySelector('[data-account-view="line"]')) return;
@@ -107,6 +122,7 @@
       account: ['個人資料', 'Google 帳號與登入狀態'],
       family: ['管理家庭通知裝置', '邀請、分享與移除家人的通知裝置'],
       deck: ['牌組設定', '管理牌組偵察的下拉選單'],
+      updates: ['最近更新紀錄', '查看排行榜與賽事最近 5 筆資料變動'],
       web: ['網站推播通知', '推播狀態與接收項目'],
       line: ['LINE 通知', '連線狀態與測試發送']
     };
@@ -125,6 +141,7 @@
     splitNotificationViews(body);
     addFamilyView(body);
     addDeckView(body);
+    addUpdateLogView(body);
 
     if (!window.__accountAppShowWrapped && typeof window.showAccountHubView === 'function') {
       const originalShow = window.showAccountHubView;
@@ -153,6 +170,15 @@
           ${row(ICONS.deck, 'deck', '牌組清單', '管理牌組偵察下拉選單', 'deck')}
         </div>
       </section>
+      <section class="account-app-group account-app-group-update">
+        <div class="account-app-group-head">
+          <span class="account-app-group-icon update">${ICONS.update}</span>
+          <strong>資料更新</strong>
+        </div>
+        <div class="account-app-list">
+          ${row(ICONS.update, 'update', '最近更新紀錄', '排行榜與賽事 · 最近 5 筆', 'updates')}
+        </div>
+      </section>
       <section class="account-app-group account-app-group-notify">
         <div class="account-app-group-head">
           <span class="account-app-group-icon notify">${ICONS.bell}</span>
@@ -168,6 +194,7 @@
     home.querySelector('[data-app-target="account"] small').id = 'accountAppProfileStatus';
     home.querySelector('[data-app-target="family"] small').id = 'accountAppFamilyStatus';
     home.querySelector('[data-app-target="deck"] small').id = 'accountAppDeckStatus';
+    home.querySelector('[data-app-target="updates"] small').id = 'accountAppUpdateStatus';
     home.querySelector('[data-app-target="web"] small').id = 'accountAppWebStatus';
     home.querySelector('[data-app-target="line"] small').id = 'accountAppLineStatus';
 
@@ -175,6 +202,7 @@
       button.addEventListener('click', () => {
         window.showAccountHubView?.(button.dataset.appTarget);
         if (button.dataset.appTarget === 'deck') document.dispatchEvent(new CustomEvent('deck-settings-opened'));
+        if (button.dataset.appTarget === 'updates') document.dispatchEvent(new CustomEvent('update-log-opened'));
       });
     });
 
@@ -186,6 +214,7 @@
     syncStatus();
     home.dataset.appStyleReady = '1';
     ensureDeckSettingsScript();
+    ensureUpdateLogScript();
     document.dispatchEvent(new CustomEvent('account-hub-ready'));
     return true;
   }
@@ -198,11 +227,19 @@
     document.body.appendChild(script);
   }
 
+  function ensureUpdateLogScript() {
+    if ([...document.scripts].some(script => script.src.includes('update-log-ui.js'))) return;
+    const script = document.createElement('script');
+    script.src = 'update-log-ui.js?v=0.19.0-r1';
+    script.defer = true;
+    document.body.appendChild(script);
+  }
+
   function ensureStyle() {
     if (document.querySelector('link[data-account-app-style]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'account-hub-v2.css?v=0.18.0-r3';
+    link.href = 'account-hub-v2.css?v=0.19.0-r1';
     link.dataset.accountAppStyle = 'true';
     document.head.appendChild(link);
   }
