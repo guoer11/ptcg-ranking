@@ -1,5 +1,5 @@
 @import url("update-log-ui.css?v=0.19.0-r4");
-/* v0.13.1：參考日系 App 的分組設定卡片；沿用網站功能，不使用圖片素材。 */
+/* 帳號與通知：日系遊戲選單風格；功能型 ICON 使用 Q 版 WebP 素材。 */
 .account-app-home { display: grid; gap: 14px; }
 .account-app-group {
   overflow: hidden;
@@ -192,3 +192,49 @@
   .account-app-row-copy small { font-size: 11px; }
 }
 
+
+/* v0.19.1：遊戲 Q 版功能 ICON */
+.account-app-group-head { grid-template-columns: 48px minmax(0,1fr) auto; }
+.account-app-row { grid-template-columns: 44px minmax(0,1fr) 20px; }
+.account-app-group-icon.deck,
+.account-app-group-icon.update,
+.account-app-group-icon.notify,
+.account-app-row-icon.deck,
+.account-app-row-icon.update,
+.account-app-row-icon.web {
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.account-app-group-icon.deck,
+.account-app-group-icon.update,
+.account-app-group-icon.notify {
+  width: 48px;
+  height: 48px;
+}
+.account-app-row-icon.deck,
+.account-app-row-icon.update,
+.account-app-row-icon.web {
+  width: 42px;
+  height: 42px;
+}
+.account-q-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 3px rgba(62, 40, 35, .16));
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+@media (max-width: 620px) {
+  .account-app-group-head { grid-template-columns: 44px minmax(0,1fr) auto; }
+  .account-app-row { grid-template-columns: 42px minmax(0,1fr) 18px; }
+  .account-app-group-icon.deck,
+  .account-app-group-icon.update,
+  .account-app-group-icon.notify { width: 44px; height: 44px; }
+  .account-app-row-icon.deck,
+  .account-app-row-icon.update,
+  .account-app-row-icon.web { width: 40px; height: 40px; }
+}
