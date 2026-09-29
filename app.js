@@ -372,13 +372,18 @@ function eventsHtml(data) {
   if (!events.length) {
     return '<div class="empty-state"><strong>目前沒有賽事紀錄</strong><span>等公開資料抓取完成後會顯示在這裡。</span></div>';
   }
-  const rows = events.map(event => `
-    <tr>
-      <td>${esc(event.name || '—')}</td>
-      <td>${esc(event.date || '—')}</td>
-      <td>${esc(event.location || '—')}</td>
-      <td class="event-points">${esc(event.points ?? '—')}</td>
-    </tr>`).join('');
+  const rows = events.map(event => {
+    const rank = Number(event.rank);
+    const rankText = Number.isFinite(rank) && rank > 0 ? `第 ${rank} 名` : '—';
+    return `
+      <tr>
+        <td>${esc(event.name || '—')}</td>
+        <td>${esc(event.date || '—')}</td>
+        <td>${esc(event.location || '—')}</td>
+        <td><strong>${esc(rankText)}</strong></td>
+        <td class="event-points">${esc(event.points ?? '—')}</td>
+      </tr>`;
+  }).join('');
   const cards = events.map(event => {
     const rank = Number(event.rank);
     const rankText = Number.isFinite(rank) && rank > 0 ? `第 ${rank} 名` : '';
@@ -398,7 +403,7 @@ function eventsHtml(data) {
   return `
     <div class="event-table-scroll">
       <table class="event-table">
-        <thead><tr><th>賽事</th><th>日期</th><th>地點</th><th>積分</th></tr></thead>
+        <thead><tr><th>賽事</th><th>日期</th><th>地點</th><th>名次</th><th>積分</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>
