@@ -288,3 +288,9 @@
     gap:8px;
   }
 }
+
+
+/* v1.9.1-r3：主區塊標題視覺再往左校正，與下方功能列標題對齊。 */
+.account-app-group-head > strong{
+  transform:translateX(-6px);
+}
