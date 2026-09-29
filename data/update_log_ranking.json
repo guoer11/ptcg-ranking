@@ -1,0 +1,27 @@
+{
+  "max_entries": 5,
+  "entries": [
+    {
+      "id": "ranking-2026-09-29T05:56:37+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-09-29T05:56:37+08:00",
+      "summary": "無排名／積分變動；暱稱 1、地區 0 筆異動",
+      "details": [
+        "Master：暱稱 1"
+      ],
+      "notified": false
+    },
+    {
+      "id": "ranking-2026-09-29T00:05:51+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-09-29T00:05:51+08:00",
+      "summary": "無排名／積分變動；暱稱 2、地區 0 筆異動",
+      "details": [
+        "Master：暱稱 2"
+      ],
+      "notified": false
+    }
+  ]
+}
