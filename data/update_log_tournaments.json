@@ -2,6 +2,15 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-09-29T08:19:02+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-09-29T08:19:02+08:00",
+      "summary": "例行檢查完成；賽事可見內容無變動",
+      "details": [],
+      "notified": false
+    },
+    {
       "id": "tournaments-2026-09-29T05:59:15+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
