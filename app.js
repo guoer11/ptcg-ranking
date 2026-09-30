@@ -99,8 +99,11 @@ function detailButton(playerId, label = '查看玩家詳細資料', demoKey = ''
 function playerNameHtml(row) {
   const identity = identityFor(row.player_id);
   const realName = identity?.real_name;
+  const displayName = String(row.name || row.player_id || '—');
+  const nameLength = Array.from(displayName).length;
+  const sizeClass = nameLength >= 13 ? ' player-name-xlong' : (nameLength >= 8 ? ' player-name-long' : '');
   return `
-    <strong>${esc(row.name || row.player_id || '—')}</strong>
+    <strong class="player-name${sizeClass}">${esc(displayName)}</strong>
     ${realName ? `<div class="player-real-name">${esc(realName)}</div>` : ''}
     ${row.player_id ? `<div class="hint row-id">${esc(row.player_id)}</div>` : ''}`;
 }
