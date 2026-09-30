@@ -485,9 +485,9 @@ h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
   .ranking-table th:nth-child(5), .ranking-table td:nth-child(5) { width: 54px; white-space: nowrap; }
   .ranking-table th:nth-child(6), .ranking-table td:nth-child(6) { width: 42px; padding-left: 2px; padding-right: 2px; }
   .ranking-table td:nth-child(2) { overflow-wrap: normal; word-break: normal; }
-  .ranking-table .player-name { display: block; line-height: 1.22; overflow-wrap: break-word; word-break: normal; }
+  .ranking-table .player-name { display: block; line-height: 1.22; white-space: nowrap; overflow-wrap: normal; word-break: keep-all; }
   .ranking-table .player-name-long { font-size: 14.5px; letter-spacing: -.15px; }
-  .ranking-table .player-name-xlong { font-size: 13.5px; letter-spacing: -.25px; }
+  .ranking-table .player-name-xlong { font-size: 13px; letter-spacing: -.3px; }
   .ranking-table .rank-badge { min-width: 32px; height: 32px; }
   .ranking-table .detail-btn { width: 36px; height: 36px; border-radius: 10px; font-size: 22px; }
   .ranking-table .player-real-name { font-size: 13px; }
