@@ -36,10 +36,18 @@ function worldQualificationClass(row) {
   return rank === slots ? 'world-qualified-row world-cutoff-rank' : 'world-qualified-row';
 }
 
-function worldCutLineRow(row) {
+function worldCutLineRow(row, nextRow) {
   const rank = Number(row?.rank);
+  const nextRank = Number(nextRow?.rank);
   const slots = Number(WORLD_SLOTS[activeGroup]);
-  if (rank !== slots) return '';
+
+  if (!Number.isFinite(rank) || !Number.isFinite(slots) || rank > slots) return '';
+
+  // 名額線應該畫在「最後一位仍落在暫定名額內的玩家」之後。
+  // 這樣就算名次因同分跳號（例如 29 名後直接到 41 名），
+  // 或同一名次有多人並列，也只會顯示一條名額線。
+  if (Number.isFinite(nextRank) && nextRank <= slots) return '';
+
   return `
     <tr class="world-cut-line" aria-label="暫定世界賽名額線">
       <td colspan="6"><span>暫定世界賽名額線｜前 ${slots} 名</span></td>
@@ -70,7 +78,7 @@ renderRanking = function renderRankingV04() {
     return;
   }
 
-  const body = rows.map(row => `
+  const body = rows.map((row, index) => `
     <tr class="${worldQualificationClass(row)}">
       <td><span class="rank-badge">${esc(row.rank ?? '—')}</span></td>
       <td>${playerNameHtml(row)}</td>
@@ -79,7 +87,7 @@ renderRanking = function renderRankingV04() {
       <td>${esc(row.region || '—')}</td>
       <td class="detail-col">${detailButton(row.player_id)}</td>
     </tr>
-    ${worldCutLineRow(row)}`).join('');
+    ${worldCutLineRow(row, rows[index + 1])}`).join('');
 
   container.innerHTML = `
     <div class="table-scroll">
