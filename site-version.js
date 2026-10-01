@@ -1,5 +1,5 @@
 (() => {
-  const SITE_VERSION = 'v1.10.1';
+  const SITE_VERSION = 'v1.11.0';
   window.PTCG_SITE_VERSION = SITE_VERSION;
 
   function ensureStyle() {
@@ -41,4 +41,5 @@
     badge.title = `目前版本 ${SITE_VERSION}`;
   };
 })();
+
 

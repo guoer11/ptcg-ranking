@@ -1,0 +1,1 @@
+{"name":"ptcg-pairing-forecast","private":true,"type":"module","dependencies":{"@supabase/supabase-js":"2.117.2","cheerio":"1.0.0"}}

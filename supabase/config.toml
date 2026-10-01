@@ -1,0 +1,2 @@
+[functions.ptcg-pairing-forecast]
+verify_jwt = true

@@ -45,3 +45,22 @@ for(const p of finals.standings){const better=finals.standings.filter(q=>q.score
 assert.throws(()=>simulate(data.snapshots[5],options),/空白對手/);
 console.log('All tests passed. Round 5:',JSON.stringify(output));
 for(const s of data.snapshots.filter(s=>!s.pairs.some(p=>p[1]===null))){const r=simulate(s,{...options,seed:3000442+s.round});console.log('Round',s.round,'score',s.players.find(p=>p.id===id).score,'bounds',r.scoreBounds);}
+
+// Equal-point estimates are bounded and their group allocations conserve all slots.
+for(let i=0;i<output.cuts.length;i++){
+ assert(output.probabilities[i]>=output.scoreBounds[i][0]-1e-12 && output.probabilities[i]<=output.scoreBounds[i][1]+1e-12);
+ const slots=output.field.reduce((n,p)=>n+p.meanPlayers*p.probabilities[i],0);
+ assert(Math.abs(slots-Math.min(output.cuts[i],output.modeledPlayers))<1e-9);
+ const conditional=output.scenarios.reduce((n,s)=>n+s.probabilities[i],0)/output.trials;
+ assert(Math.abs(conditional-output.probabilities[i])<1e-10);
+}
+assert(Math.abs(output.field.reduce((n,p)=>n+p.meanPlayers,0)-output.modeledPlayers)<1e-9);
+const tieEstimate=simulate(tie,{playerId:'tw00000001',totalRounds:1,cuts:[1],chance:0,trials:5});
+assert.deepEqual(tieEstimate.probabilities,[.5],'equal tie slots allocated evenly instead of a false certainty');
+const bye={completed:0,players:[player(0)],pairs:[[0,null]],pending:[{index:0,id:'tw00000001',kind:'bye'}]};
+assert.deepEqual(simulate(bye,{playerId:'tw00000001',totalRounds:1,cuts:[1],trials:2}).probabilities,[1]);
+const ambiguous={...bye,pending:[{index:0,id:'tw00000001',kind:'unknown'}]};
+assert.throws(()=>simulate(ambiguous,{playerId:'tw00000001',totalRounds:1,cuts:[1],trials:2}),/空白對手/);
+assert.throws(()=>simulate(ambiguous,{playerId:'tw00000001',totalRounds:1,cuts:[1],trials:2,pendingDecisions:{tw00000001:'absent'}}),/缺席/);
+assert.deepEqual(simulate(ambiguous,{playerId:'tw00000001',totalRounds:1,cuts:[1],trials:2,pendingDecisions:{tw00000001:'bye'}}).probabilities,[1]);
+console.log('Probability mass, per-score conditional rates, tie allocation and explicit/unconfirmed bye tests passed.');
