@@ -1,0 +1,12 @@
+{
+  "format": "ptcg-player-identity-v1",
+  "cipher": "AES-256-GCM",
+  "key_wrap": "RSA-OAEP-SHA256",
+  "aad": "cHRjZy1wbGF5ZXItaWRlbnRpdHktdjE=",
+  "nonce": "7lznpG56OQMxh+rj",
+  "wrapped_key": "j8NzWJ3JI/ftGynm608Ykrdvi3jA04CahfnQXQT2WQmN4Yy+vj81ALT6vuNPpGIptEgQSig8LaY1TkO8l3MxNy6ZHlFOcJZcvmGgi3724dhGUb70VLRfgkdwN8ddpe6zpl8zEE71bMjLe3A3LktjUn899EqpQT1UIy/bE1eXNOX1R1ZMYDqis+5DF0N5URjBOVdX0Yz/VRXcrNuGTAgfFSIVOhYgY50nJXmYYzVg6lCYAZFAlb2u1trUQBc5JVhBYMj+c/qK+GqRNSeJm4HEzuCB17Ls/AXnKqM1NYUXF3yUp0PZlDvXlZMGdlPtmtlAANmLv4LLIh4KfaU3i7fmYoo7n4Zk7IvAKz9lb3uvX3RJxvyklI23hveWkb5EIzPtVvCKEY4xMJuQEcYxk0P5/khNW4Zp77TlA4OssBQ2i62lQvd6bwdI6kFaMUpICKuKq7rod+9V4I1UALy/Rg3cHBwOLGY9O2T3Y01II9df1EdU6a/bWcLldOgVfQ4UyCdH",
+  "ciphertext": "FAYuXsOzJrnrgJUpg0lvdEGR1Aus+FiEIb0WdB6YL2O/m9Ix0qxnowGVFxlWX+ZourBAiv5u52LrRyqWaJMcrGjJGzb0glwTawnWVG4u0NJUMzeL88kgpzTwadcqkIPh/RU/6W55rJSvlr54i8Z3ROn3MggEi44mGp6lbbgG",
+  "plaintext_sha256": "eeecb509e80b281a010170212e5e027a68a6d32bb486b96cdc9b64d6b1ea34c4",
+  "updated_at": "2026-10-01T09:04:28+08:00",
+  "count": 1
+}

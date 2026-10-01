@@ -2,6 +2,9 @@ import hashlib
 import json
 import os
 from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from deploy_identity import decrypt_for_deploy
 
 import requests
 
@@ -26,6 +29,20 @@ def main() -> None:
     players = payload.get("players")
     if not isinstance(players, dict) or not players:
         raise RuntimeError("Plain-text identity payload is empty; refusing to sync")
+
+    # Apply encrypted manual corrections after scraping, before syncing and encryption.
+    overrides_path = Path("data/player_identity_overrides.enc.json")
+    if overrides_path.exists():
+        with TemporaryDirectory() as directory:
+            plain_path = Path(directory) / "overrides.json"
+            decrypt_for_deploy(overrides_path, plain_path)
+            overrides = json.loads(plain_path.read_text(encoding="utf-8"))
+        for player_id, correction in overrides["players"].items():
+            current = dict(players.get(player_id) or {})
+            current.update(correction)
+            players[player_id] = current
+        payload["count"] = len(players)
+        source.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     sync_token = build_sync_token(private_key)
     response = requests.post(
