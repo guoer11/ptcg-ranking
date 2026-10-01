@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="pairing.css?v=0.11.0-r1" />
   <link rel="stylesheet" href="pairing-quick-lookup.css?v=0.14.0-r2" />
   <link rel="stylesheet" href="pairing-deck-scout.css?v=0.18.0-r4" />
+  <link rel="stylesheet" href="pairing-odds.css?v=1.10.0-r1" />
 </head>
 <body>
   <header class="site-header pairing-header">
@@ -46,6 +47,21 @@
         <section class="pairing-history-note" style="margin-top:12px;"><strong>歷史測試場</strong><br>2026/9/12 高級球孩童組（tid=3000442）可用來測 Round 1 配對通知與 Final rank 通知。Final rank 測試只顯示最終名次，不顯示總分。為避免已存在的 Round 2、3、4…一次全部發送，歷史測試場不允許啟動連續監控。</section>
       </aside>
     </div>
+    <section id="pairingOdds" class="panel odds-panel" aria-labelledby="oddsHeading">
+      <h2 id="oddsHeading">晉級與名次預估<span class="odds-badge">歷史測試版</span></h2>
+      <p class="odds-intro">先用 2026/9/12 高級球孩童組（tid=3000442）試算。選擇某輪開始前，僅使用當時已公布的積分與配對。第一版以積分的同分範圍估算，完整小分排序仍待驗證。此版尚未連接其他現場賽事；操作不會啟動監控或發送通知。</p>
+      <div class="odds-controls">
+        <label>測試玩家 PTCG ID<input id="oddsPlayer" class="search-input" value="tw39371632" autocomplete="off" autocapitalize="none"></label>
+        <label>回到哪個時間點<select id="oddsRound" class="search-input"><option value="1" disabled>第 1 輪：對手資料不完整</option><option value="2">第 2 輪開始前（已打完 1 輪）</option><option value="3">第 3 輪開始前（已打完 2 輪）</option><option value="4">第 4 輪開始前（已打完 3 輪）</option><option value="5" selected>第 5 輪開始前（已打完 4 輪）</option><option value="6" disabled>第 6 輪：對手資料不完整</option><option value="7">第 7 輪開始前（已打完 6 輪）</option></select></label>
+        <label>總輪數<input id="oddsTotal" class="search-input" type="number" min="1" max="20" step="1" value="7"></label>
+        <label>名次門檻預設<select id="oddsType" class="search-input"><option value="ultra">高級球：前 8／16／32 名</option><option value="premier">紀念球 DAY1：前 256 名</option><option value="master">大師球：自訂晉級名次</option></select></label>
+        <label>目標名次（取幾名）<input id="oddsCut" class="search-input" type="number" min="1" max="4096" step="1" value="8" placeholder="依現場公告填寫"></label>
+        <label>你的每場勝率假設<select id="oddsChance" class="search-input"><option value="40">40%（較保守）</option><option value="50" selected>50%（雙方機會相同）</option><option value="60">60%（較樂觀）</option></select></label>
+      </div>
+      <div class="odds-actions"><button id="oddsRun" class="primary-btn" type="button" disabled>用測試場估算</button><button id="oddsUsePlayer" class="secondary-btn" type="button">帶入上方玩家 ID</button><a href="https://tcg.sfc-jpn.jp/tour.asp?tid=3000442" target="_blank" rel="noopener">查看測試場官方配對 ↗</a></div>
+      <div id="oddsResult" class="odds-result" role="status" aria-live="polite">尚未估算。預設回到第 5 輪開始前，試看最後三輪對名次的影響。第 1、6 輪有空白對手，暫不估算。</div>
+      <details id="oddsActual" hidden><summary>與官方最終成績比對</summary><button id="oddsReadActual" class="secondary-btn" type="button">讀取官方最終結果</button><p id="oddsActualResult"></p><a href="https://tcg.sfc-jpn.jp/tourround.asp?tid=3000442&amp;kno=9999999&amp;znt=1" target="_blank" rel="noopener">查看官方最終排名 ↗</a></details>
+    </section>
     <section id="pairingDeckScout" class="panel pairing-scout-panel">
       <div class="pairing-scout-head">
         <div><h2>牌組偵察</h2><p>逐桌快速選擇牌組；認不出玩家時也可以只記這桌看到的兩副牌。</p></div>
@@ -65,9 +81,11 @@
 
   <footer class="footer"><div class="wrap">非官方網站。本頁僅協助整理公開配對資訊，Pokémon 相關商標屬原權利人所有。</div></footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="site-version.js?v=1.9.8-r1" defer></script>
+  <script src="site-version.js?v=1.10.0-r1" defer></script>
   <script src="pairing.js?v=1.9.8-r1" defer></script>
   <script src="pairing-quick-lookup.js?v=0.14.0-r3" defer></script>
+  <script src="pairing-odds-engine.js?v=1.10.0-r1" defer></script>
+  <script src="pairing-odds.js?v=1.10.0-r1" defer></script>
   <script src="pairing-deck-scout.js?v=0.18.0-r5" defer></script>
   <script src="site-account-ui.js?v=1.9.2-r1" defer></script>
   <script>
@@ -79,3 +97,4 @@
   </script>
 </body>
 </html>
+
