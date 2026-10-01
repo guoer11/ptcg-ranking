@@ -9,9 +9,9 @@
 .pairing-scout-deck-chip{display:inline-flex;align-items:center;gap:5px;padding:6px 8px 6px 10px;border:1px solid #d8e1ec;border-radius:999px;background:#fff;font-size:12px;font-weight:800}
 .pairing-scout-deck-chip button{width:24px;height:24px;min-height:0;padding:0;border:0;border-radius:50%;background:#eef2f7;color:#667085;cursor:pointer}
 .pairing-scout-empty{color:var(--muted);font-size:12px}
-.pairing-scout-controls{display:grid;grid-template-columns:auto 120px auto auto;gap:8px;align-items:end;margin-top:14px}
+.pairing-scout-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;margin-top:12px}
 .pairing-scout-controls label span{display:block;margin:0 0 5px;color:var(--muted);font-size:11px;font-weight:800}
-.pairing-scout-controls input{text-align:center}
+.pairing-scout-controls input{width:100%;min-width:0;box-sizing:border-box}
 .pairing-scout-result{margin-top:12px;padding:13px;border:1px solid #dce3ee;border-radius:14px;background:#fff}
 .pairing-scout-result.is-idle{color:var(--muted)}
 .pairing-scout-result.is-found{background:#f4fbf7;border-color:#bfe1ce}
@@ -22,7 +22,7 @@
 .pairing-scout-result-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
 .pairing-scout-result-head strong{font-size:18px}
 .pairing-scout-result-head span{padding:4px 8px;border-radius:999px;background:#e9f2ff;color:#2c63b7;font-size:11px;font-weight:800}
-.pairing-scout-players{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.pairing-scout-players{display:grid;grid-template-columns:1fr;gap:9px}
 .pairing-scout-player{display:grid;grid-template-columns:minmax(0,1fr) minmax(140px,.8fr);gap:10px;align-items:center;padding:11px;border:1px solid #dfe6ef;border-radius:12px;background:rgba(255,255,255,.8)}
 .pairing-scout-player div{min-width:0}
 .pairing-scout-player span,.pairing-scout-player strong,.pairing-scout-player small{display:block}
@@ -52,11 +52,6 @@
 .pairing-scout-known.unknown{background:#f2f4f7;color:#667085}
 @media(max-width:680px){
   .pairing-scout-head{align-items:center}
-  .pairing-scout-controls{grid-template-columns:1fr 92px 1fr}
-  .pairing-scout-controls #pairingScoutPrev{grid-column:1}
-  .pairing-scout-controls label{grid-column:2}
-  .pairing-scout-controls #pairingScoutLoad{grid-column:3}
-  .pairing-scout-controls #pairingScoutNext{grid-column:1/-1}
   .pairing-scout-players{grid-template-columns:1fr}
   .pairing-scout-player{grid-template-columns:minmax(0,1fr) 44%}
   .pairing-scout-chart-wrap{grid-template-columns:1fr}
@@ -94,3 +89,14 @@
 }
 
 .pairing-scout-player-possible{display:block;margin-top:5px;color:#9a6700;font-size:10px;font-style:normal;font-weight:800;line-height:1.35}
+
+
+.pairing-scout-card{padding:14px;border:1px solid #d7e1ef;border-radius:14px;background:#f8fbff}
+.pairing-scout-card h2{font-size:18px}
+.pairing-scout-tabs{display:flex;gap:6px;margin-top:12px}
+.pairing-scout-tabs button{min-height:36px;padding:7px 14px;border:1px solid #d5deeb;border-radius:9px;background:#fff;color:#526078;font-size:12px;font-weight:800;cursor:pointer}
+.pairing-scout-tabs button.active{border-color:#aac6ee;background:#eaf2ff;color:#245fc7}
+.pairing-scout-tabs button:disabled{opacity:.6;cursor:wait}
+.pairing-scout-navigation{display:flex;justify-content:space-between;gap:8px;margin-top:8px}
+.pairing-scout-navigation button{min-height:38px;flex:1}
+.pairing-scout-controls button{min-height:42px}

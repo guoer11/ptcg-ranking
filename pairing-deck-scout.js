@@ -8,6 +8,8 @@
   let deckCatalog = [];
   let currentContext = null;
   let initializedForUser = '';
+  let queryMode = 'table';
+  let queryBusy = false;
 
   const $ = id => document.getElementById(id);
 
@@ -32,8 +34,45 @@
   }
 
   function setBusy(busy) {
-    ['pairingScoutLoad','pairingScoutPrev','pairingScoutNext']
-      .map($).filter(Boolean).forEach(el => { el.disabled = busy; });
+    queryBusy = busy;
+    const table = queryMode === 'table' ? Number($('pairingScoutTable')?.value) : currentContext?.table;
+    const canNavigate = Number.isSafeInteger(table) && table > 0;
+    ['pairingScoutLoad','pairingScoutTable'].map($).filter(Boolean)
+      .forEach(el => { el.disabled = busy; });
+    ['pairingScoutPrev','pairingScoutNext'].map($).filter(Boolean)
+      .forEach(el => { el.disabled = busy || !canNavigate; });
+    document.querySelectorAll('[data-pairing-scout-mode]').forEach(button => { button.disabled = busy; });
+  }
+
+  function normalizeQueryPlayerId(value) {
+    let id = String(value || '').trim().toLowerCase().replace(/\s+/g, '');
+    if (/^\d{6,}$/.test(id)) id = `tw${id}`;
+    return id;
+  }
+
+  function setQueryMode(mode, value = '') {
+    queryMode = mode === 'player' ? 'player' : 'table';
+    currentContext = null;
+    document.querySelectorAll('[data-pairing-scout-mode]').forEach(button => {
+      const active = button.dataset.pairingScoutMode === queryMode;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+    const input = $('pairingScoutTable');
+    if (input) {
+      input.value = value;
+      input.inputMode = queryMode === 'table' ? 'numeric' : 'text';
+      input.placeholder = queryMode === 'table' ? '例如 1' : '例如 tw39371632';
+      input.setAttribute('aria-label', queryMode === 'table' ? '桌號' : 'PTCG ID');
+    }
+    if ($('pairingScoutValueLabel')) $('pairingScoutValueLabel').textContent = queryMode === 'table' ? '桌號' : 'PTCG ID';
+    const box = $('pairingScoutResult');
+    if (box) {
+      box.className = 'pairing-scout-result is-idle';
+      box.innerHTML = `<strong>${queryMode === 'table' ? '輸入桌號查詢這桌的玩家與對手' : '輸入 PTCG ID 查詢玩家的桌號與對手'}</strong><span>查詢後可直接記錄牌組；上方追蹤玩家與監控設定不會變更。</span>`;
+    }
+    setStatus('');
+    setBusy(false);
   }
 
   async function loadCatalog() {
@@ -57,20 +96,32 @@
     ].join('');
   }
 
-  async function fetchTable(table) {
+  function matchFromRows(data, playerId) {
+    for (const row of data?.matched_rows || []) {
+      const ids = [...new Set((row?.cells || []).flatMap(cell => String(cell).match(/tw\d+/gi) || []).map(id => id.toLowerCase()))];
+      if (ids.length < 2 || !ids.includes(playerId)) continue;
+      return { table: String(row.cells?.[0] || ''), player: playerId, opponent: ids.find(id => id !== playerId) };
+    }
+    return null;
+  }
+
+  async function fetchLookup(value, mode) {
     if (!pairingAuthorized || !pairingSession?.access_token) throw new Error('請先登入授權帳號');
     const parsed = normalizeRoundUrl(sourceInput()?.value, Number(roundInput()?.value || 1));
     if (sourceInput()) sourceInput().value = parsed.url;
-    const response = await fetch(TABLE_FUNCTION_URL, {
+    if (roundInput()) roundInput().value = String(parsed.round);
+    const byPlayer = mode === 'player';
+    const response = await fetch(byPlayer ? PAIRING_FUNCTION_URL : TABLE_FUNCTION_URL, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${pairingSession.access_token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ url: parsed.url, table: String(table) })
+      body: JSON.stringify(byPlayer ? { url: parsed.url, player: value } : { url: parsed.url, table: String(value) })
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok || !data?.ok) throw new Error(data?.error || '桌號配對讀取失敗');
+    if (!response.ok || !data?.ok) throw new Error(data?.error || (byPlayer ? '玩家配對讀取失敗' : '桌號配對讀取失敗'));
+    if (byPlayer && !data.match) data.match = matchFromRows(data, value);
     return { data, parsed };
   }
 
@@ -186,7 +237,7 @@
     return names[id] || (index === 0 ? match.player_name : match.opponent_name) || id;
   }
 
-  async function renderScoutMatch(data, table) {
+  async function renderScoutMatch(data, table, target = '') {
     const box = $('pairingScoutResult');
     if (!box) return;
     if (!data?.available) {
@@ -197,7 +248,7 @@
     const match = data?.match;
     if (!match) {
       box.className = 'pairing-scout-result is-error';
-      box.innerHTML = `<strong>找不到第 ${esc(table)} 桌</strong><span>可能已經超過本輪最後一桌。</span>`;
+      box.innerHTML = `<strong>找不到配對</strong><span>Round ${esc(data?.round || '—')} 找不到 ${target ? esc(target) : `第 ${esc(table)} 桌`}。</span>`;
       return;
     }
 
@@ -319,28 +370,48 @@
     }
   }
 
-  async function loadTable(table) {
-    const n = Number(table);
-    if (!Number.isInteger(n) || n < 1) return setStatus('桌號請輸入 1 以上的整數。', 'error');
+  async function loadSelection(value, mode = queryMode) {
+    if (queryBusy) return;
+    const raw = String(value || '').trim();
+    const byPlayer = mode === 'player';
+    const selected = byPlayer ? normalizeQueryPlayerId(raw) : Number(raw);
+    if (byPlayer && !/^tw\d+$/.test(selected)) return setStatus('請輸入有效的 PTCG ID，例如 tw39371632。', 'error');
+    if (!byPlayer && (!/^\d+$/.test(raw) || !Number.isSafeInteger(selected) || selected < 1)) return setStatus('桌號請輸入 1 以上的整數。', 'error');
     setBusy(true);
-    setStatus('正在讀取這一桌…');
+    setStatus('正在讀取配對與牌組紀錄…');
     try {
-      const { data, parsed } = await fetchTable(n);
-      currentContext = { data, parsed, table: n };
+      const { data, parsed } = await fetchLookup(selected, mode);
+      const matchedTable = Number(data.match?.table);
+      currentContext = { data, parsed, table: Number.isSafeInteger(matchedTable) && matchedTable > 0 ? matchedTable : (byPlayer ? null : selected), target: byPlayer ? selected : '' };
       const input = $('pairingScoutTable');
-      if (input) input.value = String(n);
-      await renderScoutMatch(data, n);
+      if (input) input.value = String(selected);
+      await renderScoutMatch(data, currentContext.table, currentContext.target);
       await refreshStats(parsed.tid);
       if (data.match && !$('pairingScoutUnknownToggle')?.checked) {
-        setStatus('已載入；認得玩家就直接選牌組，不認得就勾「不知道哪位是哪副牌」。', 'success');
+        setStatus('查詢完成。認得玩家就直接選牌組，不認得就勾「不知道哪位是哪副牌」。', 'success');
       } else if (!data.match) {
-        setStatus('找不到這一桌。');
+        setStatus(data.available ? '這一輪已公布，但找不到指定配對。' : '這一輪尚未公布。');
       }
     } catch (error) {
+      currentContext = null;
+      const box = $('pairingScoutResult');
+      if (box) {
+        box.className = 'pairing-scout-result is-error';
+        box.innerHTML = '<strong>查詢失敗</strong><span>請確認網址、Round 與查詢條件後重試。</span>';
+      }
       setStatus(error?.message || String(error), 'error');
     } finally {
       setBusy(false);
     }
+  }
+
+  function navigateTable(offset) {
+    if (queryBusy) return;
+    const table = queryMode === 'table' ? Number($('pairingScoutTable')?.value) : currentContext?.table;
+    if (!Number.isSafeInteger(table) || table < 1) return;
+    const next = Math.max(1, table + offset);
+    setQueryMode('table', String(next));
+    loadSelection(String(next), 'table');
   }
 
   async function refreshStats(tid) {
@@ -451,37 +522,25 @@
   }
 
   function inject() {
-    const main = document.querySelector('main.pairing-main');
-    const grid = main?.querySelector('.pairing-grid');
-    if (!main || !grid) return;
-
-    let section = $('pairingDeckScout');
-    if (!section) {
-      section = document.createElement('section');
-      section.id = 'pairingDeckScout';
-      section.className = 'panel pairing-scout-panel';
-      section.innerHTML = `
-        <div class="pairing-scout-head">
-          <div><h2>牌組偵察</h2><p>逐桌快速選擇牌組；認不出玩家時也可以只記這桌看到的兩副牌。</p></div>
-        </div>
-        <div class="pairing-scout-controls">
-          <button id="pairingScoutPrev" class="secondary-btn" type="button">← 上一桌</button>
-          <label><span>桌號</span><input id="pairingScoutTable" class="search-input" type="number" min="1" step="1" value="1" inputmode="numeric"></label>
-          <button id="pairingScoutLoad" class="primary-btn" type="button">載入這桌</button>
-          <button id="pairingScoutNext" class="secondary-btn" type="button">下一桌 →</button>
-        </div>
-        <div id="pairingScoutResult" class="pairing-scout-result is-idle"><strong>準備好了</strong><span>先設定上方活動網址與 Round，再從第 1 桌開始。</span></div>
-        <div id="pairingScoutMessage" class="pairing-scout-message"></div>
-        <div id="pairingScoutStats" class="pairing-scout-stats"><div class="pairing-scout-stats-empty">載入任一桌後會顯示這場比賽的牌組分布。</div></div>`;
-      grid.after(section);
-    }
-
+    const section = $('pairingDeckScout');
+    const anchor = $('pairingMessage') || $('pairingResult');
+    if (!section || !anchor) return;
+    anchor.after(section);
     if (section.dataset.scoutBound === '1') return;
     section.dataset.scoutBound = '1';
-
-    $('pairingScoutLoad')?.addEventListener('click', () => loadTable($('pairingScoutTable')?.value));
-    $('pairingScoutPrev')?.addEventListener('click', () => loadTable(Math.max(1, Number($('pairingScoutTable')?.value || 1) - 1)));
-    $('pairingScoutNext')?.addEventListener('click', () => loadTable(Number($('pairingScoutTable')?.value || 1) + 1));
+    document.querySelectorAll('[data-pairing-scout-mode]').forEach(button => {
+      button.addEventListener('click', () => setQueryMode(button.dataset.pairingScoutMode));
+    });
+    $('pairingScoutLoad')?.addEventListener('click', () => loadSelection($('pairingScoutTable')?.value));
+    $('pairingScoutPrev')?.addEventListener('click', () => navigateTable(-1));
+    $('pairingScoutNext')?.addEventListener('click', () => navigateTable(1));
+    $('pairingScoutTable')?.addEventListener('input', () => setBusy(queryBusy));
+    $('pairingScoutTable')?.addEventListener('keydown', event => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      loadSelection($('pairingScoutTable')?.value);
+    });
+    setBusy(false);
   }
 
   async function onAuthorized() {
@@ -497,7 +556,7 @@
     if (!pairingAuthorized || !pairingSession?.user?.id) return;
     try {
       await loadCatalog();
-      if (currentContext) await renderScoutMatch(currentContext.data, currentContext.table);
+      if (currentContext) await renderScoutMatch(currentContext.data, currentContext.table, currentContext.target);
     } catch (error) {
       setStatus(`牌組清單讀取失敗：${error?.message || error}`, 'error');
     }
