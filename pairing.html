@@ -31,7 +31,7 @@
     <div class="pairing-grid">
       <section class="panel pairing-panel">
         <h2>配對查詢</h2>
-        <p class="section-note">比賽當天貼一次活動網址或任一 Round 配對網址。貼入 Round 配對網址時會自動同步右側 Round。開始監控時，若目前 Round 尚未公布就直接等待本輪；若已公布則自動等待下一輪，之後會一路監控到最終排名。</p>
+        <p class="section-note">比賽當天貼一次活動網址或任一 Round 配對網址。貼入 Round 配對網址時會自動同步右側 Round。開始監控時，若目前 Round 尚未公布就直接等待本輪；若已公布則自動等待下一輪，之後會一路監控到最終排名。監控中重新整理會還原網址、玩家與查詢 Round；停止監控或比賽結束後，下次開啟不再帶入。</p>
         <div class="pairing-form">
           <div class="pairing-field"><label for="pairingSourceUrl">活動網址 / Round 配對網址</label><input id="pairingSourceUrl" class="search-input" type="url" inputmode="url" placeholder="https://tcg.sfc-jpn.jp/tour.asp?tid=..." autocomplete="off" /></div>
           <div class="pairing-row"><div class="pairing-field"><label for="pairingPlayerId">追蹤玩家 PTCG ID</label><input id="pairingPlayerId" class="search-input" type="text" value="tw39371632" autocomplete="off" autocapitalize="none" /></div><div class="pairing-field"><label for="pairingRound">Round</label><input id="pairingRound" class="search-input" type="number" min="1" step="1" value="1" inputmode="numeric" /></div></div>
@@ -65,8 +65,8 @@
 
   <footer class="footer"><div class="wrap">非官方網站。本頁僅協助整理公開配對資訊，Pokémon 相關商標屬原權利人所有。</div></footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="site-version.js?v=1.9.7-r1" defer></script>
-  <script src="pairing.js?v=0.18.0-r1" defer></script>
+  <script src="site-version.js?v=1.9.8-r1" defer></script>
+  <script src="pairing.js?v=1.9.8-r1" defer></script>
   <script src="pairing-quick-lookup.js?v=0.14.0-r3" defer></script>
   <script src="pairing-deck-scout.js?v=0.18.0-r5" defer></script>
   <script src="site-account-ui.js?v=1.9.2-r1" defer></script>

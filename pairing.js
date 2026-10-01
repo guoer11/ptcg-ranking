@@ -10,6 +10,10 @@ let pairingClient = null;
 let pairingSession = null;
 let pairingAuthorized = false;
 let lastPairing = null;
+let activePairingWatch = null;
+let pairingFormOwner = null;
+let pairingFormEdited = false;
+const PAIRING_WATCH_FORM_KEY = 'ptcg-pairing-watch-form-v1:';
 
 const sourceInput = () => document.getElementById('pairingSourceUrl');
 const playerInput = () => document.getElementById('pairingPlayerId');
@@ -127,6 +131,77 @@ function normalizeRoundUrl(raw, roundOverride = null) {
   url.searchParams.set('kno', String(requestedRound));
   url.searchParams.set('znt', url.searchParams.get('znt') || '0');
   return { url: url.toString(), tid, round: requestedRound };
+}
+
+
+// Restore only a watch confirmed active by the backend for the signed-in account.
+function pairingWatchFormKey() {
+  const userId = pairingSession?.user?.id;
+  return userId ? PAIRING_WATCH_FORM_KEY + userId : '';
+}
+
+function clearSavedPairingWatchForm() {
+  const key = pairingWatchFormKey();
+  if (!key) return;
+  try { localStorage.removeItem(key); }
+  catch (_) { /* Backend restoration still works when browser storage is unavailable. */ }
+}
+
+function savePairingWatchForm() {
+  const userId = pairingSession?.user?.id;
+  if (!pairingAuthorized || !activePairingWatch?.active || activePairingWatch.user_id !== userId) return;
+  try {
+    const parsed = normalizeRoundUrl(sourceInput()?.value, Number(roundInput()?.value || 1));
+    const playerId = normalizePlayerId(playerInput()?.value);
+    if (parsed.tid !== String(activePairingWatch.tid) || playerId !== activePairingWatch.player_id) return;
+    localStorage.setItem(pairingWatchFormKey(), JSON.stringify({
+      watch_id: activePairingWatch.id,
+      tid: parsed.tid,
+      player_id: playerId,
+      url: parsed.url,
+      round: parsed.round
+    }));
+  } catch (_) { /* Ignore incomplete edits and unavailable browser storage. */ }
+}
+
+function syncPairingWatchForm(watch) {
+  const userId = pairingSession?.user?.id;
+  if (!pairingAuthorized || !userId) return;
+  if (watch && watch.user_id !== userId) return;
+
+  if (pairingFormOwner && pairingFormOwner !== userId) {
+    if (sourceInput()) sourceInput().value = '';
+    if (playerInput()) playerInput().value = DEFAULT_PLAYER_ID;
+    if (roundInput()) roundInput().value = '1';
+    pairingFormEdited = false;
+  }
+  pairingFormOwner = userId;
+  activePairingWatch = watch || null;
+
+  if (!watch?.active) {
+    // Keep this page's fields usable for a final lookup, but do not restore them next time.
+    clearSavedPairingWatchForm();
+    return;
+  }
+  if (pairingFormEdited) return;
+
+  try {
+    let parsed = normalizeRoundUrl(watch.source_url);
+    try {
+      const saved = JSON.parse(localStorage.getItem(pairingWatchFormKey()) || 'null');
+      if (saved?.watch_id === watch.id && saved?.tid === String(watch.tid) && saved?.player_id === watch.player_id) {
+        const savedUrl = normalizeRoundUrl(saved.url, saved.round);
+        if (savedUrl.tid === String(watch.tid)) parsed = savedUrl;
+      }
+    } catch (_) { /* Fall back to the active watch's backend URL. */ }
+
+    if (sourceInput()) sourceInput().value = parsed.url;
+    if (playerInput()) playerInput().value = watch.player_id;
+    if (roundInput()) roundInput().value = String(parsed.round);
+    savePairingWatchForm();
+  } catch (error) {
+    console.warn('監控網址還原失敗', error);
+  }
 }
 
 async function fetchPairing(url, playerId) {
@@ -275,6 +350,7 @@ async function lookupCurrentPairing() {
   const parsed = normalizeRoundUrl(sourceInput()?.value, Number(roundInput()?.value || 1));
   if (sourceInput()) sourceInput().value = parsed.url;
   if (roundInput()) roundInput().value = String(parsed.round);
+  savePairingWatchForm();
   const data = await fetchPairing(parsed.url, playerId);
   await renderPairing(data);
   return { data, parsed, playerId };
@@ -325,13 +401,22 @@ function renderWatchStatus(watch) {
   copy.innerHTML = `活動 <strong>${escPairing(watch.tid)}</strong> · 玩家 <strong>${escPairing(watch.player_id)}</strong><br>正在等待 <strong>Round ${escPairing(watch.next_round)}</strong> 或最終排名，每 10 秒由後端檢查。最後檢查：${escPairing(checked)}`;
 }
 
-async function refreshWatchStatus() {
+async function refreshWatchStatus({ reopened = false } = {}) {
   if (!pairingAuthorized || !pairingSession) {
     renderWatchStatus(null);
     return;
   }
+  const userId = pairingSession.user.id;
   try {
     const data = await authorizedWatchRequest('status');
+    if (!pairingAuthorized || pairingSession?.user?.id !== userId) return;
+    if (reopened && !data.watch?.active) {
+      if (sourceInput()) sourceInput().value = '';
+      if (playerInput()) playerInput().value = DEFAULT_PLAYER_ID;
+      if (roundInput()) roundInput().value = '1';
+      pairingFormEdited = false;
+    }
+    syncPairingWatchForm(data.watch);
     renderWatchStatus(data.watch);
   } catch (error) {
     console.warn('監控狀態讀取失敗', error);
@@ -394,6 +479,9 @@ async function handleStartWatch() {
     const { parsed, playerId } = await lookupCurrentPairing();
     if (parsed.tid === TEST_TID) throw new Error('這是歷史測試場，為避免 Round 2、3、4…連續洗版，請使用測試通知按鈕，不要啟動連續監控。');
     const data = await authorizedWatchRequest('start', { url: parsed.url, player_id: playerId });
+    clearSavedPairingWatchForm();
+    pairingFormEdited = false;
+    syncPairingWatchForm(data.watch);
     renderWatchStatus(data.watch);
     setPairingMessage(`已開始監控 Round ${data.watch.next_round} 與後續配對、最終排名，後端每 10 秒檢查一次。iPhone 鎖屏後仍會繼續。`, 'success');
   } catch (error) {
@@ -407,6 +495,7 @@ async function handleStopWatch() {
   setPairingBusy(true);
   try {
     const data = await authorizedWatchRequest('stop');
+    syncPairingWatchForm(data.watch);
     renderWatchStatus(data.watch);
     setPairingMessage('已停止配對與最終排名監控。', 'success');
   } catch (error) {
@@ -417,6 +506,7 @@ async function handleStopWatch() {
 }
 
 function loadHistoricalTest() {
+  pairingFormEdited = true;
   if (sourceInput()) sourceInput().value = TEST_TOURNAMENT_URL;
   if (playerInput()) playerInput().value = DEFAULT_PLAYER_ID;
   if (roundInput()) roundInput().value = '1';
@@ -469,6 +559,19 @@ async function initPairingAuth() {
 }
 
 function initPairingPage() {
+  [sourceInput(), playerInput(), roundInput()].filter(Boolean).forEach(input => {
+    const saveEdit = () => {
+      pairingFormEdited = true;
+      // The URL listener in pairing.html synchronizes Round in the same input event.
+      queueMicrotask(savePairingWatchForm);
+    };
+    input.addEventListener('input', saveEdit);
+    input.addEventListener('change', saveEdit);
+  });
+  window.addEventListener('pagehide', savePairingWatchForm);
+  window.addEventListener('pageshow', event => {
+    if (event.persisted) refreshWatchStatus({ reopened: true });
+  });
   if (playerInput() && !playerInput().value) playerInput().value = DEFAULT_PLAYER_ID;
   document.getElementById('pairingLoadTestButton')?.addEventListener('click', loadHistoricalTest);
   lookupButton()?.addEventListener('click', handleLookup);
