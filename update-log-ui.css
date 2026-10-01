@@ -1,10 +1,5 @@
 .update-log-note{margin-bottom:12px;padding:12px 14px;border:1px solid #e4e9f0;border-radius:15px;background:#f8fafc;color:#667085;font-size:11px;line-height:1.55}
 .update-log-note strong{color:#344054}
-.update-log-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;padding:4px;border-radius:14px;background:#eef2f6}
-.update-log-tabs button{min-height:40px;border:0;border-radius:11px;background:transparent;color:#667085;font-size:13px;font-weight:800;cursor:pointer}
-.update-log-tabs button.active{background:#fff;color:#202939;box-shadow:0 1px 5px rgba(15,23,42,.08)}
-.update-log-tabs span{display:inline-grid;place-items:center;min-width:20px;height:20px;margin-left:4px;padding:0 5px;border-radius:999px;background:#dde4ec;color:#667085;font-size:10px}
-.update-log-tabs button.active span{background:#e8efff;color:#4263b5}
 .update-log-list{display:grid;gap:10px}
 .update-log-item{padding:14px;border:1px solid #e2e8f0;border-radius:16px;background:#fff}
 .update-log-item.ranking{border-left:4px solid #5b7cfa}
@@ -26,3 +21,7 @@
 .update-log-source{display:flex;align-items:center;gap:7px;margin-top:8px;color:#667085;font-size:10px;line-height:1.4}
 .update-log-source span{color:#98a2b3}
 .update-log-source b{font-weight:800;color:#475467}
+
+.update-log-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.update-log-type{padding:4px 7px;border-radius:999px;background:#e8efff;color:#4263b5;font-size:10px;font-weight:800}
+.update-log-item.tournaments .update-log-type{background:#e8f7ef;color:#21845d}

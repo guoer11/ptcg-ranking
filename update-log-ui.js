@@ -8,7 +8,6 @@
     ranking: 'data/update_log_ranking.json',
     tournaments: 'data/update_log_tournaments.json'
   };
-  let activeTab = 'ranking';
   let cache = { ranking: [], tournaments: [] };
 
   const $ = id => document.getElementById(id);
@@ -35,22 +34,25 @@
     }).format(date);
   }
 
-  function renderList(type) {
+  function renderList() {
     const list = $('updateLogList');
     if (!list) return;
-    const entries = (cache[type] || []).slice(0, 5);
+    const entries = Object.entries(cache)
+      .flatMap(([type, rows]) => rows.map(entry => ({ ...entry, type })))
+      .sort((a, b) => (Date.parse(b.updated_at) || 0) - (Date.parse(a.updated_at) || 0))
+      .slice(0, 5);
 
     if (!entries.length) {
-      list.innerHTML = '<div class="update-log-empty">目前還沒有這類更新紀錄。</div>';
+      list.innerHTML = '<div class="update-log-empty">目前還沒有更新紀錄。</div>';
       return;
     }
 
     list.innerHTML = entries.map(entry => {
       const details = Array.isArray(entry.details) ? entry.details.filter(Boolean) : [];
       return `
-        <article class="update-log-item ${esc(entry.type || type)}">
+        <article class="update-log-item ${esc(entry.type)}">
           <header>
-            <time>${esc(formatTime(entry.updated_at))}</time>
+            <div class="update-log-meta"><span class="update-log-type">${entry.type === 'ranking' ? '排行榜' : '賽事'}</span><time>${esc(formatTime(entry.updated_at))}</time></div>
             <span class="update-log-notify ${entry.notified ? 'is-notified' : ''}">${entry.notified ? '符合通知條件' : '未達通知條件'}</span>
           </header>
           <strong>${esc(entry.summary || entry.title || '資料更新')}</strong>
@@ -60,30 +62,13 @@
     }).join('');
   }
 
-  function switchTab(type) {
-    activeTab = type === 'tournaments' ? 'tournaments' : 'ranking';
-    document.querySelectorAll('[data-update-log-tab]').forEach(button => {
-      const on = button.dataset.updateLogTab === activeTab;
-      button.classList.toggle('active', on);
-      button.setAttribute('aria-selected', on ? 'true' : 'false');
-    });
-    renderList(activeTab);
-  }
-
   function renderShell() {
     const host = $('updateLogCard');
     if (!host) return;
     host.innerHTML = `
-      <div class="update-log-note">排行榜與賽事<strong>各自保留最近 5 筆</strong>。LOG 只用來查看實際改了什麼；LINE／網站推播仍照原本通知條件。</div>
-      <div class="update-log-tabs" role="tablist" aria-label="更新紀錄分類">
-        <button type="button" role="tab" data-update-log-tab="ranking">排行榜 <span>${cache.ranking.length}</span></button>
-        <button type="button" role="tab" data-update-log-tab="tournaments">賽事 <span>${cache.tournaments.length}</span></button>
-      </div>
+      <div class="update-log-note">排行榜與賽事更新<strong>合計顯示最新 5 筆</strong>，依更新時間由新到舊排列。</div>
       <div id="updateLogList" class="update-log-list"></div>`;
-    host.querySelectorAll('[data-update-log-tab]').forEach(button => {
-      button.addEventListener('click', () => switchTab(button.dataset.updateLogTab));
-    });
-    switchTab(activeTab);
+    renderList();
   }
 
   async function load() {

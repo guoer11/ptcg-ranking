@@ -1,4 +1,4 @@
-@import url("update-log-ui.css?v=0.19.0-r4");
+@import url("update-log-ui.css?v=1.9.7-r1");
 /* 帳號與通知：日系遊戲選單風格；功能型 ICON 使用 Q 版 WebP 素材。 */
 .account-app-home { display: grid; gap: 14px; }
 .account-app-group {
