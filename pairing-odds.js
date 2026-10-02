@@ -61,7 +61,7 @@
   function renderFinal(data,o){
     const p=data.standing;
     $('oddsPending').hidden=true;$('oddsActual').hidden=true;
-    $('oddsResult').innerHTML=`<div class="odds-result-heading"><h3>官方最終結果</h3><span class="odds-badge">已公布</span></div><p>${esc(data.title||'此活動')} · ${esc(o.playerId)}</p>${p?`<p class="odds-current">第 <strong>${p.rank}</strong> 名 · ${p.score} 分</p><div class="odds-table-wrap"><table class="odds-record-table"><thead><tr><th>名次門檻</th><th>實際結果</th></tr></thead><tbody>${[...new Set(o.cuts)].sort((a,b)=>a-b).map(c=>`<tr><td>前 ${c} 名</td><td>${p.rank<=c?'已進入':'未進入'}</td></tr>`).join('')}</tbody></table></div>`:'<p>最終榜未列出這個玩家 ID，請至官方頁面確認。</p>'}<p><a href="${esc(data.source_url)}" target="_blank" rel="noopener">查看官方最終排名 ↗</a></p>`;
+    $('oddsResult').innerHTML=`<div class="odds-result-heading"><h3>官方最終結果</h3><span class="odds-badge">已公布</span></div><p>${esc(data.title||'此活動')} · ${esc(o.playerId)}</p>${p?`<div class="odds-table-wrap"><table class="odds-record-table"><thead><tr><th>名次門檻</th><th>實際結果</th></tr></thead><tbody>${[...new Set(o.cuts)].sort((a,b)=>a-b).map(c=>`<tr><td>前 ${c} 名</td><td>${p.rank<=c?'已進入':'未進入'}</td></tr>`).join('')}</tbody></table></div>`:'<p>最終榜未列出這個玩家 ID，請至官方頁面確認。</p>'}<p><a href="${esc(data.source_url)}" target="_blank" rel="noopener">查看官方最終排名 ↗</a></p>`;
   }
   function renderTable(output,data,o,view=o.cut){
     const snapshot=data.snapshot,me=snapshot.players.find(p=>p.id===o.playerId),i=output.cuts.indexOf(view),remaining=o.totalRounds-snapshot.completed;
