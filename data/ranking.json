@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-02T00:05:41+08:00",
+  "updated_at": "2026-10-03T00:05:50+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -2744,7 +2744,7 @@
       },
       {
         "rank": 288,
-        "name": "OP_Chai",
+        "name": "OP_TheCry",
         "player_id": "tw52194649",
         "region": "臺中市",
         "points": 4,
@@ -4064,19 +4064,19 @@
       },
       {
         "rank": 400,
-        "name": "BrianChan1987",
-        "player_id": "tw58380842",
-        "region": "臺北市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw58380842/"
-      },
-      {
-        "rank": 400,
         "name": "BrianSu",
         "player_id": "tw74591750",
         "region": "屏東縣",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw74591750/"
+      },
+      {
+        "rank": 400,
+        "name": "Brian_C.",
+        "player_id": "tw58380842",
+        "region": "臺北市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw58380842/"
       },
       {
         "rank": 400,
@@ -8008,6 +8008,14 @@
       },
       {
         "rank": 400,
+        "name": "PaiChaoYuan",
+        "player_id": "tw17824694",
+        "region": "臺北市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw17824694/"
+      },
+      {
+        "rank": 400,
         "name": "Pan",
         "player_id": "tw89902913",
         "region": "基隆市",
@@ -8045,14 +8053,6 @@
         "region": "臺北市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw79476009/"
-      },
-      {
-        "rank": 400,
-        "name": "Parkigam",
-        "player_id": "tw17824694",
-        "region": "臺北市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw17824694/"
       },
       {
         "rank": 400,
@@ -13802,7 +13802,7 @@
       },
       {
         "rank": 92,
-        "name": "Shirakami",
+        "name": "Shiro",
         "player_id": "tw54665545",
         "region": "高雄市",
         "points": 0,
