@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#123d2a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="棒球打擊王" />
+  <title>棒球打擊王</title>
+  <style>
+    :root{--dark:#123d2a;--dark2:#0a2b1d;--gold:#ffd54a;--white:#fff;--red:#df4d4d;--blue:#63b6ef}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden}
+    body{font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif;background:#0c3b29;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+    button,a{font:inherit}
+    #app{height:100%;display:flex;flex-direction:column;background:linear-gradient(#8bd3ff 0 34%,#72bf62 34% 100%);padding-top:env(safe-area-inset-top)}
+    .topbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:10px 13px;background:rgba(9,46,31,.94);color:#fff;z-index:20}
+    .score,.outs{font-weight:900;font-size:17px}.outs{text-align:right}.title{font-weight:950;text-align:center;white-space:nowrap}
+    .field{position:relative;flex:1;min-height:0;overflow:hidden}
+    .stands{position:absolute;left:0;right:0;top:0;height:22%;background:repeating-linear-gradient(90deg,#2c5c7c 0 13px,#22465f 13px 26px);border-bottom:5px solid #e9ddad}
+    .grass{position:absolute;inset:22% 0 0;background:repeating-linear-gradient(45deg,#69b95a 0 38px,#74c364 38px 76px)}
+    .diamond{position:absolute;left:50%;top:56%;width:min(64vw,390px);aspect-ratio:1;background:#c99461;transform:translate(-50%,-50%) rotate(45deg);border-radius:9%;box-shadow:inset 0 0 0 9px rgba(255,255,255,.18)}
+    .infield{position:absolute;left:50%;top:56%;width:min(43vw,255px);aspect-ratio:1;background:#76bf65;transform:translate(-50%,-50%) rotate(45deg);border-radius:50%}
+    .base{position:absolute;width:18px;height:18px;background:#fff;transform:rotate(45deg);box-shadow:0 2px 5px rgba(0,0,0,.25)}
+    .b1{left:68%;top:57%}.b2{left:50%;top:41%}.b3{left:30%;top:57%}.home{left:50%;bottom:8%;transform:translateX(-50%) rotate(45deg)}
+    .pitcher{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);font-size:47px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.25))}
+    .zone{position:absolute;left:50%;bottom:14%;width:76px;height:90px;transform:translateX(-50%);border:2px dashed rgba(255,255,255,.55);border-radius:8px}
+    #ball{position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #d84040;display:none;z-index:8;box-shadow:0 2px 6px rgba(0,0,0,.32)}
+    #ball::before,#ball::after{content:"";position:absolute;width:7px;height:2px;background:#d84040;top:5px}#ball::before{left:1px;transform:rotate(45deg)}#ball::after{right:1px;transform:rotate(-45deg)}
+    .batter{position:absolute;left:50%;bottom:8%;transform:translateX(30px);font-size:52px;z-index:6;transition:.12s}.batter.swing{transform:translateX(30px) rotate(-25deg) scale(1.08)}
+    .bat{position:absolute;left:50%;bottom:14%;width:8px;height:91px;border-radius:9px;background:linear-gradient(#d7a768,#8b5c30);transform-origin:50% 88%;transform:translateX(58px) rotate(29deg);z-index:7;transition:.12s}.bat.swing{transform:translateX(58px) rotate(-74deg)}
+    .message{position:absolute;top:25%;left:50%;width:92%;transform:translateX(-50%);text-align:center;color:#fff;font-weight:950;font-size:29px;text-shadow:0 3px 6px rgba(0,0,0,.5);z-index:12;pointer-events:none}.sub{font-size:14px;margin-top:5px;font-weight:800}
+    .count{position:absolute;left:12px;top:12px;display:flex;gap:6px;z-index:12}.pill{background:rgba(0,0,0,.48);color:#fff;border-radius:999px;padding:6px 9px;font-size:13px;font-weight:850}
+    .controls{display:grid;grid-template-columns:1fr 1fr;gap:11px;padding:11px 13px calc(11px + env(safe-area-inset-bottom));background:rgba(9,46,31,.96);z-index:20}
+    button{appearance:none;-webkit-appearance:none;border:0;border-radius:18px;min-height:58px;font-size:19px;font-weight:950;box-shadow:0 5px 0 rgba(0,0,0,.25);touch-action:manipulation}.control:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+    #startBtn{background:#fff;color:#17442f}#swingBtn{background:var(--gold);color:#4b3600}#swingBtn:disabled{opacity:.45}
+    .overlay{position:absolute;inset:0;z-index:60;background:rgba(4,28,19,.86);display:flex;align-items:center;justify-content:center;padding:20px}.card{width:min(430px,94vw);background:#fff;border-radius:25px;padding:24px;color:#173126;text-align:center;box-shadow:0 20px 55px rgba(0,0,0,.32)}.card h1{margin:3px 0 10px;font-size:30px}.card p{line-height:1.65}.big{font-size:61px}.primary{width:100%;margin-top:10px;background:var(--gold);color:#4b3600}.back{display:inline-block;margin-top:15px;color:#315b49;font-weight:800;text-decoration:none;font-size:14px}.tiny{margin-top:11px;color:#648071;font-size:12px}
+    @media(max-height:690px){.message{top:23%;font-size:24px}.pitcher{top:40%}.diamond,.infield{top:54%}.batter{font-size:45px}.bat{height:78px}}
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar"><div class="score">分數 <span id="score">0</span></div><div class="title">⚾ 棒球打擊王</div><div class="outs">出局 <span id="outs">0</span>/3</div></div>
+  <div class="field" id="field">
+    <div class="stands"></div><div class="grass"></div><div class="diamond"></div><div class="infield"></div>
+    <div class="base b1"></div><div class="base b2"></div><div class="base b3"></div><div class="base home"></div>
+    <div class="pitcher">🧢</div><div class="zone"></div><div id="ball"></div><div class="batter" id="batter">🧍</div><div class="bat" id="bat"></div>
+    <div class="count"><span class="pill" id="pitchLabel">等待開賽</span><span class="pill">最高 <span id="best">0</span></span></div>
+    <div class="message" id="message"><span id="mainMsg">準備上場！</span><div class="sub" id="subMsg">按「開始比賽」</div></div>
+  </div>
+  <div class="controls"><button id="startBtn" class="control">開始比賽</button><button id="swingBtn" class="control" disabled>揮棒！</button></div>
+  <div class="overlay" id="intro"><div class="card"><div class="big">⚾</div><h1 id="introTitle">棒球打擊王</h1><p id="introText">看準球飛到本壘附近的瞬間按「揮棒！」，越準越容易敲出長打。</p><p><b>安打 +1</b>　<b>二壘安打 +2</b>　<b>全壘打 +4</b></p><button class="primary" id="playNow">開始玩</button><a class="back" href="index.html">← 回到 PTCG 排名</a><div class="tiny">iPhone Safari 可直接玩，也可以把這一頁加入主畫面。</div></div></div>
+</div>
+<script>
+(()=>{
+  const $=id=>document.getElementById(id);const field=$('field'),ball=$('ball'),swingBtn=$('swingBtn'),startBtn=$('startBtn'),playNow=$('playNow'),intro=$('intro'),batter=$('batter'),bat=$('bat');
+  let score=0,outs=0,playing=false,pitching=false,swung=false,raf=0,timer=0,pitchStart=0,duration=1400,ballX=0,ballY=0,targetX=0,curve=0;
+  const bestKey='baseballGameBestV1';let best=Number(localStorage.getItem(bestKey)||0);$('best').textContent=best;
+  const pitches=[{name:'直球',min:1050,max:1320,curve:0},{name:'變速球',min:1480,max:1820,curve:0},{name:'滑球',min:1220,max:1510,curve:28}];
+  const rand=(a,b)=>Math.random()*(b-a)+a;
+  function msg(a,b=''){$('mainMsg').textContent=a;$('subMsg').textContent=b}
+  function clearMotion(){if(raf)cancelAnimationFrame(raf);if(timer)clearTimeout(timer);raf=0;timer=0;pitching=false;ball.style.display='none'}
+  function reset(){score=0;outs=0;$('score').textContent='0';$('outs').textContent='0'}
+  function begin(){clearMotion();intro.style.display='none';reset();playing=true;swung=false;startBtn.textContent='重新開始';swingBtn.disabled=false;msg('比賽開始！','準備看球');schedule(600)}
+  function schedule(delay=800){if(!playing||outs>=3)return;pitching=false;swung=false;ball.style.display='none';$('pitchLabel').textContent='準備投球';timer=setTimeout(throwPitch,delay)}
+  function throwPitch(){if(!playing)return;const p=pitches[Math.floor(Math.random()*pitches.length)];duration=rand(p.min,p.max);curve=(Math.random()<.5?-1:1)*p.curve;targetX=rand(-27,27);pitchStart=performance.now();pitching=true;swung=false;$('pitchLabel').textContent=p.name;msg(p.name,'抓準進壘時機！');ball.style.display='block';raf=requestAnimationFrame(animate)}
+  function animate(now){if(!pitching)return;const r=field.getBoundingClientRect(),t=Math.min(1,(now-pitchStart)/duration),e=t*t*(3-2*t),sx=r.width/2,sy=r.height*.42,ey=r.height*.84;ballX=sx+targetX*e+Math.sin(t*Math.PI)*curve;ballY=sy+(ey-sy)*e;const s=.72+e*.55;ball.style.left=ballX+'px';ball.style.top=ballY+'px';ball.style.transform=`translate(-50%,-50%) scale(${s})`;if(t>=1){pitching=false;ball.style.display='none';if(!swung)makeOut('好球！','沒有揮棒');return}raf=requestAnimationFrame(animate)}
+  function swing(){if(!playing||!pitching||swung)return;swung=true;batter.classList.add('swing');bat.classList.add('swing');setTimeout(()=>{batter.classList.remove('swing');bat.classList.remove('swing')},160);const t=Math.min(1,(performance.now()-pitchStart)/duration),timing=Math.abs(t-.88);pitching=false;if(raf)cancelAnimationFrame(raf);if(timing<.036){hit('全壘打！！！',4,'完美時機！',true)}else if(timing<.077){hit('二壘安打！',2,'漂亮的強勁擊球',false)}else if(timing<.128){hit('安打！',1,'安全上壘',false)}else{ball.style.display='none';makeOut('揮空！','時機差一點，再試一次')}}
+  function hit(text,pts,sub,homer){score+=pts;$('score').textContent=score;if(score>best){best=score;localStorage.setItem(bestKey,String(best));$('best').textContent=best}msg(text,sub+'　+'+pts+' 分');launch(homer);schedule(1050)}
+  function makeOut(text,sub){outs++;$('outs').textContent=outs;msg(text,sub);if(outs>=3){playing=false;swingBtn.disabled=true;timer=setTimeout(endGame,700)}else schedule(900)}
+  function endGame(){clearMotion();$('introTitle').textContent='最後得分：'+score;$('introText').textContent=score>=12?'太猛了！今天根本是全壘打王！':score>=6?'打得不錯，再挑戰一次看看能不能破最高分！':'再試一次，抓球快進本壘的瞬間揮棒會更容易打中。';playNow.textContent='再玩一次';intro.style.display='flex'}
+  function launch(homer){const r=field.getBoundingClientRect(),sx=ballX||r.width/2,sy=ballY||r.height*.82,st=performance.now(),dur=homer?720:520,dir=Math.random()<.5?-1:1;ball.style.display='block';function fly(now){const t=Math.min(1,(now-st)/dur),x=sx+dir*r.width*(homer?.34:.20)*t,y=sy-r.height*(homer?.62:.35)*t-Math.sin(t*Math.PI)*85;ball.style.left=x+'px';ball.style.top=y+'px';ball.style.transform=`translate(-50%,-50%) scale(${1.18-t*.42})`;if(t<1)requestAnimationFrame(fly);else ball.style.display='none'}requestAnimationFrame(fly)}
+  function bindTap(el,fn){let touched=false;el.addEventListener('touchend',e=>{e.preventDefault();touched=true;fn();setTimeout(()=>touched=false,350)},{passive:false});el.addEventListener('click',()=>{if(!touched)fn()})}
+  bindTap(swingBtn,swing);bindTap(startBtn,begin);bindTap(playNow,begin);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){clearMotion();if(playing)schedule(700)}});
+})();
+</script>
+</body>
+</html>
