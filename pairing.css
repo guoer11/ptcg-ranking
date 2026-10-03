@@ -155,6 +155,10 @@
   background: #fff;
 }
 
+.pairing-watch-inline {
+  margin-top: 4px;
+}
+
 .pairing-watch-card + .pairing-watch-card { margin-top: 12px; }
 
 .pairing-watch-head {
