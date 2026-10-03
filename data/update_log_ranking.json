@@ -2,6 +2,19 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-10-04T03:11:55+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-10-04T03:11:55+08:00",
+      "summary": "無排名／積分變動；暱稱 1、地區 0 筆異動",
+      "details": [
+        "Master：暱稱 1",
+        "Master｜tw23935088｜暱稱 Wuyilin → Baoger"
+      ],
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
+    },
+    {
       "id": "ranking-2026-10-03T21:39:21+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -91,38 +104,6 @@
         "Master｜tw92466220｜名次 96 → 95",
         "Master｜tw79411276｜名次 96 → 95",
         "其餘 1588 筆細節省略"
-      ],
-      "notified": true,
-      "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "ranking-2026-09-30T00:05:44+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-09-30T00:05:44+08:00",
-      "summary": "有效排名變動：名次 1593、積分 164、進榜 314、離榜 0",
-      "details": [
-        "Master：名次 1237、積分 129、進榜 245、暱稱 2",
-        "Senior：名次 242、積分 27、進榜 44",
-        "Junior：名次 114、積分 8、進榜 25",
-        "Master｜tw49759795｜名次 2 → 1；積分 34 → 54",
-        "Master｜tw00387540｜名次 4 → 2；積分 28 → 48",
-        "Master｜tw22529091｜名次 1 → 3；積分 40 → 46",
-        "Master｜tw36759052｜名次 12 → 3；積分 20 → 46",
-        "Master｜tw42309306｜名次 12 → 3；積分 20 → 46",
-        "Master｜tw75551324｜名次 38 → 6；積分 12 → 42",
-        "Master｜tw23764220｜名次 27 → 7；積分 14 → 40",
-        "Master｜tw39894258｜名次 4 → 8；積分 28 → 36",
-        "Master｜tw33544977｜名次 8 → 9；積分 24 → 34",
-        "Master｜tw60273793｜名次 6 → 9；積分 26 → 34",
-        "Master｜tw37556303｜名次 3 → 11",
-        "Master｜tw11739209｜名次 38 → 11；積分 12 → 32",
-        "Master｜tw32020032｜名次 302 → 11；積分 0 → 32",
-        "Master｜tw44127879｜名次 12 → 11；積分 20 → 32",
-        "Master｜tw18638755｜名次 8 → 15；積分 24 → 30",
-        "Master｜tw41523616｜名次 6 → 16",
-        "Master｜tw46076033｜名次 12 → 16；積分 20 → 26",
-        "其餘 1894 筆細節省略"
       ],
       "notified": true,
       "trigger_source": "主排程（Supabase）"

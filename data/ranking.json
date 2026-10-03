@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-03T21:39:21+08:00",
+  "updated_at": "2026-10-04T03:11:55+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -3272,43 +3272,11 @@
       },
       {
         "rank": 400,
-        "name": "185longleg",
-        "player_id": "tw65565901",
-        "region": "宜蘭縣",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw65565901/"
-      },
-      {
-        "rank": 400,
-        "name": "33",
-        "player_id": "tw75755528",
-        "region": "臺中市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw75755528/"
-      },
-      {
-        "rank": 400,
-        "name": "3Dlong2",
-        "player_id": "tw18480972",
-        "region": "南投縣",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw18480972/"
-      },
-      {
-        "rank": 400,
         "name": "75",
         "player_id": "tw40188987",
         "region": "雲林縣",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw40188987/"
-      },
-      {
-        "rank": 400,
-        "name": "571",
-        "player_id": "tw28634769",
-        "region": "桃園市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw28634769/"
       },
       {
         "rank": 400,
@@ -3336,11 +3304,43 @@
       },
       {
         "rank": 400,
+        "name": "185longleg",
+        "player_id": "tw65565901",
+        "region": "宜蘭縣",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw65565901/"
+      },
+      {
+        "rank": 400,
+        "name": "33",
+        "player_id": "tw75755528",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw75755528/"
+      },
+      {
+        "rank": 400,
         "name": "192",
         "player_id": "tw44524433",
         "region": "新北市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw44524433/"
+      },
+      {
+        "rank": 400,
+        "name": "3Dlong2",
+        "player_id": "tw18480972",
+        "region": "南投縣",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw18480972/"
+      },
+      {
+        "rank": 400,
+        "name": "571",
+        "player_id": "tw28634769",
+        "region": "桃園市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw28634769/"
       },
       {
         "rank": 400,
@@ -3861,6 +3861,14 @@
         "region": "新北市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw80334646/"
+      },
+      {
+        "rank": 400,
+        "name": "Baoger",
+        "player_id": "tw23935088",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw23935088/"
       },
       {
         "rank": 400,
@@ -9981,14 +9989,6 @@
         "region": "臺北市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw89644458/"
-      },
-      {
-        "rank": 400,
-        "name": "Wuyilin",
-        "player_id": "tw23935088",
-        "region": "臺中市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw23935088/"
       },
       {
         "rank": 400,
