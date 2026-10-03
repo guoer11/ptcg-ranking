@@ -1,122 +1,160 @@
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
-from playwright.sync_api import sync_playwright
 
-# Scrape the official CPBL 2026 first-team batting table for the roster manager.
+import requests
+
 YEAR = 2026
-URL = f"https://cpbl.com.tw/stats/recordall?kindcode=A&position=01&year={YEAR}&sortby=11"
+BASE = "https://www.cpbl.com.tw"
+URL = (
+    f"{BASE}/stats/recordall?year={YEAR}&kindCode=A"
+    "&gameType=01&position=01&orderField=00&online=1"
+)
 OUT = Path("data/cpbl_batting_2026.json")
-TEAMS = [
-    "中信兄弟",
-    "統一7-ELEVEn獅",
-    "樂天桃猿",
-    "味全龍",
-    "富邦悍將",
-    "台鋼雄鷹",
-]
+TEAM_CODES = {
+    "ACN": "中信兄弟",
+    "ADD": "統一7-ELEVEn獅",
+    "AJL": "樂天桃猿",
+    "AAA": "味全龍",
+    "AEO": "富邦悍將",
+    "AKP": "台鋼雄鷹",
+}
 
 
-def num(s: str):
-    s = s.strip().replace(",", "")
-    if not s or s in {"-", "—"}:
+def new_session():
+    s = requests.Session()
+    s.headers.update(
+        {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/120.0.0.0 Safari/537.36"
+            ),
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
+            "X-Requested-With": "XMLHttpRequest",
+        }
+    )
+    return s
+
+
+def as_num(value: str):
+    value = value.strip().replace(",", "")
+    if not value or value in {"-", "—"}:
         return None
     try:
-        return float(s)
+        return float(value)
     except ValueError:
         return None
 
 
-def integer(s: str):
-    v = num(s)
+def as_int(value: str):
+    v = as_num(value)
     return int(v) if v is not None else None
 
 
-def extract_rows(page):
-    rows = page.locator("table tbody tr")
-    found = []
-    for i in range(rows.count()):
-        row = rows.nth(i)
-        cells = row.locator("td")
-        if cells.count() < 27:
+def fetch_batting_table():
+    s = new_session()
+    html = s.get(URL, timeout=40).text
+
+    headers = [
+        re.sub(r"\s+", "", h)
+        for h in re.findall(
+            r'<th class="num[^"]*"(?:\s+data-sortby="\d*")?[^>]*>\s*([^<\n]+?)\s*<',
+            html,
+        )
+    ]
+    rows = re.findall(r'<td class="sticky">(.*?)</td>(.*?)</tr>', html, re.S)
+    if not headers or not rows:
+        raise RuntimeError("CPBL batting table structure was not found")
+
+    def idx(name: str):
+        try:
+            return headers.index(name)
+        except ValueError:
+            return None
+
+    columns = {
+        "AVG": idx("打擊率"),
+        "G": idx("出賽數"),
+        "PA": idx("打席"),
+        "AB": idx("打數"),
+        "R": idx("得分"),
+        "RBI": idx("打點"),
+        "H": idx("安打"),
+        "1B": idx("一安"),
+        "2B": idx("二安"),
+        "3B": idx("三安"),
+        "HR": idx("全壘打"),
+        "BB": idx("四壞"),
+        "HBP": idx("死球"),
+        "K": idx("被三振"),
+        "SB": idx("盜壘"),
+        "OBP": idx("上壘率"),
+        "SLG": idx("長打率"),
+        "OPS": idx("整體攻擊指數"),
+        "OPSplus": idx("OPS+"),
+    }
+    required = ["AVG", "PA", "H", "OBP", "SLG", "OPS"]
+    if any(columns[k] is None for k in required):
+        raise RuntimeError(f"Missing expected CPBL columns: {columns}")
+
+    out = []
+    for sticky, rest in rows:
+        team_m = re.search(r"TeamNo=([A-Z]{3})", sticky)
+        name_m = re.search(r'/team/person[^>]*>\s*([^<]+?)\s*<', sticky)
+        vals = [
+            re.sub(r"<[^>]+>", "", v).strip()
+            for v in re.findall(r'<td class="num[^"]*">\s*(.*?)\s*</td>', rest, re.S)
+        ]
+        if not team_m or not name_m:
             continue
-        vals = [cells.nth(j).inner_text().strip() for j in range(cells.count())]
-        player_cell = vals[1]
-        team = next((t for t in TEAMS if player_cell.startswith(t)), None)
+        team = TEAM_CODES.get(team_m.group(1))
         if not team:
             continue
-        player = player_cell[len(team):].strip()
-        if not player:
-            continue
-        found.append({
-            "team": team,
-            "player": player,
-            "AVG": num(vals[2]),
-            "G": integer(vals[3]),
-            "PA": integer(vals[4]),
-            "AB": integer(vals[5]),
-            "R": integer(vals[6]),
-            "RBI": integer(vals[7]),
-            "H": integer(vals[8]),
-            "1B": integer(vals[9]),
-            "2B": integer(vals[10]),
-            "3B": integer(vals[11]),
-            "HR": integer(vals[12]),
-            "BB": integer(vals[15]),
-            "HBP": integer(vals[17]),
-            "K": integer(vals[18]),
-            "SB": integer(vals[22]),
-            "OBP": num(vals[24]),
-            "SLG": num(vals[25]),
-            "OPS": num(vals[26]),
-            "OPSplus": integer(vals[29]) if len(vals) > 29 else None,
-        })
-    return found
+        player = name_m.group(1).strip()
+
+        def get(key):
+            i = columns[key]
+            return vals[i] if i is not None and i < len(vals) else ""
+
+        out.append(
+            {
+                "team": team,
+                "player": player,
+                "AVG": as_num(get("AVG")),
+                "G": as_int(get("G")),
+                "PA": as_int(get("PA")),
+                "AB": as_int(get("AB")),
+                "R": as_int(get("R")),
+                "RBI": as_int(get("RBI")),
+                "H": as_int(get("H")),
+                "1B": as_int(get("1B")),
+                "2B": as_int(get("2B")),
+                "3B": as_int(get("3B")),
+                "HR": as_int(get("HR")),
+                "BB": as_int(get("BB")),
+                "HBP": as_int(get("HBP")),
+                "K": as_int(get("K")),
+                "SB": as_int(get("SB")),
+                "OBP": as_num(get("OBP")),
+                "SLG": as_num(get("SLG")),
+                "OPS": as_num(get("OPS")),
+                "OPSplus": as_int(get("OPSplus")),
+            }
+        )
+    return out
 
 
 def main():
-    all_rows = []
-    seen = set()
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page(viewport={"width": 1440, "height": 1200}, locale="zh-TW")
-        page.goto(URL, wait_until="domcontentloaded", timeout=90000)
-        page.wait_for_selector("table", timeout=90000)
+    rows = fetch_batting_table()
+    if len(rows) < 60:
+        raise RuntimeError(f"Only scraped {len(rows)} batting rows; refusing to overwrite data")
 
-        for _ in range(20):
-            page.wait_for_timeout(800)
-            rows = extract_rows(page)
-            for row in rows:
-                key = (row["team"], row["player"])
-                if key not in seen:
-                    seen.add(key)
-                    all_rows.append(row)
-
-            next_candidates = page.locator("a,button").filter(has_text="下一頁")
-            if next_candidates.count() == 0:
-                break
-            nxt = next_candidates.last
-            disabled = nxt.get_attribute("disabled") is not None or "disabled" in (nxt.get_attribute("class") or "").lower()
-            if disabled:
-                break
-            before = rows[0]["player"] if rows else ""
-            try:
-                nxt.click(timeout=5000)
-                page.wait_for_timeout(900)
-                after_rows = extract_rows(page)
-                after = after_rows[0]["player"] if after_rows else ""
-                if not after or after == before:
-                    break
-            except Exception:
-                break
-        browser.close()
-
-    if len(all_rows) < 60:
-        raise RuntimeError(f"Only scraped {len(all_rows)} batting rows; refusing to overwrite data.")
-
-    players = {f'{r["team"]}|{r["player"]}': r for r in all_rows}
+    players = {f'{r["team"]}|{r["player"]}': r for r in rows}
     payload = {
         "year": YEAR,
         "source": URL,
@@ -126,7 +164,7 @@ def main():
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Wrote {len(players)} players to {OUT}")
+    print(f"Wrote {len(players)} CPBL batting records to {OUT}")
 
 
 if __name__ == "__main__":
