@@ -24,6 +24,7 @@ FALLBACK_CSV_URL = (
     "data/processed/batters_scored.csv"
 )
 OUT = Path("data/cpbl_batting_2026.json")
+ROSTER_FILE = Path("data/cpbl_registered_players_2026.json")
 TEAM_CODES = {
     "ACN": "中信兄弟",
     "ADD": "統一7-ELEVEn獅",
@@ -33,6 +34,10 @@ TEAM_CODES = {
     "AKP": "台鋼雄鷹",
 }
 TEAM_NAMES = set(TEAM_CODES.values())
+STAT_FIELDS = (
+    "AVG", "G", "PA", "AB", "R", "RBI", "H", "1B", "2B", "3B",
+    "HR", "BB", "HBP", "K", "SB", "OBP", "SLG", "OPS", "OPSplus",
+)
 
 
 def new_session():
@@ -190,7 +195,6 @@ def fetch_from_record_html(session):
         if not cells:
             continue
 
-        # First cell is normally the sticky player/team cell. Numeric table columns follow it.
         numeric = cells[1:]
 
         def get(key):
@@ -275,6 +279,36 @@ def fetch_from_fallback_csv(session):
     return out, FALLBACK_CSV_URL
 
 
+def empty_player(team, player):
+    row = {"team": team, "player": player}
+    row.update({field: None for field in STAT_FIELDS})
+    return row
+
+
+def build_registered_pool(stat_rows):
+    stats = {f'{r["team"]}|{r["player"]}': r for r in stat_rows}
+    if not ROSTER_FILE.exists():
+        print(f"Roster file {ROSTER_FILE} not found; using batting-stat players only")
+        return stats
+
+    roster = json.loads(ROSTER_FILE.read_text(encoding="utf-8"))
+    registered = roster.get("teams", {})
+    players = {}
+    for team, names in registered.items():
+        if team not in TEAM_NAMES or not isinstance(names, list):
+            continue
+        for name in names:
+            name = str(name).strip()
+            if not name:
+                continue
+            key = f"{team}|{name}"
+            players[key] = stats.get(key, empty_player(team, name))
+
+    if len(players) < 250:
+        raise RuntimeError(f"Registered roster pool unexpectedly small: {len(players)}")
+    return players
+
+
 def main():
     session = new_session()
     errors = []
@@ -283,7 +317,7 @@ def main():
     for loader in (fetch_from_api, fetch_from_record_html, fetch_from_fallback_csv):
         try:
             rows, source = loader(session)
-            print(f"Loaded {len(rows)} rows from {source}")
+            print(f"Loaded {len(rows)} batting rows from {source}")
             break
         except Exception as exc:
             errors.append(f"{loader.__name__}: {exc}")
@@ -292,17 +326,18 @@ def main():
     if not rows:
         raise RuntimeError("All CPBL batting sources failed: " + " | ".join(errors))
 
-    players = {f'{r["team"]}|{r["player"]}': r for r in rows}
+    players = build_registered_pool(rows)
     payload = {
         "year": YEAR,
         "source": source,
+        "roster_source": "https://www.cpbl.com.tw/player",
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "count": len(players),
         "players": players,
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Wrote {len(players)} CPBL batting records to {OUT}")
+    print(f"Wrote {len(players)} registered CPBL players to {OUT}")
 
 
 if __name__ == "__main__":
