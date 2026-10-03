@@ -96,11 +96,24 @@
   <script src="site-account-ui.js?v=1.9.2-r1" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const source = document.getElementById('pairingSourceUrl'); const round = document.getElementById('pairingRound'); if (!source || !round) return;
-      const syncRoundFromUrl = () => { const raw = source.value.trim(); if (!raw) return; try { const url = new URL(raw); if (url.hostname !== 'tcg.sfc-jpn.jp') return; if (/\/tourround\.asp$/i.test(url.pathname)) { const kno = Number(url.searchParams.get('kno')); if (Number.isInteger(kno) && kno >= 1) round.value = String(kno); return; } if (/\/tour\.asp$/i.test(url.pathname)) round.value = '1'; } catch (_) {} };
-      source.addEventListener('input', syncRoundFromUrl); source.addEventListener('change', syncRoundFromUrl); syncRoundFromUrl();
+      const source = document.getElementById('pairingSourceUrl');
+      const round = document.getElementById('pairingRound');
+      if (source && round) {
+        const syncRoundFromUrl = () => { const raw = source.value.trim(); if (!raw) return; try { const url = new URL(raw); if (url.hostname !== 'tcg.sfc-jpn.jp') return; if (/\/tourround\.asp$/i.test(url.pathname)) { const kno = Number(url.searchParams.get('kno')); if (Number.isInteger(kno) && kno >= 1) round.value = String(kno); return; } if (/\/tour\.asp$/i.test(url.pathname)) round.value = '1'; } catch (_) {} };
+        source.addEventListener('input', syncRoundFromUrl);
+        source.addEventListener('change', syncRoundFromUrl);
+        syncRoundFromUrl();
+      }
+
+      const keepMonitorAboveScout = () => {
+        const monitor = document.querySelector('.pairing-watch-inline');
+        const scout = document.getElementById('pairingDeckScout');
+        if (!monitor || !scout) return;
+        if (monitor.nextElementSibling !== scout) monitor.after(scout);
+      };
+      keepMonitorAboveScout();
+      setTimeout(keepMonitorAboveScout, 0);
     });
   </script>
 </body>
 </html>
-
