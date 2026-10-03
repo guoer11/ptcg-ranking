@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import csv
+import io
 import json
 import re
 from datetime import datetime, timezone
@@ -9,9 +11,17 @@ import requests
 
 YEAR = 2026
 BASE = "https://www.cpbl.com.tw"
-URL = (
+RECORD_URL = (
     f"{BASE}/stats/recordall?year={YEAR}&kindCode=A"
     "&gameType=01&position=01&orderField=00&online=1"
+)
+API_URL = (
+    "https://stats.cpbl.com.tw/api/proxy/v1/leaderboards/pr-table"
+    f"?year={YEAR}&searchType=batter&gameKind=A"
+)
+FALLBACK_CSV_URL = (
+    "https://raw.githubusercontent.com/Lily09-project/CPBL-baseball/main/"
+    "data/processed/batters_scored.csv"
 )
 OUT = Path("data/cpbl_batting_2026.json")
 TEAM_CODES = {
@@ -22,6 +32,7 @@ TEAM_CODES = {
     "AEO": "富邦悍將",
     "AKP": "台鋼雄鷹",
 }
+TEAM_NAMES = set(TEAM_CODES.values())
 
 
 def new_session():
@@ -33,17 +44,20 @@ def new_session():
                 "AppleWebKit/537.36 (KHTML, like Gecko) "
                 "Chrome/120.0.0.0 Safari/537.36"
             ),
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept": "application/json,text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
-            "X-Requested-With": "XMLHttpRequest",
         }
     )
     return s
 
 
-def as_num(value: str):
-    value = value.strip().replace(",", "")
-    if not value or value in {"-", "—"}:
+def as_num(value):
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    value = str(value).strip().replace(",", "")
+    if not value or value in {"-", "—", "null", "None"}:
         return None
     try:
         return float(value)
@@ -51,80 +65,146 @@ def as_num(value: str):
         return None
 
 
-def as_int(value: str):
+def as_int(value):
     v = as_num(value)
     return int(v) if v is not None else None
 
 
-def fetch_batting_table():
-    s = new_session()
-    html = s.get(URL, timeout=40).text
+def pick(obj, *names):
+    for name in names:
+        if isinstance(obj, dict) and name in obj and obj[name] not in (None, ""):
+            return obj[name]
+    return None
+
+
+def unwrap_api(payload):
+    data = payload.get("Data", payload.get("data", payload)) if isinstance(payload, dict) else payload
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict):
+        for key in ("Leaderboard", "leaderboard", "Rows", "rows", "Items", "items", "Records", "records"):
+            if isinstance(data.get(key), list):
+                return data[key]
+    return []
+
+
+def normalize_api_row(x):
+    player_obj = x.get("Player") or x.get("player") or {}
+    team_obj = x.get("Team") or x.get("team") or {}
+    player = pick(player_obj, "Name", "name") or pick(x, "PlayerName", "playerName", "Name", "name")
+    team = pick(team_obj, "Name", "name") or pick(x, "TeamName", "teamName")
+    if team not in TEAM_NAMES or not player:
+        return None
+
+    avg = as_num(pick(x, "Ba", "BA", "ba", "Avg", "AVG", "avg"))
+    obp = as_num(pick(x, "Obp", "OBP", "obp"))
+    slg = as_num(pick(x, "Slg", "SLG", "slg"))
+    ops = as_num(pick(x, "Ops", "OPS", "ops"))
+    if ops is None and obp is not None and slg is not None:
+        ops = round(obp + slg, 3)
+
+    return {
+        "team": team,
+        "player": str(player).strip(),
+        "AVG": avg,
+        "G": as_int(pick(x, "G", "Games", "games")),
+        "PA": as_int(pick(x, "Pa", "PA", "pa")),
+        "AB": as_int(pick(x, "Ab", "AB", "ab")),
+        "R": as_int(pick(x, "R", "Runs", "runs")),
+        "RBI": as_int(pick(x, "Rbi", "RBI", "rbi")),
+        "H": as_int(pick(x, "H", "Hits", "hits")),
+        "1B": as_int(pick(x, "B1", "1B", "Singles", "singles")),
+        "2B": as_int(pick(x, "B2", "2B", "Doubles", "doubles")),
+        "3B": as_int(pick(x, "B3", "3B", "Triples", "triples")),
+        "HR": as_int(pick(x, "Hr", "HR", "HomeRuns", "homeRuns", "home_runs")),
+        "BB": as_int(pick(x, "Bb", "BB", "Walks", "walks")),
+        "HBP": as_int(pick(x, "Hbp", "HBP", "hbp")),
+        "K": as_int(pick(x, "So", "SO", "K", "Strikeouts", "strikeouts")),
+        "SB": as_int(pick(x, "Sb", "SB", "StolenBases", "stolenBases")),
+        "OBP": obp,
+        "SLG": slg,
+        "OPS": ops,
+        "OPSplus": as_int(pick(x, "OpsPlus", "OPSplus", "OPS+", "opsPlus")),
+    }
+
+
+def fetch_from_api(session):
+    r = session.get(API_URL, timeout=40)
+    r.raise_for_status()
+    rows = unwrap_api(r.json())
+    out = [normalize_api_row(x) for x in rows]
+    out = [x for x in out if x]
+    if len(out) < 60:
+        raise RuntimeError(f"CPBL API returned only {len(out)} usable batting rows")
+    return out, API_URL
+
+
+def fetch_from_record_html(session):
+    r = session.get(RECORD_URL, timeout=40)
+    r.raise_for_status()
+    html = r.text
 
     headers = [
-        re.sub(r"\s+", "", h)
-        for h in re.findall(
-            r'<th class="num[^"]*"(?:\s+data-sortby="\d*")?[^>]*>\s*([^<\n]+?)\s*<',
-            html,
-        )
+        re.sub(r"\s+", "", re.sub(r"<[^>]+>", "", h))
+        for h in re.findall(r"<th[^>]*>(.*?)</th>", html, re.S)
     ]
-    rows = re.findall(r'<td class="sticky">(.*?)</td>(.*?)</tr>', html, re.S)
+    rows = re.findall(r"<tr[^>]*>(.*?)</tr>", html, re.S)
     if not headers or not rows:
-        raise RuntimeError("CPBL batting table structure was not found")
+        raise RuntimeError("CPBL batting HTML table structure was not found")
 
-    def idx(name: str):
-        try:
-            return headers.index(name)
-        except ValueError:
-            return None
-
-    columns = {
-        "AVG": idx("打擊率"),
-        "G": idx("出賽數"),
-        "PA": idx("打席"),
-        "AB": idx("打數"),
-        "R": idx("得分"),
-        "RBI": idx("打點"),
-        "H": idx("安打"),
-        "1B": idx("一安"),
-        "2B": idx("二安"),
-        "3B": idx("三安"),
-        "HR": idx("全壘打"),
-        "BB": idx("四壞"),
-        "HBP": idx("死球"),
-        "K": idx("被三振"),
-        "SB": idx("盜壘"),
-        "OBP": idx("上壘率"),
-        "SLG": idx("長打率"),
-        "OPS": idx("整體攻擊指數"),
-        "OPSplus": idx("OPS+"),
+    aliases = {
+        "AVG": "打擊率",
+        "G": "出賽數",
+        "PA": "打席",
+        "AB": "打數",
+        "R": "得分",
+        "RBI": "打點",
+        "H": "安打",
+        "1B": "一安",
+        "2B": "二安",
+        "3B": "三安",
+        "HR": "全壘打",
+        "BB": "四壞",
+        "HBP": "死球",
+        "K": "被三振",
+        "SB": "盜壘",
+        "OBP": "上壘率",
+        "SLG": "長打率",
+        "OPS": "整體攻擊指數",
+        "OPSplus": "OPS+",
     }
-    required = ["AVG", "PA", "H", "OBP", "SLG", "OPS"]
-    if any(columns[k] is None for k in required):
-        raise RuntimeError(f"Missing expected CPBL columns: {columns}")
+    idx = {k: headers.index(v) if v in headers else None for k, v in aliases.items()}
+    if any(idx[k] is None for k in ("AVG", "PA", "H", "OBP", "SLG", "OPS")):
+        raise RuntimeError(f"Missing expected CPBL HTML columns: {idx}")
 
     out = []
-    for sticky, rest in rows:
-        team_m = re.search(r"TeamNo=([A-Z]{3})", sticky)
-        name_m = re.search(r'/team/person[^>]*>\s*([^<]+?)\s*<', sticky)
-        vals = [
-            re.sub(r"<[^>]+>", "", v).strip()
-            for v in re.findall(r'<td class="num[^"]*">\s*(.*?)\s*</td>', rest, re.S)
-        ]
+    for tr in rows:
+        team_m = re.search(r"TeamNo=([A-Z]{3})", tr)
+        name_m = re.search(r'/team/person[^>]*>\s*([^<]+?)\s*<', tr)
         if not team_m or not name_m:
             continue
         team = TEAM_CODES.get(team_m.group(1))
         if not team:
             continue
-        player = name_m.group(1).strip()
+        cells = [re.sub(r"\s+", "", re.sub(r"<[^>]+>", "", c)) for c in re.findall(r"<td[^>]*>(.*?)</td>", tr, re.S)]
+        if not cells:
+            continue
+
+        # First cell is normally the sticky player/team cell. Numeric table columns follow it.
+        numeric = cells[1:]
 
         def get(key):
-            i = columns[key]
-            return vals[i] if i is not None and i < len(vals) else ""
+            i = idx[key]
+            return numeric[i] if i is not None and i < len(numeric) else None
 
+        obp, slg = as_num(get("OBP")), as_num(get("SLG"))
+        ops = as_num(get("OPS"))
+        if ops is None and obp is not None and slg is not None:
+            ops = round(obp + slg, 3)
         out.append(
             {
                 "team": team,
-                "player": player,
+                "player": name_m.group(1).strip(),
                 "AVG": as_num(get("AVG")),
                 "G": as_int(get("G")),
                 "PA": as_int(get("PA")),
@@ -140,24 +220,82 @@ def fetch_batting_table():
                 "HBP": as_int(get("HBP")),
                 "K": as_int(get("K")),
                 "SB": as_int(get("SB")),
-                "OBP": as_num(get("OBP")),
-                "SLG": as_num(get("SLG")),
-                "OPS": as_num(get("OPS")),
+                "OBP": obp,
+                "SLG": slg,
+                "OPS": ops,
                 "OPSplus": as_int(get("OPSplus")),
             }
         )
-    return out
+
+    if len(out) < 60:
+        raise RuntimeError(f"CPBL HTML returned only {len(out)} usable batting rows")
+    return out, RECORD_URL
+
+
+def fetch_from_fallback_csv(session):
+    r = session.get(FALLBACK_CSV_URL, timeout=40)
+    r.raise_for_status()
+    text = r.text.lstrip("\ufeff")
+    reader = csv.DictReader(io.StringIO(text))
+    out = []
+    for row in reader:
+        if str(row.get("season", "")) != str(YEAR):
+            continue
+        team = row.get("team")
+        player = row.get("player_name")
+        if team not in TEAM_NAMES or not player:
+            continue
+        out.append(
+            {
+                "team": team,
+                "player": player.strip(),
+                "AVG": as_num(row.get("batting_average")),
+                "G": None,
+                "PA": as_int(row.get("pa")),
+                "AB": as_int(row.get("ab")),
+                "R": None,
+                "RBI": None,
+                "H": as_int(row.get("hits")),
+                "1B": None,
+                "2B": as_int(row.get("doubles")),
+                "3B": as_int(row.get("triples")),
+                "HR": as_int(row.get("home_runs")),
+                "BB": as_int(row.get("walks")),
+                "HBP": None,
+                "K": as_int(row.get("strikeouts")),
+                "SB": as_int(row.get("stolen_bases")),
+                "OBP": as_num(row.get("obp")),
+                "SLG": as_num(row.get("slg")),
+                "OPS": as_num(row.get("ops")),
+                "OPSplus": None,
+            }
+        )
+    if len(out) < 60:
+        raise RuntimeError(f"Fallback CSV returned only {len(out)} batting rows")
+    return out, FALLBACK_CSV_URL
 
 
 def main():
-    rows = fetch_batting_table()
-    if len(rows) < 60:
-        raise RuntimeError(f"Only scraped {len(rows)} batting rows; refusing to overwrite data")
+    session = new_session()
+    errors = []
+    rows = None
+    source = None
+    for loader in (fetch_from_api, fetch_from_record_html, fetch_from_fallback_csv):
+        try:
+            rows, source = loader(session)
+            print(f"Loaded {len(rows)} rows from {source}")
+            break
+        except Exception as exc:
+            errors.append(f"{loader.__name__}: {exc}")
+            print(errors[-1])
+
+    if not rows:
+        raise RuntimeError("All CPBL batting sources failed: " + " | ".join(errors))
 
     players = {f'{r["team"]}|{r["player"]}': r for r in rows}
     payload = {
         "year": YEAR,
-        "source": URL,
+        "source": source,
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "count": len(players),
         "players": players,
