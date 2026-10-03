@@ -13,74 +13,58 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Inspect TE player search implementation
+      - name: Fetch public TE player records
         shell: bash
         run: |
           python - <<'PY'
-          import os, re, json, urllib.request, urllib.parse, html as htmlmod
+          import os, json, urllib.request, urllib.parse
 
-          base = 'https://ptcg.bcb.idv.tw/TE'
+          endpoint = 'https://ptcg.bcb.idv.tw/TE/SearchPlayers'
           headers = {
               'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36',
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+              'Accept': 'application/json,text/plain,*/*',
+              'Referer': 'https://ptcg.bcb.idv.tw/TE',
           }
 
-          def get(url, timeout=30):
+          def search(keyword):
+              url = endpoint + '?' + urllib.parse.urlencode({'keyword': keyword})
               req = urllib.request.Request(url, headers=headers)
-              with urllib.request.urlopen(req, timeout=timeout) as r:
-                  data = r.read()
-                  charset = r.headers.get_content_charset() or 'utf-8'
-                  return r.status, r.geturl(), data.decode(charset, errors='replace')
+              with urllib.request.urlopen(req, timeout=60) as r:
+                  raw = r.read().decode(r.headers.get_content_charset() or 'utf-8', errors='replace')
+              data = json.loads(raw)
+              players = data.get('players') or [] if data.get('success') else []
+              return data, players
 
-          status, final_url, page = get(base)
-          print('PAGE_STATUS', status)
-          print('PAGE_FINAL_URL', final_url)
-          print('PAGE_LENGTH', len(page))
-          os.makedirs('ivan_te_probe', exist_ok=True)
-          open('ivan_te_probe/TE.html', 'w', encoding='utf-8').write(page)
-
-          # Print likely player-search code directly from the server-rendered HTML.
-          keywords = ['搜尋玩家', '玩家搜尋', 'player', 'Player', 'member', 'Member', 'ajax', 'axios', 'fetch(', '$.get', '$.post', '$.ajax', 'new Vue', 'methods:', 'mounted:', '/TE']
-          lines = page.splitlines()
-          for i, line in enumerate(lines, 1):
-              if any(k in line for k in keywords):
-                  print(f'PAGE_HIT_LINE {i}: {line[:1800]}')
-
-          # Extract quoted URL/path candidates from inline scripts and markup.
-          candidates = []
-          for m in re.finditer(r'["\']((?:https?://[^"\']+)|(?:/[A-Za-z0-9_./?=&%-]{2,}))?["\']', page):
-              value = m.group(1)
-              if not value:
+          os.makedirs('ivan_te_players', exist_ok=True)
+          data, players = search('tw')
+          valid = []
+          seen = set()
+          for p in players:
+              pid = str(p.get('twpid') or '').strip().lower()
+              name = str(p.get('cName') or '').strip()
+              if not (pid.startswith('tw') and pid[2:].isdigit() and name):
                   continue
-              low = value.lower()
-              if any(k in low for k in ['te', 'player', 'member', 'search', 'event', 'tournament', 'api']):
-                  candidates.append(value)
-          print('URL_CANDIDATES', json.dumps(sorted(set(candidates)), ensure_ascii=False, indent=2))
+              if pid in seen:
+                  continue
+              seen.add(pid)
+              valid.append({'player_id': pid, 'real_name': name})
 
-          # Save inline scripts separately and scan their network-call neighborhoods.
-          inline = re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>', page, flags=re.I|re.S)
-          call_re = re.compile(r'(?:fetch\s*\(|axios\.|\$\.ajax|\$\.get|\$\.post|XMLHttpRequest|/TE|player|搜尋玩家)', re.I)
-          summaries = []
-          for idx, text in enumerate(inline):
-              open(f'ivan_te_probe/inline_{idx}.js', 'w', encoding='utf-8').write(text)
-              hits = []
-              for m in call_re.finditer(text):
-                  a=max(0,m.start()-500); b=min(len(text),m.end()+900)
-                  snip=text[a:b].replace('\n',' ')
-                  if snip not in hits:
-                      hits.append(snip)
-                  if len(hits)>=80: break
-              if hits:
-                  print('INLINE_SCRIPT', idx, 'LEN', len(text), 'HITS', len(hits))
-                  for h in hits:
-                      print('INLINE_HIT', h[:1800])
-              summaries.append({'index':idx,'length':len(text),'hits':hits})
-          open('ivan_te_probe/inline_summary.json','w',encoding='utf-8').write(json.dumps(summaries,ensure_ascii=False,indent=2))
+          print('SEARCH_SUCCESS', bool(data.get('success')))
+          print('RAW_PLAYER_COUNT', len(players))
+          print('VALID_IDENTITY_COUNT', len(valid))
+          print('FIELDS', sorted({k for p in players[:100] for k in p.keys()}))
+          if players:
+              print('FIRST_ID', str(players[0].get('twpid') or '').strip().lower())
+              print('LAST_ID', str(players[-1].get('twpid') or '').strip().lower())
+
+          with open('ivan_te_players/players.json', 'w', encoding='utf-8') as f:
+              json.dump(valid, f, ensure_ascii=False, indent=2)
+          with open('ivan_te_players/meta.json', 'w', encoding='utf-8') as f:
+              json.dump({'raw_count': len(players), 'valid_count': len(valid), 'success': bool(data.get('success'))}, f, ensure_ascii=False, indent=2)
           PY
-      - name: Upload probe
+      - name: Upload public player data
         uses: actions/upload-artifact@v4
         with:
-          name: ivan-te-probe-inline
-          path: ivan_te_probe/
+          name: ivan-te-players
+          path: ivan_te_players/
           retention-days: 1
