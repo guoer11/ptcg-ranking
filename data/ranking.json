@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-03T00:05:50+08:00",
+  "updated_at": "2026-10-03T21:39:21+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -410,7 +410,7 @@
         "rank": 46,
         "name": "LUGIA",
         "player_id": "tw38080173",
-        "region": "高雄市",
+        "region": "臺南市",
         "points": 16,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw38080173/"
       },
