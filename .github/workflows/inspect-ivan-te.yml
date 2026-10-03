@@ -14,11 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch TE page and inspect assets
+      - name: Inspect TE player search implementation
         shell: bash
         run: |
           python - <<'PY'
-          import os, re, json, urllib.request, urllib.parse, html
+          import os, re, json, urllib.request, urllib.parse, html as htmlmod
 
           base = 'https://ptcg.bcb.idv.tw/TE'
           headers = {
@@ -40,40 +40,47 @@ jobs:
           os.makedirs('ivan_te_probe', exist_ok=True)
           open('ivan_te_probe/TE.html', 'w', encoding='utf-8').write(page)
 
-          scripts = re.findall(r'<script[^>]+src=["\']([^"\']+)', page, flags=re.I)
-          links = re.findall(r'<link[^>]+href=["\']([^"\']+)', page, flags=re.I)
-          print('SCRIPTS', json.dumps(scripts, ensure_ascii=False))
-          print('LINKS', json.dumps(links, ensure_ascii=False))
+          # Print likely player-search code directly from the server-rendered HTML.
+          keywords = ['搜尋玩家', '玩家搜尋', 'player', 'Player', 'member', 'Member', 'ajax', 'axios', 'fetch(', '$.get', '$.post', '$.ajax', 'new Vue', 'methods:', 'mounted:', '/TE']
+          lines = page.splitlines()
+          for i, line in enumerate(lines, 1):
+              if any(k in line for k in keywords):
+                  print(f'PAGE_HIT_LINE {i}: {line[:1800]}')
 
-          patterns = re.compile(r'(player|玩家|search|搜尋|api|axios|fetch\(|/TE|tournament|event|ptcg|member)', re.I)
-          summaries = []
-          for idx, src in enumerate(scripts):
-              url = urllib.parse.urljoin(final_url, html.unescape(src))
-              try:
-                  s, u, text = get(url)
-              except Exception as e:
-                  print('SCRIPT_FAIL', url, repr(e))
+          # Extract quoted URL/path candidates from inline scripts and markup.
+          candidates = []
+          for m in re.finditer(r'["\']((?:https?://[^"\']+)|(?:/[A-Za-z0-9_./?=&%-]{2,}))?["\']', page):
+              value = m.group(1)
+              if not value:
                   continue
-              fn = f'ivan_te_probe/script_{idx}.js'
-              open(fn, 'w', encoding='utf-8').write(text)
+              low = value.lower()
+              if any(k in low for k in ['te', 'player', 'member', 'search', 'event', 'tournament', 'api']):
+                  candidates.append(value)
+          print('URL_CANDIDATES', json.dumps(sorted(set(candidates)), ensure_ascii=False, indent=2))
+
+          # Save inline scripts separately and scan their network-call neighborhoods.
+          inline = re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>', page, flags=re.I|re.S)
+          call_re = re.compile(r'(?:fetch\s*\(|axios\.|\$\.ajax|\$\.get|\$\.post|XMLHttpRequest|/TE|player|搜尋玩家)', re.I)
+          summaries = []
+          for idx, text in enumerate(inline):
+              open(f'ivan_te_probe/inline_{idx}.js', 'w', encoding='utf-8').write(text)
               hits = []
-              for m in patterns.finditer(text):
-                  a = max(0, m.start()-140)
-                  b = min(len(text), m.end()+260)
-                  snippet = text[a:b].replace('\n', ' ')
-                  if snippet not in hits:
-                      hits.append(snippet)
-                  if len(hits) >= 40:
-                      break
-              print('SCRIPT', idx, u, 'LEN', len(text), 'HITS', len(hits))
-              for hit in hits:
-                  print('HIT', hit[:500])
-              summaries.append({'index': idx, 'url': u, 'length': len(text), 'hits': hits})
-          open('ivan_te_probe/summary.json', 'w', encoding='utf-8').write(json.dumps(summaries, ensure_ascii=False, indent=2))
+              for m in call_re.finditer(text):
+                  a=max(0,m.start()-500); b=min(len(text),m.end()+900)
+                  snip=text[a:b].replace('\n',' ')
+                  if snip not in hits:
+                      hits.append(snip)
+                  if len(hits)>=80: break
+              if hits:
+                  print('INLINE_SCRIPT', idx, 'LEN', len(text), 'HITS', len(hits))
+                  for h in hits:
+                      print('INLINE_HIT', h[:1800])
+              summaries.append({'index':idx,'length':len(text),'hits':hits})
+          open('ivan_te_probe/inline_summary.json','w',encoding='utf-8').write(json.dumps(summaries,ensure_ascii=False,indent=2))
           PY
       - name: Upload probe
         uses: actions/upload-artifact@v4
         with:
-          name: ivan-te-probe
+          name: ivan-te-probe-inline
           path: ivan_te_probe/
           retention-days: 1
