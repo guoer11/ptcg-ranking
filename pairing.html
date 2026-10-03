@@ -38,8 +38,8 @@
           <div class="pairing-actions"><button id="pairingLookupButton" class="primary-btn" type="button">查詢這一輪</button><button id="pairingOpenOfficialButton" class="secondary-btn" type="button">開官方配對頁</button><button id="pairingLoadTestButton" class="secondary-btn pairing-test-btn" type="button">載入歷史測試場</button><button id="pairingTestButton" class="secondary-btn pairing-test-btn" type="button">測試 Round 通知</button><button id="pairingFinalTestButton" class="secondary-btn pairing-test-btn" type="button">測試最終排名通知</button></div>
         </div>
         <div id="pairingResult" class="pairing-result is-waiting"><div class="pairing-result-title"><strong>尚未查詢</strong><span class="pairing-round-badge">等待輸入</span></div><div class="pairing-watch-copy">可先按「載入歷史測試場」，用 2026/9/12 高級球孩童組驗證配對與最終排名通知。</div></div>
-        <div id="pairingMessage" class="pairing-message"></div>
         <section class="pairing-watch-card pairing-watch-inline"><div class="pairing-watch-head"><strong>配對 / 最終排名自動監控</strong><span id="pairingWatchStatus" class="pairing-watch-status"><span class="pairing-watch-dot"></span>未監控</span></div><div id="pairingWatchCopy" class="pairing-watch-copy">設定目前 Round 後即可開始監控；如果這一輪尚未公布，就直接等待本輪，若已公布則自動等待下一輪。後端每 <strong>10 秒</strong>檢查配對與最終排名。</div><div class="pairing-actions" style="margin-top:14px;"><button id="pairingStartButton" class="primary-btn" type="button">開始監控配對</button><button id="pairingStopButton" class="secondary-btn" type="button">停止監控</button></div></section>
+        <div id="pairingMessage" class="pairing-message"></div>
         <section id="pairingDeckScout" class="pairing-scout-panel pairing-scout-card" aria-labelledby="pairingScoutHeading">
           <div class="pairing-scout-head">
             <div><h2 id="pairingScoutHeading">牌組偵察</h2><p>臨時查詢桌號或 PTCG ID，查看玩家與對手後直接記錄牌組；不影響上方的追蹤玩家與自動監控。</p></div>
@@ -103,5 +103,4 @@
   </script>
 </body>
 </html>
-
 
