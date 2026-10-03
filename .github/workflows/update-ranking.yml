@@ -14,6 +14,7 @@ on:
       - "update_log.py"
       - "scrape_identity.py"
       - "scrape_identity_preflight.py"
+      - "merge_te_identity.py"
       - "sync_identity_supabase.py"
       - "encrypt_identity.py"
       - "privacy/player_identity_public.pem"
@@ -52,6 +53,7 @@ jobs:
         run: |
           python scrape_identity.py
           python scrape_identity_preflight.py
+          python merge_te_identity.py
 
       - name: Sync private player names to Supabase
         env:
