@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
+# Scrape the official CPBL 2026 first-team batting table for the roster manager.
 YEAR = 2026
 URL = f"https://cpbl.com.tw/stats/recordall?kindcode=A&position=01&year={YEAR}&sortby=11"
 OUT = Path("data/cpbl_batting_2026.json")
