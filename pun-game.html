@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>諧音梗大冒險</title>
+  <style>
+    :root{--bg1:#fff8df;--bg2:#dff7ff;--ink:#2f3142;--accent:#ff9f43;--good:#2ecc71;--bad:#ff6b6b;--shadow:0 14px 30px rgba(45,55,72,.14)}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{min-height:100%;margin:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;color:var(--ink);background:linear-gradient(160deg,var(--bg1),var(--bg2));padding:calc(18px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:center}
+    .wrap{width:min(720px,100%)}.title{text-align:center;font-size:clamp(30px,7vw,48px);margin:0 0 6px;font-weight:900}.sub{text-align:center;opacity:.7;margin:0 0 18px}
+    .card{background:rgba(255,255,255,.94);border-radius:26px;padding:22px;box-shadow:var(--shadow);border:2px solid rgba(255,255,255,.7)}
+    .topbar{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}.pill{background:#f4f6fb;border-radius:999px;padding:8px 13px;font-weight:800}.progress{height:12px;background:#edf0f5;border-radius:999px;overflow:hidden;margin-bottom:20px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#ffd166);transition:.3s}.emoji{font-size:64px;text-align:center;margin:4px 0 12px}.q{font-size:clamp(22px,5vw,32px);line-height:1.35;text-align:center;font-weight:900;margin:0 0 18px}.answers{display:grid;gap:12px}
+    button{appearance:none;-webkit-appearance:none;border:0;border-radius:18px;padding:15px 16px;min-height:54px;font-size:18px;font-weight:850;cursor:pointer;background:#f5f7fb;color:var(--ink);box-shadow:0 4px 0 rgba(0,0,0,.05);touch-action:manipulation;user-select:none;-webkit-user-select:none}
+    button:active{transform:translateY(1px)}.answer{border:2px solid transparent}.answer.correct{background:#eafff2;border-color:var(--good)}.answer.wrong{background:#fff0f0;border-color:var(--bad)}.msg{margin-top:16px;padding:14px 16px;border-radius:18px;background:#f7f9fc;display:none;line-height:1.6}.msg.show{display:block}.next,.start,.restart{width:100%;margin-top:14px;background:linear-gradient(90deg,var(--accent),#ffbe76);color:white;font-size:20px}.hidden{display:none!important}.center{text-align:center}.big{font-size:58px;margin:6px 0}.score{font-size:30px;font-weight:900}.tiny{font-size:13px;opacity:.65;margin-top:10px;text-align:center}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="title">🤣 諧音梗大冒險</h1><p class="sub">答得出來算你厲害，笑出來算你輸一半。</p>
+  <section id="startScreen" class="card center"><div class="big">🧠💥</div><h2>準備接受冷笑話攻擊了嗎？</h2><p>共 12 題，每題都有一個諧音梗。答對 +10 分。</p><button id="startBtn" class="start" type="button">開始挑戰</button><div class="tiny">iPhone Safari 可直接遊玩</div></section>
+  <section id="gameScreen" class="card hidden"><div class="topbar"><div class="pill">第 <span id="num">1</span> / <span id="total">12</span> 題</div><div class="pill">分數：<span id="score">0</span></div></div><div class="progress"><div id="bar" class="bar"></div></div><div id="emoji" class="emoji">🐟</div><h2 id="question" class="q"></h2><div id="answers" class="answers"></div><div id="message" class="msg"></div><button id="nextBtn" class="next hidden" type="button">下一題</button></section>
+  <section id="endScreen" class="card center hidden"><div id="endEmoji" class="big">🏆</div><h2>挑戰結束！</h2><div class="score"><span id="finalScore">0</span> 分</div><p id="rankText"></p><button id="restartBtn" class="restart" type="button">再玩一次</button></section>
+</div>
+<script>
+(function(){
+const allQuestions=[
+{e:"🐟",q:"有一隻魚一直不說話，牠可能是什麼魚？",a:["鮪魚","沉默的魚","鯊魚","章魚"],c:0,x:"因為『鮪魚』聽起來像『無語』。"},
+{e:"🧊",q:"什麼東西最會道歉？",a:["冰塊","對不起司","橡皮擦","衛生紙"],c:1,x:"『對不起司』＝對不起＋起司。很冷，但就是要冷。"},
+{e:"🐑",q:"羊打電話給另一隻羊，第一句最可能說什麼？",a:["咩事？","你好嗎？","吃草了嗎？","羊羊得意"],c:0,x:"『咩事』聽起來像『什麼事』。"},
+{e:"🍐",q:"什麼水果最容易讓人分開？",a:["蘋果","香蕉","梨子","西瓜"],c:2,x:"梨＝離，所以『梨子』自帶一點離別感。"},
+{e:"🐔",q:"哪一種雞最愛幫人打氣？",a:["烤雞","炸雞","加油雞","母雞"],c:2,x:"『加油雞』就是一直幫你加油的雞。"},
+{e:"🍜",q:"有一碗麵很會拖時間，它可能是哪種麵？",a:["拉麵","拖延麵","陽春麵","泡麵"],c:0,x:"『拉麵』可以理解成一直『拉』時間。"},
+{e:"🦌",q:"哪一種鹿最常迷路？",a:["梅花鹿","麋鹿","長頸鹿","馴鹿"],c:1,x:"『麋鹿』聽起來就像『迷路』。"},
+{e:"🍌",q:"香蕉去看醫生，醫生可能會對它說什麼？",a:["蕉慮太多了","你太甜了","多喝水","不要剝皮"],c:0,x:"『蕉慮』＝焦慮。香蕉也有煩惱。"},
+{e:"🐷",q:"豬為什麼很會存錢？",a:["因為牠有撲滿親戚","因為牠不花錢","因為牠住銀行","因為牠很小氣"],c:0,x:"存錢筒常做成小豬，所以豬跟『撲滿』超有關係。"},
+{e:"🥚",q:"雞蛋突然很生氣，最可能變成什麼？",a:["臭雞蛋","氣蛋","炸蛋","皮蛋"],c:1,x:"『氣蛋』＝氣到變蛋，聽起來又像汽彈。"},
+{e:"🧀",q:"起司最怕哪一句話？",a:["你很好吃","起來！","司機來了","不要再起司了"],c:1,x:"『起司』最怕被叫『起來』，因為牠已經起了。"},
+{e:"🌽",q:"玉米去燙頭髮，回來會變什麼？",a:["爆米花","玉米鬚","捲米","焦糖玉米"],c:0,x:"玉米被高溫『燙』過，最經典結果當然是爆米花。"},
+{e:"🦀",q:"螃蟹最不喜歡哪一科？",a:["數學","直線","自然","英文"],c:1,x:"螃蟹橫著走，所以跟『直線』天生不太合。"},
+{e:"🐝",q:"蜜蜂最愛哪一門功課？",a:["音樂","蜂學","美術","數學"],c:1,x:"『蜂學』聽起來像『佛學』，而且很像蜜蜂的專業。"},
+{e:"🍵",q:"茶最討厭別人叫它做什麼？",a:["泡一下","冷靜","查一下","喝掉"],c:2,x:"『茶』最怕『查』，同音不同命。"},
+{e:"🧦",q:"襪子最喜歡去哪裡？",a:["腳踏車店","襪國","鞋店","夜市"],c:2,x:"襪子跟鞋子幾乎天天見面，這題算生活系諧音梗。"}
+];
+let qs=[],idx=0,score=0,locked=false;const $=id=>document.getElementById(id);function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function start(){qs=shuffle(allQuestions.slice()).slice(0,12);idx=0;score=0;locked=false;$("startScreen").classList.add("hidden");$("endScreen").classList.add("hidden");$("gameScreen").classList.remove("hidden");$("total").textContent=qs.length;render()}
+function render(){locked=false;$("nextBtn").classList.add("hidden");$("message").classList.remove("show");$("message").textContent="";$("num").textContent=idx+1;$("score").textContent=score;$("bar").style.width=(idx/qs.length*100)+"%";const q=qs[idx];$("emoji").textContent=q.e;$("question").textContent=q.q;const box=$("answers");box.innerHTML="";q.a.forEach((txt,i)=>{const b=document.createElement("button");b.type="button";b.className="answer";b.textContent=txt;b.addEventListener("click",()=>choose(i,b),{passive:true});box.appendChild(b)})}
+function choose(i,btn){if(locked)return;locked=true;const q=qs[idx],buttons=[...document.querySelectorAll(".answer")];buttons[q.c].classList.add("correct");if(i===q.c){score+=10;$("message").innerHTML="✅ 答對了！<br>"+q.x}else{btn.classList.add("wrong");$("message").innerHTML="❌ 被諧音梗偷襲了！<br>"+q.x}$("score").textContent=score;$("message").classList.add("show");$("bar").style.width=((idx+1)/qs.length*100)+"%";$("nextBtn").textContent=idx===qs.length-1?"看結果":"下一題";$("nextBtn").classList.remove("hidden")}
+function next(){idx++;if(idx>=qs.length){end();return}render()}
+function end(){$("gameScreen").classList.add("hidden");$("endScreen").classList.remove("hidden");$("finalScore").textContent=score;let t="",e="🏆";if(score>=110){t="你根本是諧音梗王者，冷到可以開冷氣團了。";e="👑"}else if(score>=80){t="很強！你已經有把朋友冷到沉默的實力。";e="😎"}else if(score>=50){t="不錯喔，諧音雷達已經啟動一半了。";e="😂"}else{t="看來你還保有正常人的笑點，恭喜……吧？";e="🥶"}$("rankText").textContent=t;$("endEmoji").textContent=e}
+$("startBtn").addEventListener("click",start);$("nextBtn").addEventListener("click",next);$("restartBtn").addEventListener("click",start);
+})();
+</script>
+</body>
+</html>
