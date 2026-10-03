@@ -1,0 +1,79 @@
+name: Inspect Ivan TE
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/inspect-ivan-te.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch TE page and inspect assets
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os, re, json, urllib.request, urllib.parse, html
+
+          base = 'https://ptcg.bcb.idv.tw/TE'
+          headers = {
+              'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          }
+
+          def get(url, timeout=30):
+              req = urllib.request.Request(url, headers=headers)
+              with urllib.request.urlopen(req, timeout=timeout) as r:
+                  data = r.read()
+                  charset = r.headers.get_content_charset() or 'utf-8'
+                  return r.status, r.geturl(), data.decode(charset, errors='replace')
+
+          status, final_url, page = get(base)
+          print('PAGE_STATUS', status)
+          print('PAGE_FINAL_URL', final_url)
+          print('PAGE_LENGTH', len(page))
+          os.makedirs('ivan_te_probe', exist_ok=True)
+          open('ivan_te_probe/TE.html', 'w', encoding='utf-8').write(page)
+
+          scripts = re.findall(r'<script[^>]+src=["\']([^"\']+)', page, flags=re.I)
+          links = re.findall(r'<link[^>]+href=["\']([^"\']+)', page, flags=re.I)
+          print('SCRIPTS', json.dumps(scripts, ensure_ascii=False))
+          print('LINKS', json.dumps(links, ensure_ascii=False))
+
+          patterns = re.compile(r'(player|玩家|search|搜尋|api|axios|fetch\(|/TE|tournament|event|ptcg|member)', re.I)
+          summaries = []
+          for idx, src in enumerate(scripts):
+              url = urllib.parse.urljoin(final_url, html.unescape(src))
+              try:
+                  s, u, text = get(url)
+              except Exception as e:
+                  print('SCRIPT_FAIL', url, repr(e))
+                  continue
+              fn = f'ivan_te_probe/script_{idx}.js'
+              open(fn, 'w', encoding='utf-8').write(text)
+              hits = []
+              for m in patterns.finditer(text):
+                  a = max(0, m.start()-140)
+                  b = min(len(text), m.end()+260)
+                  snippet = text[a:b].replace('\n', ' ')
+                  if snippet not in hits:
+                      hits.append(snippet)
+                  if len(hits) >= 40:
+                      break
+              print('SCRIPT', idx, u, 'LEN', len(text), 'HITS', len(hits))
+              for hit in hits:
+                  print('HIT', hit[:500])
+              summaries.append({'index': idx, 'url': u, 'length': len(text), 'hits': hits})
+          open('ivan_te_probe/summary.json', 'w', encoding='utf-8').write(json.dumps(summaries, ensure_ascii=False, indent=2))
+          PY
+      - name: Upload probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: ivan-te-probe
+          path: ivan_te_probe/
+          retention-days: 1
