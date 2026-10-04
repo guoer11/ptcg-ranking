@@ -1,10 +1,11 @@
-name: Update CPBL game batting stats
+name: Update CPBL game stats
 
 on:
   workflow_dispatch:
   push:
     paths:
       - "scripts/update_cpbl_batting.py"
+      - "scripts/update_cpbl_pitching.py"
       - ".github/workflows/update-cpbl-game-stats.yml"
   schedule:
     - cron: "20 10 * * *"
@@ -36,14 +37,17 @@ jobs:
       - name: Fetch CPBL 2026 batting stats
         run: python scripts/update_cpbl_batting.py
 
+      - name: Fetch CPBL 2026 pitching stats
+        run: python scripts/update_cpbl_pitching.py
+
       - name: Commit updated stats
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/cpbl_batting_2026.json
+          git add data/cpbl_batting_2026.json data/cpbl_pitching_2026.json
           if git diff --cached --quiet; then
-            echo "No batting stat changes."
+            echo "No CPBL stat changes."
             exit 0
           fi
-          git commit -m "Update CPBL batting stats"
+          git commit -m "Update CPBL game stats"
           git push
