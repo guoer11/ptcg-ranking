@@ -1,0 +1,32 @@
+name: Tune baseball pitcher roles
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/tune_pitcher_roles.py
+      - .github/workflows/tune-pitcher-roles.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - name: Tune pitcher roles
+        run: python scripts/tune_pitcher_roles.py
+      - name: Commit tuned game
+        run: |
+          if git diff --quiet -- baseball-game.html; then
+            echo "No change needed"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add baseball-game.html
+          git commit -m "Differentiate starter reliever and closer roles"
+          git push
