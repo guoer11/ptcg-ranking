@@ -12,28 +12,32 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect official player pitch logs
+      - name: Probe official pitch-type detail codes
         run: |
           python - <<'PY'
-          import json, urllib.parse, urllib.request
-          base='https://stats.cpbl.com.tw/api/proxy/v1/players/logs'
-          params={'playerType':'pitcher','acnt':'0000007053','year':'2026','kindCode':'A'}
-          url=base+'?'+urllib.parse.urlencode(params)
-          req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0','Content-Type':'application/json','Accept':'application/json'})
-          with urllib.request.urlopen(req,timeout=30) as r:
-              data=json.load(r)
-          print('TOP_TYPE',type(data).__name__)
-          print('TOP_KEYS',list(data)[:50] if isinstance(data,dict) else '')
-          def walk(obj,path='root',depth=0):
-              if depth>5:return
-              if isinstance(obj,dict):
-                  print('DICT',path,'KEYS',list(obj)[:80])
-                  for k,v in list(obj.items())[:15]:
-                      if isinstance(v,(dict,list)): walk(v,path+'.'+k,depth+1)
-              elif isinstance(obj,list):
-                  print('LIST',path,'LEN',len(obj))
-                  if obj:
-                      print('SAMPLE',path,json.dumps(obj[0],ensure_ascii=False)[:12000])
-                      walk(obj[0],path+'[0]',depth+1)
-          walk(data)
+          import collections,json,urllib.parse,urllib.request
+          H={'User-Agent':'Mozilla/5.0','Content-Type':'application/json','Accept':'application/json'}
+          def get(base,params):
+              url=base+'?'+urllib.parse.urlencode(params)
+              req=urllib.request.Request(url,headers=H)
+              with urllib.request.urlopen(req,timeout=30) as r:return json.load(r)
+
+          logs=get('https://stats.cpbl.com.tw/api/proxy/v1/players/logs',{'playerType':'pitcher','acnt':'0000007053','year':'2026','kindCode':'A'}).get('Data',{}).get('Logs',[])
+          auto=collections.Counter(); tagged=collections.Counter()
+          for row in logs:
+              tag=((row.get('Trackman') or {}).get('Play') or {}).get('PitchTag') or {}
+              if tag.get('AutoPitchType'): auto[tag['AutoPitchType']]+=1
+              if tag.get('TaggedPitchType'): tagged[tag['TaggedPitchType']]+=1
+          print('AUTO_UNIQUE',dict(auto))
+          print('TAGGED_UNIQUE',dict(tagged))
+
+          base='https://stats.cpbl.com.tw/api/proxy/v1/leaderboards/pitch-tracking'
+          candidates=['fastball','breakingball','fourseam','four-seam','four_seam','4seam','twoseam','two-seam','two_seam','sinker','sinkerball','cutter','slider','sweeper','curveball','curve','changeup','change-up','splitter','splitfinger','forkball','fork','knucklecurve']
+          for c in candidates:
+              try:
+                  lb=get(base,{'year':'2026','gameKind':'A','pitchType':c}).get('Data',{}).get('Leaderboard',[])
+                  pts=sorted({str(x.get('PitchType')) for x in lb[:20]})
+                  print('CAND',c,'LEN',len(lb),'RETURN_TYPES',pts[:10])
+              except Exception as e:
+                  print('CAND',c,'ERR',type(e).__name__,str(e)[:120])
           PY
