@@ -1,6 +1,7 @@
 name: Deploy PTCG ranking site
 
 # GitHub Pages source: GitHub Actions
+# Baseball realism v7 deployment marker
 on:
   workflow_dispatch:
   push:
