@@ -12,29 +12,28 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect official pitch tracking response
+      - name: Inspect official player pitch logs
         run: |
           python - <<'PY'
-          import json, urllib.request
-          url='https://stats.cpbl.com.tw/api/proxy/v1/leaderboards/pitch-tracking?year=2026&gameKind=A'
+          import json, urllib.parse, urllib.request
+          base='https://stats.cpbl.com.tw/api/proxy/v1/players/logs'
+          params={'playerType':'pitcher','acnt':'0000007053','year':'2026','kindCode':'A'}
+          url=base+'?'+urllib.parse.urlencode(params)
           req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0','Content-Type':'application/json','Accept':'application/json'})
           with urllib.request.urlopen(req,timeout=30) as r:
               data=json.load(r)
-          lb=data.get('Data',{}).get('Leaderboard')
-          print('LEADERBOARD_TYPE',type(lb).__name__)
-          if isinstance(lb,dict):
-              print('LEADERBOARD_KEYS',list(lb)[:50])
-              for k,v in lb.items():
-                  print('KEY',k,'TYPE',type(v).__name__, 'LEN',len(v) if hasattr(v,'__len__') else '')
-                  if isinstance(v,list) and v:
-                      print('ITEM_KEYS',list(v[0])[:100] if isinstance(v[0],dict) else type(v[0]).__name__)
-                      print('ITEM',json.dumps(v[0],ensure_ascii=False)[:8000])
-                  elif isinstance(v,dict):
-                      print('DICT_SAMPLE',json.dumps(v,ensure_ascii=False)[:8000])
-          elif isinstance(lb,list):
-              print('LEN',len(lb))
-              for i,item in enumerate(lb[:3]):
-                  print('ITEM',i,json.dumps(item,ensure_ascii=False)[:8000])
-          else:
-              print('RAW',json.dumps(lb,ensure_ascii=False)[:8000])
+          print('TOP_TYPE',type(data).__name__)
+          print('TOP_KEYS',list(data)[:50] if isinstance(data,dict) else '')
+          def walk(obj,path='root',depth=0):
+              if depth>5:return
+              if isinstance(obj,dict):
+                  print('DICT',path,'KEYS',list(obj)[:80])
+                  for k,v in list(obj.items())[:15]:
+                      if isinstance(v,(dict,list)): walk(v,path+'.'+k,depth+1)
+              elif isinstance(obj,list):
+                  print('LIST',path,'LEN',len(obj))
+                  if obj:
+                      print('SAMPLE',path,json.dumps(obj[0],ensure_ascii=False)[:12000])
+                      walk(obj[0],path+'[0]',depth+1)
+          walk(data)
           PY
