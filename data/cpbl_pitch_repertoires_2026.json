@@ -1,0 +1,2191 @@
+{
+  "year": 2026,
+  "updated_at": "2026-10-04T13:00:30.371190+00:00",
+  "count": 113,
+  "verified_count": 59,
+  "partial_count": 53,
+  "unresolved_count": 1,
+  "source_note": "Detailed pitch names are parsed from the public Taiwan Baseball Wiki '擅長球路' field. 2026 CPBL TrackMan public data is used only to verify broad fastball presence; CPBL does not publicly expose detailed slider/curve/changeup/etc labels in that API.",
+  "repertoires": {
+    "中信兄弟|羅戈": {
+      "team": "中信兄弟",
+      "player": "羅戈",
+      "pitches": [
+        "CH",
+        "FB",
+        "FS",
+        "CU",
+        "SL"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E7%BE%85%E6%88%88",
+      "wiki_title": "羅戈N.R - 台灣棒球維基館",
+      "repertoire_text": "變速球、指叉球、曲球、滑球",
+      "trackman_2026": {
+        "fastball_pitches": 236,
+        "breakingball_pitches": 398,
+        "fastball_avg_kph": 150.1,
+        "breakingball_avg_kph": 133.4
+      }
+    },
+    "中信兄弟|伍立辰": {
+      "team": "中信兄弟",
+      "player": "伍立辰",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "伍立辰 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 38,
+        "breakingball_pitches": 48,
+        "fastball_avg_kph": 145.4,
+        "breakingball_avg_kph": 131.3
+      }
+    },
+    "中信兄弟|呂彥青": {
+      "team": "中信兄弟",
+      "player": "呂彥青",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "呂彥青 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 92,
+        "breakingball_pitches": 110,
+        "fastball_avg_kph": 141.8,
+        "breakingball_avg_kph": 127.8
+      }
+    },
+    "中信兄弟|王凱程": {
+      "team": "中信兄弟",
+      "player": "王凱程",
+      "pitches": [
+        "SL",
+        "SI",
+        "FS"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E7%8E%8B%E5%87%B1%E7%A8%8B",
+      "wiki_title": "王凱程 - 台灣棒球維基館",
+      "repertoire_text": "滑球、二縫線快速球、指叉球",
+      "trackman_2026": {
+        "fastball_pitches": 7,
+        "breakingball_pitches": 48,
+        "fastball_avg_kph": 139.1,
+        "breakingball_avg_kph": 135.8
+      }
+    },
+    "中信兄弟|江忠城": {
+      "team": "中信兄弟",
+      "player": "江忠城",
+      "pitches": [
+        "FB",
+        "SL",
+        "FS"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%B1%9F%E5%BF%A0%E5%9F%8E",
+      "wiki_title": "江忠城 - 台灣棒球維基館",
+      "repertoire_text": "滑球、快速指叉球",
+      "trackman_2026": {
+        "fastball_pitches": 42,
+        "breakingball_pitches": 47,
+        "fastball_avg_kph": 145.1,
+        "breakingball_avg_kph": 132.9
+      }
+    },
+    "樂天桃猿|威能帝": {
+      "team": "樂天桃猿",
+      "player": "威能帝",
+      "pitches": [
+        "SL",
+        "CH",
+        "FB"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E5%A8%81%E8%83%BD%E5%B8%9D",
+      "wiki_title": "威能帝P.F - 台灣棒球維基館",
+      "repertoire_text": "滑球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 200,
+        "breakingball_pitches": 229,
+        "fastball_avg_kph": 150.2,
+        "breakingball_avg_kph": 134.5
+      }
+    },
+    "樂天桃猿|林子崴": {
+      "team": "樂天桃猿",
+      "player": "林子崴",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "林子崴 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 122,
+        "breakingball_pitches": 112,
+        "fastball_avg_kph": 145.1,
+        "breakingball_avg_kph": 132.6
+      }
+    },
+    "樂天桃猿|賴胤豪": {
+      "team": "樂天桃猿",
+      "player": "賴胤豪",
+      "pitches": [
+        "FB",
+        "SL",
+        "CU",
+        "FS"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E8%B3%B4%E8%83%A4%E8%B1%AA",
+      "wiki_title": "賴胤豪 - 台灣棒球維基館",
+      "repertoire_text": "滑球、曲球、指叉球",
+      "trackman_2026": {
+        "fastball_pitches": 47,
+        "breakingball_pitches": 38,
+        "fastball_avg_kph": 149.2,
+        "breakingball_avg_kph": 134.5
+      }
+    },
+    "樂天桃猿|莊昕諺": {
+      "team": "樂天桃猿",
+      "player": "莊昕諺",
+      "pitches": [
+        "FB",
+        "SL",
+        "CU"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E8%8E%8A%E6%98%95%E8%AB%BA",
+      "wiki_title": "莊昕諺 - 台灣棒球維基館",
+      "repertoire_text": "滑球、曲球",
+      "trackman_2026": {
+        "fastball_pitches": 78,
+        "breakingball_pitches": 83,
+        "fastball_avg_kph": 146.6,
+        "breakingball_avg_kph": 130.1
+      }
+    },
+    "樂天桃猿|陳柏豪": {
+      "team": "樂天桃猿",
+      "player": "陳柏豪",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "陳柏豪 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 22,
+        "breakingball_pitches": 15,
+        "fastball_avg_kph": 143.2,
+        "breakingball_avg_kph": 132.4
+      }
+    },
+    "樂天桃猿|陳冠宇": {
+      "team": "樂天桃猿",
+      "player": "陳冠宇",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "陳冠宇 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 84,
+        "breakingball_pitches": 125,
+        "fastball_avg_kph": 146.8,
+        "breakingball_avg_kph": 128.5
+      }
+    },
+    "富邦悍將|游霆崴": {
+      "team": "富邦悍將",
+      "player": "游霆崴",
+      "pitches": [
+        "CH",
+        "FB",
+        "SL",
+        "CU"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%B8%B8%E9%9C%86%E5%B4%B4",
+      "wiki_title": "游霆崴 - 台灣棒球維基館",
+      "repertoire_text": "變速球、滑球、曲球",
+      "trackman_2026": {
+        "fastball_pitches": 87,
+        "breakingball_pitches": 164,
+        "fastball_avg_kph": 137.1,
+        "breakingball_avg_kph": 125.9
+      }
+    },
+    "富邦悍將|石梓霖": {
+      "team": "富邦悍將",
+      "player": "石梓霖",
+      "pitches": [
+        "CU",
+        "FS",
+        "FB",
+        "CH"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E7%9F%B3%E6%A2%93%E9%9C%96",
+      "wiki_title": "石梓霖 - 台灣棒球維基館",
+      "repertoire_text": "曲球、指叉球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 85,
+        "breakingball_pitches": 47,
+        "fastball_avg_kph": 146.3,
+        "breakingball_avg_kph": 134.3
+      }
+    },
+    "富邦悍將|張瑞麟": {
+      "team": "富邦悍將",
+      "player": "張瑞麟",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "張瑞麟 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 41,
+        "breakingball_pitches": 27,
+        "fastball_avg_kph": 141.2,
+        "breakingball_avg_kph": 127.6
+      }
+    },
+    "富邦悍將|李建勳": {
+      "team": "富邦悍將",
+      "player": "李建勳",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "李建勳 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 110,
+        "breakingball_pitches": 73,
+        "fastball_avg_kph": 148.4,
+        "breakingball_avg_kph": 135.4
+      }
+    },
+    "統一7-ELEVEn獅|郭俊麟": {
+      "team": "統一7-ELEVEn獅",
+      "player": "郭俊麟",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "郭俊麟 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 80,
+        "breakingball_pitches": 88,
+        "fastball_avg_kph": 143.9,
+        "breakingball_avg_kph": 132.2
+      }
+    },
+    "統一7-ELEVEn獅|姚杰宏": {
+      "team": "統一7-ELEVEn獅",
+      "player": "姚杰宏",
+      "pitches": [
+        "SL",
+        "SI"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E5%A7%9A%E6%9D%B0%E5%AE%8F",
+      "wiki_title": "姚杰宏 - 台灣棒球維基館",
+      "repertoire_text": "滑球、沉球",
+      "trackman_2026": {
+        "fastball_pitches": 13,
+        "breakingball_pitches": 4,
+        "fastball_avg_kph": 140.8,
+        "breakingball_avg_kph": 123.5
+      }
+    },
+    "統一7-ELEVEn獅|李其峰": {
+      "team": "統一7-ELEVEn獅",
+      "player": "李其峰",
+      "pitches": [
+        "FB",
+        "SL"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%9D%8E%E5%85%B6%E5%B3%B0",
+      "wiki_title": "李其峰 - 台灣棒球維基館",
+      "repertoire_text": "滑球",
+      "trackman_2026": {
+        "fastball_pitches": 55,
+        "breakingball_pitches": 41,
+        "fastball_avg_kph": 145.3,
+        "breakingball_avg_kph": 131.1
+      }
+    },
+    "統一7-ELEVEn獅|辛俊昇": {
+      "team": "統一7-ELEVEn獅",
+      "player": "辛俊昇",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "辛俊昇 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 42,
+        "breakingball_pitches": 22,
+        "fastball_avg_kph": 143.3,
+        "breakingball_avg_kph": 129.7
+      }
+    },
+    "統一7-ELEVEn獅|劉予承": {
+      "team": "統一7-ELEVEn獅",
+      "player": "劉予承",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "劉予承 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 17,
+        "breakingball_pitches": 3,
+        "fastball_avg_kph": 145.6,
+        "breakingball_avg_kph": 121.3
+      }
+    },
+    "統一7-ELEVEn獅|鍾允華": {
+      "team": "統一7-ELEVEn獅",
+      "player": "鍾允華",
+      "pitches": [
+        "CT",
+        "SL",
+        "CU",
+        "SI",
+        "CH"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%8D%BE%E5%85%81%E8%8F%AF",
+      "wiki_title": "鍾允華 - 台灣棒球維基館",
+      "repertoire_text": "切球、滑球、曲球、沉球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 67,
+        "breakingball_pitches": 44,
+        "fastball_avg_kph": 151.9,
+        "breakingball_avg_kph": 138.2
+      }
+    },
+    "樂天桃猿|麥斯威尼": {
+      "team": "樂天桃猿",
+      "player": "麥斯威尼",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "麥斯威尼M.M - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 219,
+        "breakingball_pitches": 358,
+        "fastball_avg_kph": 145.5,
+        "breakingball_avg_kph": 134.1
+      }
+    },
+    "樂天桃猿|蘇俊璋": {
+      "team": "樂天桃猿",
+      "player": "蘇俊璋",
+      "pitches": [
+        "FB",
+        "FS",
+        "CU",
+        "SL"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E8%98%87%E4%BF%8A%E7%92%8B",
+      "wiki_title": "蘇俊璋 - 台灣棒球維基館",
+      "repertoire_text": "指叉球、曲球、滑球",
+      "trackman_2026": {
+        "fastball_pitches": 58,
+        "breakingball_pitches": 72,
+        "fastball_avg_kph": 144.2,
+        "breakingball_avg_kph": 131.3
+      }
+    },
+    "樂天桃猿|王志煊": {
+      "team": "樂天桃猿",
+      "player": "王志煊",
+      "pitches": [
+        "SL",
+        "CH",
+        "FB"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E7%8E%8B%E5%BF%97%E7%85%8A",
+      "wiki_title": "王志煊 - 台灣棒球維基館",
+      "repertoire_text": "滑球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 68,
+        "breakingball_pitches": 22,
+        "fastball_avg_kph": 135.6,
+        "breakingball_avg_kph": 123.2
+      }
+    },
+    "味全龍|魔神龍": {
+      "team": "味全龍",
+      "player": "魔神龍",
+      "pitches": [
+        "CH",
+        "FB",
+        "SL"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%AD%94%E7%A5%9E%E9%BE%8D",
+      "wiki_title": "魔神龍M.M - 台灣棒球維基館",
+      "repertoire_text": "變速球、滑球",
+      "trackman_2026": {
+        "fastball_pitches": 184,
+        "breakingball_pitches": 199,
+        "fastball_avg_kph": 140.9,
+        "breakingball_avg_kph": 125.8
+      }
+    },
+    "味全龍|李超": {
+      "team": "味全龍",
+      "player": "李超",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "李超 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 146,
+        "breakingball_pitches": 52,
+        "fastball_avg_kph": 146.5,
+        "breakingball_avg_kph": 127.3
+      }
+    },
+    "味全龍|林子昱": {
+      "team": "味全龍",
+      "player": "林子昱",
+      "pitches": [
+        "CU",
+        "SI",
+        "FS",
+        "CH",
+        "CT"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%9E%97%E5%AD%90%E6%98%B1",
+      "wiki_title": "林子昱 - 台灣棒球維基館",
+      "repertoire_text": "曲球、沉球、指叉球、變速球、切球",
+      "trackman_2026": {
+        "fastball_pitches": 105,
+        "breakingball_pitches": 92,
+        "fastball_avg_kph": 142.6,
+        "breakingball_avg_kph": 129.5
+      }
+    },
+    "味全龍|林鋅杰": {
+      "team": "味全龍",
+      "player": "林鋅杰",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "林鋅杰 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 86,
+        "breakingball_pitches": 87,
+        "fastball_avg_kph": 145.1,
+        "breakingball_avg_kph": 129.1
+      }
+    },
+    "味全龍|陳冠偉": {
+      "team": "味全龍",
+      "player": "陳冠偉",
+      "pitches": [
+        "FB",
+        "FS"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%99%B3%E5%86%A0%E5%81%89",
+      "wiki_title": "陳冠偉 - 台灣棒球維基館",
+      "repertoire_text": "指叉球",
+      "trackman_2026": {
+        "fastball_pitches": 122,
+        "breakingball_pitches": 83,
+        "fastball_avg_kph": 145.1,
+        "breakingball_avg_kph": 133.5
+      }
+    },
+    "台鋼雄鷹|艾速特": {
+      "team": "台鋼雄鷹",
+      "player": "艾速特",
+      "pitches": [
+        "FB",
+        "SL",
+        "SW"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E8%89%BE%E9%80%9F%E7%89%B9",
+      "wiki_title": "艾速特E.S - 台灣棒球維基館",
+      "repertoire_text": "滑球、橫掃球",
+      "trackman_2026": {
+        "fastball_pitches": 96,
+        "breakingball_pitches": 201,
+        "fastball_avg_kph": 146.2,
+        "breakingball_avg_kph": 134.6
+      }
+    },
+    "台鋼雄鷹|王躍霖": {
+      "team": "台鋼雄鷹",
+      "player": "王躍霖",
+      "pitches": [
+        "SL",
+        "CU",
+        "CH",
+        "CT"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E7%8E%8B%E8%BA%8D%E9%9C%96",
+      "wiki_title": "王躍霖 - 台灣棒球維基館",
+      "repertoire_text": "滑球、曲球、變速球、切球",
+      "trackman_2026": {
+        "fastball_pitches": 52,
+        "breakingball_pitches": 38,
+        "fastball_avg_kph": 141.7,
+        "breakingball_avg_kph": 130.7
+      }
+    },
+    "台鋼雄鷹|黃群": {
+      "team": "台鋼雄鷹",
+      "player": "黃群",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "黃群 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 9,
+        "breakingball_pitches": 16,
+        "fastball_avg_kph": 144.2,
+        "breakingball_avg_kph": 127.8
+      }
+    },
+    "富邦悍將|魔力藍": {
+      "team": "富邦悍將",
+      "player": "魔力藍",
+      "pitches": [
+        "SI",
+        "CU",
+        "CT",
+        "CH",
+        "SW"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%AD%94%E5%8A%9B%E8%97%8D",
+      "wiki_title": "魔力藍S.M - 台灣棒球維基館",
+      "repertoire_text": "二縫線快速球、曲球、切球、變速球、橫掃球",
+      "trackman_2026": {
+        "fastball_pitches": 246,
+        "breakingball_pitches": 323,
+        "fastball_avg_kph": 144.9,
+        "breakingball_avg_kph": 130.7
+      }
+    },
+    "富邦悍將|張奕": {
+      "team": "富邦悍將",
+      "player": "張奕",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "張奕 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 109,
+        "breakingball_pitches": 105,
+        "fastball_avg_kph": 148.7,
+        "breakingball_avg_kph": 137.1
+      }
+    },
+    "富邦悍將|曾峻岳": {
+      "team": "富邦悍將",
+      "player": "曾峻岳",
+      "pitches": [
+        "SL",
+        "CT"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%9B%BE%E5%B3%BB%E5%B2%B3",
+      "wiki_title": "曾峻岳 - 台灣棒球維基館",
+      "repertoire_text": "滑球、切球",
+      "trackman_2026": {
+        "fastball_pitches": 118,
+        "breakingball_pitches": 45,
+        "fastball_avg_kph": 152.4,
+        "breakingball_avg_kph": 136.6
+      }
+    },
+    "統一7-ELEVEn獅|喬登": {
+      "team": "統一7-ELEVEn獅",
+      "player": "喬登",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "喬登 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 133,
+        "breakingball_pitches": 57,
+        "fastball_avg_kph": 150.7,
+        "breakingball_avg_kph": 138.9
+      }
+    },
+    "統一7-ELEVEn獅|鄭副豪": {
+      "team": "統一7-ELEVEn獅",
+      "player": "鄭副豪",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "鄭副豪 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 63,
+        "breakingball_pitches": 37,
+        "fastball_avg_kph": 148.4,
+        "breakingball_avg_kph": 135.4
+      }
+    },
+    "統一7-ELEVEn獅|黃竣彥": {
+      "team": "統一7-ELEVEn獅",
+      "player": "黃竣彥",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "黃竣彥 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 39,
+        "breakingball_pitches": 38,
+        "fastball_avg_kph": 144.5,
+        "breakingball_avg_kph": 130.7
+      }
+    },
+    "統一7-ELEVEn獅|髙塩將樹": {
+      "team": "統一7-ELEVEn獅",
+      "player": "髙塩將樹",
+      "pitches": [
+        "SL",
+        "FS",
+        "CU",
+        "FB",
+        "CH"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%AB%99%E5%A1%A9%E5%B0%87%E6%A8%B9",
+      "wiki_title": "髙塩将樹 - 台灣棒球維基館",
+      "repertoire_text": "滑球、叉指快速球、曲球、圈指變速球",
+      "trackman_2026": {
+        "fastball_pitches": 81,
+        "breakingball_pitches": 50,
+        "fastball_avg_kph": 142.2,
+        "breakingball_avg_kph": 123.2
+      }
+    },
+    "統一7-ELEVEn獅|邱浩鈞": {
+      "team": "統一7-ELEVEn獅",
+      "player": "邱浩鈞",
+      "pitches": [
+        "FB",
+        "FS",
+        "SL"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%82%B1%E6%B5%A9%E9%88%9E",
+      "wiki_title": "邱浩鈞 - 台灣棒球維基館",
+      "repertoire_text": "有指叉球及滑球",
+      "trackman_2026": {
+        "fastball_pitches": 55,
+        "breakingball_pitches": 41,
+        "fastball_avg_kph": 142.2,
+        "breakingball_avg_kph": 133.6
+      }
+    },
+    "中信兄弟|陳琥": {
+      "team": "中信兄弟",
+      "player": "陳琥",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "陳琥 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 120,
+        "breakingball_pitches": 139,
+        "fastball_avg_kph": 146.5,
+        "breakingball_avg_kph": 129.6
+      }
+    },
+    "中信兄弟|陳冠穎": {
+      "team": "中信兄弟",
+      "player": "陳冠穎",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "陳冠穎 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 44,
+        "breakingball_pitches": 62,
+        "fastball_avg_kph": 141.2,
+        "breakingball_avg_kph": 130.2
+      }
+    },
+    "中信兄弟|余謙": {
+      "team": "中信兄弟",
+      "player": "余謙",
+      "pitches": [
+        "SI",
+        "CU",
+        "SL",
+        "CH"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E4%BD%99%E8%AC%99",
+      "wiki_title": "余謙 - 台灣棒球維基館",
+      "repertoire_text": "沉球、曲球、滑球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 20,
+        "breakingball_pitches": 249,
+        "fastball_avg_kph": 146.8,
+        "breakingball_avg_kph": 141.1
+      }
+    },
+    "樂天桃猿|曾家輝": {
+      "team": "樂天桃猿",
+      "player": "曾家輝",
+      "pitches": [
+        "SL",
+        "FS",
+        "FB",
+        "CH"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%9B%BE%E5%AE%B6%E8%BC%9D",
+      "wiki_title": "曾家輝 - 台灣棒球維基館",
+      "repertoire_text": "滑球、指叉球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 268,
+        "breakingball_pitches": 211,
+        "fastball_avg_kph": 146.0,
+        "breakingball_avg_kph": 128.3
+      }
+    },
+    "富邦悍將|李東洺": {
+      "team": "富邦悍將",
+      "player": "李東洺",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "李東洺 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 227,
+        "breakingball_pitches": 306,
+        "fastball_avg_kph": 146.6,
+        "breakingball_avg_kph": 131.4
+      }
+    },
+    "富邦悍將|林栚呈": {
+      "team": "富邦悍將",
+      "player": "林栚呈",
+      "pitches": [
+        "FS",
+        "FB",
+        "CH"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%9E%97%E6%A0%9A%E5%91%88",
+      "wiki_title": "林栚呈 - 台灣棒球維基館",
+      "repertoire_text": "指叉球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 96,
+        "breakingball_pitches": 87,
+        "fastball_avg_kph": 142.1,
+        "breakingball_avg_kph": 129.6
+      }
+    },
+    "富邦悍將|廖任磊": {
+      "team": "富邦悍將",
+      "player": "廖任磊",
+      "pitches": [
+        "CU",
+        "SL",
+        "CH",
+        "FB"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E5%BB%96%E4%BB%BB%E7%A3%8A",
+      "wiki_title": "廖任磊 - 台灣棒球維基館",
+      "repertoire_text": "曲球、滑球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 101,
+        "breakingball_pitches": 86,
+        "fastball_avg_kph": 148.4,
+        "breakingball_avg_kph": 130.6
+      }
+    },
+    "台鋼雄鷹|江承諺": {
+      "team": "台鋼雄鷹",
+      "player": "江承諺",
+      "pitches": [
+        "CU",
+        "CH",
+        "FB"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%B1%9F%E6%89%BF%E8%AB%BA",
+      "wiki_title": "江承諺 - 台灣棒球維基館",
+      "repertoire_text": "曲球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 203,
+        "breakingball_pitches": 214,
+        "fastball_avg_kph": 134.9,
+        "breakingball_avg_kph": 116.5
+      }
+    },
+    "台鋼雄鷹|陳柏清": {
+      "team": "台鋼雄鷹",
+      "player": "陳柏清",
+      "pitches": [
+        "SL",
+        "CH",
+        "FB"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%99%B3%E6%9F%8F%E6%B8%85",
+      "wiki_title": "陳柏清 - 台灣棒球維基館",
+      "repertoire_text": "滑球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 131,
+        "breakingball_pitches": 95,
+        "fastball_avg_kph": 143.9,
+        "breakingball_avg_kph": 127.9
+      }
+    },
+    "台鋼雄鷹|施子謙": {
+      "team": "台鋼雄鷹",
+      "player": "施子謙",
+      "pitches": [
+        "SI",
+        "SL",
+        "CH"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%96%BD%E5%AD%90%E8%AC%99",
+      "wiki_title": "施子謙 - 台灣棒球維基館",
+      "repertoire_text": "二縫線快速球、滑球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 54,
+        "breakingball_pitches": 59,
+        "fastball_avg_kph": 143.4,
+        "breakingball_avg_kph": 133.1
+      }
+    },
+    "台鋼雄鷹|韋宏亮": {
+      "team": "台鋼雄鷹",
+      "player": "韋宏亮",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "韋宏亮 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 65,
+        "breakingball_pitches": 32,
+        "fastball_avg_kph": 147.5,
+        "breakingball_avg_kph": 134.8
+      }
+    },
+    "味全龍|伍鐸": {
+      "team": "味全龍",
+      "player": "伍鐸",
+      "pitches": [
+        "SL",
+        "SI"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E4%BC%8D%E9%90%B8",
+      "wiki_title": "伍鐸B.W - 台灣棒球維基館",
+      "repertoire_text": "滑球、二縫線快速球",
+      "trackman_2026": {
+        "fastball_pitches": 218,
+        "breakingball_pitches": 147,
+        "fastball_avg_kph": 135.6,
+        "breakingball_avg_kph": 127.7
+      }
+    },
+    "味全龍|呂偉晟": {
+      "team": "味全龍",
+      "player": "呂偉晟",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "呂偉晟 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 77,
+        "breakingball_pitches": 33,
+        "fastball_avg_kph": 148.0,
+        "breakingball_avg_kph": 128.9
+      }
+    },
+    "味全龍|王伯洋": {
+      "team": "味全龍",
+      "player": "王伯洋",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "王伯洋 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 40,
+        "breakingball_pitches": 37,
+        "fastball_avg_kph": 139.4,
+        "breakingball_avg_kph": 124.8
+      }
+    },
+    "台鋼雄鷹|王維中": {
+      "team": "台鋼雄鷹",
+      "player": "王維中",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "王維中 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 76,
+        "breakingball_pitches": 104,
+        "fastball_avg_kph": 140.6,
+        "breakingball_avg_kph": 128.6
+      }
+    },
+    "台鋼雄鷹|陳宇宏": {
+      "team": "台鋼雄鷹",
+      "player": "陳宇宏",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "陳宇宏 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 59,
+        "breakingball_pitches": 34,
+        "fastball_avg_kph": 132.3,
+        "breakingball_avg_kph": 114.0
+      }
+    },
+    "台鋼雄鷹|許育銘": {
+      "team": "台鋼雄鷹",
+      "player": "許育銘",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "許育銘 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 75,
+        "breakingball_pitches": 25,
+        "fastball_avg_kph": 137.3,
+        "breakingball_avg_kph": 111.6
+      }
+    },
+    "台鋼雄鷹|林詩翔": {
+      "team": "台鋼雄鷹",
+      "player": "林詩翔",
+      "pitches": [
+        "CH",
+        "FB",
+        "SL"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%9E%97%E8%A9%A9%E7%BF%94",
+      "wiki_title": "林詩翔 - 台灣棒球維基館",
+      "repertoire_text": "變速球、滑球",
+      "trackman_2026": {
+        "fastball_pitches": 72,
+        "breakingball_pitches": 79,
+        "fastball_avg_kph": 145.5,
+        "breakingball_avg_kph": 129.9
+      }
+    },
+    "味全龍|梅賽鍶": {
+      "team": "味全龍",
+      "player": "梅賽鍶",
+      "pitches": [
+        "SI",
+        "CH",
+        "CU",
+        "SL"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%A2%85%E8%B3%BD%E9%8D%B6",
+      "wiki_title": "梅賽鍶C.C.M - 台灣棒球維基館",
+      "repertoire_text": "二縫線快速球、變速球、曲球、滑球",
+      "trackman_2026": {
+        "fastball_pitches": 271,
+        "breakingball_pitches": 152,
+        "fastball_avg_kph": 140.3,
+        "breakingball_avg_kph": 128.0
+      }
+    },
+    "味全龍|李致霖": {
+      "team": "味全龍",
+      "player": "李致霖",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "李致霖 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 23,
+        "breakingball_pitches": 7,
+        "fastball_avg_kph": 145.7,
+        "breakingball_avg_kph": 129.8
+      }
+    },
+    "味全龍|黃暐傑": {
+      "team": "味全龍",
+      "player": "黃暐傑",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "黃暐傑 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 59,
+        "breakingball_pitches": 25,
+        "fastball_avg_kph": 151.1,
+        "breakingball_avg_kph": 125.2
+      }
+    },
+    "台鋼雄鷹|黃子鵬": {
+      "team": "台鋼雄鷹",
+      "player": "黃子鵬",
+      "pitches": [
+        "SI",
+        "SL",
+        "CH"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%BB%83%E5%AD%90%E9%B5%AC",
+      "wiki_title": "黃子鵬 - 台灣棒球維基館",
+      "repertoire_text": "沉球、滑球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 225,
+        "breakingball_pitches": 238,
+        "fastball_avg_kph": 131.6,
+        "breakingball_avg_kph": 116.3
+      }
+    },
+    "味全龍|郭郁政": {
+      "team": "味全龍",
+      "player": "郭郁政",
+      "pitches": [
+        "FS",
+        "CU",
+        "SL",
+        "SI"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%83%AD%E9%83%81%E6%94%BF",
+      "wiki_title": "郭郁政 - 台灣棒球維基館",
+      "repertoire_text": "指叉球、曲球、滑球、沉球、二縫線快速球",
+      "trackman_2026": {
+        "fastball_pitches": 113,
+        "breakingball_pitches": 107,
+        "fastball_avg_kph": 143.0,
+        "breakingball_avg_kph": 131.5
+      }
+    },
+    "味全龍|林凱威": {
+      "team": "味全龍",
+      "player": "林凱威",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "林凱威 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 99,
+        "breakingball_pitches": 82,
+        "fastball_avg_kph": 152.3,
+        "breakingball_avg_kph": 139.3
+      }
+    },
+    "統一7-ELEVEn獅|獅帝芬": {
+      "team": "統一7-ELEVEn獅",
+      "player": "獅帝芬",
+      "pitches": [
+        "CU",
+        "CT"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E7%8D%85%E5%B8%9D%E8%8A%AC",
+      "wiki_title": "獅帝芬J.S - 台灣棒球維基館",
+      "repertoire_text": "曲球、切球",
+      "trackman_2026": {
+        "fastball_pitches": 259,
+        "breakingball_pitches": 323,
+        "fastball_avg_kph": 146.1,
+        "breakingball_avg_kph": 139.0
+      }
+    },
+    "統一7-ELEVEn獅|高偉強": {
+      "team": "統一7-ELEVEn獅",
+      "player": "高偉強",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "高偉強 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 70,
+        "breakingball_pitches": 42,
+        "fastball_avg_kph": 144.2,
+        "breakingball_avg_kph": 130.6
+      }
+    },
+    "中信兄弟|黎克": {
+      "team": "中信兄弟",
+      "player": "黎克",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "黎克N.N - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 151,
+        "breakingball_pitches": 328,
+        "fastball_avg_kph": 148.6,
+        "breakingball_avg_kph": 136.3
+      }
+    },
+    "樂天桃猿|艾菩樂": {
+      "team": "樂天桃猿",
+      "player": "艾菩樂",
+      "pitches": [
+        "SI",
+        "SL",
+        "CH",
+        "CU"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E8%89%BE%E8%8F%A9%E6%A8%82",
+      "wiki_title": "艾菩樂T.E - 台灣棒球維基館",
+      "repertoire_text": "二縫線快速球、滑球、變速球、曲球",
+      "trackman_2026": {
+        "fastball_pitches": 179,
+        "breakingball_pitches": 288,
+        "fastball_avg_kph": 145.9,
+        "breakingball_avg_kph": 133.1
+      }
+    },
+    "樂天桃猿|朱承洋": {
+      "team": "樂天桃猿",
+      "player": "朱承洋",
+      "pitches": [
+        "FB",
+        "CU",
+        "FS",
+        "SL"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%9C%B1%E6%89%BF%E6%B4%8B",
+      "wiki_title": "朱承洋 - 台灣棒球維基館",
+      "repertoire_text": "單指曲球、指叉球、滑球",
+      "trackman_2026": {
+        "fastball_pitches": 65,
+        "breakingball_pitches": 93,
+        "fastball_avg_kph": 148.1,
+        "breakingball_avg_kph": 133.5
+      }
+    },
+    "富邦悍將|威戈神": {
+      "team": "富邦悍將",
+      "player": "威戈神",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "威戈神A.W - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 104,
+        "breakingball_pitches": 173,
+        "fastball_avg_kph": 142.3,
+        "breakingball_avg_kph": 132.4
+      }
+    },
+    "富邦悍將|劉昱言": {
+      "team": "富邦悍將",
+      "player": "劉昱言",
+      "pitches": [],
+      "source_type": "unverified",
+      "source_label": null,
+      "source_url": null,
+      "wiki_title": "劉昱言 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 2,
+        "breakingball_pitches": 11,
+        "fastball_avg_kph": 141.8,
+        "breakingball_avg_kph": 123.6
+      }
+    },
+    "統一7-ELEVEn獅|胡智爲": {
+      "team": "統一7-ELEVEn獅",
+      "player": "胡智爲",
+      "pitches": [
+        "SI",
+        "CH",
+        "SL",
+        "KC"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E8%83%A1%E6%99%BA%E7%88%B2",
+      "wiki_title": "胡智爲 - 台灣棒球維基館",
+      "repertoire_text": "二縫線快速球、變速球、滑球、彈指曲球",
+      "trackman_2026": {
+        "fastball_pitches": 210,
+        "breakingball_pitches": 153,
+        "fastball_avg_kph": 144.9,
+        "breakingball_avg_kph": 137.4
+      }
+    },
+    "台鋼雄鷹|後勁": {
+      "team": "台鋼雄鷹",
+      "player": "後勁",
+      "pitches": [
+        "CU",
+        "CH",
+        "CT",
+        "KN"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E5%BE%8C%E5%8B%81",
+      "wiki_title": "後勁B.H - 台灣棒球維基館",
+      "repertoire_text": "曲球、變速球、切球、彈指球",
+      "trackman_2026": {
+        "fastball_pitches": 136,
+        "breakingball_pitches": 423,
+        "fastball_avg_kph": 146.0,
+        "breakingball_avg_kph": 137.3
+      }
+    },
+    "樂天桃猿|魔爾曼": {
+      "team": "樂天桃猿",
+      "player": "魔爾曼",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "魔爾曼K.M - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 170,
+        "breakingball_pitches": 364,
+        "fastball_avg_kph": 146.7,
+        "breakingball_avg_kph": 136.7
+      }
+    },
+    "味全龍|鋼龍": {
+      "team": "味全龍",
+      "player": "鋼龍",
+      "pitches": [
+        "CU",
+        "CH",
+        "SI",
+        "SL"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%8B%BC%E9%BE%8D",
+      "wiki_title": "鋼龍A.G - 台灣棒球維基館",
+      "repertoire_text": "曲球、變速球、沉球、滑球",
+      "trackman_2026": {
+        "fastball_pitches": 274,
+        "breakingball_pitches": 246,
+        "fastball_avg_kph": 146.2,
+        "breakingball_avg_kph": 130.5
+      }
+    },
+    "中信兄弟|鄭浩均": {
+      "team": "中信兄弟",
+      "player": "鄭浩均",
+      "pitches": [
+        "CU",
+        "SL",
+        "CH",
+        "FB",
+        "FS"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%84%AD%E6%B5%A9%E5%9D%87",
+      "wiki_title": "鄭浩均 - 台灣棒球維基館",
+      "repertoire_text": "曲球、滑球、變速球、指叉球",
+      "trackman_2026": {
+        "fastball_pitches": 170,
+        "breakingball_pitches": 293,
+        "fastball_avg_kph": 147.7,
+        "breakingball_avg_kph": 129.8
+      }
+    },
+    "中信兄弟|李振昌": {
+      "team": "中信兄弟",
+      "player": "李振昌",
+      "pitches": [
+        "FF",
+        "SL"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%9D%8E%E6%8C%AF%E6%98%8C",
+      "wiki_title": "李振昌 - 台灣棒球維基館",
+      "repertoire_text": "四縫線快速球、滑球",
+      "trackman_2026": {
+        "fastball_pitches": 95,
+        "breakingball_pitches": 25,
+        "fastball_avg_kph": 144.4,
+        "breakingball_avg_kph": 129.4
+      }
+    },
+    "富邦悍將|江國豪": {
+      "team": "富邦悍將",
+      "player": "江國豪",
+      "pitches": [
+        "CH",
+        "FB",
+        "SL",
+        "CU"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%B1%9F%E5%9C%8B%E8%B1%AA",
+      "wiki_title": "江國豪 - 台灣棒球維基館",
+      "repertoire_text": "圈指變速球、滑球、曲球",
+      "trackman_2026": {
+        "fastball_pitches": 68,
+        "breakingball_pitches": 86,
+        "fastball_avg_kph": 143.6,
+        "breakingball_avg_kph": 129.9
+      }
+    },
+    "富邦悍將|李吳永勤": {
+      "team": "富邦悍將",
+      "player": "李吳永勤",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "李吳永勤 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 140,
+        "breakingball_pitches": 74,
+        "fastball_avg_kph": 138.9,
+        "breakingball_avg_kph": 121.4
+      }
+    },
+    "統一7-ELEVEn獅|布雷克": {
+      "team": "統一7-ELEVEn獅",
+      "player": "布雷克",
+      "pitches": [
+        "FS",
+        "SL",
+        "CU",
+        "FB",
+        "CH"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E5%B8%83%E9%9B%B7%E5%85%8B",
+      "wiki_title": "布雷克B.D - 台灣棒球維基館",
+      "repertoire_text": "指叉球、滑球、曲球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 204,
+        "breakingball_pitches": 149,
+        "fastball_avg_kph": 142.0,
+        "breakingball_avg_kph": 132.6
+      }
+    },
+    "富邦悍將|阿部雄大": {
+      "team": "富邦悍將",
+      "player": "阿部雄大",
+      "pitches": [
+        "FB",
+        "FS",
+        "SL",
+        "CU"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%98%BF%E9%83%A8%E9%9B%84%E5%A4%A7",
+      "wiki_title": "阿部雄大 - 台灣棒球維基館",
+      "repertoire_text": "快速指叉球、滑球、曲球",
+      "trackman_2026": {
+        "fastball_pitches": 54,
+        "breakingball_pitches": 59,
+        "fastball_avg_kph": 143.0,
+        "breakingball_avg_kph": 127.2
+      }
+    },
+    "台鋼雄鷹|坎南": {
+      "team": "台鋼雄鷹",
+      "player": "坎南",
+      "pitches": [
+        "CT",
+        "CH",
+        "CU",
+        "SW",
+        "SI"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E5%9D%8E%E5%8D%97",
+      "wiki_title": "坎南D.B - 台灣棒球維基館",
+      "repertoire_text": "切球、變速球、曲球、橫掃球、二縫線快速球",
+      "trackman_2026": {
+        "fastball_pitches": 130,
+        "breakingball_pitches": 274,
+        "fastball_avg_kph": 146.0,
+        "breakingball_avg_kph": 134.2
+      }
+    },
+    "味全龍|蔣銲": {
+      "team": "味全龍",
+      "player": "蔣銲",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "蔣銲J.G - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 185,
+        "breakingball_pitches": 182,
+        "fastball_avg_kph": 146.9,
+        "breakingball_avg_kph": 131.5
+      }
+    },
+    "富邦悍將|賴鴻誠": {
+      "team": "富邦悍將",
+      "player": "賴鴻誠",
+      "pitches": [
+        "SI",
+        "CT",
+        "CH"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E8%B3%B4%E9%B4%BB%E8%AA%A0",
+      "wiki_title": "賴鴻誠 - 台灣棒球維基館",
+      "repertoire_text": "二縫線快速球、切球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 74,
+        "breakingball_pitches": 58,
+        "fastball_avg_kph": 142.3,
+        "breakingball_avg_kph": 129.4
+      }
+    },
+    "台鋼雄鷹|賴智垣": {
+      "team": "台鋼雄鷹",
+      "player": "賴智垣",
+      "pitches": [
+        "SI",
+        "SL"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E8%B3%B4%E6%99%BA%E5%9E%A3",
+      "wiki_title": "賴智垣 - 台灣棒球維基館",
+      "repertoire_text": "沉球、滑球",
+      "trackman_2026": {
+        "fastball_pitches": 20,
+        "breakingball_pitches": 35,
+        "fastball_avg_kph": 145.6,
+        "breakingball_avg_kph": 138.5
+      }
+    },
+    "台鋼雄鷹|黃紹睿": {
+      "team": "台鋼雄鷹",
+      "player": "黃紹睿",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "黃紹睿 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 19,
+        "breakingball_pitches": 4,
+        "fastball_avg_kph": 145.2,
+        "breakingball_avg_kph": 130.0
+      }
+    },
+    "樂天桃猿|盧冠宇": {
+      "team": "樂天桃猿",
+      "player": "盧冠宇",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "盧冠宇 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 41,
+        "breakingball_pitches": 30,
+        "fastball_avg_kph": 146.3,
+        "breakingball_avg_kph": 137.1
+      }
+    },
+    "樂天桃猿|王奕翔": {
+      "team": "樂天桃猿",
+      "player": "王奕翔",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "王奕翔 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 14,
+        "breakingball_pitches": 3,
+        "fastball_avg_kph": 145.5,
+        "breakingball_avg_kph": 136.5
+      }
+    },
+    "味全龍|吳君奕": {
+      "team": "味全龍",
+      "player": "吳君奕",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "吳君奕 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 13,
+        "breakingball_pitches": 37,
+        "fastball_avg_kph": 147.2,
+        "breakingball_avg_kph": 134.2
+      }
+    },
+    "統一7-ELEVEn獅|吳承諭": {
+      "team": "統一7-ELEVEn獅",
+      "player": "吳承諭",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "吳承諭 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 22,
+        "breakingball_pitches": 19,
+        "fastball_avg_kph": 137.2,
+        "breakingball_avg_kph": 127.7
+      }
+    },
+    "中信兄弟|勝騎士": {
+      "team": "中信兄弟",
+      "player": "勝騎士",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "勝騎士 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 202,
+        "breakingball_pitches": 318,
+        "fastball_avg_kph": 145.8,
+        "breakingball_avg_kph": 128.8
+      }
+    },
+    "中信兄弟|魏碩成": {
+      "team": "中信兄弟",
+      "player": "魏碩成",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "魏碩成 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 32,
+        "breakingball_pitches": 37,
+        "fastball_avg_kph": 137.5,
+        "breakingball_avg_kph": 129.2
+      }
+    },
+    "樂天桃猿|邱駿威": {
+      "team": "樂天桃猿",
+      "player": "邱駿威",
+      "pitches": [
+        "CT",
+        "SL",
+        "FS",
+        "CU"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%82%B1%E9%A7%BF%E5%A8%81",
+      "wiki_title": "邱駿威 - 台灣棒球維基館",
+      "repertoire_text": "切球、滑球、指叉球、曲球",
+      "trackman_2026": {
+        "fastball_pitches": 50,
+        "breakingball_pitches": 54,
+        "fastball_avg_kph": 144.5,
+        "breakingball_avg_kph": 129.7
+      }
+    },
+    "富邦悍將|陳品宏": {
+      "team": "富邦悍將",
+      "player": "陳品宏",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "陳品宏 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 90,
+        "breakingball_pitches": 72,
+        "fastball_avg_kph": 139.7,
+        "breakingball_avg_kph": 126.4
+      }
+    },
+    "中信兄弟|錢可倫": {
+      "team": "中信兄弟",
+      "player": "錢可倫",
+      "pitches": [
+        "CU",
+        "SL",
+        "CT"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%8C%A2%E5%8F%AF%E5%80%AB",
+      "wiki_title": "錢可倫 - 台灣棒球維基館",
+      "repertoire_text": "曲球、滑球、切球",
+      "trackman_2026": {
+        "fastball_pitches": 64,
+        "breakingball_pitches": 80,
+        "fastball_avg_kph": 138.4,
+        "breakingball_avg_kph": 123.8
+      }
+    },
+    "中信兄弟|蔡齊哲": {
+      "team": "中信兄弟",
+      "player": "蔡齊哲",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "蔡齊哲 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 43,
+        "breakingball_pitches": 91,
+        "fastball_avg_kph": 140.4,
+        "breakingball_avg_kph": 128.9
+      }
+    },
+    "統一7-ELEVEn獅|李軍": {
+      "team": "統一7-ELEVEn獅",
+      "player": "李軍",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "李軍 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 50,
+        "breakingball_pitches": 10,
+        "fastball_avg_kph": 146.6,
+        "breakingball_avg_kph": 129.1
+      }
+    },
+    "台鋼雄鷹|李欣穎": {
+      "team": "台鋼雄鷹",
+      "player": "李欣穎",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "李欣穎 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 34,
+        "breakingball_pitches": 19,
+        "fastball_avg_kph": 142.6,
+        "breakingball_avg_kph": 129.6
+      }
+    },
+    "統一7-ELEVEn獅|張宥謙": {
+      "team": "統一7-ELEVEn獅",
+      "player": "張宥謙",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "張宥謙 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 101,
+        "breakingball_pitches": 60,
+        "fastball_avg_kph": 143.7,
+        "breakingball_avg_kph": 127.2
+      }
+    },
+    "富邦悍將|鈴木駿輔": {
+      "team": "富邦悍將",
+      "player": "鈴木駿輔",
+      "pitches": [
+        "SL",
+        "CT",
+        "CU",
+        "CH",
+        "FS"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%88%B4%E6%9C%A8%E9%A7%BF%E8%BC%94",
+      "wiki_title": "鈴木駿輔 - 台灣棒球維基館",
+      "repertoire_text": "滑球、切球、曲球、變速球、指叉球",
+      "trackman_2026": {
+        "fastball_pitches": 145,
+        "breakingball_pitches": 248,
+        "fastball_avg_kph": 148.0,
+        "breakingball_avg_kph": 133.8
+      }
+    },
+    "中信兄弟|謝榮豪": {
+      "team": "中信兄弟",
+      "player": "謝榮豪",
+      "pitches": [
+        "SI",
+        "SL",
+        "CU",
+        "CH"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E8%AC%9D%E6%A6%AE%E8%B1%AA",
+      "wiki_title": "謝榮豪 - 台灣棒球維基館",
+      "repertoire_text": "二縫線快速球、滑球、曲球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 9,
+        "breakingball_pitches": 36,
+        "fastball_avg_kph": 142.7,
+        "breakingball_avg_kph": 127.3
+      }
+    },
+    "統一7-ELEVEn獅|銳力獅": {
+      "team": "統一7-ELEVEn獅",
+      "player": "銳力獅",
+      "pitches": [
+        "SL",
+        "CT",
+        "SI",
+        "CH"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E9%8A%B3%E5%8A%9B%E7%8D%85",
+      "wiki_title": "銳力獅D.R - 台灣棒球維基館",
+      "repertoire_text": "滑球、切球、沉球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 56,
+        "breakingball_pitches": 126,
+        "fastball_avg_kph": 146.1,
+        "breakingball_avg_kph": 133.5
+      }
+    },
+    "樂天桃猿|劉家翔": {
+      "team": "樂天桃猿",
+      "player": "劉家翔",
+      "pitches": [
+        "FB",
+        "CU"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E5%8A%89%E5%AE%B6%E7%BF%94",
+      "wiki_title": "劉家翔 - 台灣棒球維基館",
+      "repertoire_text": "曲球",
+      "trackman_2026": {
+        "fastball_pitches": 35,
+        "breakingball_pitches": 16,
+        "fastball_avg_kph": 144.8,
+        "breakingball_avg_kph": 128.6
+      }
+    },
+    "台鋼雄鷹|許峻暘": {
+      "team": "台鋼雄鷹",
+      "player": "許峻暘",
+      "pitches": [
+        "FS"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E8%A8%B1%E5%B3%BB%E6%9A%98",
+      "wiki_title": "許峻暘 - 台灣棒球維基館",
+      "repertoire_text": "叉指變速球",
+      "trackman_2026": {
+        "fastball_pitches": 0,
+        "breakingball_pitches": 0,
+        "fastball_avg_kph": null,
+        "breakingball_avg_kph": null
+      }
+    },
+    "統一7-ELEVEn獅|林子崴": {
+      "team": "統一7-ELEVEn獅",
+      "player": "林子崴",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "林子崴 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 122,
+        "breakingball_pitches": 112,
+        "fastball_avg_kph": 145.1,
+        "breakingball_avg_kph": 132.6
+      }
+    },
+    "富邦悍將|王偉軒": {
+      "team": "富邦悍將",
+      "player": "王偉軒",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "王偉軒 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 11,
+        "breakingball_pitches": 12,
+        "fastball_avg_kph": 141.3,
+        "breakingball_avg_kph": 132.0
+      }
+    },
+    "味全龍|曾仁和": {
+      "team": "味全龍",
+      "player": "曾仁和",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "曾仁和 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 30,
+        "breakingball_pitches": 43,
+        "fastball_avg_kph": 142.6,
+        "breakingball_avg_kph": 130.0
+      }
+    },
+    "中信兄弟|德保拉": {
+      "team": "中信兄弟",
+      "player": "德保拉",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "德保拉J.D - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 93,
+        "breakingball_pitches": 82,
+        "fastball_avg_kph": 143.3,
+        "breakingball_avg_kph": 126.4
+      }
+    },
+    "統一7-ELEVEn獅|江少慶": {
+      "team": "統一7-ELEVEn獅",
+      "player": "江少慶",
+      "pitches": [
+        "FB",
+        "SL",
+        "CU",
+        "FS"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%B1%9F%E5%B0%91%E6%85%B6",
+      "wiki_title": "江少慶 - 台灣棒球維基館",
+      "repertoire_text": "滑球、曲球、指叉變速球",
+      "trackman_2026": {
+        "fastball_pitches": 35,
+        "breakingball_pitches": 19,
+        "fastball_avg_kph": 149.1,
+        "breakingball_avg_kph": 135.9
+      }
+    },
+    "統一7-ELEVEn獅|林詔恩": {
+      "team": "統一7-ELEVEn獅",
+      "player": "林詔恩",
+      "pitches": [
+        "CU",
+        "SL",
+        "CH",
+        "FB"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%9E%97%E8%A9%94%E6%81%A9",
+      "wiki_title": "林詔恩 - 台灣棒球維基館",
+      "repertoire_text": "曲球、滑球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 29,
+        "breakingball_pitches": 11,
+        "fastball_avg_kph": 142.8,
+        "breakingball_avg_kph": 134.8
+      }
+    },
+    "味全龍|趙璟榮": {
+      "team": "味全龍",
+      "player": "趙璟榮",
+      "pitches": [
+        "CU",
+        "CH",
+        "FB"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E8%B6%99%E7%92%9F%E6%A6%AE",
+      "wiki_title": "趙璟榮 - 台灣棒球維基館",
+      "repertoire_text": "曲球、變速球",
+      "trackman_2026": {
+        "fastball_pitches": 27,
+        "breakingball_pitches": 35,
+        "fastball_avg_kph": 148.2,
+        "breakingball_avg_kph": 134.8
+      }
+    },
+    "富邦悍將|陳仕朋": {
+      "team": "富邦悍將",
+      "player": "陳仕朋",
+      "pitches": [
+        "FB"
+      ],
+      "source_type": "partial",
+      "source_label": "2026 CPBL TrackMan",
+      "source_url": null,
+      "wiki_title": "陳仕朋 - 台灣棒球維基館",
+      "repertoire_text": null,
+      "trackman_2026": {
+        "fastball_pitches": 38,
+        "breakingball_pitches": 40,
+        "fastball_avg_kph": 140.2,
+        "breakingball_avg_kph": 132.1
+      }
+    },
+    "中信兄弟|林暉盛": {
+      "team": "中信兄弟",
+      "player": "林暉盛",
+      "pitches": [
+        "SL",
+        "CH",
+        "FB",
+        "FS"
+      ],
+      "source_type": "verified",
+      "source_label": "台灣棒球維基館",
+      "source_url": "https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E6%9E%97%E6%9A%89%E7%9B%9B",
+      "wiki_title": "林暉盛 - 台灣棒球維基館",
+      "repertoire_text": "滑球、變速球、指叉球",
+      "trackman_2026": {
+        "fastball_pitches": 24,
+        "breakingball_pitches": 46,
+        "fastball_avg_kph": 147.9,
+        "breakingball_avg_kph": 135.3
+      }
+    }
+  }
+}
