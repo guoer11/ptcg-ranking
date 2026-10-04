@@ -12,32 +12,19 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Probe official pitch-type detail codes
+      - name: Probe Taiwan baseball wiki API
         run: |
           python - <<'PY'
-          import collections,json,urllib.parse,urllib.request
-          H={'User-Agent':'Mozilla/5.0','Content-Type':'application/json','Accept':'application/json'}
-          def get(base,params):
-              url=base+'?'+urllib.parse.urlencode(params)
-              req=urllib.request.Request(url,headers=H)
-              with urllib.request.urlopen(req,timeout=30) as r:return json.load(r)
-
-          logs=get('https://stats.cpbl.com.tw/api/proxy/v1/players/logs',{'playerType':'pitcher','acnt':'0000007053','year':'2026','kindCode':'A'}).get('Data',{}).get('Logs',[])
-          auto=collections.Counter(); tagged=collections.Counter()
-          for row in logs:
-              tag=((row.get('Trackman') or {}).get('Play') or {}).get('PitchTag') or {}
-              if tag.get('AutoPitchType'): auto[tag['AutoPitchType']]+=1
-              if tag.get('TaggedPitchType'): tagged[tag['TaggedPitchType']]+=1
-          print('AUTO_UNIQUE',dict(auto))
-          print('TAGGED_UNIQUE',dict(tagged))
-
-          base='https://stats.cpbl.com.tw/api/proxy/v1/leaderboards/pitch-tracking'
-          candidates=['fastball','breakingball','fourseam','four-seam','four_seam','4seam','twoseam','two-seam','two_seam','sinker','sinkerball','cutter','slider','sweeper','curveball','curve','changeup','change-up','splitter','splitfinger','forkball','fork','knucklecurve']
-          for c in candidates:
-              try:
-                  lb=get(base,{'year':'2026','gameKind':'A','pitchType':c}).get('Data',{}).get('Leaderboard',[])
-                  pts=sorted({str(x.get('PitchType')) for x in lb[:20]})
-                  print('CAND',c,'LEN',len(lb),'RETURN_TYPES',pts[:10])
-              except Exception as e:
-                  print('CAND',c,'ERR',type(e).__name__,str(e)[:120])
+          import json, urllib.parse, urllib.request
+          base='https://twbsball.dils.tku.edu.tw/api.php'
+          params={'action':'query','prop':'extracts','titles':'徐若熙','format':'json','formatversion':'2','explaintext':'1','redirects':'1'}
+          url=base+'?'+urllib.parse.urlencode(params)
+          req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0','Accept':'application/json'})
+          try:
+              with urllib.request.urlopen(req,timeout=30) as r:
+                  print('STATUS',r.status,'TYPE',r.headers.get('content-type'))
+                  body=r.read().decode('utf-8','replace')
+                  print('BODY',body[:12000])
+          except Exception as e:
+              print('ERROR',type(e).__name__,str(e))
           PY
