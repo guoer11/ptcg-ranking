@@ -21,21 +21,21 @@ TRACKING_CSV = (
     "master/data/csv/rankings_pitch_tracking.csv"
 )
 
-# Order matters: longer/specific names must be checked before generic words.
+# Longer/specific names before generic names.
 PITCH_PATTERNS = [
     ("FF", ("四縫線快速球", "四縫線速球", "四縫線", "4-seam", "4 seam", "four-seam", "fourseam")),
     ("SI", ("二縫線快速球", "二縫線速球", "二縫線", "伸卡球", "伸卡", "沉球", "sinker", "2-seam", "two-seam")),
     ("CT", ("卡特球", "卡特", "切球", "cutter")),
-    ("SW", ("sweeper", "Sweeper", "橫掃球", "橫掃滑球")),
-    ("SV", ("滑曲球", "slurve", "Slurve")),
-    ("SL", ("高速滑球", "縱向滑球", "滑球", "slider", "Slider")),
+    ("SW", ("sweeper", "橫掃球", "橫掃滑球")),
+    ("SV", ("滑曲球", "slurve")),
+    ("SL", ("高速滑球", "縱向滑球", "滑球", "slider")),
     ("KC", ("彈指曲球", "指節曲球", "knuckle curve", "knucklecurve")),
-    ("CU", ("12-6曲球", "12-6曲", "曲球", "curveball", "curve")),
-    ("FS", ("指叉變速球", "快速指叉球", "指叉球", "指叉", "SFF", "split-finger", "splitter", "forkball", "fork")),
+    ("CU", ("12-6曲球", "12-6曲", "單指曲球", "曲球", "curveball", "curve")),
+    ("FS", ("叉指變速球", "叉指快速球", "指叉變速球", "快速指叉球", "指叉球", "指叉", "SFF", "split-finger", "splitter", "forkball", "fork")),
     ("PA", ("掌心球", "palmball", "palm ball")),
     ("CH", ("圈指變速球", "圈指變速", "變速球", "變速", "changeup", "change-up")),
     ("SC", ("螺旋球", "screwball")),
-    ("KN", ("蝴蝶球", "knuckleball", "knuckle ball")),
+    ("KN", ("蝴蝶球", "彈指球", "knuckleball", "knuckle ball")),
 ]
 GENERIC_FASTBALL = ("快速球", "速球", "直球", "fastball")
 FASTBALL_FAMILY = {"FB", "FF", "SI", "CT"}
@@ -43,7 +43,7 @@ FASTBALL_FAMILY = {"FB", "FF", "SI", "CT"}
 STOP_LABELS = (
     "出生地點", "所屬族裔", "最高學歷", "職棒選秀", "經紀公司", "簽約金額",
     "推定年薪", "親屬關係", "婚姻狀況", "外文姓名", "原文姓名", "姓名變更",
-    "職棒月薪", "職棒簽約", "教練資格", "經歷", "個人年表",
+    "職棒月薪", "職棒簽約", "教練資格", "經歷", "個人年表", "備註",
 )
 
 
@@ -79,19 +79,18 @@ def clean_text(s: str) -> str:
 
 def extract_repertoire_field(text: str) -> str | None:
     text = clean_text(text)
-    idx = text.find("擅長球路")
-    if idx < 0:
-        # Some pages use a different but equivalent label.
-        for label in ("拿手球路", "主要球路"):
-            idx = text.find(label)
-            if idx >= 0:
-                break
-    if idx < 0:
+    label = None
+    idx = -1
+    for candidate in ("擅長球路", "拿手球路", "主要球路"):
+        idx = text.find(candidate)
+        if idx >= 0:
+            label = candidate
+            break
+    if idx < 0 or not label:
         return None
 
     segment = text[idx : idx + 1200]
-    # Drop the label itself.
-    segment = re.sub(r"^(?:擅長球路|拿手球路|主要球路)\s*[：:]?\s*", "", segment)
+    segment = re.sub(rf"^{re.escape(label)}\s*[：:]?\s*", "", segment)
     lines = [clean_text(x) for x in segment.splitlines()]
     kept: list[str] = []
     for line in lines:
@@ -100,7 +99,7 @@ def extract_repertoire_field(text: str) -> str | None:
                 kept.append(line)
             continue
         compact = re.sub(r"\s+", "", line)
-        if any(compact.startswith(label) and ("：" in compact or ":" in compact or compact == label) for label in STOP_LABELS):
+        if any(compact.startswith(stop) and ("：" in compact or ":" in compact or compact == stop) for stop in STOP_LABELS):
             break
         if compact in {"[編輯]", "編輯", "[", "]"}:
             if kept:
@@ -112,39 +111,48 @@ def extract_repertoire_field(text: str) -> str | None:
     raw = " ".join(kept)
     raw = re.sub(r"\s*([、，,/／])\s*", r"\1", raw)
     raw = re.sub(r"\s+", " ", raw).strip(" 、，,/／")
+    # Some older pages put a descriptive paragraph immediately after the repertoire.
+    # The first full stop reliably ends the pitch-list sentence in those cases.
+    if "。" in raw:
+        raw = raw.split("。", 1)[0].strip(" 、，,/／")
     return raw or None
 
 
 def map_pitch_codes(raw: str | None) -> list[str]:
     if not raw:
         return []
+    lowered = raw.lower()
     found: list[tuple[int, int, str]] = []
     claimed_spans: list[tuple[int, int]] = []
 
-    # Specific terms first. Avoid mapping "變速" inside "指叉變速球" twice.
     for order, (code, terms) in enumerate(PITCH_PATTERNS):
         best = None
         for term in terms:
-            pos = raw.lower().find(term.lower())
+            pos = lowered.find(term.lower())
             if pos >= 0 and (best is None or pos < best[0] or (pos == best[0] and len(term) > best[1])):
                 best = (pos, len(term))
         if best is None:
             continue
         pos, length = best
+        # Don't double count "變速" inside a splitter-change phrase.
         if code == "CH" and any(a <= pos < b for a, b in claimed_spans):
             continue
-        if code == "CU" and ("彈指曲球" in raw or "指節曲球" in raw) and pos >= raw.find("曲球"):
-            # KC already represents that exact phrase. A separate 曲球 later will still be found
-            # only if the page explicitly lists another curve; rare enough to avoid duplication.
-            if not re.search(r"(?:彈指曲球|指節曲球).*(?:、|，|/|／).*曲球", raw):
-                continue
+        # Don't double count curve inside knuckle-curve phrase.
+        if code == "CU" and any(a <= pos < b for a, b in claimed_spans):
+            continue
         found.append((pos, order, code))
         claimed_spans.append((pos, pos + length))
 
-    # Generic fastball only when the field itself explicitly says it and no specific fastball type was found.
     codes = [c for _, _, c in sorted(found)]
     if not FASTBALL_FAMILY.intersection(codes):
-        pos_candidates = [raw.lower().find(t.lower()) for t in GENERIC_FASTBALL]
+        # Strip phrases containing the word 速球 that are already another pitch type,
+        # e.g. 叉指快速球, before deciding there is a generic fastball.
+        generic_text = lowered
+        for code, terms in PITCH_PATTERNS:
+            if code in {"FS", "FF", "SI"}:
+                for term in terms:
+                    generic_text = generic_text.replace(term.lower(), "")
+        pos_candidates = [generic_text.find(t.lower()) for t in GENERIC_FASTBALL]
         pos_candidates = [p for p in pos_candidates if p >= 0]
         if pos_candidates:
             found.append((min(pos_candidates), -1, "FB"))
@@ -190,9 +198,6 @@ def main() -> None:
             tr = tracking.get(name, {})
             fast_count = int(tr.get("fastball", 0) or 0)
             breaking_count = int(tr.get("breakingball", 0) or 0)
-            # CPBL's public 2026 TrackMan endpoint only labels broad fastball/breakingball.
-            # Add a generic FB only if there is actual 2026 fastball evidence and the wiki
-            # does not already identify a more specific fastball-family pitch.
             trackman_fastball_added = False
             if fast_count >= 5 and not FASTBALL_FAMILY.intersection(codes):
                 codes.insert(0, "FB")
@@ -226,7 +231,6 @@ def main() -> None:
                 },
             }
             print(f"[{idx:03}/{len(pitchers)}] {name}: {source_type} {codes} {raw or ''}", flush=True)
-            # Be polite to the community wiki while reusing one browser/session.
             time.sleep(0.18)
 
     payload = {
