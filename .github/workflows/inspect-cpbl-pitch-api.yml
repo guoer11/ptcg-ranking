@@ -12,19 +12,20 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Probe Taiwan baseball wiki API
+      - name: Install browser scraper
+        run: |
+          python -m pip install --disable-pip-version-check 'scrapling[ai]' >/dev/null
+          python -m patchright install --with-deps chromium >/dev/null
+      - name: Probe Taiwan baseball wiki through browser
         run: |
           python - <<'PY'
-          import json, urllib.parse, urllib.request
-          base='https://twbsball.dils.tku.edu.tw/api.php'
-          params={'action':'query','prop':'extracts','titles':'徐若熙','format':'json','formatversion':'2','explaintext':'1','redirects':'1'}
-          url=base+'?'+urllib.parse.urlencode(params)
-          req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0','Accept':'application/json'})
-          try:
-              with urllib.request.urlopen(req,timeout=30) as r:
-                  print('STATUS',r.status,'TYPE',r.headers.get('content-type'))
-                  body=r.read().decode('utf-8','replace')
-                  print('BODY',body[:12000])
-          except Exception as e:
-              print('ERROR',type(e).__name__,str(e))
+          from scrapling.fetchers import StealthyFetcher
+          url='https://twbsball.dils.tku.edu.tw/wiki/index.php?title=%E5%BE%90%E8%8B%A5%E7%86%99'
+          page=StealthyFetcher.fetch(url, headless=True, network_idle=True, timeout=60000)
+          print('TITLE', page.css('title::text').get())
+          content=page.css('#mw-content-text')
+          text=content.get_all_text(separator='\n') if content else page.get_all_text(separator='\n')
+          print('HAS擅長球路', '擅長球路' in text)
+          idx=text.find('擅長球路')
+          print('EXCERPT', text[max(0,idx-500):idx+1500] if idx>=0 else text[:4000])
           PY
