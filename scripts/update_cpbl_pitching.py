@@ -8,9 +8,9 @@ from pathlib import Path
 import requests
 
 YEAR = 2026
-BASE = "https://www.cpbl.com.tw"
+BASE = "https://cpbl.com.tw"
 RECORD_URL = (
-    f"{BASE}/stats/recordall?year={YEAR}&kindCode=A&position=02&sortby=01"
+    f"{BASE}/Stats/RecordAll?kindcode=A&position=02&sortby=01&year={YEAR}"
 )
 OUT = Path("data/cpbl_pitching_2026.json")
 TEAM_CODES = {
