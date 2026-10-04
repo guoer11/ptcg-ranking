@@ -1,0 +1,42 @@
+name: Fix interactive pitching tactics
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/fix_interactive_pitching_tactics.py
+      - .github/workflows/fix-interactive-pitching-tactics.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - name: Fix pitching tactics safeguards
+        run: python scripts/fix_interactive_pitching_tactics.py
+      - name: Check JavaScript syntax
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          t=Path('baseball-game.html').read_text(encoding='utf-8')
+          scripts=re.findall(r'<script>(.*?)</script>',t,re.S)
+          Path('/tmp/baseball-game.js').write_text('\n'.join(scripts),encoding='utf-8')
+          PY
+          node --check /tmp/baseball-game.js
+      - name: Commit patched game
+        run: |
+          if git diff --quiet -- baseball-game.html; then
+            echo "No change needed"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add baseball-game.html
+          git commit -m "Fix pitching mode tactics safeguards"
+          git push
