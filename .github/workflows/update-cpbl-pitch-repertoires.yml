@@ -46,7 +46,7 @@ jobs:
 
       - name: Commit updated repertoire data
         run: |
-          if git diff --quiet -- data/cpbl_pitch_repertoires_2026.json; then
+          if [ -z "$(git status --porcelain -- data/cpbl_pitch_repertoires_2026.json)" ]; then
             echo 'No repertoire changes.'
             exit 0
           fi
