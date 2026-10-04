@@ -1,0 +1,62 @@
+name: Move pitching controls outside strike zone
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/move-pitch-controls-outside-zone.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - name: Move pitch controls below field
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('baseball-game.html')
+          s=p.read_text()
+          old_css=".pitch-mode-panel{position:absolute;left:10px;right:10px;bottom:8px;z-index:27;background:rgba(3,18,20,.90);border:1px solid rgba(255,255,255,.16);border-radius:15px;padding:9px 10px;backdrop-filter:blur(7px);box-shadow:0 8px 24px #0007}.pitch-mode-panel.hidden{display:none!important}.pitch-mode-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px;font-size:11px;color:#b9cbc7}.pitch-mode-top strong{color:#ffe079;font-size:13px}.pitch-types{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.pitch-type{border:1px solid #3b5c5d;background:#0d3032;color:#dfe9e7;border-radius:10px;padding:7px 3px;font-size:10px;font-weight:900;min-height:38px}.pitch-type.active{background:#ffd052;color:#493500;border-color:#ffd052;box-shadow:0 0 0 2px #ffd05222}.pitch-type:disabled{opacity:.35}.pitch-help{text-align:center;font-size:10px;color:#9db4af;margin-top:6px}"
+          new_css=".pitch-mode-panel{position:relative;flex:0 0 auto;z-index:28;background:#071514;border-top:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.10);padding:8px 10px;box-shadow:0 -5px 18px #0005}.pitch-mode-panel.hidden{display:none!important}.pitch-mode-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:11px;color:#b9cbc7}.pitch-mode-top strong{color:#ffe079;font-size:13px}.pitch-types{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.pitch-types::-webkit-scrollbar{display:none}.pitch-type{flex:0 0 auto;min-width:72px;border:1px solid #3b5c5d;background:#0d3032;color:#dfe9e7;border-radius:10px;padding:7px 8px;font-size:10px;font-weight:900;min-height:36px}.pitch-type.active{background:#ffd052;color:#493500;border-color:#ffd052;box-shadow:0 0 0 2px #ffd05222}.pitch-type:disabled{opacity:.35}.pitch-help{text-align:center;font-size:10px;color:#9db4af;margin-top:5px}"
+          if old_css not in s:
+              raise SystemExit('pitch panel css anchor not found')
+          s=s.replace(old_css,new_css,1)
+          old_media="@media(max-width:620px){.pitch-mode-panel{left:6px;right:6px;bottom:5px;padding:7px 8px}.pitch-types{grid-template-columns:repeat(3,minmax(0,1fr))}.pitch-type{min-height:34px;padding:5px 2px}.scene.user-pitching .batterCard{max-width:62vw}.scene.user-pitching .hud{max-width:42vw}}"
+          new_media="@media(max-width:620px){.pitch-mode-panel{padding:6px 8px}.pitch-mode-top{margin-bottom:5px}.pitch-type{min-width:68px;min-height:34px;padding:5px 7px}.pitch-help{display:none}.scene.user-pitching .batterCard{max-width:62vw}.scene.user-pitching .hud{max-width:42vw}}"
+          if old_media not in s:
+              raise SystemExit('pitch panel mobile css anchor not found')
+          s=s.replace(old_media,new_media,1)
+          panel='    <div id="pitchModePanel" class="pitch-mode-panel hidden"><div class="pitch-mode-top"><strong id="userPitcherLabel">你的投手</strong><span id="cpuBatterLabel">對手打者</span></div><div id="pitchTypeButtons" class="pitch-types"></div><div class="pitch-help">先選球種 → 拖曳九宮格瞄準 → 按「投球！」</div></div>\n'
+          if panel not in s:
+              raise SystemExit('pitch panel html anchor not found')
+          s=s.replace(panel,'',1)
+          footer='  </main>\n  <footer class="controls">'
+          if footer not in s:
+              raise SystemExit('footer anchor not found')
+          s=s.replace(footer,'  </main>\n'+panel+'  <footer class="controls">',1)
+          p.write_text(s)
+          PY
+      - name: Check JavaScript syntax
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          s=Path('baseball-game.html').read_text()
+          scripts=re.findall(r'<script>(.*?)</script>',s,re.S)
+          Path('/tmp/game.js').write_text('\n'.join(scripts))
+          PY
+          node --check /tmp/game.js
+      - name: Commit change
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add baseball-game.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Move pitch selection below field'
+          git push
