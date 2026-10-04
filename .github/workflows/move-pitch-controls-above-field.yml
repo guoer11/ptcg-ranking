@@ -1,0 +1,32 @@
+name: Move pitch controls above field
+on:
+  push:
+    paths:
+      - 'scripts/move_pitch_controls_above_field.py'
+      - '.github/workflows/move-pitch-controls-above-field.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Move pitch controls above field
+        run: python scripts/move_pitch_controls_above_field.py
+      - name: Check JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('baseball-game.html').read_text(encoding='utf-8')
+          m=re.search(r'<script>([\s\S]*?)</script>',s)
+          Path('/tmp/baseball.js').write_text(m.group(1),encoding='utf-8')
+          PY
+          node --check /tmp/baseball.js
+      - name: Commit change
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add baseball-game.html
+          git diff --cached --quiet || git commit -m 'Move pitch selection above field'
+          git push
