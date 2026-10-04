@@ -1,0 +1,40 @@
+name: Inspect CPBL pitch API
+
+on:
+  push:
+    paths:
+      - '.github/workflows/inspect-cpbl-pitch-api.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect official pitch tracking response
+        run: |
+          python - <<'PY'
+          import json, urllib.request
+          url='https://stats.cpbl.com.tw/api/proxy/v1/leaderboards/pitch-tracking?year=2026&gameKind=A'
+          req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0','Content-Type':'application/json','Accept':'application/json'})
+          with urllib.request.urlopen(req,timeout=30) as r:
+              data=json.load(r)
+          print('TYPE', type(data).__name__)
+          if isinstance(data, dict):
+              print('TOP_KEYS', list(data)[:30])
+              for k,v in data.items():
+                  if isinstance(v,list):
+                      print('LIST_KEY',k,'LEN',len(v))
+                      if v:
+                          print('FIRST_ITEM_KEYS', list(v[0])[:80] if isinstance(v[0],dict) else type(v[0]).__name__)
+                          print('FIRST_ITEM', json.dumps(v[0],ensure_ascii=False)[:5000])
+                      break
+                  elif isinstance(v,dict):
+                      print('DICT_KEY',k,'KEYS',list(v)[:30])
+          elif isinstance(data,list):
+              print('LEN',len(data))
+              if data:
+                  print('FIRST_ITEM_KEYS',list(data[0])[:80] if isinstance(data[0],dict) else type(data[0]).__name__)
+                  print('FIRST_ITEM',json.dumps(data[0],ensure_ascii=False)[:5000])
+          PY
