@@ -1,189 +1,185 @@
 from __future__ import annotations
 
+import csv
+import io
 import json
-import re
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
 
 YEAR = 2026
-BASE = "https://cpbl.com.tw"
-RECORD_URL = (
-    f"{BASE}/Stats/RecordAll?kindcode=A&position=02&sortby=01&year={YEAR}"
+SOURCE_URL = (
+    "https://raw.githubusercontent.com/lin-junyou/cpbl-savant-py-app/"
+    "master/data/csv/game_pitchers.csv"
 )
 OUT = Path("data/cpbl_pitching_2026.json")
-TEAM_CODES = {
-    "ACN": "中信兄弟",
-    "ADD": "統一7-ELEVEn獅",
-    "AJL": "樂天桃猿",
-    "AAA": "味全龍",
-    "AEO": "富邦悍將",
-    "AKP": "台鋼雄鷹",
+FIRST_TEAM_NAMES = {
+    "中信兄弟",
+    "統一7-ELEVEn獅",
+    "樂天桃猿",
+    "味全龍",
+    "富邦悍將",
+    "台鋼雄鷹",
 }
 
 
-def new_session():
-    s = requests.Session()
-    s.headers.update(
-        {
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/120.0.0.0 Safari/537.36"
-            ),
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
-        }
-    )
-    return s
-
-
-def clean_html(value: str) -> str:
-    return re.sub(r"\s+", "", re.sub(r"<[^>]+>", "", value or ""))
-
-
-def as_num(value):
-    if value is None:
-        return None
-    text = str(value).strip().replace(",", "").replace("%", "")
-    if not text or text in {"-", "—", "null", "None"}:
-        return None
+def num(value, default=0.0):
     try:
-        return float(text)
-    except ValueError:
+        if value is None or str(value).strip() == "":
+            return default
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def integer(value, default=0):
+    return int(num(value, default))
+
+
+def ip_text(outs: int) -> str:
+    return f"{outs // 3}.{outs % 3}"
+
+
+def ratio(numerator: float, denominator: float, digits=2):
+    if denominator <= 0:
         return None
-
-
-def as_int(value):
-    v = as_num(value)
-    return int(v) if v is not None else None
-
-
-def ip_outs(value):
-    if value is None:
-        return None
-    text = str(value).strip()
-    m = re.fullmatch(r"(\d+)(?:\.([012]))?", text)
-    if not m:
-        return None
-    return int(m.group(1)) * 3 + int(m.group(2) or 0)
+    return round(numerator / denominator, digits)
 
 
 def main():
-    session = new_session()
-    r = session.get(RECORD_URL, timeout=45)
+    r = requests.get(
+        SOURCE_URL,
+        timeout=45,
+        headers={"User-Agent": "Mozilla/5.0", "Accept": "text/csv,*/*"},
+    )
     r.raise_for_status()
-    html = r.text
+    reader = csv.DictReader(io.StringIO(r.text.lstrip("\ufeff")))
 
-    headers = [clean_html(h) for h in re.findall(r"<th[^>]*>(.*?)</th>", html, re.S)]
-    rows = re.findall(r"<tr[^>]*>(.*?)</tr>", html, re.S)
-    if not headers or not rows:
-        raise RuntimeError("CPBL pitching table structure was not found")
-
-    aliases = {
-        "ERA": "防禦率",
-        "G": "出賽數",
-        "GS": "先發",
-        "GF": "救援",
-        "W": "勝場",
-        "L": "敗場",
-        "SV": "救援成功",
-        "HLD": "中繼成功",
-        "BF": "打席",
-        "PITCHES": "投球數",
-        "IP": "投球局數",
-        "H": "被安打",
-        "HR": "被全壘打",
-        "R": "失分",
-        "ER": "自責分",
-        "BB": "四壞",
-        "HBP": "死球",
-        "K": "奪三振",
-        "WHIP": "每局被上壘率",
-        "BAA": "被打擊率",
-        "K9": "K9值",
-        "BB9": "B9值",
-        "H9": "H9值",
-        "Kpct": "K%",
-        "BBpct": "BB%",
-        "FIP": "FIP",
-        "ERAplus": "ERA+",
-    }
-    idx = {k: headers.index(v) if v in headers else None for k, v in aliases.items()}
-    required = ("ERA", "G", "GS", "W", "L", "IP", "K", "WHIP")
-    missing = [k for k in required if idx[k] is None]
-    if missing:
-        raise RuntimeError(f"Missing expected CPBL pitching columns: {missing}; headers={headers}")
-
-    out = {}
-    for tr in rows:
-        team_m = re.search(r"TeamNo=([A-Z]{3})", tr, re.I)
-        name_m = re.search(r'/team/person[^>]*>\s*([^<]+?)\s*<', tr, re.S | re.I)
-        if not team_m or not name_m:
-            continue
-        team = TEAM_CODES.get(team_m.group(1).upper())
-        player = clean_html(name_m.group(1))
-        if not team or not player:
-            continue
-
-        cells = [clean_html(c) for c in re.findall(r"<td[^>]*>(.*?)</td>", tr, re.S)]
-        if len(cells) < 10:
-            continue
-        numeric = cells[1:]
-
-        def get(key):
-            i = idx[key]
-            return numeric[i] if i is not None and i < len(numeric) else None
-
-        ip_text = get("IP")
-        row = {
-            "team": team,
-            "player": player,
-            "ERA": as_num(get("ERA")),
-            "G": as_int(get("G")),
-            "GS": as_int(get("GS")),
-            "GF": as_int(get("GF")),
-            "W": as_int(get("W")),
-            "L": as_int(get("L")),
-            "SV": as_int(get("SV")),
-            "HLD": as_int(get("HLD")),
-            "BF": as_int(get("BF")),
-            "PITCHES": as_int(get("PITCHES")),
-            "IP": ip_text,
-            "IP_outs": ip_outs(ip_text),
-            "H": as_int(get("H")),
-            "HR": as_int(get("HR")),
-            "R": as_int(get("R")),
-            "ER": as_int(get("ER")),
-            "BB": as_int(get("BB")),
-            "HBP": as_int(get("HBP")),
-            "K": as_int(get("K")),
-            "WHIP": as_num(get("WHIP")),
-            "BAA": as_num(get("BAA")),
-            "K9": as_num(get("K9")),
-            "BB9": as_num(get("BB9")),
-            "H9": as_num(get("H9")),
-            "Kpct": as_num(get("Kpct")),
-            "BBpct": as_num(get("BBpct")),
-            "FIP": as_num(get("FIP")),
-            "ERAplus": as_num(get("ERAplus")),
+    agg = defaultdict(
+        lambda: {
+            "team": "",
+            "player": "",
+            "games": set(),
+            "G": 0,
+            "GS": 0,
+            "GF": 0,
+            "BF": 0,
+            "PITCHES": 0,
+            "IP_outs": 0,
+            "H": 0,
+            "HR": 0,
+            "R": 0,
+            "ER": 0,
+            "BB": 0,
+            "HBP": 0,
+            "K": 0,
+            "SV_events": 0,
+            "HLD_events": 0,
+            "W": 0,
+            "L": 0,
+            "SV_total": 0,
         }
-        out[f"{team}|{player}"] = row
+    )
 
-    if len(out) < 60:
-        raise RuntimeError(f"CPBL pitching page returned only {len(out)} usable pitchers")
+    for row in reader:
+        if row.get("kind_code") != "A":
+            continue
+        date = row.get("date", "")
+        if not date.startswith(str(YEAR)):
+            continue
+        team = (row.get("team_name") or "").strip()
+        player = (row.get("pitcher_name") or "").strip()
+        if team not in FIRST_TEAM_NAMES or not player:
+            continue
+
+        key = f"{team}|{player}"
+        a = agg[key]
+        a["team"] = team
+        a["player"] = player
+        game_id = row.get("game_id") or row.get("game_sno") or ""
+        a["games"].add(game_id)
+        role = (row.get("role_type") or "").strip()
+        if role == "先發":
+            a["GS"] += 1
+        if role == "最後一任":
+            a["GF"] += 1
+        a["BF"] += integer(row.get("plate_appearances"))
+        a["PITCHES"] += integer(row.get("pitch_cnt"))
+        a["IP_outs"] += integer(row.get("inning_pitched_cnt")) * 3 + integer(row.get("inning_pitched_div3_cnt"))
+        a["H"] += integer(row.get("hitting_cnt"))
+        a["HR"] += integer(row.get("home_run_cnt"))
+        a["R"] += integer(row.get("run_cnt"))
+        a["ER"] += integer(row.get("earned_run_cnt"))
+        a["BB"] += integer(row.get("bases_onballs_cnt"))
+        a["HBP"] += integer(row.get("hit_bypitch_cnt"))
+        a["K"] += integer(row.get("strike_out_cnt"))
+        a["SV_events"] += integer(row.get("is_save_ok"))
+        a["HLD_events"] += integer(row.get("relief_point_cnt"))
+        a["W"] = max(a["W"], integer(row.get("total_w")))
+        a["L"] = max(a["L"], integer(row.get("total_l")))
+        a["SV_total"] = max(a["SV_total"], integer(row.get("total_s")))
+
+    pitchers = {}
+    for key, a in agg.items():
+        outs = a["IP_outs"]
+        innings = outs / 3 if outs else 0
+        g = len(a["games"])
+        era = ratio(a["ER"] * 9, innings, 2)
+        whip = ratio(a["H"] + a["BB"], innings, 2)
+        k9 = ratio(a["K"] * 9, innings, 2)
+        bb9 = ratio(a["BB"] * 9, innings, 2)
+        h9 = ratio(a["H"] * 9, innings, 2)
+        baa_den = max(1, a["BF"] - a["BB"] - a["HBP"])
+        baa = round(a["H"] / baa_den, 3)
+        pitchers[key] = {
+            "team": a["team"],
+            "player": a["player"],
+            "ERA": era,
+            "G": g,
+            "GS": a["GS"],
+            "GF": a["GF"],
+            "W": a["W"],
+            "L": a["L"],
+            "SV": max(a["SV_total"], a["SV_events"]),
+            "HLD": a["HLD_events"],
+            "BF": a["BF"],
+            "PITCHES": a["PITCHES"],
+            "IP": ip_text(outs),
+            "IP_outs": outs,
+            "H": a["H"],
+            "HR": a["HR"],
+            "R": a["R"],
+            "ER": a["ER"],
+            "BB": a["BB"],
+            "HBP": a["HBP"],
+            "K": a["K"],
+            "WHIP": whip,
+            "BAA": baa,
+            "K9": k9,
+            "BB9": bb9,
+            "H9": h9,
+            "Kpct": ratio(a["K"] * 100, a["BF"], 2),
+            "BBpct": ratio(a["BB"] * 100, a["BF"], 2),
+            "FIP": None,
+            "ERAplus": None,
+        }
+
+    if len(pitchers) < 60:
+        raise RuntimeError(f"Pitching source returned only {len(pitchers)} usable first-team pitchers")
 
     payload = {
         "year": YEAR,
-        "source": RECORD_URL,
+        "source": SOURCE_URL,
+        "source_note": "Aggregated from 2026 CPBL game pitcher data collected from the public CPBL advanced-data APIs.",
         "updated_at": datetime.now(timezone.utc).isoformat(),
-        "count": len(out),
-        "pitchers": out,
+        "count": len(pitchers),
+        "pitchers": pitchers,
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Wrote {len(out)} CPBL pitchers to {OUT}")
+    print(f"Wrote {len(pitchers)} CPBL first-team pitchers to {OUT}")
 
 
 if __name__ == "__main__":
