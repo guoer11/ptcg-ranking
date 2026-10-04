@@ -10,7 +10,7 @@ on:
     workflows:
       - "Update PTCG ranking"
       - "Update PTCG tournaments"
-      - "Update CPBL game batting stats"
+      - "Update CPBL game stats"
     types:
       - completed
   schedule:
@@ -54,6 +54,11 @@ jobs:
             cp data/cpbl_batting_2026.json _site/data/cpbl_batting_2026.json
           else
             printf '%s\n' '{"year":2026,"updated_at":null,"count":0,"players":{}}' > _site/data/cpbl_batting_2026.json
+          fi
+          if [ -f data/cpbl_pitching_2026.json ]; then
+            cp data/cpbl_pitching_2026.json _site/data/cpbl_pitching_2026.json
+          else
+            printf '%s\n' '{"year":2026,"updated_at":null,"count":0,"pitchers":{}}' > _site/data/cpbl_pitching_2026.json
           fi
           if [ -f data/tournament_registration.json ]; then
             cp data/tournament_registration.json _site/data/tournament_registration.json
