@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="pairing.css?v=1.11.1-r1" />
   <link rel="stylesheet" href="pairing-deck-scout.css?v=1.10.1-r1" />
   <link rel="stylesheet" href="pairing-odds.css?v=1.11.0-r1" />
+  <link rel="stylesheet" href="pairing-history.css?v=1.12.0-r1" />
 </head>
 <body>
   <header class="site-header pairing-header">
@@ -35,45 +36,37 @@
         <div class="pairing-form">
           <div class="pairing-field"><label for="pairingSourceUrl">活動網址 / Round 配對網址</label><input id="pairingSourceUrl" class="search-input" type="url" inputmode="url" placeholder="https://tcg.sfc-jpn.jp/tour.asp?tid=..." autocomplete="off" /></div>
           <div class="pairing-row"><div class="pairing-field"><label for="pairingPlayerId">追蹤玩家 PTCG ID</label><input id="pairingPlayerId" class="search-input" type="text" value="tw39371632" autocomplete="off" autocapitalize="none" /></div><div class="pairing-field"><label for="pairingRound">Round</label><input id="pairingRound" class="search-input" type="number" min="1" step="1" value="1" inputmode="numeric" /></div></div>
-          <div class="pairing-actions"><button id="pairingLookupButton" class="primary-btn" type="button">查詢這一輪</button><button id="pairingOpenOfficialButton" class="secondary-btn" type="button">開官方配對頁</button><button id="pairingLoadTestButton" class="secondary-btn pairing-test-btn" type="button">載入歷史測試場</button><button id="pairingTestButton" class="secondary-btn pairing-test-btn" type="button">測試 Round 通知</button><button id="pairingFinalTestButton" class="secondary-btn pairing-test-btn" type="button">測試最終排名通知</button></div>
+          <div class="pairing-actions"><button id="pairingLookupButton" class="primary-btn" type="button">查詢這一輪</button><button id="pairingOpenOfficialButton" class="secondary-btn" type="button">開官方配對頁</button><button id="pairingTestButton" class="secondary-btn pairing-test-btn" type="button">測試 Round 通知</button><button id="pairingFinalTestButton" class="secondary-btn pairing-test-btn" type="button">測試最終排名通知</button></div>
         </div>
-        <div id="pairingResult" class="pairing-result is-waiting"><div class="pairing-result-title"><strong>尚未查詢</strong><span class="pairing-round-badge">等待輸入</span></div><div class="pairing-watch-copy">可先按「載入歷史測試場」，用 2026/9/12 高級球孩童組驗證配對與最終排名通知。</div></div>
+        <div id="pairingResult" class="pairing-result is-waiting"><div class="pairing-result-title"><strong>尚未查詢</strong><span class="pairing-round-badge">等待輸入</span></div><div class="pairing-watch-copy">貼上目前賽事網址並選擇 Round，即可查詢配對、開始監控與記錄牌組。</div></div>
         <section class="pairing-watch-card pairing-watch-inline"><div class="pairing-watch-head"><strong>配對 / 最終排名自動監控</strong><span id="pairingWatchStatus" class="pairing-watch-status"><span class="pairing-watch-dot"></span>未監控</span></div><div id="pairingWatchCopy" class="pairing-watch-copy">設定目前 Round 後即可開始監控；如果這一輪尚未公布，就直接等待本輪，若已公布則自動等待下一輪。後端每 <strong>10 秒</strong>檢查配對與最終排名。</div><div class="pairing-actions" style="margin-top:14px;"><button id="pairingStartButton" class="primary-btn" type="button">開始監控配對</button><button id="pairingStopButton" class="secondary-btn" type="button">停止監控</button></div></section>
         <div id="pairingMessage" class="pairing-message"></div>
         <section id="pairingDeckScout" class="pairing-scout-panel pairing-scout-card" aria-labelledby="pairingScoutHeading">
-          <div class="pairing-scout-head">
-            <div><h2 id="pairingScoutHeading">牌組偵察</h2><p>臨時查詢桌號或 PTCG ID，查看玩家與對手後直接記錄牌組；不影響上方的追蹤玩家與自動監控。</p></div>
-          </div>
-          <div class="pairing-scout-tabs" role="group" aria-label="牌組偵察查詢方式">
-            <button type="button" data-pairing-scout-mode="table" class="active" aria-pressed="true">桌號</button>
-            <button type="button" data-pairing-scout-mode="player" aria-pressed="false">PTCG ID</button>
-          </div>
-          <div class="pairing-scout-controls">
-            <label for="pairingScoutTable"><span id="pairingScoutValueLabel">桌號</span><input id="pairingScoutTable" class="search-input" type="text" value="1" inputmode="numeric" placeholder="例如 1" autocomplete="off" autocapitalize="none"></label>
-            <button id="pairingScoutLoad" class="primary-btn" type="button">查詢配對</button>
-          </div>
+          <div class="pairing-scout-head"><div><h2 id="pairingScoutHeading">牌組偵察</h2><p>臨時查詢桌號或 PTCG ID，查看玩家與對手後直接記錄牌組；不影響上方的追蹤玩家與自動監控。</p></div></div>
+          <div class="pairing-scout-tabs" role="group" aria-label="牌組偵察查詢方式"><button type="button" data-pairing-scout-mode="table" class="active" aria-pressed="true">桌號</button><button type="button" data-pairing-scout-mode="player" aria-pressed="false">PTCG ID</button></div>
+          <div class="pairing-scout-controls"><label for="pairingScoutTable"><span id="pairingScoutValueLabel">桌號</span><input id="pairingScoutTable" class="search-input" type="text" value="1" inputmode="numeric" placeholder="例如 1" autocomplete="off" autocapitalize="none"></label><button id="pairingScoutLoad" class="primary-btn" type="button">查詢配對</button></div>
           <div class="pairing-scout-navigation"><button id="pairingScoutPrev" class="secondary-btn" type="button">← 上一桌</button><button id="pairingScoutNext" class="secondary-btn" type="button">下一桌 →</button></div>
           <div id="pairingScoutResult" class="pairing-scout-result is-idle"><strong>輸入桌號查詢這桌的玩家與對手</strong><span>先設定上方活動網址與 Round；查詢後可直接記錄牌組。</span></div>
           <div id="pairingScoutMessage" class="pairing-scout-message" role="status" aria-live="polite"></div>
           <div id="pairingScoutStats" class="pairing-scout-stats"><div class="pairing-scout-stats-empty">查詢後會顯示這場比賽的牌組分布。</div></div>
+          <details id="pairingHistory" class="pairing-history-panel">
+            <summary>歷史賽事</summary>
+            <p class="pairing-history-note-copy">只顯示你自己記錄過的賽事與牌組分布，不公開給其他使用者。</p>
+            <div id="pairingHistoryList" class="pairing-history-list"><div class="pairing-history-empty">展開後讀取歷史賽事。</div></div>
+            <div id="pairingHistoryDetail" class="pairing-history-detail"></div>
+          </details>
         </section>
       </section>
-      <aside>
-        <section class="pairing-watch-card"><div class="pairing-watch-head"><strong>通知與姓名</strong></div><div id="pairingAuthCopy" class="pairing-watch-copy">正在確認登入狀態…</div><div class="pairing-watch-copy" style="margin-top:8px;">配對頁本身只提供 PTCG ID。登入你目前網站的授權帳號後，系統會用現有私人資料補上玩家真實姓名。</div></section>
-        <section class="pairing-history-note" style="margin-top:12px;"><strong>歷史測試場</strong><br>2026/9/12 高級球孩童組（tid=3000442）可用來測 Round 1 配對通知與 Final rank 通知。Final rank 測試只顯示最終名次，不顯示總分。為避免已存在的 Round 2、3、4…一次全部發送，歷史測試場不允許啟動連續監控。</section>
-      </aside>
+      <aside><section class="pairing-watch-card"><div class="pairing-watch-head"><strong>通知與姓名</strong></div><div id="pairingAuthCopy" class="pairing-watch-copy">正在確認登入狀態…</div><div class="pairing-watch-copy" style="margin-top:8px;">配對頁本身只提供 PTCG ID。登入你目前網站的授權帳號後，系統會用現有私人資料補上玩家真實姓名。</div></section></aside>
     </div>
     <section class="notice" style="margin-top:20px;"><strong>使用提醒</strong><span>正式比賽配對與最終排名仍以現場主辦與 TCG マイスター頁面為準。</span></section>
     <section id="pairingOdds" class="panel odds-panel" aria-labelledby="oddsHeading">
       <h2 id="oddsHeading">晉級與名次預估<span class="odds-badge">現場賽事可用</span></h2>
       <p class="odds-intro">使用上方活動網址與追蹤玩家，讀取完整配對後估算各種戰績的晉級機會。總輪數與取幾名請依現場公告填寫；最終名次以官方小分排序為準。</p>
       <div class="odds-controls">
-        <label>資料來源<select id="oddsMode" class="search-input"><option value="live">上方活動網址（正式場）</option><option value="history">歷史場回放（2026/9/12）</option></select></label>
+        <input id="oddsMode" type="hidden" value="live">
         <label id="oddsLiveRoundField">使用哪個時間點<select id="oddsRound" class="search-input"><option value="auto">最新已公布輪次（完成後顯示官方名次）</option><option value="top">使用上方查詢 Round</option></select></label>
-        <div id="oddsHistoryFields" class="odds-history-fields" hidden>
-          <label>歷史場測試玩家<input id="oddsPlayer" class="search-input" value="tw39371632" autocomplete="off" autocapitalize="none"></label>
-          <label>回到哪個時間點<select id="oddsHistoryRound" class="search-input"><option value="1">第 1 輪開始前（已完成 0 輪）</option><option value="2">第 2 輪開始前（已完成 1 輪）</option><option value="3">第 3 輪開始前（已完成 2 輪）</option><option value="4">第 4 輪開始前（已完成 3 輪）</option><option value="5" selected>第 5 輪開始前（已完成 4 輪）</option><option value="6">第 6 輪開始前（已完成 5 輪）</option><option value="7">第 7 輪開始前（已完成 6 輪）</option></select></label>
-        </div>
+        <div id="oddsHistoryFields" class="odds-history-fields" hidden><input id="oddsPlayer" value="tw39371632"><select id="oddsHistoryRound"><option value="1">1</option></select></div>
         <label>總輪數（依現場公告）<input id="oddsTotal" class="search-input" type="number" min="1" max="20" step="1" value="7"></label>
         <label>賽事類型<select id="oddsType" class="search-input"><option value="ultra">高級球：前 8／16／32 名</option><option value="premier">紀念球 DAY1：前 256 名</option><option value="master">大師球：自訂晉級名次</option></select></label>
         <label>晉級名額（取幾名）<input id="oddsCut" class="search-input" type="number" min="1" max="4096" step="1" value="8" placeholder="依現場公告填寫"></label>
@@ -88,12 +81,13 @@
 
   <footer class="footer"><div class="wrap">非官方網站。本頁僅協助整理公開配對資訊，Pokémon 相關商標屬原權利人所有。</div></footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="site-version.js?v=1.11.2-r1" defer></script>
+  <script src="site-version.js?v=1.12.0-r1" defer></script>
   <script src="pairing-auth-stability.js?v=1.11.2-r1" defer></script>
   <script src="pairing.js?v=1.9.8-r1" defer></script>
   <script src="pairing-odds-engine.js?v=1.11.0-r1" defer></script>
   <script src="pairing-odds.js?v=1.11.0-r1" defer></script>
   <script src="pairing-deck-scout.js?v=1.10.1-r1" defer></script>
+  <script src="pairing-history.js?v=1.12.0-r1" defer></script>
   <script src="site-account-ui.js?v=1.9.2-r1" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -101,19 +95,10 @@
       const round = document.getElementById('pairingRound');
       if (source && round) {
         const syncRoundFromUrl = () => { const raw = source.value.trim(); if (!raw) return; try { const url = new URL(raw); if (url.hostname !== 'tcg.sfc-jpn.jp') return; if (/\/tourround\.asp$/i.test(url.pathname)) { const kno = Number(url.searchParams.get('kno')); if (Number.isInteger(kno) && kno >= 1) round.value = String(kno); return; } if (/\/tour\.asp$/i.test(url.pathname)) round.value = '1'; } catch (_) {} };
-        source.addEventListener('input', syncRoundFromUrl);
-        source.addEventListener('change', syncRoundFromUrl);
-        syncRoundFromUrl();
+        source.addEventListener('input', syncRoundFromUrl); source.addEventListener('change', syncRoundFromUrl); syncRoundFromUrl();
       }
-
-      const keepMonitorAboveScout = () => {
-        const monitor = document.querySelector('.pairing-watch-inline');
-        const scout = document.getElementById('pairingDeckScout');
-        if (!monitor || !scout) return;
-        if (monitor.nextElementSibling !== scout) monitor.after(scout);
-      };
-      keepMonitorAboveScout();
-      setTimeout(keepMonitorAboveScout, 0);
+      const keepMonitorAboveScout = () => { const monitor = document.querySelector('.pairing-watch-inline'); const scout = document.getElementById('pairingDeckScout'); if (!monitor || !scout) return; if (monitor.nextElementSibling !== scout) monitor.after(scout); };
+      keepMonitorAboveScout(); setTimeout(keepMonitorAboveScout, 0);
     });
   </script>
 </body>
