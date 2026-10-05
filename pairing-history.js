@@ -7,6 +7,7 @@
   const $ = id => document.getElementById(id);
   let lastMatchDetail = null;
   let refreshTimer = null;
+  let deckSearchObserver = null;
 
   function esc(value = '') {
     return String(value)
@@ -265,6 +266,128 @@
     }
   }
 
+  function deckNamesFromSelect(select) {
+    return [...select.options]
+      .map(option => String(option.value || '').trim())
+      .filter(Boolean);
+  }
+
+  function closeDeckSearches(except = null) {
+    document.querySelectorAll('.pairing-deck-search').forEach(wrapper => {
+      if (except && wrapper === except) return;
+      const list = wrapper.querySelector('.pairing-deck-search-results');
+      const input = wrapper.querySelector('.pairing-deck-search-input');
+      const select = wrapper.querySelector('select');
+      if (list) list.hidden = true;
+      if (input && select && document.activeElement !== input) input.value = select.value || '';
+    });
+  }
+
+  function enhanceDeckSelect(select) {
+    if (!select || select.dataset.deckSearchEnhanced === '1') return;
+    select.dataset.deckSearchEnhanced = '1';
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'pairing-deck-search';
+    const input = document.createElement('input');
+    input.type = 'search';
+    input.className = 'pairing-deck-search-input';
+    input.autocomplete = 'off';
+    input.autocapitalize = 'none';
+    input.spellcheck = false;
+    input.inputMode = 'search';
+    input.placeholder = '輸入關鍵字搜尋牌組，例如「多」';
+    input.value = select.value || '';
+    input.setAttribute('aria-label', '搜尋牌組');
+
+    const results = document.createElement('div');
+    results.className = 'pairing-deck-search-results';
+    results.hidden = true;
+
+    select.before(wrapper);
+    wrapper.append(input, results, select);
+    select.classList.add('pairing-deck-search-native');
+
+    const render = () => {
+      const query = input.value.trim().toLocaleLowerCase('zh-Hant');
+      if (!query) {
+        results.innerHTML = '<div class="pairing-deck-search-hint">輸入關鍵字後，符合的牌組會顯示在這裡。</div>';
+        results.hidden = false;
+        return;
+      }
+      const matches = deckNamesFromSelect(select)
+        .filter(name => name.toLocaleLowerCase('zh-Hant').includes(query))
+        .slice(0, 12);
+      if (!matches.length) {
+        results.innerHTML = '<div class="pairing-deck-search-hint">找不到符合的牌組。</div>';
+        results.hidden = false;
+        return;
+      }
+      results.innerHTML = matches.map(name => `<button type="button" data-deck-search-value="${esc(name)}">${esc(name)}</button>`).join('');
+      results.hidden = false;
+    };
+
+    input.addEventListener('focus', () => {
+      closeDeckSearches(wrapper);
+      if (select.value && input.value === select.value) input.select();
+      render();
+    });
+    input.addEventListener('input', render);
+    input.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        results.hidden = true;
+        input.value = select.value || '';
+        input.blur();
+        return;
+      }
+      if (event.key === 'Enter') {
+        const first = results.querySelector('[data-deck-search-value]');
+        if (!first) return;
+        event.preventDefault();
+        first.click();
+      }
+    });
+    input.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (!wrapper.contains(document.activeElement)) {
+          results.hidden = true;
+          input.value = select.value || '';
+        }
+      }, 120);
+    });
+    results.addEventListener('click', event => {
+      const button = event.target.closest('[data-deck-search-value]');
+      if (!button || select.disabled) return;
+      const value = button.dataset.deckSearchValue || '';
+      if (!value) return;
+      select.value = value;
+      input.value = value;
+      results.hidden = true;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+      input.blur();
+    });
+    select.addEventListener('change', () => {
+      input.value = select.value || '';
+    });
+  }
+
+  function enhanceDeckSearches(root = document) {
+    root.querySelectorAll('select[data-scout-player], #pairingScoutPairDeckA, #pairingScoutPairDeckB')
+      .forEach(enhanceDeckSelect);
+  }
+
+  function initDeckSearches() {
+    const scoutResult = $('pairingScoutResult');
+    if (!scoutResult) return;
+    enhanceDeckSearches(scoutResult);
+    deckSearchObserver?.disconnect();
+    deckSearchObserver = new MutationObserver(() => enhanceDeckSearches(scoutResult));
+    deckSearchObserver.observe(scoutResult, { childList: true, subtree: true });
+    document.addEventListener('pointerdown', event => {
+      if (!event.target.closest('.pairing-deck-search')) closeDeckSearches();
+    });
+  }
+
   function scheduleRefresh() {
     clearTimeout(refreshTimer);
     refreshTimer = setTimeout(() => {
@@ -288,5 +411,6 @@
       if (event.currentTarget.open) loadHistory();
     });
     $('pairingDeckScout')?.addEventListener('change', scheduleRefresh);
+    initDeckSearches();
   }, { once: true });
 })();
