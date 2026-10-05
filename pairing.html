@@ -99,6 +99,83 @@
       }
       const keepMonitorAboveScout = () => { const monitor = document.querySelector('.pairing-watch-inline'); const scout = document.getElementById('pairingDeckScout'); if (!monitor || !scout) return; if (monitor.nextElementSibling !== scout) monitor.after(scout); };
       keepMonitorAboveScout(); setTimeout(keepMonitorAboveScout, 0);
+
+      // v1.12.0 refinement: keep the full deck list browsable and do not close it when the iPhone keyboard is dismissed.
+      const patchDeckPicker = () => {
+        document.querySelectorAll('.pairing-deck-search:not([data-browse-patched])').forEach(wrapper => {
+          const input = wrapper.querySelector('.pairing-deck-search-input');
+          const results = wrapper.querySelector('.pairing-deck-search-results');
+          const select = wrapper.querySelector('select');
+          if (!input || !results || !select) return;
+          wrapper.dataset.browsePatched = '1';
+          input.placeholder = '可直接滑選，或輸入關鍵字搜尋';
+          input.enterKeyHint = 'done';
+          let outsidePointer = false;
+          let choosing = false;
+
+          const deckNames = () => [...select.options].map(option => String(option.value || '').trim()).filter(Boolean);
+          const renderBrowseList = () => {
+            const query = input.value.trim().toLocaleLowerCase('zh-Hant');
+            const matches = deckNames().filter(name => !query || name.toLocaleLowerCase('zh-Hant').includes(query));
+            results.replaceChildren();
+            if (!matches.length) {
+              const hint = document.createElement('div');
+              hint.className = 'pairing-deck-search-hint';
+              hint.textContent = '找不到符合的牌組。';
+              results.appendChild(hint);
+            } else {
+              matches.forEach(name => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.dataset.deckSearchValue = name;
+                button.textContent = name;
+                results.appendChild(button);
+              });
+            }
+            results.hidden = false;
+          };
+
+          input.addEventListener('focus', () => {
+            outsidePointer = false;
+            choosing = false;
+            if (select.value && input.value === select.value) input.value = '';
+            queueMicrotask(renderBrowseList);
+          });
+          input.addEventListener('input', () => queueMicrotask(renderBrowseList));
+          input.addEventListener('keydown', event => {
+            if (event.key !== 'Enter') return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            input.blur();
+          }, true);
+          results.addEventListener('click', event => {
+            if (event.target.closest('[data-deck-search-value]')) choosing = true;
+          }, true);
+          document.addEventListener('pointerdown', event => {
+            if (document.activeElement === input && !wrapper.contains(event.target)) outsidePointer = true;
+          }, true);
+          input.addEventListener('blur', () => {
+            const query = input.value;
+            setTimeout(() => {
+              if (choosing) {
+                choosing = false;
+                outsidePointer = false;
+                return;
+              }
+              if (outsidePointer) {
+                input.value = select.value || '';
+                outsidePointer = false;
+                return;
+              }
+              input.value = query;
+              renderBrowseList();
+            }, 170);
+          });
+        });
+      };
+      const deckPickerRoot = document.getElementById('pairingDeckScout') || document.body;
+      new MutationObserver(patchDeckPicker).observe(deckPickerRoot, { childList: true, subtree: true });
+      setTimeout(patchDeckPicker, 0);
     });
   </script>
 </body>
