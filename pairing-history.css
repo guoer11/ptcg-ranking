@@ -20,6 +20,18 @@
 .pairing-scout-player-possible{font-size:12px}
 .pairing-scout-known{font-size:13px;line-height:1.45}
 
+/* Searchable deck picker for long deck catalogs. */
+.pairing-deck-search{position:relative;width:100%;min-width:0}
+.pairing-deck-search-native{display:none!important}
+.pairing-deck-search-input{width:100%;min-height:46px;box-sizing:border-box;padding:10px 38px 10px 12px;border:1px solid #ccd7e5;border-radius:10px;background:#fff;color:var(--text);font-size:16px;line-height:1.25;-webkit-appearance:none;appearance:none}
+.pairing-deck-search-input:focus{outline:2px solid rgba(58,125,222,.22);border-color:#8db7ee}
+.pairing-deck-search-results{position:absolute;z-index:60;left:0;right:0;top:calc(100% + 5px);max-height:260px;overflow:auto;-webkit-overflow-scrolling:touch;padding:6px;border:1px solid #cfd9e7;border-radius:12px;background:#fff;box-shadow:0 12px 28px rgba(20,37,63,.18)}
+.pairing-deck-search-results[hidden]{display:none}
+.pairing-deck-search-results button{display:block;width:100%;min-height:44px;padding:10px 12px;border:0;border-bottom:1px solid #edf1f5;background:#fff;color:#27364b;text-align:left;font-size:16px;font-weight:700;cursor:pointer}
+.pairing-deck-search-results button:last-child{border-bottom:0}
+.pairing-deck-search-results button:active{background:#eaf2ff}
+.pairing-deck-search-hint{padding:10px 12px;color:var(--muted);font-size:14px;line-height:1.45}
+
 /* Deck distribution: larger labels and percentages for live phone use. */
 .pairing-scout-stats-empty{font-size:14px}
 .pairing-scout-stats-head strong{font-size:19px}
@@ -64,10 +76,16 @@
 .pairing-history-close{width:34px;height:34px;border:0;border-radius:50%;background:#fff;color:#526078;font-size:23px;line-height:1;cursor:pointer}
 .pairing-history-stats{margin-top:0;border-radius:0 0 12px 12px}
 
+/* Private page for now: keep account/help cards out of the live pairing workflow. */
+.pairing-grid{grid-template-columns:minmax(0,1fr)}
+.pairing-grid>aside{display:none}
+.pairing-main>.notice{display:none}
+
 @media(max-width:680px){
   .pairing-scout-card{padding:14px 12px}
   .pairing-scout-player{padding:12px}
   .pairing-scout-legend span{white-space:normal;overflow:visible;text-overflow:clip}
   .pairing-history-event{grid-template-columns:1fr}
   .pairing-history-actions{justify-content:flex-start}
+  .pairing-deck-search-results{max-height:220px}
 }
