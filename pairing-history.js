@@ -26,25 +26,43 @@
     return pairingSession?.user?.id || '';
   }
 
-  function formatShortDate(value) {
+  function dateParts(value) {
     const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return '';
-    return new Intl.DateTimeFormat('zh-TW', {
-      timeZone: 'Asia/Taipei',
-      month: 'numeric',
-      day: 'numeric'
-    }).format(date);
-  }
-
-  function formatFullDate(value) {
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return '';
-    return new Intl.DateTimeFormat('zh-TW', {
+    if (Number.isNaN(date.getTime())) return null;
+    const parts = new Intl.DateTimeFormat('en-CA', {
       timeZone: 'Asia/Taipei',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
-    }).format(date);
+    }).formatToParts(date);
+    return Object.fromEntries(parts.filter(part => part.type !== 'literal').map(part => [part.type, part.value]));
+  }
+
+  function formatShortDate(value) {
+    const parts = dateParts(value);
+    return parts ? `${Number(parts.month)}/${Number(parts.day)}` : '';
+  }
+
+  function formatCompactDate(value) {
+    const parts = dateParts(value);
+    return parts ? `${parts.month}/${parts.day}` : '';
+  }
+
+  function seasonInfo(value) {
+    const parts = dateParts(value);
+    if (!parts) return { key: '', label: '未知賽季', start: 0 };
+    const year = Number(parts.year);
+    const month = Number(parts.month);
+    const start = month >= 9 ? year : year - 1;
+    return {
+      key: `${start}-${start + 1}`,
+      label: `${start}–${start + 1} 賽季`,
+      start
+    };
+  }
+
+  function currentSeasonKey() {
+    return seasonInfo(Date.now()).key;
   }
 
   async function exactRows(tid = '') {
@@ -210,12 +228,30 @@
       .sort((a, b) => a - b)[0] || 0;
   }
 
+  function renderHistoryEvent(event) {
+    return `
+      <article class="pairing-history-event" data-history-event="${esc(event.tid)}">
+        <div class="pairing-history-event-row">
+          <div class="pairing-history-event-main">
+            <strong>${esc(formatCompactDate(event.seen))}</strong>
+            <span>TID ${esc(event.tid)}</span>
+            <small>${event.total} 位玩家</small>
+          </div>
+          <div class="pairing-history-actions">
+            <button type="button" class="secondary-btn" data-history-tid="${esc(event.tid)}">牌組分布</button>
+            <a class="pairing-history-link" href="https://tcg.sfc-jpn.jp/tour.asp?tid=${encodeURIComponent(event.tid)}" target="_blank" rel="noopener noreferrer">官方 ↗</a>
+          </div>
+        </div>
+        <div class="pairing-history-inline-detail" data-history-detail="${esc(event.tid)}" hidden></div>
+      </article>`;
+  }
+
   async function loadHistory() {
     const list = $('pairingHistoryList');
-    const detail = $('pairingHistoryDetail');
+    const legacyDetail = $('pairingHistoryDetail');
     if (!list || !pairingAuthorized || !currentUserId()) return;
     list.innerHTML = '<div class="pairing-history-loading">正在讀取歷史賽事…</div>';
-    if (detail) detail.innerHTML = '';
+    if (legacyDetail) legacyDetail.innerHTML = '';
 
     try {
       const [allExact, allPairs] = await Promise.all([exactRows(), pairRows()]);
@@ -225,7 +261,7 @@
         const pairs = allPairs.filter(row => String(row.tid) === tid);
         const seen = firstSeen([...exact, ...pairs]);
         const distribution = buildDistribution(exact, pairs);
-        return { tid, exact, pairs, seen, total: distribution.total };
+        return { tid, exact, pairs, seen, total: distribution.total, season: seasonInfo(seen) };
       }).filter(event => event.seen).sort((a, b) => b.seen - a.seen);
 
       if (!events.length) {
@@ -233,31 +269,42 @@
         return;
       }
 
-      list.innerHTML = events.map(event => `
-        <article class="pairing-history-event">
-          <div>
-            <strong>${esc(formatFullDate(event.seen))}</strong>
-            <span>TCG マイスター · TID ${esc(event.tid)}</span>
-            <small>已記錄 ${event.total} 位玩家</small>
-          </div>
-          <div class="pairing-history-actions">
-            <button type="button" class="secondary-btn" data-history-tid="${esc(event.tid)}">查看牌組分布</button>
-            <a class="pairing-history-link" href="https://tcg.sfc-jpn.jp/tour.asp?tid=${encodeURIComponent(event.tid)}" target="_blank" rel="noopener noreferrer">官方頁 ↗</a>
-          </div>
-        </article>`).join('');
+      const grouped = new Map();
+      for (const event of events) {
+        const key = event.season.key || 'unknown';
+        if (!grouped.has(key)) grouped.set(key, { ...event.season, events: [] });
+        grouped.get(key).events.push(event);
+      }
+      const seasons = [...grouped.values()].sort((a, b) => b.start - a.start);
+      const currentKey = currentSeasonKey();
+      const defaultOpenKey = seasons.some(item => item.key === currentKey) ? currentKey : seasons[0]?.key;
+
+      list.innerHTML = seasons.map(season => `
+        <details class="pairing-history-season" data-season="${esc(season.key)}" ${season.key === defaultOpenKey ? 'open' : ''}>
+          <summary><strong>${esc(season.label)}</strong><span>${season.events.length} 場</span></summary>
+          <div class="pairing-history-season-list">${season.events.map(renderHistoryEvent).join('')}</div>
+        </details>`).join('');
 
       list.querySelectorAll('[data-history-tid]').forEach(button => {
         button.addEventListener('click', () => {
           const event = events.find(item => item.tid === button.dataset.historyTid);
+          const article = button.closest('.pairing-history-event');
+          const detail = article?.querySelector('[data-history-detail]');
           if (!event || !detail) return;
-          detail.innerHTML = `
-            <div class="pairing-history-detail-head">
-              <div><strong>${esc(formatFullDate(event.seen))}</strong><span>TID ${esc(event.tid)}</span></div>
-              <button type="button" class="pairing-history-close" aria-label="關閉歷史牌組分布">×</button>
-            </div>
-            <div class="pairing-scout-stats pairing-history-stats">${distributionHtml(event.exact, event.pairs)}</div>`;
-          detail.querySelector('.pairing-history-close')?.addEventListener('click', () => { detail.innerHTML = ''; });
-          detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+          const wasOpen = !detail.hidden;
+          list.querySelectorAll('.pairing-history-inline-detail').forEach(other => {
+            other.hidden = true;
+            other.innerHTML = '';
+          });
+          list.querySelectorAll('[data-history-tid]').forEach(otherButton => {
+            otherButton.textContent = '牌組分布';
+          });
+          if (wasOpen) return;
+
+          detail.innerHTML = `<div class="pairing-scout-stats pairing-history-stats">${distributionHtml(event.exact, event.pairs)}</div>`;
+          detail.hidden = false;
+          button.textContent = '收合分布';
         });
       });
     } catch (error) {
@@ -279,7 +326,7 @@
       const input = wrapper.querySelector('.pairing-deck-search-input');
       const select = wrapper.querySelector('select');
       if (list) list.hidden = true;
-      if (input && select && document.activeElement !== input) input.value = select.value || '';
+      if (input && select) input.value = select.value || '';
     });
   }
 
@@ -296,7 +343,8 @@
     input.autocapitalize = 'none';
     input.spellcheck = false;
     input.inputMode = 'search';
-    input.placeholder = '輸入關鍵字搜尋牌組，例如「多」';
+    input.enterKeyHint = 'done';
+    input.placeholder = '可直接滑選，或輸入關鍵字搜尋';
     input.value = select.value || '';
     input.setAttribute('aria-label', '搜尋牌組');
 
@@ -310,26 +358,19 @@
 
     const render = () => {
       const query = input.value.trim().toLocaleLowerCase('zh-Hant');
-      if (!query) {
-        results.innerHTML = '<div class="pairing-deck-search-hint">輸入關鍵字後，符合的牌組會顯示在這裡。</div>';
-        results.hidden = false;
-        return;
-      }
       const matches = deckNamesFromSelect(select)
-        .filter(name => name.toLocaleLowerCase('zh-Hant').includes(query))
-        .slice(0, 12);
+        .filter(name => !query || name.toLocaleLowerCase('zh-Hant').includes(query));
       if (!matches.length) {
         results.innerHTML = '<div class="pairing-deck-search-hint">找不到符合的牌組。</div>';
-        results.hidden = false;
-        return;
+      } else {
+        results.innerHTML = matches.map(name => `<button type="button" data-deck-search-value="${esc(name)}">${esc(name)}</button>`).join('');
       }
-      results.innerHTML = matches.map(name => `<button type="button" data-deck-search-value="${esc(name)}">${esc(name)}</button>`).join('');
       results.hidden = false;
     };
 
     input.addEventListener('focus', () => {
       closeDeckSearches(wrapper);
-      if (select.value && input.value === select.value) input.select();
+      if (select.value && input.value === select.value) input.value = '';
       render();
     });
     input.addEventListener('input', render);
@@ -341,19 +382,9 @@
         return;
       }
       if (event.key === 'Enter') {
-        const first = results.querySelector('[data-deck-search-value]');
-        if (!first) return;
         event.preventDefault();
-        first.click();
+        input.blur();
       }
-    });
-    input.addEventListener('blur', () => {
-      setTimeout(() => {
-        if (!wrapper.contains(document.activeElement)) {
-          results.hidden = true;
-          input.value = select.value || '';
-        }
-      }, 120);
     });
     results.addEventListener('click', event => {
       const button = event.target.closest('[data-deck-search-value]');
