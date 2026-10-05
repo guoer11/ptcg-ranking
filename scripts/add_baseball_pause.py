@@ -1,5 +1,6 @@
 from pathlib import Path
 
+# One-time patch: add a real pause/resume system to the baseball game.
 p = Path('baseball-game.html')
 s = p.read_text()
 
