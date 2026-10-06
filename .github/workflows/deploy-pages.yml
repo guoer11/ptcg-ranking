@@ -3,6 +3,7 @@ name: Deploy PTCG ranking site
 # GitHub Pages source: GitHub Actions
 # Baseball realism v7 deployment marker
 # Baseball full strategy v13 deployment marker
+# Baseball complete v14 deployment marker
 on:
   workflow_dispatch:
   push:
