@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - scripts/upgrade_baseball_full_strategy_v13.py
+      - .github/workflows/upgrade-baseball-full-strategy-v13.yml
 jobs:
   patch:
     runs-on: ubuntu-latest
