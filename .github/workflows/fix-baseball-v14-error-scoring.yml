@@ -1,0 +1,35 @@
+name: Fix baseball v14 error scoring
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - scripts/fix_baseball_v14_error_scoring.py
+      - .github/workflows/fix-baseball-v14-error-scoring.yml
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Apply scoring fix
+        run: python scripts/fix_baseball_v14_error_scoring.py
+      - name: Check JavaScript syntax
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          s=Path('baseball-game.html').read_text()
+          js=re.findall(r'<script>(.*?)</script>',s,re.S)[-1]
+          Path('/tmp/baseball-v14-error.js').write_text(js)
+          PY
+          node --check /tmp/baseball-v14-error.js
+      - name: Smoke check
+        run: grep -q 'v14Game.cpuH=Math.max(0,v14Game.cpuH-1)' baseball-game.html
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add baseball-game.html
+          git diff --cached --quiet || git commit -m "Fix error scoring in baseball v14"
+          git push
