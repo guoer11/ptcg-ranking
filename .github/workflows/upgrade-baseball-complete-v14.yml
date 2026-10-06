@@ -1,0 +1,44 @@
+name: Upgrade baseball complete v14
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - scripts/upgrade_baseball_complete_v14.py
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Apply v14 upgrade
+        run: python scripts/upgrade_baseball_complete_v14.py
+      - name: Check JavaScript syntax
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          s=Path('baseball-game.html').read_text()
+          js=re.findall(r'<script>(.*?)</script>',s,re.S)[-1]
+          Path('/tmp/baseball-v14.js').write_text(js)
+          PY
+          node --check /tmp/baseball-v14.js
+      - name: Smoke check v14 features
+        run: |
+          grep -q 'V14 COMPLETE BASEBALL' baseball-game.html
+          grep -q 'BOX SCORE' baseball-game.html
+          grep -q 'v14DefenseOverlay' baseball-game.html
+          grep -q 'v14SeasonCard' baseball-game.html
+          grep -q 'v14WarmupSelect' baseball-game.html
+          grep -q 'v14ReplayOverlay' baseball-game.html
+          grep -q 'v14AchOverlay' baseball-game.html
+          grep -q 'v14ShapePitch' baseball-game.html
+          grep -q 'v14CpuManagerBunt' baseball-game.html
+          grep -q "v1.14.0" site-version.js
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add baseball-game.html site-version.js
+          git diff --cached --quiet || git commit -m "Add complete baseball v14 systems"
+          git push
