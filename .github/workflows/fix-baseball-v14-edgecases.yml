@@ -1,0 +1,38 @@
+name: Fix baseball v14 edge cases
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - scripts/fix_baseball_v14_edgecases.py
+      - .github/workflows/fix-baseball-v14-edgecases.yml
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Apply edge case fixes
+        run: python scripts/fix_baseball_v14_edgecases.py
+      - name: Check JavaScript syntax
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          s=Path('baseball-game.html').read_text()
+          js=re.findall(r'<script>(.*?)</script>',s,re.S)[-1]
+          Path('/tmp/baseball-v14-fixed.js').write_text(js)
+          PY
+          node --check /tmp/baseball-v14-fixed.js
+      - name: Smoke check fixes
+        run: |
+          grep -q "v14FinalizeCpuPA('FC','二壘封殺')" baseball-game.html
+          grep -q "v14RecordCpuPA('OUT',b,0" baseball-game.html
+          grep -q "usedPitchers.has(id)" baseball-game.html
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add baseball-game.html
+          git diff --cached --quiet || git commit -m "Fix baseball v14 edge cases"
+          git push
