@@ -1,5 +1,5 @@
 (() => {
-  const SITE_VERSION = 'v1.14.3';
+  const SITE_VERSION = 'v1.14.4';
   window.PTCG_SITE_VERSION = SITE_VERSION;
 
   function ensureStyle() {

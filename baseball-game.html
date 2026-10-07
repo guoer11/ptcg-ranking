@@ -546,67 +546,60 @@ v14InstallUI();
 
 loadPlayers();
 
-// ===== V141_INTERPLAY_REST =====
-let v141RestToken=0,v141Resting=false;
-function v141EnsureRestUi(){
-  let el=$('v141RestChip');
+
+// ===== V144_HALF_INNING_BREAK =====
+let v144HalfBreakToken=0,v144HalfBreakActive=false;
+function v144EnsureHalfBreakUi(){
+  let el=$('v144HalfBreakChip');
   if(el)return el;
   const st=document.createElement('style');
-  st.textContent=`#v141RestChip{position:fixed;left:50%;top:74px;transform:translateX(-50%);z-index:138;pointer-events:none;background:rgba(5,20,22,.92);border:1px solid #5e7774;color:#fff;border-radius:999px;padding:8px 14px;font-weight:950;font-size:13px;box-shadow:0 8px 24px #0008;backdrop-filter:blur(8px)}#v141RestChip b{color:#ffe071;font-size:17px;margin:0 3px}#v141RestChip.hidden{display:none!important}@media(max-width:620px){#v141RestChip{top:68px;font-size:12px;padding:7px 12px}}`;
+  st.textContent=`#v144HalfBreakChip{position:fixed;left:50%;top:74px;transform:translateX(-50%);z-index:138;pointer-events:none;background:rgba(5,20,22,.94);border:1px solid #6b817e;color:#fff;border-radius:999px;padding:9px 15px;font-weight:950;font-size:13px;box-shadow:0 8px 24px #0008;backdrop-filter:blur(8px)}#v144HalfBreakChip b{color:#ffe071;font-size:18px;margin:0 3px}#v144HalfBreakChip.hidden{display:none!important}@media(max-width:620px){#v144HalfBreakChip{top:68px;font-size:12px;padding:8px 13px}}`;
   document.head.appendChild(st);
-  el=document.createElement('div');el.id='v141RestChip';el.className='hidden';document.body.appendChild(el);return el;
+  el=document.createElement('div');
+  el.id='v144HalfBreakChip';
+  el.className='hidden';
+  document.body.appendChild(el);
+  return el;
 }
-function v141BeginRest(label='局中休息',onFinish=null){
-  const token=++v141RestToken,el=v141EnsureRestUi();
-  v141Resting=true;
-  if(halfMode==='pitch'&&$('userPitchBtn'))$('userPitchBtn').disabled=true;
+function v144BeginHalfBreak(onFinish){
+  const token=++v144HalfBreakToken,el=v144EnsureHalfBreakUi();
+  v144HalfBreakActive=true;
+  if($('swingBtn'))$('swingBtn').disabled=true;
+  if($('userPitchBtn'))$('userPitchBtn').disabled=true;
+  if($('tacticsBtn'))$('tacticsBtn').disabled=true;
   let remain=5;
   const tick=()=>{
-    if(token!==v141RestToken)return;
-    el.classList.remove('hidden');el.innerHTML=`${label} <b>${remain}</b> 秒`;
-    if($('pitchInfo'))$('pitchInfo').textContent=`${label}・${remain} 秒`;
-    if(remain<=1){gameSetTimeout(()=>{
-      if(token!==v141RestToken)return;
-      v141Resting=false;el.classList.add('hidden');
-      if(typeof onFinish==='function')onFinish();
-    },1000);return}
-    remain--;gameSetTimeout(tick,1000);
+    if(token!==v144HalfBreakToken)return;
+    el.classList.remove('hidden');
+    el.innerHTML=`攻守交換 <b>${remain}</b> 秒`;
+    if($('pitchInfo'))$('pitchInfo').textContent=`攻守交換・${remain} 秒`;
+    if(remain<=1){
+      gameSetTimeout(()=>{
+        if(token!==v144HalfBreakToken)return;
+        v144HalfBreakActive=false;
+        el.classList.add('hidden');
+        if(typeof onFinish==='function')onFinish();
+      },1000);
+      return;
+    }
+    remain--;
+    gameSetTimeout(tick,1000);
   };
   tick();
 }
-const v141RenderUserPitchControlsBase=renderUserPitchControls;
-renderUserPitchControls=function(...args){
-  const out=v141RenderUserPitchControlsBase(...args);
-  if(v141Resting&&halfMode==='pitch'&&$('userPitchBtn'))$('userPitchBtn').disabled=true;
-  return out;
-};
-function v141PitchRest(){
-  if(!playing||halfMode!=='pitch'||outs>=3)return;
-  v141BeginRest('投球後休息',()=>{
-    if(!playing||paused||halfMode!=='pitch'||pitching||outs>=3)return;
-    renderUserPitchControls();
-    $('userPitchBtn').disabled=false;
-    $('pitchInfo').textContent='可以投下一球';
+const v144EndHalfBase=endHalf;
+endHalf=function(...args){
+  if(v144HalfBreakActive)return;
+  const gameEndsNow=(halfMode==='pitch'&&inning===9&&userScore>cpuScore)||(halfMode==='bat'&&inning>=9);
+  if(gameEndsNow)return v144EndHalfBase(...args);
+  clearMotion();
+  setMsg('三出局','攻守交換，5 秒後繼續','');
+  updateBoard();
+  saveGameState();
+  v144BeginHalfBreak(()=>{
+    if(!playing)return;
+    v144EndHalfBase(...args);
   });
-}
-const v141ResolveCpuPitchBase=resolveCpuPitch;
-resolveCpuPitch=function(...args){
-  const beforeBat=cpuBatIndex,beforeMode=halfMode;
-  const out=v141ResolveCpuPitchBase(...args);
-  if(playing&&beforeMode==='pitch'&&halfMode==='pitch'&&!pitching&&outs<3&&cpuBatIndex===beforeBat)v141PitchRest();
-  return out;
-};
-const v141CompleteCpuPABase=completeCpuPA;
-completeCpuPA=function(...args){
-  const out=v141CompleteCpuPABase(...args);
-  if(playing&&halfMode==='pitch'&&!pitching&&outs<3)v141PitchRest();
-  return out;
-};
-const v141SchedulePitchBase=schedulePitch;
-schedulePitch=function(delay=760){
-  if(paused||!playing||halfMode!=='bat'||outs>=3)return;
-  v141BeginRest('下一球前休息');
-  return v141SchedulePitchBase(Math.max(5000,Number(delay)||0));
 };
 
 })();
