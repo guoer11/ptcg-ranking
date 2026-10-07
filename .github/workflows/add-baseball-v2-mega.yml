@@ -1,0 +1,45 @@
+name: Add baseball v2 mega expansion
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - scripts/add_baseball_v2_mega.py
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Apply v2 mega expansion
+        run: python scripts/add_baseball_v2_mega.py
+      - name: Check JavaScript syntax
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          s=Path('baseball-game.html').read_text()
+          js=re.findall(r'<script>(.*?)</script>',s,re.S)[-1]
+          Path('/tmp/baseball-v20.js').write_text(js)
+          PY
+          node --check /tmp/baseball-v20.js
+      - name: Smoke check v2 features
+        run: |
+          grep -q 'V20 MEGA BASEBALL' baseball-game.html
+          grep -q '完整聯盟賽程' baseball-game.html
+          grep -q '全壘打大賽' baseball-game.html
+          grep -q '生涯球員' baseball-game.html
+          grep -q '存檔槽' baseball-game.html
+          grep -q '球員卡收藏' baseball-game.html
+          grep -q '每日任務' baseball-game.html
+          grep -q '故意四壞' baseball-game.html
+          grep -q 'Pitch Clock' baseball-game.html
+          grep -q '資料來源標示' baseball-game.html
+          grep -q "SITE_VERSION = 'v2.0.0'" site-version.js
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add baseball-game.html site-version.js
+          git diff --cached --quiet || git commit -m "Add baseball v2 mega expansion"
+          git push
