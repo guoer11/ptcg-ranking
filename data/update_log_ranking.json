@@ -2,6 +2,19 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-10-08T05:15:58+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-10-08T05:15:58+08:00",
+      "summary": "無排名／積分變動；暱稱 1、地區 0 筆異動",
+      "details": [
+        "Master：暱稱 1",
+        "Master｜tw38962597｜暱稱 OolongQ → BBQ"
+      ],
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
+    },
+    {
       "id": "ranking-2026-10-07T00:06:37+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -52,23 +65,6 @@
       ],
       "notified": false,
       "trigger_source": "程式更新觸發"
-    },
-    {
-      "id": "ranking-2026-10-03T00:05:50+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-10-03T00:05:50+08:00",
-      "summary": "無排名／積分變動；暱稱 4、地區 0 筆異動",
-      "details": [
-        "Master：暱稱 3",
-        "Senior：暱稱 1",
-        "Master｜tw52194649｜暱稱 OP_Chai → OP_TheCry",
-        "Master｜tw58380842｜暱稱 BrianChan1987 → Brian_C.",
-        "Master｜tw17824694｜暱稱 Parkigam → PaiChaoYuan",
-        "Senior｜tw54665545｜暱稱 Shirakami → Shiro"
-      ],
-      "notified": false,
-      "trigger_source": "主排程（Supabase）"
     }
   ]
 }

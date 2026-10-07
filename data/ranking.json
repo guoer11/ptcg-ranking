@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-07T00:06:37+08:00",
+  "updated_at": "2026-10-08T05:15:58+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -776,6 +776,14 @@
       },
       {
         "rank": 96,
+        "name": "BBQ",
+        "player_id": "tw38962597",
+        "region": "高雄市",
+        "points": 10,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw38962597/"
+      },
+      {
+        "rank": 96,
         "name": "Beef",
         "player_id": "tw79411276",
         "region": "新北市",
@@ -933,14 +941,6 @@
         "region": "新北市",
         "points": 10,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw50328610/"
-      },
-      {
-        "rank": 96,
-        "name": "OolongQ",
-        "player_id": "tw38962597",
-        "region": "高雄市",
-        "points": 10,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw38962597/"
       },
       {
         "rank": 96,
