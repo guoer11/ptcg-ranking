@@ -127,6 +127,25 @@ function familyRenderMatchSummary() {
   return true;
 }
 
+function familyHandleServiceWorkerMessage(event) {
+  const message = event?.data || {};
+  if (message.type !== 'ptcg-family-update' || !message.url) return;
+
+  try {
+    const target = new URL(message.url, window.location.origin);
+    if (target.origin !== window.location.origin || !/\/family-notify\.html$/i.test(target.pathname)) return;
+
+    history.replaceState(null, '', `${target.pathname}${target.search}${target.hash}`);
+    const rendered = familyRenderMatchSummary();
+    if (!rendered) return;
+
+    const linked = localStorage.getItem(FAMILY_LINKED_STORAGE_KEY) === '1';
+    if (linked) {
+      familySetState('家庭通知已啟用', '收到新的配對通知，畫面已自動更新，不需要重新開啟 App。', 'success');
+    }
+  } catch (_) {}
+}
+
 function familyIsIOS() {
   return /iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
@@ -226,6 +245,7 @@ async function handleFamilyEnable() {
 
 async function initFamilyNotify() {
   if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('message', familyHandleServiceWorkerMessage);
     try {
       const registration = await navigator.serviceWorker.register('./sw.js', { scope: './', updateViaCache: 'none' });
       registration.update().catch(() => {});
