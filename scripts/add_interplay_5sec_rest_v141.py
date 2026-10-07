@@ -1,10 +1,10 @@
 from pathlib import Path
+import re
 
-# trigger workflow after workflow definition is present
 p=Path('baseball-game.html')
 s=p.read_text()
 if 'V141_INTERPLAY_REST' in s:
-    raise SystemExit('v1.14.1 rest already installed')
+    raise SystemExit('five-second rest already installed')
 if 'V14 COMPLETE BASEBALL' not in s:
     raise SystemExit('v14 base not found')
 
@@ -68,7 +68,7 @@ completeCpuPA=function(...args){
 const v141SchedulePitchBase=schedulePitch;
 schedulePitch=function(delay=760){
   if(paused||!playing||halfMode!=='bat'||outs>=3)return;
-  v141BeginRest('打擊後休息');
+  v141BeginRest('下一球前休息');
   return v141SchedulePitchBase(Math.max(5000,Number(delay)||0));
 };
 '''
@@ -80,6 +80,10 @@ p.write_text(s)
 
 vp=Path('site-version.js')
 v=vp.read_text()
-if "v1.14.0" not in v:
-    raise SystemExit('expected site version v1.14.0 not found')
-vp.write_text(v.replace('v1.14.0','v1.14.1',1))
+m=re.search(r"const SITE_VERSION = 'v(\d+)\.(\d+)\.(\d+)'",v)
+if not m:
+    raise SystemExit('site version not found')
+major,minor,patch=map(int,m.groups())
+new=f"const SITE_VERSION = 'v{major}.{minor}.{patch+1}'"
+v=v[:m.start()]+new+v[m.end():]
+vp.write_text(v)
