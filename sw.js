@@ -42,6 +42,21 @@ function buildPairingSummaryUrl(payload = {}) {
   return `/ptcg-ranking/family-notify.html?${params.toString()}`;
 }
 
+async function broadcastFamilyPairingUpdate(targetUrl) {
+  const absoluteUrl = new URL(targetUrl, self.location.origin).href;
+  const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+  for (const client of windows) {
+    try {
+      const clientUrl = new URL(client.url);
+      if (!/\/family-notify\.html$/i.test(clientUrl.pathname)) continue;
+      client.postMessage({
+        type: 'ptcg-family-update',
+        url: absoluteUrl
+      });
+    } catch (_) {}
+  }
+}
+
 self.addEventListener('push', event => {
   let payload = {};
   try {
@@ -61,7 +76,9 @@ self.addEventListener('push', event => {
     data: { url: targetUrl }
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  const tasks = [self.registration.showNotification(title, options)];
+  if (tag === 'ptcg-pairing') tasks.push(broadcastFamilyPairingUpdate(targetUrl));
+  event.waitUntil(Promise.all(tasks));
 });
 
 self.addEventListener('notificationclick', event => {
