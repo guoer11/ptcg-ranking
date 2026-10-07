@@ -1,5 +1,6 @@
 from pathlib import Path
 
+# trigger workflow after workflow definition is present
 p=Path('baseball-game.html')
 s=p.read_text()
 if 'V141_INTERPLAY_REST' in s:
