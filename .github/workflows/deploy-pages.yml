@@ -6,6 +6,7 @@ name: Deploy PTCG ranking site
 # Baseball complete v14 deployment marker
 # Baseball v14 edge-fix deployment marker
 # Baseball v14 error-scoring deployment marker
+# Baseball v14.3 five-second-rest deployment marker
 on:
   workflow_dispatch:
   push:
