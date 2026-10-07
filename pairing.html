@@ -32,12 +32,12 @@
     <div class="pairing-grid">
       <section class="panel pairing-panel">
         <h2>配對追蹤</h2>
-        <p class="section-note">貼上活動或 Round 配對網址，輸入玩家 PTCG ID 與 Round 後按「開始追蹤」。系統會先查目前這一輪，再自動追蹤後續配對到最終排名；牌組偵察會沿用同一場賽事與 Round。</p>
+        <p class="section-note">貼上活動或 Round 配對網址，輸入玩家 PTCG ID 與 Round 後按「開始追蹤」。進行中的賽事會自動追蹤後續配對到最終排名；已結束的賽事會自動改為歷史查詢模式，不啟動通知。牌組偵察會沿用同一場賽事與 Round。</p>
         <div class="pairing-form">
           <div class="pairing-field"><label for="pairingSourceUrl">活動網址 / Round 配對網址</label><input id="pairingSourceUrl" class="search-input" type="url" inputmode="url" placeholder="https://tcg.sfc-jpn.jp/tour.asp?tid=..." autocomplete="off" /></div>
           <div class="pairing-row"><div class="pairing-field"><label for="pairingPlayerId">追蹤玩家 PTCG ID</label><input id="pairingPlayerId" class="search-input" type="text" value="tw39371632" autocomplete="off" autocapitalize="none" /></div><div class="pairing-field"><label for="pairingRound">Round</label><input id="pairingRound" class="search-input" type="number" min="1" step="1" value="1" inputmode="numeric" /></div></div>
           <div class="pairing-actions"><button id="pairingLookupButton" class="primary-btn" type="button">開始追蹤</button><button id="pairingOpenOfficialButton" class="secondary-btn" type="button">開官方配對頁</button></div>
-          <p class="section-note" style="margin:0;">按一次即可查詢本輪並啟動後續監控，不需要再另外按第二次。</p>
+          <p class="section-note" style="margin:0;">按一次即可查詢本輪；進行中賽事自動監控，已結束賽事則只查指定 Round，不會發送追蹤通知。</p>
         </div>
         <div id="pairingResult" class="pairing-result is-waiting"><div class="pairing-result-title"><strong>尚未開始追蹤</strong><span class="pairing-round-badge">等待輸入</span></div><div class="pairing-watch-copy">貼上目前賽事網址並選擇 Round，按「開始追蹤」即可查詢配對、啟動監控並使用牌組偵察。</div></div>
         <section class="pairing-watch-card pairing-watch-inline"><div class="pairing-watch-head"><strong>追蹤狀態</strong><span id="pairingWatchStatus" class="pairing-watch-status"><span class="pairing-watch-dot"></span>未追蹤</span></div><div id="pairingWatchCopy" class="pairing-watch-copy">按上方「開始追蹤」後，系統會先查詢目前 Round，再自動監控後續配對與最終排名。</div><div id="pairingStopActions" class="pairing-actions" style="margin-top:14px;" hidden><button id="pairingStopButton" class="secondary-btn" type="button">停止追蹤</button></div></section>
@@ -96,6 +96,64 @@
   <script src="pairing-history.js?v=1.12.0-r3" defer></script>
   <script src="site-account-ui.js?v=1.9.2-r1" defer></script>
   <script>
+    document.addEventListener('click', async event => {
+      const button = event.target.closest?.('#pairingLookupButton');
+      if (!button) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (!pairingAuthorized) return;
+
+      setPairingBusy(true);
+      setPairingMessage('正在查詢目前 Round 與賽事狀態…');
+      try {
+        const { data: pairingData, parsed, playerId } = await lookupCurrentPairing();
+        if (parsed.tid === TEST_TID) throw new Error('這是歷史測試場，請使用進階 / 測試工具，不要啟動連續追蹤。');
+
+        const finalState = await authorizedWatchRequest('final', { url: parsed.url, player_id: playerId });
+        const standing = finalState?.ranking?.standing_match;
+        if (standing) {
+          const status = watchStatus();
+          const copy = watchCopy();
+          const stopRow = stopActions();
+          button.textContent = '查詢這一輪';
+          if (stopRow) stopRow.hidden = true;
+          if (status) {
+            status.classList.remove('active');
+            status.innerHTML = '<span class="pairing-watch-dot"></span>歷史查詢';
+          }
+          if (copy) {
+            copy.innerHTML = `此賽事已結束（最終第 <strong>${escPairing(standing.rank)}</strong> 名），目前為歷史查詢模式。變更 Round 後按「查詢這一輪」即可回看每輪對手；不會啟動自動監控或發送通知。`;
+          }
+          pairingFormEdited = true;
+          document.dispatchEvent(new CustomEvent('pairing:history-mode', {
+            detail: { parsed, playerId, pairing: pairingData, ranking: finalState.ranking }
+          }));
+          const resultText = pairingData?.match
+            ? `Round ${parsed.round} 配對已找到`
+            : (pairingData?.available ? `Round ${parsed.round} 配對表已公布` : `Round ${parsed.round} 尚未公布`);
+          setPairingMessage(`${resultText}；此賽事已結束，僅進行歷史查詢，不會發送追蹤通知。`, 'success');
+          return;
+        }
+
+        const started = await authorizedWatchRequest('start', { url: parsed.url, player_id: playerId });
+        clearSavedPairingWatchForm();
+        pairingFormEdited = false;
+        syncPairingWatchForm(started.watch);
+        renderWatchStatus(started.watch);
+        document.dispatchEvent(new CustomEvent('pairing:tracking-started', {
+          detail: { watch: started.watch, parsed, playerId, pairing: pairingData }
+        }));
+        const currentRoundText = pairingData?.match
+          ? `Round ${parsed.round} 配對已找到`
+          : (pairingData?.available ? `Round ${parsed.round} 配對表已公布` : `Round ${parsed.round} 尚未公布，已開始等待`);
+        setPairingMessage(`${currentRoundText}；系統會自動追蹤後續配對與最終排名。牌組偵察已套用同一場賽事與 Round，可直接使用。`, 'success');
+      } catch (error) {
+        setPairingMessage(error?.message || String(error), 'error');
+      } finally {
+        setPairingBusy(false);
+      }
+    }, true);
+
     document.addEventListener('DOMContentLoaded', () => {
       const source = document.getElementById('pairingSourceUrl');
       const round = document.getElementById('pairingRound');
