@@ -27,7 +27,7 @@ jobs:
         run: |
           grep -q 'V141_INTERPLAY_REST' baseball-game.html
           grep -q '投球後休息' baseball-game.html
-          grep -q '打擊後休息' baseball-game.html
+          grep -q '下一球前休息' baseball-game.html
           grep -q 'v141RestChip' baseball-game.html
           grep -q "SITE_VERSION = 'v1.14." site-version.js
       - name: Commit changes
