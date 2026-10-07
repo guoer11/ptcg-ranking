@@ -1,6 +1,7 @@
 from pathlib import Path
 import re
 
+# final trigger after smoke-check wording was updated
 p=Path('baseball-game.html')
 s=p.read_text()
 if 'V141_INTERPLAY_REST' in s:
