@@ -28,6 +28,7 @@ const testButton = () => document.getElementById('pairingTestButton');
 const finalTestButton = () => document.getElementById('pairingFinalTestButton');
 const startButton = () => document.getElementById('pairingStartButton');
 const stopButton = () => document.getElementById('pairingStopButton');
+const stopActions = () => document.getElementById('pairingStopActions');
 
 function protectedPairingMain() {
   return document.getElementById('pairingProtectedMain');
@@ -383,20 +384,27 @@ function renderWatchStatus(watch) {
   const copy = watchCopy();
   if (!status || !copy) return;
 
+  const primary = lookupButton();
+  const stopRow = stopActions();
+
   if (!watch?.active) {
+    if (primary) primary.textContent = watch?.final_notified ? '開始新的追蹤' : '開始追蹤';
+    if (stopRow) stopRow.hidden = true;
     status.classList.remove('active');
     if (watch?.final_notified && watch?.final_result?.rank) {
       status.innerHTML = '<span class="pairing-watch-dot"></span>已完成';
-      copy.innerHTML = `最終排名已公布：<strong>第 ${escPairing(watch.final_result.rank)} 名</strong>。這場監控已自動停止。`;
+      copy.innerHTML = `最終排名已公布：<strong>第 ${escPairing(watch.final_result.rank)} 名</strong>。這場追蹤已自動停止，牌組偵察資料仍會保留。`;
       return;
     }
-    status.innerHTML = '<span class="pairing-watch-dot"></span>未監控';
-    copy.innerHTML = '設定目前 Round 後即可開始監控；如果這一輪尚未公布，就直接等待本輪，若已公布則自動等待下一輪。後端每 <strong>10 秒</strong>檢查配對與最終排名。';
+    status.innerHTML = '<span class="pairing-watch-dot"></span>未追蹤';
+    copy.innerHTML = '按上方「開始追蹤」後，系統會先查詢目前 Round，再自動監控後續配對與最終排名。';
     return;
   }
 
+  if (primary) primary.textContent = '更新追蹤';
+  if (stopRow) stopRow.hidden = false;
   status.classList.add('active');
-  status.innerHTML = '<span class="pairing-watch-dot"></span>監控中';
+  status.innerHTML = '<span class="pairing-watch-dot"></span>追蹤中';
   const checked = watch.last_checked_at ? new Date(watch.last_checked_at).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '尚未檢查';
   copy.innerHTML = `活動 <strong>${escPairing(watch.tid)}</strong> · 玩家 <strong>${escPairing(watch.player_id)}</strong><br>正在等待 <strong>Round ${escPairing(watch.next_round)}</strong> 或最終排名，每 10 秒由後端檢查。最後檢查：${escPairing(checked)}`;
 }
@@ -475,15 +483,23 @@ async function handleFinalTestNotification() {
 
 async function handleStartWatch() {
   setPairingBusy(true);
+  setPairingMessage('正在查詢目前 Round 並啟動追蹤…');
   try {
-    const { parsed, playerId } = await lookupCurrentPairing();
-    if (parsed.tid === TEST_TID) throw new Error('這是歷史測試場，為避免 Round 2、3、4…連續洗版，請使用測試通知按鈕，不要啟動連續監控。');
+    const { data: pairingData, parsed, playerId } = await lookupCurrentPairing();
+    if (parsed.tid === TEST_TID) throw new Error('這是歷史測試場，為避免 Round 2、3、4…連續洗版，請使用進階 / 測試工具，不要啟動連續追蹤。');
     const data = await authorizedWatchRequest('start', { url: parsed.url, player_id: playerId });
     clearSavedPairingWatchForm();
     pairingFormEdited = false;
     syncPairingWatchForm(data.watch);
     renderWatchStatus(data.watch);
-    setPairingMessage(`已開始監控 Round ${data.watch.next_round} 與後續配對、最終排名，後端每 10 秒檢查一次。iPhone 鎖屏後仍會繼續。`, 'success');
+    document.dispatchEvent(new CustomEvent('pairing:tracking-started', {
+      detail: { watch: data.watch, parsed, playerId, pairing: pairingData }
+    }));
+
+    const currentRoundText = pairingData?.match
+      ? `Round ${parsed.round} 配對已找到`
+      : (pairingData?.available ? `Round ${parsed.round} 配對表已公布` : `Round ${parsed.round} 尚未公布，已開始等待`);
+    setPairingMessage(`${currentRoundText}；系統會自動追蹤後續配對與最終排名。牌組偵察已套用同一場賽事與 Round，可直接使用。`, 'success');
   } catch (error) {
     setPairingMessage(error?.message || String(error), 'error');
   } finally {
@@ -497,7 +513,8 @@ async function handleStopWatch() {
     const data = await authorizedWatchRequest('stop');
     syncPairingWatchForm(data.watch);
     renderWatchStatus(data.watch);
-    setPairingMessage('已停止配對與最終排名監控。', 'success');
+    document.dispatchEvent(new CustomEvent('pairing:tracking-stopped', { detail: { watch: data.watch } }));
+    setPairingMessage('已停止自動追蹤與通知；牌組偵察仍可繼續使用目前賽事與 Round。', 'success');
   } catch (error) {
     setPairingMessage(error?.message || String(error), 'error');
   } finally {
@@ -574,7 +591,7 @@ function initPairingPage() {
   });
   if (playerInput() && !playerInput().value) playerInput().value = DEFAULT_PLAYER_ID;
   document.getElementById('pairingLoadTestButton')?.addEventListener('click', loadHistoricalTest);
-  lookupButton()?.addEventListener('click', handleLookup);
+  lookupButton()?.addEventListener('click', handleStartWatch);
   testButton()?.addEventListener('click', handleTestNotification);
   finalTestButton()?.addEventListener('click', handleFinalTestNotification);
   startButton()?.addEventListener('click', handleStartWatch);
