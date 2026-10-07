@@ -1,0 +1,40 @@
+name: Switch rest to half-inning v144
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - scripts/switch_rest_to_half_inning_v144.py
+      - .github/workflows/switch-rest-to-half-inning-v144.yml
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Apply half-inning rest patch
+        run: python scripts/switch_rest_to_half_inning_v144.py
+      - name: Check JavaScript syntax
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          s=Path('baseball-game.html').read_text()
+          js=re.findall(r'<script>(.*?)</script>',s,re.S)[-1]
+          Path('/tmp/baseball-v144.js').write_text(js)
+          PY
+          node --check /tmp/baseball-v144.js
+      - name: Smoke check half-inning rest
+        run: |
+          grep -q 'V144_HALF_INNING_BREAK' baseball-game.html
+          grep -q '攻守交換' baseball-game.html
+          ! grep -q 'V141_INTERPLAY_REST' baseball-game.html
+          ! grep -q '投球後休息' baseball-game.html
+          ! grep -q '下一球前休息' baseball-game.html
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add baseball-game.html site-version.js
+          git diff --cached --quiet || git commit -m "Move five-second rest to half-inning changes"
+          git push
