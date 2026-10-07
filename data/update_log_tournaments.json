@@ -2,6 +2,24 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-10-08T00:03:48+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-10-08T00:03:48+08:00",
+      "summary": "新增 3 場；狀態變更 1 場；報名期間更新 3 場",
+      "details": [
+        "新增｜#69315｜2026-11-07｜The Pokémon Company｜臺北市｜紀念球｜700 人",
+        "新增｜#69317｜2026-11-07｜The Pokémon Company｜臺北市｜紀念球｜4000 人",
+        "新增｜#69316｜2026-11-07｜The Pokémon Company｜臺北市｜紀念球｜800 人",
+        "狀態｜#69395｜2026-10-24｜Card Master｜臺北市｜unavailable → removed",
+        "報名期間｜#69315｜2026-11-07｜The Pokémon Company｜臺北市｜— → 10.08.2026 - 11.07.2026 00:00",
+        "報名期間｜#69316｜2026-11-07｜The Pokémon Company｜臺北市｜— → 10.08.2026 - 11.07.2026 00:00",
+        "報名期間｜#69317｜2026-11-07｜The Pokémon Company｜臺北市｜— → 10.08.2026 - 11.07.2026 00:00"
+      ],
+      "notified": true,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "tournaments-2026-10-07T19:03:27+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -44,16 +62,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "GitHub 備援排程"
-    },
-    {
-      "id": "tournaments-2026-10-07T00:03:33+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-10-07T00:03:33+08:00",
-      "summary": "例行檢查完成；賽事可見內容無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "主排程（Supabase）"
     }
   ]
 }
