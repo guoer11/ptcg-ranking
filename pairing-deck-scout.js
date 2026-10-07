@@ -523,9 +523,7 @@
 
   function inject() {
     const section = $('pairingDeckScout');
-    const anchor = $('pairingMessage') || $('pairingResult');
-    if (!section || !anchor) return;
-    anchor.after(section);
+    if (!section) return;
     if (section.dataset.scoutBound === '1') return;
     section.dataset.scoutBound = '1';
     document.querySelectorAll('[data-pairing-scout-mode]').forEach(button => {
