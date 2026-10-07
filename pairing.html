@@ -42,6 +42,11 @@
         <div id="pairingResult" class="pairing-result is-waiting"><div class="pairing-result-title"><strong>尚未開始追蹤</strong><span class="pairing-round-badge">等待輸入</span></div><div class="pairing-watch-copy">貼上目前賽事網址並選擇 Round，按「開始追蹤」即可查詢配對、啟動監控並使用牌組偵察。</div></div>
         <section class="pairing-watch-card pairing-watch-inline"><div class="pairing-watch-head"><strong>追蹤狀態</strong><span id="pairingWatchStatus" class="pairing-watch-status"><span class="pairing-watch-dot"></span>未追蹤</span></div><div id="pairingWatchCopy" class="pairing-watch-copy">按上方「開始追蹤」後，系統會先查詢目前 Round，再自動監控後續配對與最終排名。</div><div id="pairingStopActions" class="pairing-actions" style="margin-top:14px;" hidden><button id="pairingStopButton" class="secondary-btn" type="button">停止追蹤</button></div></section>
         <div id="pairingMessage" class="pairing-message"></div>
+        <details class="pairing-history-panel pairing-advanced-tools">
+          <summary>進階 / 測試工具</summary>
+          <p class="pairing-watch-copy" style="margin:10px 0 12px;">正式比賽平常可保持收合；需要測試通知時再展開。</p>
+          <div class="pairing-actions"><button id="pairingTestButton" class="secondary-btn pairing-test-btn" type="button">測試 Round 通知</button><button id="pairingFinalTestButton" class="secondary-btn pairing-test-btn" type="button">測試最終排名通知</button></div>
+        </details>
         <section id="pairingDeckScout" class="pairing-scout-panel pairing-scout-card" aria-labelledby="pairingScoutHeading">
           <div class="pairing-scout-head"><div><h2 id="pairingScoutHeading">牌組偵察</h2><p>開始追蹤後會沿用上方活動網址與 Round，可直接查桌號或 PTCG ID、查看玩家與對手並記錄牌組；停止自動追蹤後仍可繼續使用。</p></div></div>
           <div class="pairing-scout-tabs" role="group" aria-label="牌組偵察查詢方式"><button type="button" data-pairing-scout-mode="table" class="active" aria-pressed="true">桌號</button><button type="button" data-pairing-scout-mode="player" aria-pressed="false">PTCG ID</button></div>
@@ -57,11 +62,6 @@
             <div id="pairingHistoryDetail" class="pairing-history-detail"></div>
           </details>
         </section>
-        <details class="pairing-history-panel pairing-advanced-tools">
-          <summary>進階 / 測試工具</summary>
-          <p class="pairing-watch-copy" style="margin:10px 0 12px;">正式比賽平常可保持收合；需要測試通知時再展開。</p>
-          <div class="pairing-actions"><button id="pairingTestButton" class="secondary-btn pairing-test-btn" type="button">測試 Round 通知</button><button id="pairingFinalTestButton" class="secondary-btn pairing-test-btn" type="button">測試最終排名通知</button></div>
-        </details>
       </section>
       <aside><section class="pairing-watch-card"><div class="pairing-watch-head"><strong>通知與姓名</strong></div><div id="pairingAuthCopy" class="pairing-watch-copy">正在確認登入狀態…</div><div class="pairing-watch-copy" style="margin-top:8px;">配對頁本身只提供 PTCG ID。登入你目前網站的授權帳號後，系統會用現有私人資料補上玩家真實姓名。</div></section></aside>
     </div>
