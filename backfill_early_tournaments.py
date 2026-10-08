@@ -12,7 +12,7 @@ from __future__ import annotations
 import json
 from datetime import datetime
 
-from scrape_tournaments import (
+from scrape_tournaments_safe import (
     BASE_URL,
     CSP_LEAGUES,
     DATA_FILE,
