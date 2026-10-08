@@ -11,6 +11,16 @@ from __future__ import annotations
 
 import scrape_tournaments as base
 
+# 重新匯出 backfill 會使用的既有常數與工具，確保所有賽事詳情解析都走同一套安全邏輯。
+BASE_URL = base.BASE_URL
+CSP_LEAGUES = base.CSP_LEAGUES
+DATA_FILE = base.DATA_FILE
+SEASON = base.SEASON
+SEASON_END = base.SEASON_END
+SEASON_START = base.SEASON_START
+TAIPEI = base.TAIPEI
+load_existing = base.load_existing
+make_session = base.make_session
 
 REGION_ALIASES = (
     (("臺北市", "台北市"), "臺北市"),
