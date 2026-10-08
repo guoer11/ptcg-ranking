@@ -13,6 +13,7 @@ on:
       - main
     paths:
       - "scrape_tournaments.py"
+      - "scrape_tournaments_safe.py"
       - "update_log.py"
       - "backfill_early_tournaments.py"
       - "enrich_registration_windows.py"
@@ -46,7 +47,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Fetch official tournament information
-        run: python scrape_tournaments.py
+        run: python scrape_tournaments_safe.py
 
       - name: Backfill early-season official tournaments
         run: python backfill_early_tournaments.py
