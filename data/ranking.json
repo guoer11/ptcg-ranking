@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-10T00:05:29+08:00",
+  "updated_at": "2026-10-10T04:50:35+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -4344,59 +4344,11 @@
       },
       {
         "rank": 533,
-        "name": "33",
-        "player_id": "tw75755528",
-        "region": "臺中市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw75755528/"
-      },
-      {
-        "rank": 533,
-        "name": "192",
-        "player_id": "tw44524433",
-        "region": "新北市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw44524433/"
-      },
-      {
-        "rank": 533,
-        "name": "3Dlong2",
-        "player_id": "tw18480972",
-        "region": "南投縣",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw18480972/"
-      },
-      {
-        "rank": 533,
-        "name": "75",
-        "player_id": "tw40188987",
-        "region": "雲林縣",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw40188987/"
-      },
-      {
-        "rank": 533,
-        "name": "571",
-        "player_id": "tw28634769",
-        "region": "桃園市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw28634769/"
-      },
-      {
-        "rank": 533,
         "name": "1122",
         "player_id": "tw22969264",
         "region": "桃園市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw22969264/"
-      },
-      {
-        "rank": 533,
-        "name": "666869",
-        "player_id": "tw05270520",
-        "region": "新北市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw05270520/"
       },
       {
         "rank": 533,
@@ -4437,6 +4389,54 @@
         "region": "宜蘭縣",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw65565901/"
+      },
+      {
+        "rank": 533,
+        "name": "33",
+        "player_id": "tw75755528",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw75755528/"
+      },
+      {
+        "rank": 533,
+        "name": "75",
+        "player_id": "tw40188987",
+        "region": "雲林縣",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw40188987/"
+      },
+      {
+        "rank": 533,
+        "name": "192",
+        "player_id": "tw44524433",
+        "region": "新北市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw44524433/"
+      },
+      {
+        "rank": 533,
+        "name": "3Dlong2",
+        "player_id": "tw18480972",
+        "region": "南投縣",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw18480972/"
+      },
+      {
+        "rank": 533,
+        "name": "571",
+        "player_id": "tw28634769",
+        "region": "桃園市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw28634769/"
+      },
+      {
+        "rank": 533,
+        "name": "666869",
+        "player_id": "tw05270520",
+        "region": "新北市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw05270520/"
       },
       {
         "rank": 533,
@@ -8952,6 +8952,14 @@
       },
       {
         "rank": 533,
+        "name": "Morpeko",
+        "player_id": "tw77531117",
+        "region": "臺南市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw77531117/"
+      },
+      {
+        "rank": 533,
         "name": "Morris",
         "player_id": "tw82266278",
         "region": "桃園市",
@@ -12973,14 +12981,6 @@
         "region": "新北市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw35496510/"
-      },
-      {
-        "rank": 533,
-        "name": "laolicat",
-        "player_id": "tw77531117",
-        "region": "臺南市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw77531117/"
       },
       {
         "rank": 533,
