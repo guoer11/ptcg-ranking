@@ -122,6 +122,109 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
 .scene.v15-bat-close:not(.user-pitching) .batter{--bscale:1.02;right:-5%;bottom:17%}.scene.v15-bat-close:not(.user-pitching) .bat{right:-3%;height:152px}.scene.v15-bat-broadcast:not(.user-pitching) .zone{bottom:15%;width:86px;height:108px}.scene.v15-bat-broadcast:not(.user-pitching) .batter{--bscale:.8;right:3%;bottom:20%}.scene.user-pitching.v15-pitch-behind .pitcher{top:78%;transform:translate(-50%,-50%) scale(1.08);z-index:21}.scene.user-pitching.v15-pitch-behind .zone{bottom:43%;width:72px;height:90px}.scene.user-pitching.v15-pitch-behind .batter{--bscale:.44;right:22%;bottom:42%;z-index:18}.scene.user-pitching.v15-pitch-behind .bat{right:23%;bottom:45%;height:72px;z-index:19}.scene.user-pitching.v15-pitch-behind .catcher{bottom:40%;transform:translateX(-50%) scale(.46)}.scene.user-pitching.v15-pitch-behind .umpire{bottom:39%;transform:translateX(-50%) scale(.43)}
 @media(max-width:620px){.v15-settings{grid-template-columns:1fr 1fr}.v15-leader-grid{grid-template-columns:1fr}.scene.user-pitching.v15-pitch-behind .batter{right:17%}.v15-weather{font-size:8px}}
 
+
+
+/* ===== V202 CINEMATIC CAMERA ===== */
+#gameApp.v202-cinematic-game{position:relative;background:#02090b}
+#gameApp.v202-cinematic-game .gamebar{position:absolute;left:0;right:0;top:env(safe-area-inset-top);height:46px;z-index:76;background:linear-gradient(180deg,rgba(5,12,15,.94),rgba(8,18,20,.78));border-bottom:1px solid #ffffff24;backdrop-filter:blur(7px);padding:3px 8px}
+#gameApp.v202-cinematic-game .scoreteam{font-size:15px;text-shadow:0 2px 5px #000}
+#gameApp.v202-cinematic-game .centerScore{font-size:9px}
+#gameApp.v202-cinematic-game .centerScore b{font-size:12px}
+#gameApp.v202-cinematic-game .minirow{gap:5px;margin-top:1px}
+#gameApp.v202-cinematic-game .scene{padding-top:0}
+#gameApp.v202-cinematic-game .hud{top:54px;left:7px;background:rgba(4,13,15,.74);border-radius:7px;padding:5px 7px;max-width:46%;font-size:9px}
+#gameApp.v202-cinematic-game .batterCard{top:54px;right:7px;background:rgba(4,13,15,.76);border-radius:7px;padding:6px 8px;max-width:47%;font-size:9px}
+#gameApp.v202-cinematic-game .batterCard strong{font-size:13px}
+#gameApp.v202-cinematic-game .message{top:14%;width:72%}
+#gameApp.v202-cinematic-game .message strong{font-size:24px}
+#gameApp.v202-cinematic-game .v15-wind{top:102px}
+
+/* Batter camera: low camera beside the hitter, pitcher centered in the distance. */
+.scene.v202-cinematic-bat:not(.user-pitching){perspective:1200px;background:linear-gradient(#66b8ed 0 31%,#bddff0 32%,#477553 33%,#173c27 100%)}
+.scene.v202-cinematic-bat:not(.user-pitching) .stadium{top:17%;height:27%;left:-9%;right:-9%;filter:brightness(.98) saturate(1.05)}
+.scene.v202-cinematic-bat:not(.user-pitching) .crowd{top:23%;height:17%}
+.scene.v202-cinematic-bat:not(.user-pitching) .scoreboardBig{top:19%;width:21%;height:8%;opacity:.92}
+.scene.v202-cinematic-bat:not(.user-pitching) .outfield{top:38%;left:-10%;right:-10%;bottom:-20%;clip-path:polygon(1% 0,99% 0,78% 100%,22% 100%)}
+.scene.v202-cinematic-bat:not(.user-pitching) .infieldDirt{top:73%;width:min(108vw,900px);height:min(72vw,650px)}
+.scene.v202-cinematic-bat:not(.user-pitching) .infieldGrass{top:69%;width:min(72vw,610px);height:min(47vw,430px)}
+.scene.v202-cinematic-bat:not(.user-pitching) .mound{top:48%;transform:translate(-50%,-50%) scale(.82)}
+.scene.v202-cinematic-bat:not(.user-pitching) .pitcher{top:43.5%;transform:translate(-50%,-50%) scale(.68);z-index:15}
+.scene.v202-cinematic-bat:not(.user-pitching) .zone{bottom:13%;width:108px;height:134px;border-color:rgba(255,255,255,.72);background:rgba(255,255,255,.018)}
+.scene.v202-cinematic-bat:not(.user-pitching) .batter{--bscale:1.22;right:-5%;bottom:1%;z-index:20}
+.scene.v202-cinematic-bat:not(.user-pitching) .bat{right:-1%;bottom:22%;height:164px;z-index:21}
+.scene.v202-cinematic-bat.bat-left:not(.user-pitching) .batter{right:auto;left:-5%;transform-origin:0 100%}
+.scene.v202-cinematic-bat.bat-left:not(.user-pitching) .bat{right:auto;left:-1%;transform:rotate(-28deg)}
+.scene.v202-cinematic-bat:not(.user-pitching) .catcher,.scene.v202-cinematic-bat:not(.user-pitching) .umpire{opacity:.20;transform:translateX(-50%) scale(.55)}
+.scene.v202-cinematic-bat:not(.user-pitching) .fielder{opacity:.84}
+.scene.v202-cinematic-bat:not(.user-pitching) .f-lf{top:43%}.scene.v202-cinematic-bat:not(.user-pitching) .f-cf{top:40%}.scene.v202-cinematic-bat:not(.user-pitching) .f-rf{top:43%}
+.scene.v202-cinematic-bat:not(.user-pitching) .f-ss,.scene.v202-cinematic-bat:not(.user-pitching) .f-2b{top:54%}
+
+/* Pitcher camera: pitcher fills foreground; catcher and batter sit at the far plate. */
+.scene.user-pitching.v202-cinematic-pitch{perspective:1250px;background:linear-gradient(#65b8ed 0 31%,#c0e4f3 32%,#4e7d58 33%,#173b27 100%)}
+.scene.user-pitching.v202-cinematic-pitch .stadium{top:16%;height:27%;left:-8%;right:-8%}
+.scene.user-pitching.v202-cinematic-pitch .crowd{top:22%;height:16%}
+.scene.user-pitching.v202-cinematic-pitch .outfield{top:37%;left:-9%;right:-9%;bottom:-22%}
+.scene.user-pitching.v202-cinematic-pitch .infieldDirt{top:62%;width:min(86vw,720px);height:min(58vw,510px)}
+.scene.user-pitching.v202-cinematic-pitch .infieldGrass{top:59%;width:min(58vw,500px);height:min(39vw,365px)}
+.scene.user-pitching.v202-cinematic-pitch .mound{top:79%;width:98px;height:34px;z-index:12}
+.scene.user-pitching.v202-cinematic-pitch .pitcher{left:50%;top:80%;transform:translate(-50%,-50%) scale(1.22);z-index:25;filter:drop-shadow(0 10px 7px rgba(0,0,0,.4))}
+.scene.user-pitching.v202-cinematic-pitch .zone{bottom:43%;width:80px;height:100px;border-color:rgba(255,255,255,.78);z-index:20}
+.scene.user-pitching.v202-cinematic-pitch .batter{--bscale:.46;right:21%;bottom:41.5%;z-index:19}
+.scene.user-pitching.v202-cinematic-pitch.bat-left .batter{right:auto;left:21%;transform-origin:0 100%}
+.scene.user-pitching.v202-cinematic-pitch .bat{right:22%;bottom:45%;height:76px;z-index:20}
+.scene.user-pitching.v202-cinematic-pitch.bat-left .bat{right:auto;left:22%;transform:rotate(-28deg)}
+.scene.user-pitching.v202-cinematic-pitch .catcher{bottom:40%;transform:translateX(-50%) scale(.50);z-index:18;opacity:.96}
+.scene.user-pitching.v202-cinematic-pitch .umpire{bottom:39%;transform:translateX(-50%) scale(.46);z-index:17;opacity:.78}
+.scene.user-pitching.v202-cinematic-pitch .fielder{opacity:.70;transform:translate(-50%,-50%) scale(.38)}
+.scene.user-pitching.v202-cinematic-pitch .base{transform:rotate(45deg) scale(.72)}
+.scene.user-pitching.v202-cinematic-pitch .pitcher.windup{animation:v202PitchWindup .58s cubic-bezier(.2,.7,.2,1)}
+.scene.user-pitching.v202-cinematic-pitch .pitcher.release{animation:v202PitchRelease .34s cubic-bezier(.15,.8,.2,1)}
+@keyframes v202PitchWindup{0%{transform:translate(-50%,-50%) scale(1.22) rotate(0)}40%{transform:translate(-50%,-52%) scale(1.22) rotate(-4deg)}72%{transform:translate(-50%,-51%) scale(1.22) rotate(-8deg)}100%{transform:translate(-50%,-50%) scale(1.22) rotate(-5deg)}}
+@keyframes v202PitchRelease{0%{transform:translate(-50%,-50%) scale(1.22) rotate(-5deg)}52%{transform:translate(-47%,-49%) scale(1.22) rotate(11deg)}100%{transform:translate(-46%,-48%) scale(1.22) rotate(7deg)}}
+
+/* Pitch selection becomes an overlay, similar to the reference game's edge HUD. */
+#gameApp.v202-mode-pitch .pitch-mode-panel{position:absolute;z-index:72;left:8px;right:8px;bottom:70px;margin:0;padding:7px 8px;background:linear-gradient(180deg,rgba(6,17,19,.88),rgba(5,13,15,.76));border:1px solid #ffffff2c;border-radius:13px;backdrop-filter:blur(7px);box-shadow:0 5px 18px #0007}
+#gameApp.v202-mode-pitch .pitch-mode-top{gap:5px;font-size:9px}
+#gameApp.v202-mode-pitch .pitch-mode-top strong{font-size:10px}
+#gameApp.v202-mode-pitch .pitch-help{display:none}
+#gameApp.v202-mode-pitch .pitch-defense-actions{margin:3px 0}
+#gameApp.v202-mode-pitch .pitch-types{display:flex;gap:5px;overflow-x:auto;padding:3px 0;scrollbar-width:none}
+#gameApp.v202-mode-pitch .pitch-types::-webkit-scrollbar{display:none}
+#gameApp.v202-mode-pitch .pitch-type{flex:0 0 auto;min-width:72px;min-height:38px;padding:5px 7px;border-radius:10px}
+#gameApp.v202-mode-pitch .pitch-chart-btn{padding:4px 7px;font-size:9px}
+
+@media (orientation:landscape){
+  #gameApp.v202-cinematic-game .gamebar{height:38px;top:0}
+  #gameApp.v202-cinematic-game .hud,#gameApp.v202-cinematic-game .batterCard{top:43px}
+  #gameApp.v202-cinematic-game .message{top:12%}
+  #gameApp.v202-cinematic-game .v15-wind{top:82px}
+  .scene.v202-cinematic-bat:not(.user-pitching) .batter{--bscale:1.02;right:1%;bottom:-5%}
+  .scene.v202-cinematic-bat.bat-left:not(.user-pitching) .batter{right:auto;left:1%}
+  .scene.v202-cinematic-bat:not(.user-pitching) .bat{right:5%;bottom:22%;height:148px}
+  .scene.v202-cinematic-bat.bat-left:not(.user-pitching) .bat{right:auto;left:5%}
+  .scene.v202-cinematic-bat:not(.user-pitching) .zone{bottom:10%;width:94px;height:116px}
+  .scene.v202-cinematic-bat:not(.user-pitching) .pitcher{top:43%;transform:translate(-50%,-50%) scale(.58)}
+  .scene.user-pitching.v202-cinematic-pitch .pitcher{top:82%;transform:translate(-50%,-50%) scale(1.04)}
+  .scene.user-pitching.v202-cinematic-pitch .pitcher.windup{animation-name:v202PitchWindupLandscape}
+  .scene.user-pitching.v202-cinematic-pitch .pitcher.release{animation-name:v202PitchReleaseLandscape}
+  @keyframes v202PitchWindupLandscape{0%{transform:translate(-50%,-50%) scale(1.04)}55%{transform:translate(-50%,-52%) scale(1.04) rotate(-7deg)}100%{transform:translate(-50%,-50%) scale(1.04) rotate(-5deg)}}
+  @keyframes v202PitchReleaseLandscape{0%{transform:translate(-50%,-50%) scale(1.04) rotate(-5deg)}55%{transform:translate(-47%,-49%) scale(1.04) rotate(10deg)}100%{transform:translate(-46%,-48%) scale(1.04) rotate(7deg)}}
+  .scene.user-pitching.v202-cinematic-pitch .zone{bottom:39%;width:70px;height:86px}
+  .scene.user-pitching.v202-cinematic-pitch .batter{--bscale:.38;right:25%;bottom:37.5%}
+  .scene.user-pitching.v202-cinematic-pitch.bat-left .batter{right:auto;left:25%}
+  .scene.user-pitching.v202-cinematic-pitch .catcher{bottom:36%;transform:translateX(-50%) scale(.42)}
+  .scene.user-pitching.v202-cinematic-pitch .umpire{bottom:35%;transform:translateX(-50%) scale(.39)}
+  #gameApp.v202-mode-pitch .pitch-mode-panel{left:1.5%;right:auto;width:min(58vw,620px);bottom:7px;padding:5px 6px}
+  #gameApp.v202-mode-pitch .pitch-type{min-width:64px;min-height:32px;font-size:10px}
+}
+
+@media (orientation:portrait){
+  .scene.v202-cinematic-bat:not(.user-pitching) .batter{--bscale:1.32;right:-12%}
+  .scene.v202-cinematic-bat.bat-left:not(.user-pitching) .batter{right:auto;left:-12%}
+  .scene.v202-cinematic-bat:not(.user-pitching) .bat{right:-4%}
+  .scene.v202-cinematic-bat.bat-left:not(.user-pitching) .bat{right:auto;left:-4%}
+}
+
 </style>
 </head>
 <body>
@@ -614,11 +717,12 @@ endHalf=function(...args){
 
 // ===== V15 IMMERSIVE BASEBALL =====
 const V15_PREF_KEY='cpblFantasyPrefsV15',V15_PROFILE_KEY='cpblFantasyProfileV15',V15_LIVE_KEY='cpblFantasyLiveV15';
-function v15LoadPrefs(){try{return Object.assign({difficulty:'normal',batView:'standard',pitchView:'catcher',haptics:true,extraSound:true,umpireVoice:true,showHot:true},JSON.parse(localStorage.getItem(V15_PREF_KEY)||'{}'))}catch{return{difficulty:'normal',batView:'standard',pitchView:'catcher',haptics:true,extraSound:true,umpireVoice:true,showHot:true}}}
+function v15LoadPrefs(){try{return Object.assign({difficulty:'normal',batView:'cinematic',pitchView:'cinematic',haptics:true,extraSound:true,umpireVoice:true,showHot:true},JSON.parse(localStorage.getItem(V15_PREF_KEY)||'{}'))}catch{return{difficulty:'normal',batView:'cinematic',pitchView:'cinematic',haptics:true,extraSound:true,umpireVoice:true,showHot:true}}}
 function v15SavePrefs(){localStorage.setItem(V15_PREF_KEY,JSON.stringify(v15Prefs))}
 function v15LoadProfile(){try{return Object.assign({pitchers:{},batters:{},injuries:{},seasonBatters:{},seasonPitchers:{},seasonGameRecorded:0,lastMVP:null},JSON.parse(localStorage.getItem(V15_PROFILE_KEY)||'{}'))}catch{return{pitchers:{},batters:{},injuries:{},seasonBatters:{},seasonPitchers:{},seasonGameRecorded:0,lastMVP:null}}}
 function v15SaveProfile(){localStorage.setItem(V15_PROFILE_KEY,JSON.stringify(v15Profile))}
 let v15Prefs=v15LoadPrefs(),v15Profile=v15LoadProfile(),v15Weather=null,v15Highlights=[],v15MoundVisits=2,v15GameFinalized=false,v15NewInjury=null;
+try{if(!localStorage.getItem('cpblFantasyCinematicViewV202')){v15Prefs.batView='cinematic';v15Prefs.pitchView='cinematic';v15SavePrefs();localStorage.setItem('cpblFantasyCinematicViewV202','1')}}catch{}
 function v15Hash(s){let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return(h>>>0)/4294967295}
 function v15GameNo(){if(v14SeasonMode){const x=v14LoadSeason();return x.game||0}return db.games.length}
 function v15Diff(){return v15Prefs.difficulty==='easy'?-1:v15Prefs.difficulty==='hard'?1:0}
@@ -637,7 +741,7 @@ function v15StatusText(p,pitch=false){const inj=v15Injury(p);if(inj&&inj.games>0
 function v15PickWeather(){const park=currentPark();if(park?.roof)return{name:'室內・無風',icon:'🏟️',carry:1,cross:0};const opts=[{name:'晴朗',icon:'☀️',carry:1.005,cross:0},{name:'多雲',icon:'☁️',carry:.997,cross:0},{name:'順風',icon:'💨',carry:1.045,cross:1.3},{name:'逆風',icon:'🌬️',carry:.955,cross:-.8},{name:'側風',icon:'↗️',carry:1.005,cross:3.4}];return opts[Math.floor(Math.random()*opts.length)]}
 function v15ParkGround(){const k=config.park,known={dome:1,tianmu:.985,xinzhuang:1.018,taoyuan:1.025,intercontinental:.995};return known[k]||(.985+v15Hash(k)*.03)}
 function v15CrowdHot(){return playing&&(inning>=7&&Math.abs(userScore-cpuScore)<=2||bases.filter(Boolean).length>=2||inning>=9)}
-function v15ApplyScene(){const sc=$('scene');if(!sc)return;sc.classList.toggle('v15-bat-close',halfMode==='bat'&&v15Prefs.batView==='close');sc.classList.toggle('v15-bat-broadcast',halfMode==='bat'&&v15Prefs.batView==='broadcast');sc.classList.toggle('v15-pitch-behind',halfMode==='pitch'&&v15Prefs.pitchView==='pitcher');sc.classList.toggle('v15-crowd-hot',v15CrowdHot());let w=$('v15Wind');if(!w){w=document.createElement('div');w.id='v15Wind';w.className='v15-wind';sc.appendChild(w)}w.textContent=v15Weather?`${v15Weather.icon} ${v15Weather.name}`:'';if($('v15WeatherBadge')){$('v15WeatherBadge').textContent=v15Weather?`${v15Weather.icon}${v15Weather.name}`:'天氣';$('v15WeatherBadge').classList.toggle('hot',v15CrowdHot())}v15RenderHotZone()}
+function v15ApplyScene(){const sc=$('scene');if(!sc)return;sc.classList.toggle('v15-bat-close',halfMode==='bat'&&v15Prefs.batView==='close');sc.classList.toggle('v15-bat-broadcast',halfMode==='bat'&&v15Prefs.batView==='broadcast');sc.classList.toggle('v15-pitch-behind',halfMode==='pitch'&&v15Prefs.pitchView==='pitcher');sc.classList.toggle('v202-cinematic-bat',halfMode==='bat'&&v15Prefs.batView==='cinematic');sc.classList.toggle('v202-cinematic-pitch',halfMode==='pitch'&&v15Prefs.pitchView==='cinematic');const v202Game=$('gameApp');if(v202Game){const v202Any=v15Prefs.batView==='cinematic'||v15Prefs.pitchView==='cinematic';v202Game.classList.toggle('v202-cinematic-game',v202Any);v202Game.classList.toggle('v202-mode-bat',halfMode==='bat'&&v15Prefs.batView==='cinematic');v202Game.classList.toggle('v202-mode-pitch',halfMode==='pitch'&&v15Prefs.pitchView==='cinematic')}sc.classList.toggle('v15-crowd-hot',v15CrowdHot());let w=$('v15Wind');if(!w){w=document.createElement('div');w.id='v15Wind';w.className='v15-wind';sc.appendChild(w)}w.textContent=v15Weather?`${v15Weather.icon} ${v15Weather.name}`:'';if($('v15WeatherBadge')){$('v15WeatherBadge').textContent=v15Weather?`${v15Weather.icon}${v15Weather.name}`:'天氣';$('v15WeatherBadge').classList.toggle('hot',v15CrowdHot())}v15RenderHotZone()}
 function v15RecordHighlight(a,b=''){if(!playing)return;const key=String(a);if(!/(全壘打|三振|雙殺|盜壘|牽制|失誤|觸身|暴投|捕逸|再見|短打|換投)/.test(key))return;const text=`${inning}局${halfMode==='pitch'?'上':'下'}・${key}${b?'｜'+String(b).replace(/<[^>]*>/g,''):''}`;if(v15Highlights[v15Highlights.length-1]!==text)v15Highlights.push(text);v15Highlights=v15Highlights.slice(-12)}
 function v15ErrorAnim(){const sc=$('scene');if(!sc)return;sc.classList.remove('v15-error-play');void sc.offsetWidth;sc.classList.add('v15-error-play');gameSetTimeout(()=>sc.classList.remove('v15-error-play'),480);v15Haptic('out')}
 function v15AdvanceOne(){let runs=0;if(bases[2])runs++;bases=[null,bases[0],bases[1]];return runs}
@@ -659,7 +763,7 @@ function v15PostGameSummary(){const box=$('gameOverText');if(!box||!v14Game)retu
 function v15SaveLive(){if(!playing)return;try{localStorage.setItem(V15_LIVE_KEY,JSON.stringify({weather:v15Weather,highlights:v15Highlights,mound:v15MoundVisits,newInjury:v15NewInjury}))}catch{}}
 function v15LoadLive(){try{const x=JSON.parse(localStorage.getItem(V15_LIVE_KEY)||'null');if(x){v15Weather=x.weather||v15PickWeather();v15Highlights=x.highlights||[];v15MoundVisits=x.mound??2;v15NewInjury=x.newInjury||null;return}}catch{}v15Weather=v15PickWeather();v15Highlights=[];v15MoundVisits=2}
 function v15ClearLive(){localStorage.removeItem(V15_LIVE_KEY)}
-function v15InstallUI(){const cfg=$('parkSelect')?.closest('.card');if(cfg&&!$('v15Settings')){const src=cfg.querySelector('.source-note');const html=`<div id="v15Settings" class="v15-settings"><label>難度<select id="v15Difficulty"><option value="easy">休閒</option><option value="normal">標準</option><option value="hard">高手</option></select></label><label>打擊視角<select id="v15BatView"><option value="standard">標準</option><option value="close">近距離</option><option value="broadcast">轉播</option></select></label><label>投球視角<select id="v15PitchView"><option value="catcher">捕手後方</option><option value="pitcher">投手後方</option></select></label><label class="v15-toggle"><input id="v15Haptics" type="checkbox"><span>震動回饋</span></label><label class="v15-toggle"><input id="v15UmpireVoice" type="checkbox"><span>主審 Strike 語音</span></label><label class="v15-toggle"><input id="v15HotToggle" type="checkbox"><span>顯示打者熱區</span></label></div>`;if(src)src.insertAdjacentHTML('beforebegin',html);else cfg.insertAdjacentHTML('beforeend',html)}const season=$('v14SeasonCard');if(season&&!$('v15LeaderBtn'))season.insertAdjacentHTML('beforeend','<div class="v15-setup-actions"><button id="v15LeaderBtn" class="secondary">賽季排行榜</button><button id="v15StatusBtn" class="secondary">球員狀態／傷病</button></div>');const center=document.querySelector('.centerScore');if(center&&!$('v15WeatherBadge'))center.insertAdjacentHTML('beforeend','<span id="v15WeatherBadge" class="v15-weather">天氣</span>');const tact=document.querySelector('#tacticsOverlay .tactic-grid');if(tact&&!$('v15MoundVisitBtn'))tact.insertAdjacentHTML('beforeend','<div class="tactic-box v15-mound"><h3>投手丘暫停</h3><button id="v15MoundVisitBtn" class="secondary">上投手丘（剩 2 次）</button><div id="v15MoundStatus" class="sub">短暫提升投手穩定度。</div></div>');if(!$('v15LeaderOverlay'))document.body.insertAdjacentHTML('beforeend',`<div id="v15LeaderOverlay" class="overlay hidden v14-modal"><div class="modal v14-box"><h2>📊 賽季排行榜</h2><div class="sub">自選明星隊本季累積成績</div><div id="v15LeaderBody"></div><div class="modal-actions"><button id="v15CloseLeader" class="primary" style="grid-column:1/-1">關閉</button></div></div></div><div id="v15StatusOverlay" class="overlay hidden v14-modal"><div class="modal"><h2>🏥 球員狀態</h2><div class="sub">疲勞、牛棚使用與低機率短期傷病為遊戲模型。</div><div id="v15StatusBody"></div><div class="modal-actions"><button id="v15CloseStatus" class="primary" style="grid-column:1/-1">關閉</button></div></div></div>`);const bind=()=>{if($('v15Difficulty')){$('v15Difficulty').value=v15Prefs.difficulty;$('v15Difficulty').onchange=e=>{v15Prefs.difficulty=e.target.value;v15SavePrefs()};$('v15BatView').value=v15Prefs.batView;$('v15BatView').onchange=e=>{v15Prefs.batView=e.target.value;v15SavePrefs();v15ApplyScene()};$('v15PitchView').value=v15Prefs.pitchView;$('v15PitchView').onchange=e=>{v15Prefs.pitchView=e.target.value;v15SavePrefs();v15ApplyScene()};$('v15Haptics').checked=!!v15Prefs.haptics;$('v15Haptics').onchange=e=>{v15Prefs.haptics=e.target.checked;v15SavePrefs()};$('v15UmpireVoice').checked=!!v15Prefs.umpireVoice;$('v15UmpireVoice').onchange=e=>{v15Prefs.umpireVoice=e.target.checked;v15SavePrefs()};$('v15HotToggle').checked=!!v15Prefs.showHot;$('v15HotToggle').onchange=e=>{v15Prefs.showHot=e.target.checked;v15SavePrefs();v15RenderHotZone()}}if($('v15LeaderBtn'))$('v15LeaderBtn').onclick=v15RenderLeaders;if($('v15StatusBtn'))$('v15StatusBtn').onclick=v15RenderStatus;if($('v15CloseLeader'))$('v15CloseLeader').onclick=()=>$('v15LeaderOverlay').classList.add('hidden');if($('v15CloseStatus'))$('v15CloseStatus').onclick=()=>$('v15StatusOverlay').classList.add('hidden');if($('v15MoundVisitBtn'))$('v15MoundVisitBtn').onclick=()=>{if(!playing||halfMode!=='pitch'||!userPitcher||v15MoundVisits<=0)return;v15MoundVisits--;userPitcher.v15VisitAt=userPitcher.pitches;userPitcher.cold=false;$('v15MoundVisitBtn').textContent=`上投手丘（剩 ${v15MoundVisits} 次）`;$('v15MoundStatus').textContent='捕手／教練上丘，接下來約 10 球控球較穩。';$('tacticsOverlay').classList.add('hidden');setMsg('投手丘暫停',`${userPitcher.player.name} 重新調整節奏`,'good');v15SaveLive()}};bind()}
+function v15InstallUI(){const cfg=$('parkSelect')?.closest('.card');if(cfg&&!$('v15Settings')){const src=cfg.querySelector('.source-note');const html=`<div id="v15Settings" class="v15-settings"><label>難度<select id="v15Difficulty"><option value="easy">休閒</option><option value="normal">標準</option><option value="hard">高手</option></select></label><label>打擊視角<select id="v15BatView"><option value="cinematic">實戰（影片風格）</option><option value="standard">標準</option><option value="close">近距離</option><option value="broadcast">轉播</option></select></label><label>投球視角<select id="v15PitchView"><option value="cinematic">實戰（投手丘）</option><option value="catcher">捕手後方</option><option value="pitcher">投手後方</option></select></label><label class="v15-toggle"><input id="v15Haptics" type="checkbox"><span>震動回饋</span></label><label class="v15-toggle"><input id="v15UmpireVoice" type="checkbox"><span>主審 Strike 語音</span></label><label class="v15-toggle"><input id="v15HotToggle" type="checkbox"><span>顯示打者熱區</span></label></div>`;if(src)src.insertAdjacentHTML('beforebegin',html);else cfg.insertAdjacentHTML('beforeend',html)}const season=$('v14SeasonCard');if(season&&!$('v15LeaderBtn'))season.insertAdjacentHTML('beforeend','<div class="v15-setup-actions"><button id="v15LeaderBtn" class="secondary">賽季排行榜</button><button id="v15StatusBtn" class="secondary">球員狀態／傷病</button></div>');const center=document.querySelector('.centerScore');if(center&&!$('v15WeatherBadge'))center.insertAdjacentHTML('beforeend','<span id="v15WeatherBadge" class="v15-weather">天氣</span>');const tact=document.querySelector('#tacticsOverlay .tactic-grid');if(tact&&!$('v15MoundVisitBtn'))tact.insertAdjacentHTML('beforeend','<div class="tactic-box v15-mound"><h3>投手丘暫停</h3><button id="v15MoundVisitBtn" class="secondary">上投手丘（剩 2 次）</button><div id="v15MoundStatus" class="sub">短暫提升投手穩定度。</div></div>');if(!$('v15LeaderOverlay'))document.body.insertAdjacentHTML('beforeend',`<div id="v15LeaderOverlay" class="overlay hidden v14-modal"><div class="modal v14-box"><h2>📊 賽季排行榜</h2><div class="sub">自選明星隊本季累積成績</div><div id="v15LeaderBody"></div><div class="modal-actions"><button id="v15CloseLeader" class="primary" style="grid-column:1/-1">關閉</button></div></div></div><div id="v15StatusOverlay" class="overlay hidden v14-modal"><div class="modal"><h2>🏥 球員狀態</h2><div class="sub">疲勞、牛棚使用與低機率短期傷病為遊戲模型。</div><div id="v15StatusBody"></div><div class="modal-actions"><button id="v15CloseStatus" class="primary" style="grid-column:1/-1">關閉</button></div></div></div>`);const bind=()=>{if($('v15Difficulty')){$('v15Difficulty').value=v15Prefs.difficulty;$('v15Difficulty').onchange=e=>{v15Prefs.difficulty=e.target.value;v15SavePrefs()};$('v15BatView').value=v15Prefs.batView;$('v15BatView').onchange=e=>{v15Prefs.batView=e.target.value;v15SavePrefs();v15ApplyScene()};$('v15PitchView').value=v15Prefs.pitchView;$('v15PitchView').onchange=e=>{v15Prefs.pitchView=e.target.value;v15SavePrefs();v15ApplyScene()};$('v15Haptics').checked=!!v15Prefs.haptics;$('v15Haptics').onchange=e=>{v15Prefs.haptics=e.target.checked;v15SavePrefs()};$('v15UmpireVoice').checked=!!v15Prefs.umpireVoice;$('v15UmpireVoice').onchange=e=>{v15Prefs.umpireVoice=e.target.checked;v15SavePrefs()};$('v15HotToggle').checked=!!v15Prefs.showHot;$('v15HotToggle').onchange=e=>{v15Prefs.showHot=e.target.checked;v15SavePrefs();v15RenderHotZone()}}if($('v15LeaderBtn'))$('v15LeaderBtn').onclick=v15RenderLeaders;if($('v15StatusBtn'))$('v15StatusBtn').onclick=v15RenderStatus;if($('v15CloseLeader'))$('v15CloseLeader').onclick=()=>$('v15LeaderOverlay').classList.add('hidden');if($('v15CloseStatus'))$('v15CloseStatus').onclick=()=>$('v15StatusOverlay').classList.add('hidden');if($('v15MoundVisitBtn'))$('v15MoundVisitBtn').onclick=()=>{if(!playing||halfMode!=='pitch'||!userPitcher||v15MoundVisits<=0)return;v15MoundVisits--;userPitcher.v15VisitAt=userPitcher.pitches;userPitcher.cold=false;$('v15MoundVisitBtn').textContent=`上投手丘（剩 ${v15MoundVisits} 次）`;$('v15MoundStatus').textContent='捕手／教練上丘，接下來約 10 球控球較穩。';$('tacticsOverlay').classList.add('hidden');setMsg('投手丘暫停',`${userPitcher.player.name} 重新調整節奏`,'good');v15SaveLive()}};bind()}
 
 // Audio, haptics and umpire call.
 const v15SfxBase=sfx;
@@ -706,7 +810,7 @@ updateBoard=function(){const r=v15UpdateBoardBase();if(playing){const b=halfMode
 
 // A true alternate user-pitching camera path.
 const v15AnimatePitchBase=animatePitch;
-animatePitch=function(now){if(!(halfMode==='pitch'&&v15Prefs.pitchView==='pitcher'))return v15AnimatePitchBase(now);if(paused||!pitching)return;const f=$('scene').getBoundingClientRect(),e=pitchEnd(),t=clamp((now-pitchStart)/pitchDuration,0,1),ease=t*t*(3-2*t),sx=f.width*.5,sy=f.height*.79,x=sx+(e.x-sx)*ease+Math.sin(Math.PI*t)*pitchCurve*(1-t*.2),y=sy+(e.y-sy)*ease+Math.pow(t,2)*pitchDrop,scale=1.05-ease*.48,b=$('ball'),sh=$('ballShadow');b.style.left=x+'px';b.style.top=y+'px';b.style.transform=`translate(-50%,-50%) scale(${scale})`;if(sh){sh.style.left=x+'px';sh.style.top=(y+22)+'px';sh.style.opacity=String(.3-ease*.12);sh.style.transform=`translate(-50%,-50%) scale(${.9-ease*.35})`}if(t>=1){pitching=false;$('tacticsBtn').disabled=false;b.style.display='none';if(sh)sh.style.display='none';resolveCpuPitch();return}raf=requestAnimationFrame(animatePitch)};
+animatePitch=function(now){if(!(halfMode==='pitch'&&(v15Prefs.pitchView==='pitcher'||v15Prefs.pitchView==='cinematic')))return v15AnimatePitchBase(now);if(paused||!pitching)return;const f=$('scene').getBoundingClientRect(),e=pitchEnd(),t=clamp((now-pitchStart)/pitchDuration,0,1),ease=t*t*(3-2*t),sx=f.width*.5,sy=f.height*.79,x=sx+(e.x-sx)*ease+Math.sin(Math.PI*t)*pitchCurve*(1-t*.2),y=sy+(e.y-sy)*ease+Math.pow(t,2)*pitchDrop,scale=1.05-ease*.48,b=$('ball'),sh=$('ballShadow');b.style.left=x+'px';b.style.top=y+'px';b.style.transform=`translate(-50%,-50%) scale(${scale})`;if(sh){sh.style.left=x+'px';sh.style.top=(y+22)+'px';sh.style.opacity=String(.3-ease*.12);sh.style.transform=`translate(-50%,-50%) scale(${.9-ease*.35})`}if(t>=1){pitching=false;$('tacticsBtn').disabled=false;b.style.display='none';if(sh)sh.style.display='none';resolveCpuPitch();return}raf=requestAnimationFrame(animatePitch)};
 
 // Setup status, injuries and lifecycle.
 const v15RenderLineupBase=renderLineup;
