@@ -183,15 +183,15 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
 @keyframes v202PitchRelease{0%{transform:translate(-50%,-50%) scale(1.22) rotate(-5deg)}52%{transform:translate(-47%,-49%) scale(1.22) rotate(11deg)}100%{transform:translate(-46%,-48%) scale(1.22) rotate(7deg)}}
 
 /* Pitch selection becomes an overlay, similar to the reference game's edge HUD. */
-#gameApp.v202-mode-pitch .pitch-mode-panel{position:absolute;z-index:72;left:8px;right:8px;bottom:70px;margin:0;padding:7px 8px;background:linear-gradient(180deg,rgba(6,17,19,.88),rgba(5,13,15,.76));border:1px solid #ffffff2c;border-radius:13px;backdrop-filter:blur(7px);box-shadow:0 5px 18px #0007}
-#gameApp.v202-mode-pitch .pitch-mode-top{gap:5px;font-size:9px}
+#gameApp.pitch-ui-top .pitch-mode-panel{position:absolute;z-index:72;left:8px;right:8px;bottom:70px;margin:0;padding:7px 8px;background:linear-gradient(180deg,rgba(6,17,19,.88),rgba(5,13,15,.76));border:1px solid #ffffff2c;border-radius:13px;backdrop-filter:blur(7px);box-shadow:0 5px 18px #0007}
+#gameApp.pitch-ui-top .pitch-mode-top{gap:5px;font-size:9px}
 #gameApp.v202-mode-pitch .pitch-mode-top strong{font-size:10px}
 #gameApp.v202-mode-pitch .pitch-help{display:none}
-#gameApp.v202-mode-pitch .pitch-defense-actions{margin:3px 0}
-#gameApp.v202-mode-pitch .pitch-types{display:flex;gap:5px;overflow-x:auto;padding:3px 0;scrollbar-width:none}
+#gameApp.pitch-ui-top .pitch-defense-actions{margin:3px 0}
+#gameApp.pitch-ui-top .pitch-types{display:flex;gap:5px;overflow-x:auto;padding:3px 0;scrollbar-width:none}
 #gameApp.v202-mode-pitch .pitch-types::-webkit-scrollbar{display:none}
-#gameApp.v202-mode-pitch .pitch-type{flex:0 0 auto;min-width:72px;min-height:38px;padding:5px 7px;border-radius:10px}
-#gameApp.v202-mode-pitch .pitch-chart-btn{padding:4px 7px;font-size:9px}
+#gameApp.pitch-ui-top .pitch-type{flex:0 0 auto;min-width:72px;min-height:38px;padding:5px 7px;border-radius:10px}
+#gameApp.pitch-ui-top .pitch-chart-btn{padding:4px 7px;font-size:9px}
 
 @media (orientation:landscape){
   #gameApp.v202-cinematic-game .gamebar{height:38px;top:0}
@@ -214,8 +214,8 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
   .scene.user-pitching.v202-cinematic-pitch.bat-left .batter{right:auto;left:25%}
   .scene.user-pitching.v202-cinematic-pitch .catcher{bottom:36%;transform:translateX(-50%) scale(.42)}
   .scene.user-pitching.v202-cinematic-pitch .umpire{bottom:35%;transform:translateX(-50%) scale(.39)}
-  #gameApp.v202-mode-pitch .pitch-mode-panel{left:1.5%;right:auto;width:min(58vw,620px);bottom:7px;padding:5px 6px}
-  #gameApp.v202-mode-pitch .pitch-type{min-width:64px;min-height:32px;font-size:10px}
+  #gameApp.pitch-ui-top .pitch-mode-panel{left:1.5%;right:auto;width:min(58vw,620px);bottom:7px;padding:5px 6px}
+  #gameApp.pitch-ui-top .pitch-type{min-width:64px;min-height:32px;font-size:10px}
 }
 
 @media (orientation:portrait){
@@ -279,7 +279,7 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
 #gameApp.v202-mode-bat #scene .v20-batbar button{padding:5px 7px;font-size:9px;background:rgba(5,20,21,.78);backdrop-filter:blur(5px)}
 #gameApp.v202-mode-bat #scene.bat-left .v20-batbar{left:auto;right:6px;justify-content:flex-end}
 #gameApp.v202-mode-pitch #scene .v20-pitchassist{top:auto;right:6px;bottom:132px;max-width:42%;padding:5px 7px;background:rgba(5,20,21,.76);backdrop-filter:blur(5px)}
-#gameApp.v202-mode-pitch .pitch-mode-panel{background:linear-gradient(180deg,rgba(4,14,16,.82),rgba(3,10,12,.72));border-color:#ffffff22}
+#gameApp.pitch-ui-top .pitch-mode-panel{background:linear-gradient(180deg,rgba(4,14,16,.82),rgba(3,10,12,.72));border-color:#ffffff22}
 
 /* Contact cuts back to the existing high defensive/track camera. */
 .hitCam:not(.hidden){animation:v203FollowCut .16s ease-out}
@@ -315,11 +315,11 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
 
 /* ===== V204 TOP PITCH SELECTOR ===== */
 /* Keep the compact scoreboard, but remove the extra upper info cards while pitching. */
-#gameApp.v202-mode-pitch .hud,
-#gameApp.v202-mode-pitch .batterCard{display:none!important}
+#gameApp.pitch-ui-top .hud,
+#gameApp.pitch-ui-top .batterCard{display:none!important}
 
 /* Move pitch selection directly under the scoreboard. */
-#gameApp.v202-mode-pitch .pitch-mode-panel{
+#gameApp.pitch-ui-top .pitch-mode-panel{
   position:absolute!important;
   z-index:74!important;
   top:44px!important;
@@ -338,7 +338,7 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
 }
 
 /* Remove pitcher/batter text from the top strip; keep only the pitch-chart utility. */
-#gameApp.v202-mode-pitch .pitch-mode-top{
+#gameApp.pitch-ui-top .pitch-mode-top{
   position:absolute;
   right:6px;
   top:6px;
@@ -346,9 +346,9 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
   margin:0!important;
   display:block!important;
 }
-#gameApp.v202-mode-pitch #userPitcherLabel,
-#gameApp.v202-mode-pitch #cpuBatterLabel{display:none!important}
-#gameApp.v202-mode-pitch .pitch-chart-btn{
+#gameApp.pitch-ui-top #userPitcherLabel,
+#gameApp.pitch-ui-top #cpuBatterLabel{display:none!important}
+#gameApp.pitch-ui-top .pitch-chart-btn{
   width:34px;
   min-width:34px;
   height:32px;
@@ -359,7 +359,7 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
   border-radius:9px;
   background:rgba(16,47,49,.88)
 }
-#gameApp.v202-mode-pitch .pitch-chart-btn:after{
+#gameApp.pitch-ui-top .pitch-chart-btn:after{
   content:'▦';
   color:#dce9e5;
   font-size:17px;
@@ -367,7 +367,7 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
 }
 
 /* Ball types are now the primary top control. */
-#gameApp.v202-mode-pitch .pitch-types{
+#gameApp.pitch-ui-top .pitch-types{
   display:flex!important;
   gap:5px!important;
   padding:1px 42px 1px 0!important;
@@ -375,7 +375,7 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
   scroll-snap-type:x proximity;
   -webkit-overflow-scrolling:touch
 }
-#gameApp.v202-mode-pitch .pitch-type{
+#gameApp.pitch-ui-top .pitch-type{
   flex:0 0 auto!important;
   min-width:66px!important;
   min-height:32px!important;
@@ -384,26 +384,35 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
   font-size:10px!important;
   scroll-snap-align:start
 }
-#gameApp.v202-mode-pitch .pitch-defense-actions{
+#gameApp.pitch-ui-top .pitch-defense-actions{
   margin:4px 0 0!important;
   padding:0 42px 0 0!important;
 }
-#gameApp.v202-mode-pitch .pitch-help{display:none!important}
+#gameApp.pitch-ui-top .pitch-help{display:none!important}
 
 /* Weather can stay subtle, but no longer occupies the upper pitching HUD. */
-#gameApp.v202-mode-pitch .v15-wind{display:none!important}
+#gameApp.pitch-ui-top .v15-wind{display:none!important}
 
 @media (orientation:landscape){
-  #gameApp.v202-mode-pitch .pitch-mode-panel{top:36px!important;padding:4px 6px 5px!important}
-  #gameApp.v202-mode-pitch .pitch-type{min-width:62px!important;min-height:30px!important;padding:4px 6px!important;font-size:9px!important}
-  #gameApp.v202-mode-pitch .pitch-chart-btn{width:32px;min-width:32px;height:30px}
-  #gameApp.v202-mode-pitch .pitch-chart-btn:after{font-size:16px;line-height:28px}
+  #gameApp.pitch-ui-top .pitch-mode-panel{top:36px!important;padding:4px 6px 5px!important}
+  #gameApp.pitch-ui-top .pitch-type{min-width:62px!important;min-height:30px!important;padding:4px 6px!important;font-size:9px!important}
+  #gameApp.pitch-ui-top .pitch-chart-btn{width:32px;min-width:32px;height:30px}
+  #gameApp.pitch-ui-top .pitch-chart-btn:after{font-size:16px;line-height:28px}
 }
 
 @media (orientation:portrait){
-  #gameApp.v202-mode-pitch .pitch-mode-panel{top:44px!important}
-  #gameApp.v202-mode-pitch .pitch-type{min-width:64px!important}
+  #gameApp.pitch-ui-top .pitch-mode-panel{top:44px!important}
+  #gameApp.pitch-ui-top .pitch-type{min-width:64px!important}
 }
+
+
+/* V205: generic pitching-mode hook so every camera gets the same top pitch selector. */
+#gameApp.pitch-ui-top .pitch-mode-panel{top:58px!important}
+#gameApp.pitch-ui-top .pitch-mode-top{height:0!important;min-height:0!important;pointer-events:none}
+#gameApp.pitch-ui-top .pitch-chart-btn{position:absolute;right:6px;top:5px;pointer-events:auto}
+#gameApp.pitch-ui-top .pitch-types{min-height:36px;align-items:center}
+@media (orientation:landscape){#gameApp.pitch-ui-top .pitch-mode-panel{top:36px!important}}
+@media (orientation:portrait){#gameApp.pitch-ui-top .pitch-mode-panel{top:58px!important}}
 
 </style>
 </head>
@@ -654,7 +663,7 @@ function poisson(lambda){let L=Math.exp(-lambda),k=0,p=1;do{k++;p*=Math.random()
 function simulateCpu(first=false){const off=teamOps(opponent),pr=currentPitcherRatings(userPitcher),fat=pitcherFatigue(userPitcher),def=defenseRating(),skill=(pr.control*.36+pr.break*.32+pr.velo*.20+pr.stamina*.12)/100;let exp=.48+(off-.68)*2.6+(0.72-skill)*.95+(70-def)*.012+fat*.55;exp=clamp(exp,.12,1.7);const runs=clamp(poisson(exp),0,6);cpuScore+=runs;userPitcher.pitches+=Math.round(11+rand(2,8)+runs*4);userPitcher.innings++;updateBoard();const fatNow=pitcherFatigue(userPitcher);if(inning===9&&userScore>cpuScore)return endGame('比賽勝利！');setMsg(inning+'局下',`${teams[opponent].short} 本局 ${runs} 分・${userPitcher.player.name} ${userPitcher.pitches} 球${fatNow>.6?'（投手疲勞）':''}`,'');showIntro();schedulePitch(first?950:1150)}
 function cpuBattingOrder(){const a=offensePlayers(opponent);const eligible=a.filter(p=>(num(p.stats?.PA)||0)>=20);const src=eligible.length>=9?eligible:a;return [...src].sort((x,y)=>{const xp=num(x.stats?.PA)||0,yp=num(y.stats?.PA)||0,xo=num(x.stats?.OPS)||0,yo=num(y.stats?.OPS)||0;return(yo*0.72+Math.min(yp,350)/350*.28)-(xo*0.72+Math.min(xp,350)/350*.28)}).slice(0,9)}
 function currentCpuBatter(){const a=cpuBattingOrder();return a[cpuBatIndex%Math.max(1,a.length)]}
-function setHalfMode(mode){halfMode=mode;const pitch=mode==='pitch';$('scene').classList.toggle('user-pitching',pitch);$('pitchModePanel').classList.toggle('hidden',!pitch);$('userPitchBtn').classList.toggle('hidden',!pitch);$('swingBtn').classList.toggle('hidden',pitch);$('swingBtn').disabled=pitch;$('userPitchBtn').disabled=!pitch;$('pitchInfo').textContent=pitch?'選球種並瞄準':'準備投球';if(pitch)renderUserPitchControls()}
+function setHalfMode(mode){halfMode=mode;const pitch=mode==='pitch';$('gameApp').classList.toggle('pitch-ui-top',pitch);$('scene').classList.toggle('user-pitching',pitch);$('pitchModePanel').classList.toggle('hidden',!pitch);$('userPitchBtn').classList.toggle('hidden',!pitch);$('swingBtn').classList.toggle('hidden',pitch);$('swingBtn').disabled=pitch;$('userPitchBtn').disabled=!pitch;$('pitchInfo').textContent=pitch?'選球種並瞄準':'準備投球';if(pitch)renderUserPitchControls()}
 function renderUserPitchControls(){if(!userPitcher)return;const pr=currentPitcherRatings(userPitcher),rep=pr.repertoire||['FF'];if(!rep.includes(selectedUserPitch))selectedUserPitch=rep[0];$('pitchTypeButtons').innerHTML=rep.map(code=>{const p=basePitchTypes[code],m=pitchMastery(userPitcher.player,code);return p?`<button class="pitch-type ${selectedUserPitch===code?'active':''}" data-user-pitch="${code}"><span>${p.n}</span><b class="pitch-grade">${m.grade}</b></button>`:''}).join('');qsa('[data-user-pitch]').forEach(b=>b.onclick=()=>{selectedUserPitch=b.dataset.userPitch;renderUserPitchControls()});const read=cpuReadBonus(currentCpuBatter(),selectedUserPitch,aimX,aimY);$('userPitcherLabel').textContent=`${userPitcher.player.name}・${userPitcher.role}｜${rep.length}種球・${pr.repertoireSource||'遊戲模型'}`;$('cpuBatterLabel').textContent=`${currentCpuBatter()?.name||'—'}｜${userPitcher.pitches}球${read>.07?'・打者開始讀配球':''}`;const fat=pitcherFatigue(userPitcher);$('userPitchBtn').disabled=pitching;$('userPitchBtn').textContent=fat>.82?'投球（疲勞）':'投球！';renderPitchDefenseActions()}
 function startPitchHalf(first=false){clearMotion();offenseCall='normal';updateOffenseCallUi();setHalfMode('pitch');outs=0;balls=strikes=0;bases=[null,null,null];aimX=aimY=.5;$('aim').style.left='50%';$('aim').style.top='50%';updateBoard();showIntro();setMsg(inning+'局上','你來投球・'+userPitcher.player.name+(first?' 先發登板':''),'');renderUserPitchControls();$('userPitchBtn').disabled=false}
 function startBatHalf(){clearMotion();offenseCall='normal';setHalfMode('bat');outs=0;balls=strikes=0;bases=[null,null,null];aimX=aimY=.5;$('aim').style.left='50%';$('aim').style.top='50%';updateBoard();setMsg(inning+'局下','輪到你進攻','');showIntro();updateOffenseCallUi();saveGameState();schedulePitch(900)}
