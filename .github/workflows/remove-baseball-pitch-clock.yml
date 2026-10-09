@@ -1,0 +1,51 @@
+name: Remove baseball pitch clock
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/remove_baseball_pitch_clock.py'
+      - '.github/workflows/remove-baseball-pitch-clock.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - name: Remove pitch clock
+        run: python scripts/remove_baseball_pitch_clock.py
+      - name: Check JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('baseball-game.html').read_text(encoding='utf-8')
+          blocks=re.findall(r'<script[^>]*>(.*?)</script>',s,re.S)
+          Path('/tmp/baseball.js').write_text('\n'.join(blocks),encoding='utf-8')
+          PY
+          node --check /tmp/baseball.js
+      - name: Smoke check removal
+        run: |
+          ! grep -q 'v20PitchClock' baseball-game.html
+          ! grep -q 'v20StartPitchClock' baseball-game.html
+          ! grep -q 'Pitch Clock 18' baseball-game.html
+          ! grep -q '投球計時違規' baseball-game.html
+          grep -q 'v20QuickPitch' baseball-game.html
+          grep -q 'v20CatcherCall' baseball-game.html
+      - name: Commit changes
+        run: |
+          if git diff --quiet -- baseball-game.html; then
+            echo 'No changes needed'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add baseball-game.html
+          git commit -m 'Remove baseball pitch clock'
+          git push
