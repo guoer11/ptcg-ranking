@@ -21,6 +21,10 @@ replacements = [
         "v20GameMeta={start:Date.now(),mode:v20.mode,umpire:v20Umpire,summary:[]};v20RefreshBatBar();v20CatcherCall()}"
     ),
     (
+        "const r=v20UserThrowBase();v20StartPitchClock();return r};",
+        "const r=v20UserThrowBase();return r};"
+    ),
+    (
         "v20RefreshBatBar();v20StartPitchClock();return r};",
         "v20RefreshBatBar();return r};"
     ),
