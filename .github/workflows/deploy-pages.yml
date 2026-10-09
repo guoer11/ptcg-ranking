@@ -11,6 +11,7 @@ name: Deploy PTCG ranking site
 # Baseball immersive v15 deployment marker
 # Baseball v2.0 mega expansion deployment marker
 # Baseball v2.0 pitch-clock removal deployment marker
+# Baseball v2.0.2 cinematic batting/pitching deployment marker
 on:
   workflow_dispatch:
   push:
