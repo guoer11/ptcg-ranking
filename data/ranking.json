@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-09T00:05:32+08:00",
+  "updated_at": "2026-10-10T00:05:29+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -6296,6 +6296,14 @@
       },
       {
         "rank": 533,
+        "name": "EricEX",
+        "player_id": "tw29372557",
+        "region": "新北市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw29372557/"
+      },
+      {
+        "rank": 533,
         "name": "EricLiu",
         "player_id": "tw40377456",
         "region": "新北市",
@@ -6325,14 +6333,6 @@
         "region": "彰化縣",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw25764930/"
-      },
-      {
-        "rank": 533,
-        "name": "Ertai",
-        "player_id": "tw29372557",
-        "region": "新北市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw29372557/"
       },
       {
         "rank": 533,
@@ -16780,6 +16780,14 @@
       },
       {
         "rank": 13,
+        "name": "5Yuan",
+        "player_id": "tw45361307",
+        "region": "臺南市",
+        "points": 6,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw45361307/"
+      },
+      {
+        "rank": 13,
         "name": "Aaron-Wu",
         "player_id": "tw20997286",
         "region": "屏東縣",
@@ -16817,14 +16825,6 @@
         "region": "彰化縣",
         "points": 6,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw04390409/"
-      },
-      {
-        "rank": 13,
-        "name": "Wood",
-        "player_id": "tw45361307",
-        "region": "臺南市",
-        "points": 6,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw45361307/"
       },
       {
         "rank": 19,

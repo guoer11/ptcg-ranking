@@ -2,6 +2,21 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-10-10T00:05:29+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-10-10T00:05:29+08:00",
+      "summary": "無排名／積分變動；暱稱 2、地區 0 筆異動",
+      "details": [
+        "Master：暱稱 1",
+        "Junior：暱稱 1",
+        "Master｜tw29372557｜暱稱 Ertai → EricEX",
+        "Junior｜tw45361307｜暱稱 Wood → 5Yuan"
+      ],
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "ranking-2026-10-09T00:05:32+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -71,19 +86,6 @@
       ],
       "notified": false,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "ranking-2026-10-04T03:11:55+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-10-04T03:11:55+08:00",
-      "summary": "無排名／積分變動；暱稱 1、地區 0 筆異動",
-      "details": [
-        "Master：暱稱 1",
-        "Master｜tw23935088｜暱稱 Wuyilin → Baoger"
-      ],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }
