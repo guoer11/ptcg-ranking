@@ -1,0 +1,37 @@
+name: Fix baseball pitch UI safe v206
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Apply iPhone-safe pitch UI fix
+        run: python .github/scripts/fix_pitch_ui_safe_v206.py
+      - name: Check JS syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('baseball-game.html').read_text(encoding='utf-8')
+          scripts=re.findall(r'<script[^>]*>(.*?)</script>',s,re.S)
+          Path('/tmp/baseball-game.js').write_text('\n'.join(scripts),encoding='utf-8')
+          PY
+          node --check /tmp/baseball-game.js
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add baseball-game.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "fix: keep pitch selector below scoreboard on iPhone"
+          git push
