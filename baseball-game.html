@@ -570,6 +570,35 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
   #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-chart-btn{height:36px!important}
 }
 
+
+
+/* ===== V209 RESULT SAFE AREA ===== */
+/* Keep the previous plate-appearance result readable above the pitch selector. */
+#gameApp.pitch-ui-top #scene > .message{
+  top:82px!important;
+  z-index:96!important;
+  width:92%!important;
+  padding:0 8px!important;
+}
+#gameApp.pitch-ui-top #scene > .message strong{
+  font-size:clamp(22px,6.5vw,30px)!important;
+  line-height:1.05!important;
+}
+#gameApp.pitch-ui-top #scene > .message span{
+  display:block!important;
+  margin-top:3px!important;
+  font-size:12px!important;
+}
+#gameApp.pitch-ui-top #scene > .pitch-mode-panel{
+  top:150px!important;
+  z-index:86!important;
+}
+@media (orientation:landscape){
+  #gameApp.pitch-ui-top #scene > .message{top:34px!important;width:72%!important}
+  #gameApp.pitch-ui-top #scene > .message strong{font-size:20px!important}
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel{top:82px!important}
+}
+
 </style>
 </head>
 <body>
