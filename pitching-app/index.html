@@ -184,20 +184,20 @@
 </div></div>
 
 <script>
-// 球員姓名與球隊參考中職名鑑；遊戲能力為平衡用模擬值，並非官方球探數據。
+// 部分 ERA 參考 2026 中職公開排行榜；未核實者為遊戲暫估，並非官方成績。遊戲能力由 ERA 推算，不代表實際球探評價。
 const pitcherRoster=[
- {team:'中信兄弟',name:'羅戈',velo:1,control:.025,hand:'右投',special:['four','slider','change']},
- {team:'中信兄弟',name:'勝騎士',velo:0,control:.02,hand:'右投',special:['four','cutter','curve']},
- {team:'統一7-ELEVEn獅',name:'布雷克',velo:-1,control:.04,hand:'右投',special:['four','slider','change']},
- {team:'統一7-ELEVEn獅',name:'鍾允華',velo:2,control:-.015,hand:'右投',special:['four','slider','fork']},
- {team:'樂天桃猿',name:'威能帝',velo:3,control:.005,hand:'右投',special:['four','slider','change']},
- {team:'樂天桃猿',name:'陳冠宇',velo:-3,control:.04,hand:'左投',special:['four','slider','curve']},
- {team:'富邦悍將',name:'李東洺',velo:0,control:.025,hand:'右投',special:['four','slider','change']},
- {team:'富邦悍將',name:'曾峻岳',velo:5,control:-.02,hand:'右投',special:['four','slider','fork']},
- {team:'味全龍',name:'蔣銲',velo:2,control:.05,hand:'右投',special:['four','slider','change']},
- {team:'味全龍',name:'林凱威',velo:3,control:.005,hand:'右投',special:['four','slider','fork']},
- {team:'台鋼雄鷹',name:'黃子鵬',velo:-5,control:.055,hand:'右投',special:['sinker','slider','change']},
- {team:'台鋼雄鷹',name:'艾速特',velo:3,control:0,hand:'右投',special:['four','slider','curve']}
+ {team:'中信兄弟',name:'羅戈',era:2.8,eraVerified:false,velo:1,control:.025,hand:'右投',special:['four','slider','change']},
+ {team:'中信兄弟',name:'勝騎士',era:3.2,eraVerified:false,velo:0,control:.02,hand:'右投',special:['four','cutter','curve']},
+ {team:'統一7-ELEVEn獅',name:'布雷克',era:1.61,eraVerified:true,velo:-1,control:.04,hand:'右投',special:['four','slider','change']},
+ {team:'統一7-ELEVEn獅',name:'鍾允華',era:2.4,eraVerified:false,velo:2,control:-.015,hand:'右投',special:['four','slider','fork']},
+ {team:'樂天桃猿',name:'威能帝',era:3.1,eraVerified:false,velo:3,control:.005,hand:'右投',special:['four','slider','change']},
+ {team:'樂天桃猿',name:'陳冠宇',era:3.5,eraVerified:false,velo:-3,control:.04,hand:'左投',special:['four','slider','curve']},
+ {team:'富邦悍將',name:'李東洺',era:3.6,eraVerified:false,velo:0,control:.025,hand:'右投',special:['four','slider','change']},
+ {team:'富邦悍將',name:'曾峻岳',era:1.49,eraVerified:true,velo:5,control:-.02,hand:'右投',special:['four','slider','fork']},
+ {team:'味全龍',name:'蔣銲',era:1.49,eraVerified:true,velo:2,control:.05,hand:'右投',special:['four','slider','change']},
+ {team:'味全龍',name:'林凱威',era:2.7,eraVerified:false,velo:3,control:.005,hand:'右投',special:['four','slider','fork']},
+ {team:'台鋼雄鷹',name:'黃子鵬',era:2.2,eraVerified:true,velo:-5,control:.055,hand:'右投',special:['sinker','slider','change']},
+ {team:'台鋼雄鷹',name:'艾速特',era:3.5,eraVerified:false,velo:3,control:0,hand:'右投',special:['four','slider','curve']}
 ];
 let chosenPitcher=pitcherRoster.find(p=>p.name===localStorage.getItem('pitchKingPitcher'))||pitcherRoster[0];
 function renderPitcherSelect(){
@@ -207,7 +207,7 @@ function renderPitcherSelect(){
  teamSelect.value=chosenPitcher.team;
  pitcherSelect.innerHTML=pitcherRoster.filter(p=>p.team===chosenPitcher.team).map(p=>`<option value="${p.name}">${p.name}</option>`).join('');
  pitcherSelect.value=chosenPitcher.name;
- $('#pitcherInfo').textContent=`⚾ ${chosenPitcher.name}｜${chosenPitcher.hand}｜遊戲球速 ${chosenPitcher.velo>=0?'+':''}${chosenPitcher.velo} km/h｜控球 ${chosenPitcher.control>=0?'+':''}${Math.round(chosenPitcher.control*100)}｜擅長球種加成`;
+ $('#pitcherInfo').textContent=`⚾ ${chosenPitcher.name}｜${chosenPitcher.hand}｜ERA ${chosenPitcher.era.toFixed(2)}${chosenPitcher.eraVerified?'（2026參考）':'（暫估）'}｜實力 ${Math.round((7-clamp(chosenPitcher.era,1,7))/6*100)}｜遊戲球速 ${chosenPitcher.velo>=0?'+':''}${chosenPitcher.velo} km/h`;
 }
 const pitches = [
   {id:'four',cat:'fast',name:'四縫線速球',short:'4-Seam Fastball',base:148,sd:5,control:0.92,breakX:0,breakY:-5},
@@ -390,7 +390,8 @@ function targetPixel(normX,normY){
 }
 function actualPitch(){
   const bonus=chosenPitcher.special.includes(selected.id)?.025:0;
-  const spread=(1-clamp(selected.control+chosenPitcher.control+bonus,.35,.99))*.68 + .055;
+  const eraControl=clamp((3.5-chosenPitcher.era)*.055,-.20,.14);
+  const spread=(1-clamp(selected.control+chosenPitcher.control+eraControl+bonus,.35,.99))*.68 + .055;
   let x=target.x+randn()*spread*.33, y=target.y+randn()*spread*.42;
   x+=selected.breakX/520; y+=selected.breakY/580;
   return {x,y};
@@ -497,6 +498,7 @@ function handleDuelPitch(actual,r,speed){
   const outsideDist=Math.hypot(outsideX,outsideY);
   const repeatCount=recentPitchIds.filter(id=>id===selected.id).length;
   const level=difficultySettings[difficulty];
+  const eraPenalty=clamp((chosenPitcher.era-3.5)*.045,-.13,.19);
   let swingProb=r.inside?currentBatter.zoneSwing+level.swing:(currentBatter.chase+level.chase)*clamp(1-outsideDist/.6,.08,1);
   if(strikesCount===2)swingProb+=.12;if(balls===3&&!r.inside)swingProb-=.10;if(repeatCount>=2)swingProb+=.14;if(balls>=2&&r.inside)swingProb+=.07;
   swingProb=clamp(swingProb,.03,.96);
@@ -509,7 +511,7 @@ function handleDuelPitch(actual,r,speed){
     swingBatter();
     const breakDifficulty=clamp((Math.abs(selected.breakX)+Math.abs(selected.breakY))/170,0,.22);
     const veloDifficulty=clamp((speed-145)/140,0,.12);
-    let contactProb=currentBatter.contact+level.contact-breakDifficulty-veloDifficulty+(repeatCount*.08)+(strikesCount===2?.07:0);
+    let contactProb=currentBatter.contact+level.contact+eraPenalty-breakDifficulty-veloDifficulty+(repeatCount*.08)+(strikesCount===2?.07:0);
     if(!r.inside)contactProb-=.13+outsideDist*.30;
     contactProb=clamp(contactProb,.22,.97);
     if(Math.random()>contactProb){strikesCount++;resultMain.textContent='揮棒落空！';resultSub.textContent=`${selected.name} 騙到打者`;showToast('SWING & MISS','good');buzz(22)}
@@ -517,7 +519,7 @@ function handleDuelPitch(actual,r,speed){
       const poor=(!r.inside&&outsideDist>.20)||r.dist>.30||Math.random()>.86;
       if(poor||Math.random()<.20){if(strikesCount<2)strikesCount++;resultMain.textContent='界外球';resultSub.textContent='打者碰到球，但沒有打好';showToast('FOUL');showBigFx('FOUL','foul');animateBattedBall('foul',actual);buzz(18)}
       else{
-        const hitChance=clamp(.42+currentBatter.power*.28+level.hit-(r.dist<.12?.04:0),.15,.92);
+        const hitChance=clamp(.42+currentBatter.power*.28+level.hit+eraPenalty-(r.dist<.12?.04:0),.15,.92);
         if(Math.random()<hitChance){
           state.duel.hits++;
           const centerDist=Math.hypot(actual.x-.5,actual.y-.5);
