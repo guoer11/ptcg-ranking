@@ -156,7 +156,7 @@
   </div>
 
   <div class="panel">
-    <div class="pitchTools"><select id="teamSelect" class="pitchSelect" aria-label="選擇球隊"></select><select id="pitcherSelect" class="pitchSelect" aria-label="選擇投手"></select></div><div id="pitcherInfo" style="font-size:12px;color:#c8e2fa;margin:0 0 9px 3px"></div><div class="pitchTools">
+    <div class="pitchTools"><span id="gameStatus" style="font-size:12px;color:#f7d888">第1局｜0出局｜0失分</span><span id="staminaStatus" style="font-size:12px;color:#aee4ff">體力 100%</span><button id="bullpenBtn" class="pitchSelect" type="button">🔄 牛棚換投</button><button id="stealBtn" class="pitchSelect" type="button">🏃 盜壘</button></div><div class="pitchTools"><select id="teamSelect" class="pitchSelect" aria-label="選擇球隊"></select><select id="pitcherSelect" class="pitchSelect" aria-label="選擇投手"></select></div><div id="pitcherInfo" style="font-size:12px;color:#c8e2fa;margin:0 0 9px 3px"></div><div class="pitchTools">
       <select id="pitchCategory" class="pitchSelect" aria-label="球種分類">
         <option value="all">全部球種</option>
         <option value="fast">速球系</option>
@@ -321,7 +321,41 @@ state.duel=Object.assign({ks:0,bb:0,hits:0,hr:0,pa:0},state.duel||{});
 let selected = pitches[0], target={x:.5,y:.5}, throwing=false, challenge=false, challengeRound=0, challengePoints=0, challengeTarget=4;
 let aiming=false, aimPointer=null, gameMode='duel', balls=0, strikesCount=0, paLocked=false, recentPitchIds=[], fxBusy=false;
 let inningOuts=0, inningNumber=1, inningHits=0, inningWalks=0, inningKs=0, inningPitches=0, inningRuns=0, totalRuns=0, bases=[false,false,false];
-function resetInning(){inningOuts=0;inningHits=0;inningWalks=0;inningKs=0;inningPitches=0;inningRuns=0;bases=[false,false,false];inningNumber++;newBatter();updateDuelHud();}
+let pitcherPitchCount=0, usedPitchers=new Set(), seasonGames=0, seasonRuns=0, lineupIndex=0;
+const batterLineup=['開路先鋒','選球高手','中心打者','重砲打者','安打製造機','長打型打者','速度型打者','守備型打者','第九棒打者'];
+function stamina(){const limit=chosenPitcher.era!=null&&chosenPitcher.era<2.2?95:75;return clamp(Math.round(100-pitcherPitchCount/limit*100),0,100)}
+function refreshGameStatus(){
+ const el=$('#gameStatus');if(!el)return;
+ el.textContent=`第${Math.min(inningNumber,9)}局｜${inningOuts}出局｜本場失${totalRuns}分`;
+ $('#staminaStatus').textContent=`⚡ ${chosenPitcher.name} 體力 ${stamina()}%（${pitcherPitchCount}球）`;
+ $('#stealBtn').disabled=gameMode!=='duel'||!bases.some(Boolean)||inningOuts>=3||throwing||paLocked;
+}
+function finishGame(){
+ seasonGames++;seasonRuns+=totalRuns;
+ const record=JSON.parse(localStorage.getItem('pitchKingSeason')||'{"games":0,"runs":0}');
+ record.games++;record.runs+=totalRuns;localStorage.setItem('pitchKingSeason',JSON.stringify(record));
+ resultMain.textContent='⚾ 九局投球完成！';resultSub.textContent=`本場失 ${totalRuns} 分｜賽季 ${record.games} 場、平均失分 ${(record.runs/record.games).toFixed(2)}`;
+ showBigFx('GAME OVER','strikeout');
+}
+function switchPitcher(name){
+ if(throwing||paLocked||fxBusy)return;
+ const next=pitcherRoster.find(p=>p.name===name&&p.team===chosenPitcher.team);
+ if(!next||next.name===chosenPitcher.name||usedPitchers.has(next.name))return;
+ usedPitchers.add(chosenPitcher.name);chosenPitcher=next;pitcherPitchCount=0;
+ localStorage.setItem('pitchKingPitcher',next.name);renderPitcherSelect();refreshGameStatus();
+ resultMain.textContent='牛棚換投';resultSub.textContent=`換上 ${next.name}，體力恢復 100%`;
+}
+function attemptSteal(){
+ if(gameMode!=='duel'||throwing||paLocked||!bases.some(Boolean))return;
+ const from=bases[1]&&!bases[2]?1:bases[0]&&!bases[1]?0:-1;
+ if(from<0){showToast('目前無法盜壘','bad');return}
+ if(Math.random()<.65){bases[from]=false;bases[from+1]=true;resultMain.textContent='盜壘成功！';showToast('SAFE!','good')}
+ else{bases[from]=false;inningOuts++;resultMain.textContent='盜壘失敗！';showToast('OUT!','bad')}
+ updateDuelHud();refreshGameStatus();
+ if(inningOuts>=3){paLocked=true;setTimeout(()=>{if(inningNumber>=9){finishGame();}else{resetInning()}paLocked=false;throwing=false;throwBtn.disabled=false},1600)}
+}
+
+function resetInning(){inningOuts=0;inningHits=0;inningWalks=0;inningKs=0;inningPitches=0;inningRuns=0;bases=[false,false,false];inningNumber++;newBatter();updateDuelHud();refreshGameStatus();}
 function advanceRunners(type){
   let runs=0;
   if(type==='homer'){runs=bases.filter(Boolean).length+1;bases=[false,false,false]}
@@ -452,7 +486,7 @@ function targetPixel(normX,normY){
 }
 function actualPitch(){
   const bonus=chosenPitcher.special.includes(selected.id)?.025:0;
-  const eraControl=chosenPitcher.era==null?0:clamp((3.5-chosenPitcher.era)*.055,-.20,.14);
+  const eraControl=(chosenPitcher.era==null?0:clamp((3.5-chosenPitcher.era)*.055,-.20,.14))-(100-stamina())*.002;
   const spread=(1-clamp(selected.control+chosenPitcher.control+eraControl+bonus,.35,.99))*.68 + .055;
   let x=target.x+randn()*spread*.33, y=target.y+randn()*spread*.42;
   x+=selected.breakX/520; y+=selected.breakY/580;
@@ -483,7 +517,7 @@ function classify(actual){
   return {inside,dist,label,kind};
 }
 function updateDuelHud(){
-  $('#duelHud').classList.toggle('hidden',gameMode!=='duel');
+  $('#duelHud').classList.toggle('hidden',gameMode!=='duel');refreshGameStatus();
   $('#duelName').textContent=`第 ${inningNumber} 局｜${currentBatter.name}｜${difficultySettings[difficulty].label}`;
   [0,1,2].forEach(i=>$('#base'+(i+1)).classList.toggle('on',bases[i]));
   $('#runCount').textContent=`本局失分 ${inningRuns}｜總失分 ${totalRuns}`;
@@ -495,7 +529,7 @@ function updateDuelHud(){
 }
 function newBatter(){
   balls=0;strikesCount=0;recentPitchIds=[];
-  currentBatter=batterProfiles[Math.floor(Math.random()*batterProfiles.length)];
+  currentBatter={...batterProfiles[lineupIndex%batterProfiles.length],name:batterLineup[lineupIndex%9]};lineupIndex++;
   updateDuelHud();
 }
 function buzz(pattern){try{if(navigator.vibrate)navigator.vibrate(pattern)}catch(e){}}
@@ -549,7 +583,7 @@ function endPlateAppearance(title,sub,kind='good',isOut=false){
     if(inningOuts>=3){
       const summary=`第 ${inningNumber} 局結束｜${inningPitches} 球、${inningKs} K、${inningHits} 安、${inningWalks} 保送、失 ${inningRuns} 分`; 
       showBigFx('3 OUT!','strikeout');resultMain.textContent='三出局！攻守交換';resultSub.textContent=summary;
-      setTimeout(()=>{resetInning();paLocked=false;throwing=false;throwBtn.disabled=fxBusy;resultMain.textContent=`第 ${inningNumber} 局開始`;resultSub.textContent='三出局後進入下一局';},3500);
+      setTimeout(()=>{if(inningNumber>=9){finishGame();setTimeout(()=>{inningNumber=0;totalRuns=0;resetInning();},4500)}else resetInning();paLocked=false;throwing=false;throwBtn.disabled=fxBusy;resultMain.textContent=inningNumber===1?'新的一場比賽':`第 ${inningNumber} 局開始`;resultSub.textContent='三出局後進入下一局';},3500);
     }else{newBatter();paLocked=false;throwing=false;throwBtn.disabled=fxBusy;resultMain.textContent='下一位打者';resultSub.textContent=`目前 ${inningOuts} 出局，繼續投球`;}
   },1050);
 }
@@ -606,7 +640,7 @@ function handleDuelPitch(actual,r,speed){
 }
 function pitch(){
   if(throwing||paLocked||fxBusy)return;throwing=true;throwBtn.disabled=true;
-  const actual=actualPitch(), speed=Math.max(70,Math.round(selected.base+chosenPitcher.velo+randn()*selected.sd));
+  pitcherPitchCount++;refreshGameStatus();const actual=actualPitch(), speed=Math.max(70,Math.round(selected.base+chosenPitcher.velo-(100-stamina())*.13+randn()*selected.sd));
   velo.innerHTML=`${speed} <small>km/h</small>`;resultMain.textContent='投球中…';resultSub.textContent=selected.name;
   animateBall(actual,()=>{
     const r=classify(actual);
@@ -630,7 +664,7 @@ function setMode(mode){
   $('#difficultySelect').style.display=mode==='duel'?'':'none';
   if(throwing||paLocked)return;gameMode=mode;challenge=mode==='challenge';
   if(gameMode==='challenge'){challengeRound=0;challengePoints=0;challengeTarget=Math.floor(Math.random()*9);$('#modeLabel').textContent='10球控球挑戰';throwBtn.textContent='🎯 挑戰投球';resultMain.textContent='拖曳準星對準黃色目標';resultSub.textContent='10 球，可滑動微調到任意位置'}
-  else if(gameMode==='duel'){challenge=false;inningNumber=1;inningOuts=0;inningHits=0;inningWalks=0;inningKs=0;inningPitches=0;inningRuns=0;totalRuns=0;bases=[false,false,false];newBatter();$('#modeLabel').textContent='打者對決';throwBtn.textContent='⚾ 投球對決';resultMain.textContent='配球給打者';resultSub.textContent='AI 會依球路與球數決定是否揮棒'}
+  else if(gameMode==='duel'){challenge=false;inningNumber=1;inningOuts=0;inningHits=0;inningWalks=0;inningKs=0;inningPitches=0;inningRuns=0;totalRuns=0;bases=[false,false,false];pitcherPitchCount=0;usedPitchers=new Set();lineupIndex=0;newBatter();$('#modeLabel').textContent='打者對決';throwBtn.textContent='⚾ 投球對決';resultMain.textContent='配球給打者';resultSub.textContent='AI 會依球路與球數決定是否揮棒'}
   else{challenge=false;$('#modeLabel').textContent='自由投球';throwBtn.textContent='⚾ 投球';resultMain.textContent='拖曳準星瞄準';resultSub.textContent='可投好球帶內外任意位置'}
   updateChallengeMarker();updateDuelHud();updateStats();
 }
@@ -657,8 +691,10 @@ function openSheet(type){
 }
 $('#difficultySelect').value=difficulty;
 $('#difficultySelect').onchange=e=>{difficulty=e.target.value;localStorage.setItem('pitchKingDifficulty',difficulty);if(gameMode==='duel'){newBatter();resultMain.textContent=`${difficultySettings[difficulty].label}難度`;resultSub.textContent='新難度從下一球開始生效';}};
+$('#bullpenBtn').onclick=()=>{if(throwing||paLocked)return;const options=pitcherRoster.filter(p=>p.team===chosenPitcher.team&&!usedPitchers.has(p.name)&&p.name!==chosenPitcher.name);if(!options.length){showToast('牛棚已無可用投手','bad');return}const names=options.map(p=>p.name).join('、');const name=prompt('輸入要換上的投手姓名：\n'+names);if(name)switchPitcher(name.trim())};
+$('#stealBtn').onclick=attemptSteal;
 $('#teamSelect').onchange=e=>{if(throwing||paLocked){$('#teamSelect').value=chosenPitcher.team;return;}chosenPitcher=pitcherRoster.find(p=>p.team===e.target.value);localStorage.setItem('pitchKingPitcher',chosenPitcher.name);renderPitcherSelect();};
-$('#pitcherSelect').onchange=e=>{if(throwing||paLocked){$('#pitcherSelect').value=chosenPitcher.name;return;}chosenPitcher=pitcherRoster.find(p=>p.name===e.target.value);localStorage.setItem('pitchKingPitcher',chosenPitcher.name);renderPitcherSelect();resultSub.textContent='已換投：'+chosenPitcher.name;};
+$('#pitcherSelect').onchange=e=>{if(throwing||paLocked){$('#pitcherSelect').value=chosenPitcher.name;return;}chosenPitcher=pitcherRoster.find(p=>p.name===e.target.value);localStorage.setItem('pitchKingPitcher',chosenPitcher.name);renderPitcherSelect();pitcherPitchCount=0;refreshGameStatus();resultSub.textContent='已換投：'+chosenPitcher.name;};
 renderPitcherSelect();
 $('#modeSelect').onchange=e=>setMode(e.target.value);throwBtn.onclick=pitch;
 $('#statsBtn').onclick=()=>openSheet('stats');$('#helpBtn').onclick=()=>openSheet('help');
