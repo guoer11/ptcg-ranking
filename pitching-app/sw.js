@@ -1,4 +1,4 @@
-const CACHE='pitch-king-v3';
+const CACHE='pitch-king-v4';
 const CACHE_PREFIX='pitch-king-';
 const ASSETS=['./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 
