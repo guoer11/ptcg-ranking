@@ -155,7 +155,7 @@
   </div>
 
   <div class="panel">
-    <div class="pitchTools">
+    <div class="pitchTools"><select id="teamSelect" class="pitchSelect" aria-label="選擇球隊"></select><select id="pitcherSelect" class="pitchSelect" aria-label="選擇投手"></select></div><div id="pitcherInfo" style="font-size:12px;color:#c8e2fa;margin:0 0 9px 3px"></div><div class="pitchTools">
       <select id="pitchCategory" class="pitchSelect" aria-label="球種分類">
         <option value="all">全部球種</option>
         <option value="fast">速球系</option>
@@ -184,6 +184,31 @@
 </div></div>
 
 <script>
+// 球員姓名與球隊參考中職名鑑；遊戲能力為平衡用模擬值，並非官方球探數據。
+const pitcherRoster=[
+ {team:'中信兄弟',name:'羅戈',velo:1,control:.025,hand:'右投',special:['four','slider','change']},
+ {team:'中信兄弟',name:'勝騎士',velo:0,control:.02,hand:'右投',special:['four','cutter','curve']},
+ {team:'統一7-ELEVEn獅',name:'布雷克',velo:-1,control:.04,hand:'右投',special:['four','slider','change']},
+ {team:'統一7-ELEVEn獅',name:'鍾允華',velo:2,control:-.015,hand:'右投',special:['four','slider','fork']},
+ {team:'樂天桃猿',name:'威能帝',velo:3,control:.005,hand:'右投',special:['four','slider','change']},
+ {team:'樂天桃猿',name:'陳冠宇',velo:-3,control:.04,hand:'左投',special:['four','slider','curve']},
+ {team:'富邦悍將',name:'李東洺',velo:0,control:.025,hand:'右投',special:['four','slider','change']},
+ {team:'富邦悍將',name:'曾峻岳',velo:5,control:-.02,hand:'右投',special:['four','slider','fork']},
+ {team:'味全龍',name:'蔣銲',velo:2,control:.05,hand:'右投',special:['four','slider','change']},
+ {team:'味全龍',name:'林凱威',velo:3,control:.005,hand:'右投',special:['four','slider','fork']},
+ {team:'台鋼雄鷹',name:'黃子鵬',velo:-5,control:.055,hand:'右投',special:['sinker','slider','change']},
+ {team:'台鋼雄鷹',name:'艾速特',velo:3,control:0,hand:'右投',special:['four','slider','curve']}
+];
+let chosenPitcher=pitcherRoster.find(p=>p.name===localStorage.getItem('pitchKingPitcher'))||pitcherRoster[0];
+function renderPitcherSelect(){
+ const teamSelect=$('#teamSelect'),pitcherSelect=$('#pitcherSelect');
+ const teams=[...new Set(pitcherRoster.map(p=>p.team))];
+ teamSelect.innerHTML=teams.map(t=>`<option value="${t}">${t}</option>`).join('');
+ teamSelect.value=chosenPitcher.team;
+ pitcherSelect.innerHTML=pitcherRoster.filter(p=>p.team===chosenPitcher.team).map(p=>`<option value="${p.name}">${p.name}</option>`).join('');
+ pitcherSelect.value=chosenPitcher.name;
+ $('#pitcherInfo').textContent=`⚾ ${chosenPitcher.name}｜${chosenPitcher.hand}｜遊戲球速 ${chosenPitcher.velo>=0?'+':''}${chosenPitcher.velo} km/h｜控球 ${chosenPitcher.control>=0?'+':''}${Math.round(chosenPitcher.control*100)}｜擅長球種加成`;
+}
 const pitches = [
   {id:'four',cat:'fast',name:'四縫線速球',short:'4-Seam Fastball',base:148,sd:5,control:0.92,breakX:0,breakY:-5},
   {id:'two',cat:'fast',name:'二縫線速球',short:'2-Seam Fastball',base:145,sd:5,control:0.87,breakX:14,breakY:5},
@@ -364,7 +389,8 @@ function targetPixel(normX,normY){
   return {x:z.left-s.left+normX*z.width,y:z.top-s.top+normY*z.height};
 }
 function actualPitch(){
-  const spread=(1-selected.control)*.68 + .055;
+  const bonus=chosenPitcher.special.includes(selected.id)?.025:0;
+  const spread=(1-clamp(selected.control+chosenPitcher.control+bonus,.35,.99))*.68 + .055;
   let x=target.x+randn()*spread*.33, y=target.y+randn()*spread*.42;
   x+=selected.breakX/520; y+=selected.breakY/580;
   return {x,y};
@@ -516,7 +542,7 @@ function handleDuelPitch(actual,r,speed){
 }
 function pitch(){
   if(throwing||paLocked||fxBusy)return;throwing=true;throwBtn.disabled=true;
-  const actual=actualPitch(), speed=Math.max(70,Math.round(selected.base+randn()*selected.sd));
+  const actual=actualPitch(), speed=Math.max(70,Math.round(selected.base+chosenPitcher.velo+randn()*selected.sd));
   velo.innerHTML=`${speed} <small>km/h</small>`;resultMain.textContent='投球中…';resultSub.textContent=selected.name;
   animateBall(actual,()=>{
     const r=classify(actual);
@@ -562,11 +588,14 @@ function openSheet(type){
     $('#sheetBody').innerHTML=h;
   }else{
     $('#sheetTitle').textContent='玩法';
-    $('#sheetBody').innerHTML=`<div class="help"><p><b>打者對決：</b>可選普通、困難、地獄三種難度，每局三出局後顯示局結算並自動進入下一局。普通適合練習，困難接近強打者，地獄模式更容易被安打及全壘打。AI 打者會依球的位置、球速、變化量與目前 B/S 球數決定是否揮棒。三振、四壞、安打、全壘打與出局都會記錄；打中球時會看到球飛往場內、界外或飛出牆。如果一直重複同一球種，打者會更容易抓到。</p><p><b>自由投球：</b>選球種後拖曳藍色準星，可瞄準好球帶內外任意位置。</p><p><b>控球挑戰：</b>共 10 球，實際落點越接近黃色目標分數越高。</p><p><b>配球提示：</b>兩好球時可用變化球引誘；三壞球時要小心保送；速球與變化球交錯會比一直投同一球更有效。</p><p>目前收錄 45 種球路，紀錄只存在這支手機，不會上傳。</p></div>`;
+    $('#sheetBody').innerHTML=`<div class="help"><p><b>選擇投手：</b>可從六支中職球隊選擇投手，球速、控球與擅長球種有不同的遊戲加成。這些能力是遊戲模擬值，不代表球員實際球速或球探評價。</p><p><b>打者對決：</b>可選普通、困難、地獄三種難度，每局三出局後顯示局結算並自動進入下一局。普通適合練習，困難接近強打者，地獄模式更容易被安打及全壘打。AI 打者會依球的位置、球速、變化量與目前 B/S 球數決定是否揮棒。三振、四壞、安打、全壘打與出局都會記錄；打中球時會看到球飛往場內、界外或飛出牆。如果一直重複同一球種，打者會更容易抓到。</p><p><b>自由投球：</b>選球種後拖曳藍色準星，可瞄準好球帶內外任意位置。</p><p><b>控球挑戰：</b>共 10 球，實際落點越接近黃色目標分數越高。</p><p><b>配球提示：</b>兩好球時可用變化球引誘；三壞球時要小心保送；速球與變化球交錯會比一直投同一球更有效。</p><p>目前收錄 45 種球路，紀錄只存在這支手機，不會上傳。</p></div>`;
   }
 }
 $('#difficultySelect').value=difficulty;
 $('#difficultySelect').onchange=e=>{difficulty=e.target.value;localStorage.setItem('pitchKingDifficulty',difficulty);if(gameMode==='duel'){newBatter();resultMain.textContent=`${difficultySettings[difficulty].label}難度`;resultSub.textContent='新難度從下一球開始生效';}};
+$('#teamSelect').onchange=e=>{if(throwing||paLocked){$('#teamSelect').value=chosenPitcher.team;return;}chosenPitcher=pitcherRoster.find(p=>p.team===e.target.value);localStorage.setItem('pitchKingPitcher',chosenPitcher.name);renderPitcherSelect();};
+$('#pitcherSelect').onchange=e=>{if(throwing||paLocked){$('#pitcherSelect').value=chosenPitcher.name;return;}chosenPitcher=pitcherRoster.find(p=>p.name===e.target.value);localStorage.setItem('pitchKingPitcher',chosenPitcher.name);renderPitcherSelect();resultSub.textContent='已換投：'+chosenPitcher.name;};
+renderPitcherSelect();
 $('#modeSelect').onchange=e=>setMode(e.target.value);throwBtn.onclick=pitch;
 $('#statsBtn').onclick=()=>openSheet('stats');$('#helpBtn').onclick=()=>openSheet('help');
 $('#closeSheet').onclick=()=>$('#sheet').classList.remove('open');$('#sheet').onclick=e=>{if(e.target.id==='sheet')$('#sheet').classList.remove('open')};
