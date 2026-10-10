@@ -1,0 +1,14 @@
+{
+  "name": "投球王｜Pitch King",
+  "short_name": "投球王",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#07101d",
+  "theme_color": "#0a1220",
+  "description": "iPhone 投球模擬與控球挑戰 App",
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}

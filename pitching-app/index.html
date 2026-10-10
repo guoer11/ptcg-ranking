@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#0a1220" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="投球王" />
+  <meta name="format-detection" content="telephone=no" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" sizes="192x192" href="./icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+  <title>投球王</title>
+  <style>
+    :root{
+      --bg:#07101d;--panel:#0e1b2d;--panel2:#13253b;--text:#f6f8fb;--muted:#91a3b8;
+      --accent:#4ab3ff;--accent2:#8ce2ff;--good:#51d88a;--warn:#ffcc66;--bad:#ff6b6b;
+      --line:rgba(255,255,255,.11);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang TC","Noto Sans TC",sans-serif;overscroll-behavior:none}
+    body{min-height:100dvh;background:
+      radial-gradient(circle at 50% 0%,rgba(74,179,255,.14),transparent 32%),
+      linear-gradient(180deg,#091625 0%,#06101c 62%,#030910 100%)}
+    button{font:inherit;color:inherit}
+    .app{width:min(100%,520px);min-height:100dvh;margin:auto;padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 18px)}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#153d62,#0b1f36);display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 10px 28px rgba(0,0,0,.25)}
+    .logo .ball{width:25px;height:25px;border-radius:50%;background:#fff;position:relative;box-shadow:0 2px 8px rgba(0,0,0,.28)}
+    .logo .ball:before,.logo .ball:after{content:"";position:absolute;top:3px;width:7px;height:18px;border:2px solid #e34c4c;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%}
+    .logo .ball:before{left:3px}.logo .ball:after{right:3px}
+    h1{font-size:18px;line-height:1.1;margin:0}.sub{font-size:11px;color:var(--muted);margin-top:4px}
+    .modeBtn{border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:12px;padding:10px 11px;font-size:12px;font-weight:700}
+    .scorebar{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px}
+    .score{background:rgba(14,27,45,.88);border:1px solid var(--line);border-radius:14px;padding:9px 8px;text-align:center}
+    .score b{display:block;font-size:17px}.score span{font-size:10px;color:var(--muted)}
+    .stage{position:relative;height:min(52vh,455px);min-height:355px;border-radius:24px;overflow:hidden;border:1px solid rgba(255,255,255,.09);box-shadow:0 18px 45px rgba(0,0,0,.32);background:
+      radial-gradient(ellipse at 50% 18%,rgba(204,233,255,.22),transparent 35%),
+      linear-gradient(180deg,#1d4b71 0 29%,#1f6a4e 29% 64%,#8b5b37 64% 100%)}
+    .stadiumLights{position:absolute;inset:0;background:
+      radial-gradient(circle at 10% 7%,#fff 0 1px,transparent 2px),
+      radial-gradient(circle at 21% 7%,#fff 0 1px,transparent 2px),
+      radial-gradient(circle at 79% 7%,#fff 0 1px,transparent 2px),
+      radial-gradient(circle at 90% 7%,#fff 0 1px,transparent 2px);opacity:.8}
+    .grass{position:absolute;left:-20%;right:-20%;bottom:18%;height:43%;border-radius:50%;background:radial-gradient(ellipse at center,#2e845f 0 47%,#256d51 48% 62%,transparent 63%)}
+    .dirt{position:absolute;width:60%;height:34%;left:20%;bottom:5%;border-radius:50%;background:#9a6841;box-shadow:inset 0 0 35px rgba(66,33,13,.25)}
+    .mound{position:absolute;left:50%;bottom:3%;transform:translateX(-50%);width:48%;height:19%;border-radius:50%;background:radial-gradient(ellipse,#b47a4e,#895837 68%,transparent 70%)}
+    .rubber{position:absolute;left:50%;bottom:13%;transform:translateX(-50%);width:50px;height:7px;border-radius:2px;background:#f4f2eb}
+    .plate{position:absolute;left:50%;top:66%;transform:translate(-50%,-50%);width:44px;height:34px;background:#f8f8f4;clip-path:polygon(12% 0,88% 0,100% 52%,50% 100%,0 52%);filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))}
+    .batter{position:absolute;right:10%;top:39%;width:28px;height:118px;opacity:.9;filter:drop-shadow(0 4px 3px rgba(0,0,0,.25))}
+    .batter:before{content:"";position:absolute;left:5px;top:0;width:22px;height:22px;border-radius:50%;background:#101820}
+    .batter:after{content:"";position:absolute;left:9px;top:18px;width:15px;height:54px;border-radius:10px;background:#101820;box-shadow:-10px 47px 0 -4px #101820,11px 47px 0 -4px #101820,20px 0 0 -6px #101820;transform:rotate(-5deg)}
+    .strikeWrap{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:145px;height:190px}
+    .strikeZone{width:100%;height:100%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);border:2px solid rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(0,0,0,.25),0 0 24px rgba(255,255,255,.08)}
+    .cell{border:1px solid rgba(255,255,255,.32);background:rgba(4,13,22,.12);position:relative}
+    .cell.active{background:rgba(74,179,255,.25);box-shadow:inset 0 0 0 2px var(--accent)}
+    .cell.challenge:after{content:"";position:absolute;inset:10px;border-radius:50%;border:3px solid #ffd75a;background:rgba(255,215,90,.17);box-shadow:0 0 22px rgba(255,215,90,.36)}
+    .aim{position:absolute;width:28px;height:28px;border:2px solid #8ce2ff;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 0 5px rgba(74,179,255,.13),0 0 18px rgba(74,179,255,.45)}
+    .aim:before,.aim:after{content:"";position:absolute;background:#8ce2ff;opacity:.8}
+    .aim:before{width:2px;height:38px;left:11px;top:-7px}.aim:after{height:2px;width:38px;top:11px;left:-7px}
+    .ballFlight{display:none;position:absolute;left:50%;bottom:10%;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.35);z-index:9}
+    .ballFlight:before,.ballFlight:after{content:"";position:absolute;top:4px;width:6px;height:15px;border:1.7px solid #df4a4a;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%}
+    .ballFlight:before{left:3px}.ballFlight:after{right:3px}
+    .trail{display:none;position:absolute;width:4px;height:70px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.0),rgba(140,226,255,.55));transform-origin:bottom center;z-index:8}
+    .toast{position:absolute;left:50%;top:16%;transform:translateX(-50%) scale(.95);min-width:150px;text-align:center;padding:10px 15px;border-radius:999px;background:rgba(5,12,21,.83);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.14);font-weight:800;opacity:0;transition:.2s;z-index:20;pointer-events:none}
+    .toast.show{opacity:1;transform:translateX(-50%) scale(1)}
+    .resultCard{position:absolute;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:15px;background:rgba(4,11,19,.78);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.10)}
+    .resultMain{font-size:14px;font-weight:800}.resultSub{font-size:11px;color:#c8d3df;margin-top:2px}.velo{font-size:21px;font-weight:900;white-space:nowrap}.velo small{font-size:10px;color:var(--muted)}
+    .panel{margin-top:11px;background:rgba(14,27,45,.86);border:1px solid var(--line);border-radius:20px;padding:12px}
+    .pitchRow{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}.pitchRow::-webkit-scrollbar{display:none}
+    .pitch{flex:0 0 auto;border:1px solid var(--line);background:#122238;border-radius:13px;padding:9px 12px;min-width:82px;text-align:left}
+    .pitch strong{display:block;font-size:13px}.pitch span{font-size:10px;color:var(--muted)}
+    .pitch.active{border-color:var(--accent);background:linear-gradient(180deg,rgba(74,179,255,.22),rgba(74,179,255,.08));box-shadow:0 0 0 1px rgba(74,179,255,.18)}
+    .throwBtn{width:100%;border:0;border-radius:17px;margin-top:11px;padding:15px 16px;background:linear-gradient(135deg,#54c6ff,#2f8cff);font-size:17px;font-weight:900;box-shadow:0 10px 24px rgba(47,140,255,.28)}
+    .throwBtn:active{transform:translateY(1px)}.throwBtn:disabled{opacity:.5;transform:none}
+    .footer{display:flex;justify-content:center;gap:18px;margin-top:11px}
+    .textBtn{border:0;background:transparent;color:var(--muted);font-size:11px;padding:6px}
+    .sheet{position:fixed;inset:0;background:rgba(0,0,0,.52);display:none;align-items:flex-end;justify-content:center;z-index:99;padding:14px}
+    .sheet.open{display:flex}.sheetCard{width:min(100%,500px);max-height:75dvh;overflow:auto;background:#0f1d30;border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:18px}
+    .sheetHead{display:flex;justify-content:space-between;align-items:center}.sheetHead h2{font-size:18px;margin:0}.close{border:0;background:#1a2b42;width:34px;height:34px;border-radius:50%;font-size:18px}
+    .statsGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:14px}.statBox{background:#14253b;border-radius:15px;padding:13px}.statBox b{display:block;font-size:22px}.statBox span{font-size:11px;color:var(--muted)}
+    .help{font-size:13px;line-height:1.7;color:#d2dbe5}
+    @media (max-height:700px){.stage{height:390px;min-height:330px}.panel{padding:9px}.throwBtn{padding:12px}.scorebar{margin-bottom:7px}.topbar{margin-bottom:7px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo"><div class="ball"></div></div>
+      <div><h1>投球王</h1><div class="sub" id="modeLabel">自由投球</div></div>
+    </div>
+    <button class="modeBtn" id="modeBtn">🎯 控球挑戰</button>
+  </div>
+
+  <div class="scorebar">
+    <div class="score"><b id="pitchCount">0</b><span>投球數</span></div>
+    <div class="score"><b id="strikePct">—</b><span>好球率</span></div>
+    <div class="score"><b id="avgVelo">—</b><span>平均球速</span></div>
+    <div class="score"><b id="challengeScore">—</b><span>挑戰分數</span></div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="stadiumLights"></div><div class="grass"></div><div class="dirt"></div><div class="mound"></div><div class="rubber"></div><div class="plate"></div><div class="batter"></div>
+    <div class="strikeWrap" id="strikeWrap">
+      <div class="strikeZone" id="strikeZone"></div>
+      <div class="aim" id="aim"></div>
+    </div>
+    <div class="trail" id="trail"></div><div class="ballFlight" id="ballFlight"></div>
+    <div class="toast" id="toast">STRIKE!</div>
+    <div class="resultCard">
+      <div><div class="resultMain" id="resultMain">點選九宮格瞄準</div><div class="resultSub" id="resultSub">選球種後按「投球」</div></div>
+      <div class="velo" id="velo">— <small>km/h</small></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="pitchRow" id="pitchRow"></div>
+    <button class="throwBtn" id="throwBtn">⚾ 投球</button>
+  </div>
+
+  <div class="footer">
+    <button class="textBtn" id="statsBtn">📊 投球紀錄</button>
+    <button class="textBtn" id="helpBtn">❔玩法</button>
+    <button class="textBtn" id="resetBtn">↺ 重設</button>
+  </div>
+</div>
+
+<div class="sheet" id="sheet"><div class="sheetCard">
+  <div class="sheetHead"><h2 id="sheetTitle">投球紀錄</h2><button class="close" id="closeSheet">×</button></div>
+  <div id="sheetBody"></div>
+</div></div>
+
+<script>
+const pitches = [
+  {id:'four',name:'四縫線',short:'4-Seam',base:145,sd:5,control:.90,breakX:0,breakY:-2},
+  {id:'two',name:'二縫線',short:'2-Seam',base:141,sd:5,control:.84,breakX:13,breakY:4},
+  {id:'slider',name:'滑球',short:'Slider',base:132,sd:5,control:.78,breakX:25,breakY:14},
+  {id:'curve',name:'曲球',short:'Curve',base:119,sd:6,control:.72,breakX:-12,breakY:35},
+  {id:'change',name:'變速球',short:'Change',base:126,sd:5,control:.82,breakX:10,breakY:18},
+  {id:'fork',name:'指叉球',short:'Fork',base:136,sd:6,control:.75,breakX:3,breakY:31},
+];
+let state = JSON.parse(localStorage.getItem('pitchKingState') || '{"total":0,"strikes":0,"veloSum":0,"best":0,"history":[]}');
+let selected = pitches[0], targetCell = 4, throwing=false, challenge=false, challengeRound=0, challengePoints=0, challengeTarget=4;
+
+const $ = s=>document.querySelector(s);
+const pitchRow=$('#pitchRow'), zone=$('#strikeZone'), aim=$('#aim'), stage=$('#stage'), ball=$('#ballFlight'), toast=$('#toast');
+const resultMain=$('#resultMain'), resultSub=$('#resultSub'), velo=$('#velo'), throwBtn=$('#throwBtn');
+
+function save(){localStorage.setItem('pitchKingState',JSON.stringify(state));}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function randn(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function cellCenter(i){return {x:(i%3+.5)/3,y:(Math.floor(i/3)+.5)/3}}
+function updateAim(){
+  const c=cellCenter(targetCell); aim.style.left=(c.x*100)+'%'; aim.style.top=(c.y*100)+'%';
+  document.querySelectorAll('.cell').forEach((el,i)=>el.classList.toggle('active',i===targetCell));
+}
+function renderZone(){
+  zone.innerHTML='';
+  for(let i=0;i<9;i++){let c=document.createElement('button');c.className='cell';c.dataset.i=i;c.setAttribute('aria-label','瞄準第'+(i+1)+'格');c.onclick=()=>{if(!throwing){targetCell=i;updateAim();}};zone.appendChild(c)}
+  updateChallengeMarker(); updateAim();
+}
+function updateChallengeMarker(){
+  document.querySelectorAll('.cell').forEach((el,i)=>el.classList.toggle('challenge',challenge&&i===challengeTarget));
+}
+function renderPitches(){
+  pitchRow.innerHTML='';
+  pitches.forEach(p=>{let b=document.createElement('button');b.className='pitch'+(p.id===selected.id?' active':'');b.innerHTML=`<strong>${p.name}</strong><span>${p.short}</span>`;b.onclick=()=>{if(throwing)return;selected=p;renderPitches();resultSub.textContent=`${p.name}｜預估 ${p.base-5}–${p.base+5} km/h`};pitchRow.appendChild(b)})
+}
+function updateStats(){
+  $('#pitchCount').textContent=state.total;
+  $('#strikePct').textContent=state.total?Math.round(state.strikes/state.total*100)+'%':'—';
+  $('#avgVelo').textContent=state.total?Math.round(state.veloSum/state.total):'—';
+  $('#challengeScore').textContent=challenge?challengePoints+(challengeRound?`/${challengeRound*100}`:''):'—';
+}
+function showToast(t,kind=''){
+  toast.textContent=t;toast.style.color=kind==='good'?'#7cf3aa':kind==='bad'?'#ff8585':'#fff';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),900)
+}
+function targetPixel(normX,normY){
+  const s=stage.getBoundingClientRect(), z=$('#strikeWrap').getBoundingClientRect();
+  return {x:z.left-s.left+normX*z.width,y:z.top-s.top+normY*z.height};
+}
+function actualPitch(){
+  const c=cellCenter(targetCell);
+  const spread=(1-selected.control)*.68 + .055;
+  let x=c.x+randn()*spread*.33, y=c.y+randn()*spread*.42;
+  x+=selected.breakX/520; y+=selected.breakY/580;
+  return {x,y};
+}
+function animateBall(actual,done){
+  const rect=stage.getBoundingClientRect(), end=targetPixel(actual.x,actual.y);
+  const start={x:rect.width*.5,y:rect.height*.83};
+  const ctrl={x:(start.x+end.x)/2-selected.breakX*.65,y:(start.y+end.y)/2-selected.breakY*.8-25};
+  ball.style.display='block';
+  const dur=430, t0=performance.now();
+  function frame(now){
+    let t=clamp((now-t0)/dur,0,1), q=1-t;
+    let x=q*q*start.x+2*q*t*ctrl.x+t*t*end.x;
+    let y=q*q*start.y+2*q*t*ctrl.y+t*t*end.y;
+    let scale=.68+t*.48;
+    ball.style.left=(x-12)+'px';ball.style.top=(y-12)+'px';ball.style.bottom='auto';ball.style.transform=`scale(${scale}) rotate(${t*250}deg)`;
+    if(t<1)requestAnimationFrame(frame);else{setTimeout(()=>{ball.style.display='none';done();},120)}
+  }requestAnimationFrame(frame)
+}
+function classify(actual){
+  const inside=actual.x>=0&&actual.x<=1&&actual.y>=0&&actual.y<=1;
+  const tc=cellCenter(targetCell), dist=Math.hypot(actual.x-tc.x,actual.y-tc.y);
+  let label,kind;
+  if(!inside){label='BALL';kind='bad'}
+  else if(dist<.16){label='漂亮好球';kind='good'}
+  else {label='STRIKE';kind='good'}
+  return {inside,dist,label,kind};
+}
+function pitch(){
+  if(throwing)return;throwing=true;throwBtn.disabled=true;
+  const actual=actualPitch(), speed=Math.max(90,Math.round(selected.base+randn()*selected.sd));
+  velo.innerHTML=`${speed} <small>km/h</small>`;resultMain.textContent='投球中…';resultSub.textContent=selected.name;
+  animateBall(actual,()=>{
+    const r=classify(actual);
+    state.total++; if(r.inside)state.strikes++;state.veloSum+=speed;state.best=Math.max(state.best,speed);
+    state.history.unshift({t:Date.now(),pitch:selected.name,speed,result:r.label});state.history=state.history.slice(0,40);
+    if(challenge){
+      challengeRound++;
+      const hit=(targetCell===challengeTarget && r.dist<.19);
+      const pts=hit?Math.max(50,Math.round(100-r.dist*260)):Math.max(0,Math.round(35-r.dist*80));
+      challengePoints+=pts;
+      resultMain.textContent=hit?`命中目標 +${pts}`:`偏掉了 +${pts}`;
+      resultSub.textContent=`第 ${challengeRound}/10 球｜${r.label}`;
+      showToast(hit?'TARGET!':r.label,hit?'good':r.kind);
+      if(challengeRound>=10){
+        setTimeout(()=>finishChallenge(),700);
+      }else{
+        do{challengeTarget=Math.floor(Math.random()*9)}while(challengeTarget===targetCell&&Math.random()<.5);
+        updateChallengeMarker();
+      }
+    } else {
+      resultMain.textContent=r.label;
+      resultSub.textContent=`${selected.name}｜落點誤差 ${Math.round(r.dist*100)}%`;
+      showToast(r.label,r.kind);
+    }
+    save();updateStats();throwing=false;throwBtn.disabled=false;
+  })
+}
+function toggleChallenge(){
+  if(throwing)return;
+  challenge=!challenge;challengeRound=0;challengePoints=0;challengeTarget=Math.floor(Math.random()*9);
+  $('#modeLabel').textContent=challenge?'10球控球挑戰':'自由投球';
+  $('#modeBtn').textContent=challenge?'⚾ 自由投球':'🎯 控球挑戰';
+  throwBtn.textContent=challenge?'🎯 挑戰投球':'⚾ 投球';
+  resultMain.textContent=challenge?'瞄準黃色目標':'點選九宮格瞄準';
+  resultSub.textContent=challenge?'10 球，越接近目標分數越高':'選球種後按「投球」';
+  updateChallengeMarker();updateStats();
+}
+function finishChallenge(){
+  const score=challengePoints;
+  showToast(score>=750?'ACE!':score>=550?'NICE!':'完成挑戰','good');
+  resultMain.textContent=`挑戰完成：${score} 分`;
+  resultSub.textContent=score>=750?'控球非常穩！':score>=550?'表現不錯，再挑戰一次！':'試著先用四縫線穩定進壘點';
+  challengeRound=0;challengePoints=0;challengeTarget=Math.floor(Math.random()*9);updateChallengeMarker();updateStats();
+}
+function openSheet(type){
+  $('#sheet').classList.add('open');
+  if(type==='stats'){
+    $('#sheetTitle').textContent='投球紀錄';
+    const pct=state.total?Math.round(state.strikes/state.total*100):0, avg=state.total?Math.round(state.veloSum/state.total):0;
+    let h=`<div class="statsGrid"><div class="statBox"><b>${state.total}</b><span>累計投球</span></div><div class="statBox"><b>${pct}%</b><span>好球率</span></div><div class="statBox"><b>${avg||'—'}</b><span>平均球速 km/h</span></div><div class="statBox"><b>${state.best||'—'}</b><span>最快球速 km/h</span></div></div>`;
+    h+=`<div style="margin-top:15px;font-size:12px;color:#91a3b8">最近投球</div>`;
+    h+=state.history.length?state.history.slice(0,12).map(x=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px"><span>${x.pitch}・${x.result}</span><b>${x.speed} km/h</b></div>`).join(''):`<p class="help">還沒有紀錄，先投幾球吧。</p>`;
+    $('#sheetBody').innerHTML=h;
+  }else{
+    $('#sheetTitle').textContent='玩法';
+    $('#sheetBody').innerHTML=`<div class="help"><p><b>自由投球：</b>先選球種，再點九宮格決定想投的位置，按「投球」即可。不同球種的球速、控球與位移都不一樣。</p><p><b>控球挑戰：</b>每回合會出現黃色目標，共 10 球。實際落點越接近指定目標，分數越高。</p><p><b>小技巧：</b>四縫線最好控制；曲球與指叉球位移大，但更容易失投。</p><p>所有紀錄只存在這支手機的瀏覽器裡，不會上傳。</p></div>`;
+  }
+}
+$('#modeBtn').onclick=toggleChallenge;throwBtn.onclick=pitch;
+$('#statsBtn').onclick=()=>openSheet('stats');$('#helpBtn').onclick=()=>openSheet('help');
+$('#closeSheet').onclick=()=>$('#sheet').classList.remove('open');$('#sheet').onclick=e=>{if(e.target.id==='sheet')$('#sheet').classList.remove('open')};
+$('#resetBtn').onclick=()=>{if(confirm('要清除全部投球紀錄嗎？')){state={total:0,strikes:0,veloSum:0,best:0,history:[]};save();updateStats();resultMain.textContent='紀錄已重設';resultSub.textContent='可以重新開始投球'}};
+renderZone();renderPitches();updateStats();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
