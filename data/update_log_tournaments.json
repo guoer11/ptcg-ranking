@@ -2,6 +2,18 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-10-11T00:04:08+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-10-11T00:04:08+08:00",
+      "summary": "恢復上架 1 場",
+      "details": [
+        "恢復上架｜#67655｜2026-10-24｜松梅桌遊｜高雄市"
+      ],
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "tournaments-2026-10-10T23:20:37+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -40,16 +52,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "tournaments-2026-10-10T04:53:38+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-10-10T04:53:38+08:00",
-      "summary": "例行檢查完成；賽事可見內容無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }
