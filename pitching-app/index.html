@@ -34,6 +34,7 @@
     h1{font-size:18px;line-height:1.1;margin:0}.sub{font-size:11px;color:var(--muted);margin-top:4px}
     .modeBtn{border:1px solid var(--line);background:#122238;color:var(--text);border-radius:12px;padding:10px 11px;font-size:12px;font-weight:700;appearance:none;-webkit-appearance:none}
     .duelHud{position:absolute;left:12px;top:12px;z-index:18;padding:9px 11px;border-radius:14px;background:rgba(4,11,19,.76);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);min-width:150px}
+    .baseBoard{display:flex;align-items:center;gap:9px;margin-top:7px;padding-top:6px;border-top:1px solid #ffffff22;font-size:11px;color:#e8eef7}.diamond{position:relative;width:51px;height:46px;flex-shrink:0}.base{position:absolute;width:13px;height:13px;transform:rotate(45deg);background:#536579;border:2px solid #bdc9d5;border-radius:2px}.base.on{background:#ffce48;border-color:#fff0a6;box-shadow:0 0 10px #f3b534}.base.first{right:3px;top:22px}.base.second{left:19px;top:3px}.base.third{left:3px;top:22px}.baseText{line-height:1.5;font-weight:700}
     .duelHud.hidden{display:none}.duelName{font-size:11px;color:#c6d3e1}.duelCount{display:flex;align-items:center;gap:8px;margin-top:4px}.duelCount b{font-size:16px}.duelCount span{font-size:10px;color:var(--muted);margin-left:auto}
     .batter.swing{animation:batterSwing .42s cubic-bezier(.2,.8,.2,1)}
     @keyframes batterSwing{0%{transform:rotate(0) translateX(0)}34%{transform:rotate(-26deg) translateX(-11px) translateY(1px)}62%{transform:rotate(-10deg) translateX(-5px)}100%{transform:rotate(0) translateX(0)}}
@@ -146,7 +147,7 @@
     <div class="aim" id="aim"></div>
     <div class="landingRing" id="landingRing"></div><div class="trail" id="trail"></div><div class="ballFlight" id="ballFlight"></div><div class="battedBall" id="battedBall"></div><div class="impactFlash" id="impactFlash"></div><div class="bigFx" id="bigFx"></div>
     <div class="toast" id="toast">STRIKE!</div>
-    <div class="duelHud" id="duelHud"><div class="duelName" id="duelName">AI 打者</div><div class="duelCount"><b id="ballCount">B 0</b><b id="strikeCount">S 0</b><span id="outCount">● ● ●  0 OUT</span><span id="duelRecord">K 0 · BB 0</span></div></div>
+    <div class="duelHud" id="duelHud"><div class="duelName" id="duelName">AI 打者</div><div class="duelCount"><b id="ballCount">B 0</b><b id="strikeCount">S 0</b><span id="outCount">● ● ●  0 OUT</span><span id="duelRecord">K 0 · BB 0</span></div><div class="baseBoard"><div class="diamond"><i class="base first" id="base1"></i><i class="base second" id="base2"></i><i class="base third" id="base3"></i></div><div class="baseText"><div id="runCount">本局失分 0</div><div id="baseStatus">無人上壘</div></div></div></div>
     <div class="resultCard">
       <div><div class="resultMain" id="resultMain">拖曳準星瞄準</div><div class="resultSub" id="resultSub">可滑到好球帶內外任意位置</div></div>
       <div class="velo" id="velo">— <small>km/h</small></div>
@@ -234,8 +235,27 @@ let state = JSON.parse(localStorage.getItem('pitchKingState') || '{"total":0,"st
 state.duel=Object.assign({ks:0,bb:0,hits:0,hr:0,pa:0},state.duel||{});
 let selected = pitches[0], target={x:.5,y:.5}, throwing=false, challenge=false, challengeRound=0, challengePoints=0, challengeTarget=4;
 let aiming=false, aimPointer=null, gameMode='duel', balls=0, strikesCount=0, paLocked=false, recentPitchIds=[], fxBusy=false;
-let inningOuts=0, inningNumber=1, inningHits=0, inningWalks=0, inningKs=0, inningPitches=0;
-function resetInning(){inningOuts=0;inningHits=0;inningWalks=0;inningKs=0;inningPitches=0;inningNumber++;newBatter();updateDuelHud();}
+let inningOuts=0, inningNumber=1, inningHits=0, inningWalks=0, inningKs=0, inningPitches=0, inningRuns=0, totalRuns=0, bases=[false,false,false];
+function resetInning(){inningOuts=0;inningHits=0;inningWalks=0;inningKs=0;inningPitches=0;inningRuns=0;bases=[false,false,false];inningNumber++;newBatter();updateDuelHud();}
+function advanceRunners(type){
+  let runs=0;
+  if(type==='homer'){runs=bases.filter(Boolean).length+1;bases=[false,false,false]}
+  else if(type==='walk'){
+    if(bases[0]&&bases[1]&&bases[2])runs++;
+    if(bases[0]&&bases[1])bases[2]=true;
+    if(bases[0])bases[1]=true;
+    bases[0]=true;
+  }else if(type==='double'){
+    if(bases[2])runs++;
+    if(bases[1])runs++;
+    const first=bases[0];bases=[false,true,first];
+  }else if(type==='single'){
+    if(bases[2])runs++;
+    if(bases[1])runs++;
+    bases=[true,bases[0],false];
+  }
+  inningRuns+=runs;totalRuns+=runs;updateDuelHud();return runs;
+}
 const difficultySettings={
   normal:{label:'普通',swing:-.07,contact:-.18,hit:-.16,homeRun:.72,chase:.03},
   hard:{label:'困難',swing:0,contact:0,hit:0,homeRun:1,chase:0},
@@ -376,6 +396,9 @@ function classify(actual){
 function updateDuelHud(){
   $('#duelHud').classList.toggle('hidden',gameMode!=='duel');
   $('#duelName').textContent=`第 ${inningNumber} 局｜${currentBatter.name}｜${difficultySettings[difficulty].label}`;
+  [0,1,2].forEach(i=>$('#base'+(i+1)).classList.toggle('on',bases[i]));
+  $('#runCount').textContent=`本局失分 ${inningRuns}｜總失分 ${totalRuns}`;
+  $('#baseStatus').textContent=bases.every(x=>x)?'滿壘':bases.some(Boolean)?[bases[0]?'一壘':'',bases[1]?'二壘':'',bases[2]?'三壘':''].filter(Boolean).join('、')+'有人':'無人上壘';
   $('#outCount').textContent=`${'🔴'.repeat(inningOuts)}${'⚪'.repeat(3-inningOuts)} ${inningOuts} OUT`;
   $('#ballCount').textContent=`B ${balls}`;
   $('#strikeCount').textContent=`S ${strikesCount}`;
@@ -435,7 +458,7 @@ function endPlateAppearance(title,sub,kind='good',isOut=false){
   paLocked=true;state.duel.pa++;resultMain.textContent=title;resultSub.textContent=sub;showToast(title,kind);updateDuelHud();save();updateStats();
   setTimeout(()=>{
     if(inningOuts>=3){
-      const summary=`第 ${inningNumber} 局結束｜${inningPitches} 球、${inningKs} K、${inningHits} 安、${inningWalks} 保送`;
+      const summary=`第 ${inningNumber} 局結束｜${inningPitches} 球、${inningKs} K、${inningHits} 安、${inningWalks} 保送、失 ${inningRuns} 分`; 
       showBigFx('3 OUT!','strikeout');resultMain.textContent='三出局！攻守交換';resultSub.textContent=summary;
       setTimeout(()=>{resetInning();paLocked=false;throwing=false;throwBtn.disabled=fxBusy;resultMain.textContent=`第 ${inningNumber} 局開始`;resultSub.textContent='三出局後進入下一局';},3500);
     }else{newBatter();paLocked=false;throwing=false;throwBtn.disabled=fxBusy;resultMain.textContent='下一位打者';resultSub.textContent=`目前 ${inningOuts} 出局，繼續投球`;}
@@ -474,12 +497,12 @@ function handleDuelPitch(actual,r,speed){
           const centerDist=Math.hypot(actual.x-.5,actual.y-.5);
           const hrChance=clamp(.015+Math.max(0,currentBatter.power-.42)*.29+(centerDist<.42?.035:0)+(speed>145?.018:0),.01,.17);
           if(Math.random()<clamp(hrChance*level.homeRun,.005,.40)){
-            state.duel.hr++;showBigFx('HOME RUN!','homer');animateBattedBall('homer',actual);buzz([35,30,70,35,110]);
-            endPlateAppearance('全壘打！',`${currentBatter.name} 把 ${selected.name} 轟出牆`,'bad');return true;
+            state.duel.hr++;const scored=advanceRunners('homer');showBigFx('HOME RUN!','homer');animateBattedBall('homer',actual);buzz([35,30,70,35,110]);
+            endPlateAppearance('全壘打！',`${currentBatter.name} 把 ${selected.name} 轟出牆，攻下 ${scored} 分`,'bad');return true;
           }
-          const extra=Math.random()<currentBatter.power*.24;
+          const extra=Math.random()<currentBatter.power*.24;const scored=advanceRunners(extra?'double':'single');
           showBigFx(extra?'EXTRA BASE!':'BASE HIT','hit');animateBattedBall(extra?'double':'hit',actual);buzz(34);
-          endPlateAppearance(extra?'長打！':'安打',`${currentBatter.name} 把 ${selected.name} 打進場內`,'bad');return true;
+          endPlateAppearance(extra?'長打！':'安打',`${currentBatter.name} 把 ${selected.name} 打進場內${scored?'，攻下 '+scored+' 分':''}`,'bad');return true;
         }
         animateBattedBall(Math.random()<.45?'ground':'out',actual);buzz(16);
         endPlateAppearance('打者出局','球被打進場內但形成出局','good',true);return true
@@ -488,7 +511,7 @@ function handleDuelPitch(actual,r,speed){
   }
   updateDuelHud();
   if(strikesCount>=3){state.duel.ks++;showBigFx('STRIKE OUT!','strikeout');impact('strikeout');buzz([55,35,95]);endPlateAppearance('三振！',`${selected.name} 解決 ${currentBatter.name}`,'good',true);return true}
-  if(balls>=4){state.duel.bb++;endPlateAppearance('四壞保送',`${currentBatter.name} 選到保送`,'bad');return true}
+  if(balls>=4){state.duel.bb++;const scored=advanceRunners('walk');endPlateAppearance('四壞保送',`${currentBatter.name} 選到保送${scored?'，擠回 '+scored+' 分':''}`,'bad');return true}
   return false;
 }
 function pitch(){
@@ -517,7 +540,7 @@ function setMode(mode){
   $('#difficultySelect').style.display=mode==='duel'?'':'none';
   if(throwing||paLocked)return;gameMode=mode;challenge=mode==='challenge';
   if(gameMode==='challenge'){challengeRound=0;challengePoints=0;challengeTarget=Math.floor(Math.random()*9);$('#modeLabel').textContent='10球控球挑戰';throwBtn.textContent='🎯 挑戰投球';resultMain.textContent='拖曳準星對準黃色目標';resultSub.textContent='10 球，可滑動微調到任意位置'}
-  else if(gameMode==='duel'){challenge=false;inningNumber=1;inningOuts=0;inningHits=0;inningWalks=0;inningKs=0;inningPitches=0;newBatter();$('#modeLabel').textContent='打者對決';throwBtn.textContent='⚾ 投球對決';resultMain.textContent='配球給打者';resultSub.textContent='AI 會依球路與球數決定是否揮棒'}
+  else if(gameMode==='duel'){challenge=false;inningNumber=1;inningOuts=0;inningHits=0;inningWalks=0;inningKs=0;inningPitches=0;inningRuns=0;totalRuns=0;bases=[false,false,false];newBatter();$('#modeLabel').textContent='打者對決';throwBtn.textContent='⚾ 投球對決';resultMain.textContent='配球給打者';resultSub.textContent='AI 會依球路與球數決定是否揮棒'}
   else{challenge=false;$('#modeLabel').textContent='自由投球';throwBtn.textContent='⚾ 投球';resultMain.textContent='拖曳準星瞄準';resultSub.textContent='可投好球帶內外任意位置'}
   updateChallengeMarker();updateDuelHud();updateStats();
 }
