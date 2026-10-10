@@ -2,7 +2,7 @@
   "year": 2026,
   "source": "https://raw.githubusercontent.com/lin-junyou/cpbl-savant-py-app/master/data/csv/game_pitchers.csv",
   "source_note": "Aggregated from 2026 CPBL game pitcher data collected from the public CPBL advanced-data APIs.",
-  "updated_at": "2026-10-09T17:02:59.842000+00:00",
+  "updated_at": "2026-10-10T15:54:04.524953+00:00",
   "count": 113,
   "pitchers": {
     "中信兄弟|羅戈": {
