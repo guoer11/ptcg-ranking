@@ -49,6 +49,11 @@
       radial-gradient(circle at 79% 7%,#fff 0 1px,transparent 2px),
       radial-gradient(circle at 90% 7%,#fff 0 1px,transparent 2px);opacity:.8}
     .grass{position:absolute;left:-20%;right:-20%;bottom:18%;height:43%;border-radius:50%;background:radial-gradient(ellipse at center,#2e845f 0 47%,#256d51 48% 62%,transparent 63%)}
+    .grass:before{content:"";position:absolute;left:50%;top:7%;width:65%;height:85%;transform:translateX(-50%);border-left:2px solid rgba(255,255,255,.32);border-right:2px solid rgba(255,255,255,.32);clip-path:polygon(50% 100%,0 0,100% 0);pointer-events:none}
+    .grass:after{content:"";position:absolute;left:12%;right:12%;top:28%;height:36%;border-top:3px solid rgba(246,220,157,.5);border-radius:50%;pointer-events:none}
+    .landingRing{position:absolute;display:none;width:28px;height:12px;border:2px solid #fff2a8;border-radius:50%;box-shadow:0 0 16px #ffda4e;transform:translate(-50%,-50%);pointer-events:none;z-index:8}
+    .landingRing.show{display:block;animation:landPulse .55s ease-out infinite alternate}
+    @keyframes landPulse{from{opacity:.55;scale:.8}to{opacity:1;scale:1.2}}
     .dirt{position:absolute;width:60%;height:34%;left:20%;bottom:5%;border-radius:50%;background:#9a6841;box-shadow:inset 0 0 35px rgba(66,33,13,.25)}
     .mound{position:absolute;left:50%;bottom:3%;transform:translateX(-50%);width:48%;height:19%;border-radius:50%;background:radial-gradient(ellipse,#b47a4e,#895837 68%,transparent 70%)}
     .rubber{position:absolute;left:50%;bottom:13%;transform:translateX(-50%);width:50px;height:7px;border-radius:2px;background:#f4f2eb}
@@ -124,7 +129,7 @@
       <div class="strikeZone" id="strikeZone"></div>
     </div>
     <div class="aim" id="aim"></div>
-    <div class="trail" id="trail"></div><div class="ballFlight" id="ballFlight"></div><div class="battedBall" id="battedBall"></div><div class="impactFlash" id="impactFlash"></div><div class="bigFx" id="bigFx"></div>
+    <div class="landingRing" id="landingRing"></div><div class="trail" id="trail"></div><div class="ballFlight" id="ballFlight"></div><div class="battedBall" id="battedBall"></div><div class="impactFlash" id="impactFlash"></div><div class="bigFx" id="bigFx"></div>
     <div class="toast" id="toast">STRIKE!</div>
     <div class="duelHud" id="duelHud"><div class="duelName" id="duelName">AI 打者</div><div class="duelCount"><b id="ballCount">B 0</b><b id="strikeCount">S 0</b><span id="duelRecord">K 0 · BB 0</span></div></div>
     <div class="resultCard">
@@ -379,6 +384,11 @@ function animateBattedBall(kind,actual){
   else if(kind==='double'){end={x:rect.width*(.20+Math.random()*.60),y:rect.height*.14};ctrl={x:rect.width*(.26+Math.random()*.48),y:-12};dur=820}
   else if(kind==='homer'){end={x:rect.width*(.12+Math.random()*.76),y:-38};ctrl={x:rect.width*(.20+Math.random()*.60),y:-70};dur=980}
   else{end={x:rect.width*(.24+Math.random()*.52),y:rect.height*.29};ctrl={x:rect.width*(.30+Math.random()*.40),y:rect.height*.03};dur=700}
+  const landingRing=$('#landingRing');landingRing.classList.remove('show');
+  if(kind!=='foul'&&kind!=='homer'){
+    landingRing.style.left=end.x+'px';landingRing.style.top=end.y+'px';
+    landingRing.classList.add('show');
+  }
   battedBall.style.display='block';battedBall.style.left=(start.x-6.5)+'px';battedBall.style.top=(start.y-6.5)+'px';battedBall.style.transform='scale(1)';
   impact(kind);const t0=performance.now();
   function frame(now){
@@ -386,7 +396,7 @@ function animateBattedBall(kind,actual){
     const x=q*q*start.x+2*q*t*ctrl.x+t*t*end.x,y=q*q*start.y+2*q*t*ctrl.y+t*t*end.y;
     const scale=kind==='homer'?1-t*.58:1-t*.38;
     battedBall.style.left=(x-6.5)+'px';battedBall.style.top=(y-6.5)+'px';battedBall.style.transform=`scale(${Math.max(.34,scale)}) rotate(${t*720}deg)`;
-    if(t<1)requestAnimationFrame(frame);else{setTimeout(()=>{battedBall.style.display='none';fxBusy=false;if(!throwing&&!paLocked)throwBtn.disabled=false;},80)}
+    if(t<1)requestAnimationFrame(frame);else{setTimeout(()=>{battedBall.style.display='none';landingRing.classList.remove('show');fxBusy=false;if(!throwing&&!paLocked)throwBtn.disabled=false;},80)}
   }
   requestAnimationFrame(frame);
 }
