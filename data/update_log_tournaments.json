@@ -2,6 +2,16 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-10-10T18:36:15+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-10-10T18:36:15+08:00",
+      "summary": "例行檢查完成；賽事可見內容無變動",
+      "details": [],
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
+    },
+    {
       "id": "tournaments-2026-10-10T17:03:39+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -40,19 +50,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "GitHub 備援排程"
-    },
-    {
-      "id": "tournaments-2026-10-10T00:03:54+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-10-10T00:03:54+08:00",
-      "summary": "恢復上架 1 場；狀態變更 1 場",
-      "details": [
-        "恢復上架｜#69395｜2026-10-24｜Card Master｜臺北市",
-        "狀態｜#67655｜2026-10-24｜松梅桌遊｜高雄市｜active → unavailable"
-      ],
-      "notified": false,
-      "trigger_source": "主排程（Supabase）"
     }
   ]
 }
