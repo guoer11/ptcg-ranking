@@ -61,6 +61,21 @@
     .batter{position:absolute;right:10%;top:39%;width:28px;height:118px;opacity:.9;filter:drop-shadow(0 4px 3px rgba(0,0,0,.25))}
     .batter:before{content:"";position:absolute;left:5px;top:0;width:22px;height:22px;border-radius:50%;background:#101820}
     .batter:after{content:"";position:absolute;left:9px;top:18px;width:15px;height:54px;border-radius:10px;background:#101820;box-shadow:-10px 47px 0 -4px #101820,11px 47px 0 -4px #101820,20px 0 0 -6px #101820;transform:rotate(-5deg)}
+    .stadiumStand{position:absolute;top:12%;left:-5%;width:110%;height:19%;background:repeating-linear-gradient(90deg,#19354b 0 9px,#284b60 9px 12px);border-bottom:7px solid #c6a05e;box-shadow:0 5px 14px #112b36;opacity:.8}
+    .stadiumStand:after{content:"";position:absolute;inset:8px 0;background:radial-gradient(circle,#f7df9a 1px,transparent 2px) 0 0/19px 11px;opacity:.55}
+    .backstop{position:absolute;left:3%;right:3%;top:30%;height:28%;border:2px solid rgba(218,235,243,.17);border-radius:50% 50% 8% 8%;background:repeating-linear-gradient(90deg,transparent 0 13px,rgba(225,235,244,.07) 14px 15px);pointer-events:none}
+    .catcher{position:absolute;left:50%;top:62%;width:46px;height:49px;transform:translate(-50%,-50%);z-index:2;pointer-events:none;filter:drop-shadow(0 4px 3px #102233)}
+    .catcher .helmet{position:absolute;left:13px;top:0;width:21px;height:21px;border-radius:45% 45% 38% 38%;background:#183552;border:3px solid #a7c5d8;box-shadow:inset 0 -5px #122b42}
+    .catcher .helmet:after{content:"";position:absolute;inset:6px 2px 2px;border:2px solid #d1e2e8;border-radius:3px}
+    .catcher .body{position:absolute;left:9px;top:19px;width:29px;height:22px;border-radius:10px 10px 7px 7px;background:linear-gradient(90deg,#234b70,#467a9b,#234b70);border:2px solid #a7c5d8}
+    .catcher .body:after{content:"";position:absolute;left:-8px;top:17px;width:41px;height:12px;border-radius:12px;background:#173b5b}
+    .catcher .mitt{position:absolute;left:-5px;top:23px;width:17px;height:20px;border-radius:50%;background:#ae6738;border:2px solid #5d351d;transform:rotate(-22deg)}
+    .batter{z-index:3;width:39px;height:122px;right:8%;top:38%;opacity:1}
+    .batter:before{left:8px;width:23px;height:24px;background:#e8b787;border:5px solid #183653;box-sizing:border-box}
+    .batter:after{left:11px;top:22px;width:20px;height:56px;background:linear-gradient(90deg,#f1f5f7 0 42%,#9db9d4 43% 100%);box-shadow:-10px 50px 0 -4px #e8edf1,12px 50px 0 -4px #e8edf1,22px 0 0 -7px #e3b58a}
+    .batter .bat{position:absolute;right:-9px;top:4px;width:7px;height:75px;background:linear-gradient(90deg,#79502e,#e4b77c,#8c5d36);border-radius:6px;transform:rotate(-30deg);transform-origin:50% 80%;box-shadow:0 0 0 1px #51351d}
+    .batter.swing .bat{animation:batSwing .42s ease-in-out}
+    @keyframes batSwing{0%{transform:rotate(-30deg)}40%{transform:rotate(-100deg)}80%{transform:rotate(45deg)}100%{transform:rotate(-30deg)}}
     .strikeWrap{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:145px;height:190px}
     .strikeZone{width:100%;height:100%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);border:2px solid rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(0,0,0,.25),0 0 24px rgba(255,255,255,.08);pointer-events:none}
     .cell{border:1px solid rgba(255,255,255,.32);background:rgba(4,13,22,.12);position:relative;pointer-events:none}
@@ -124,7 +139,7 @@
   </div>
 
   <div class="stage" id="stage">
-    <div class="stadiumLights"></div><div class="grass"></div><div class="dirt"></div><div class="mound"></div><div class="rubber"></div><div class="plate"></div><div class="batter"></div>
+    <div class="stadiumLights"></div><div class="stadiumStand"></div><div class="backstop"></div><div class="grass"></div><div class="dirt"></div><div class="mound"></div><div class="rubber"></div><div class="plate"></div><div class="catcher"><div class="helmet"></div><div class="body"></div><div class="mitt"></div></div><div class="batter"><div class="bat"></div></div>
     <div class="strikeWrap" id="strikeWrap">
       <div class="strikeZone" id="strikeZone"></div>
     </div>
