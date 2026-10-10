@@ -128,7 +128,7 @@
       <div class="logo"><div class="ball"></div></div>
       <div><h1>投球王</h1><div class="sub" id="modeLabel">自由投球</div></div>
     </div>
-    <select class="modeBtn" id="modeSelect" aria-label="遊戲模式"><option value="duel">⚔️ 打者對決</option><option value="free">⚾ 自由投球</option><option value="challenge">🎯 控球挑戰</option></select>
+    <select class="modeBtn" id="difficultySelect" aria-label="對決難度"><option value="normal">🙂 普通</option><option value="hard">🔥 困難</option><option value="hell">💀 地獄</option></select><select class="modeBtn" id="modeSelect" aria-label="遊戲模式"><option value="duel">⚔️ 打者對決</option><option value="free">⚾ 自由投球</option><option value="challenge">🎯 控球挑戰</option></select>
   </div>
 
   <div class="scorebar">
@@ -234,6 +234,13 @@ let state = JSON.parse(localStorage.getItem('pitchKingState') || '{"total":0,"st
 state.duel=Object.assign({ks:0,bb:0,hits:0,hr:0,pa:0},state.duel||{});
 let selected = pitches[0], target={x:.5,y:.5}, throwing=false, challenge=false, challengeRound=0, challengePoints=0, challengeTarget=4;
 let aiming=false, aimPointer=null, gameMode='duel', balls=0, strikesCount=0, paLocked=false, recentPitchIds=[], fxBusy=false;
+const difficultySettings={
+  normal:{label:'普通',swing:-.07,contact:-.18,hit:-.16,homeRun:.72,chase:.03},
+  hard:{label:'困難',swing:0,contact:0,hit:0,homeRun:1,chase:0},
+  hell:{label:'地獄',swing:.08,contact:.12,hit:.16,homeRun:1.65,chase:-.06}
+};
+let difficulty=localStorage.getItem('pitchKingDifficulty')||'normal';
+if(!difficultySettings[difficulty])difficulty='normal';
 const batterProfiles=[
   {name:'選球型打者',zoneSwing:.76,chase:.10,contact:.94,power:.49},
   {name:'強打者',zoneSwing:.89,chase:.25,contact:.85,power:.93},
@@ -366,7 +373,7 @@ function classify(actual){
 }
 function updateDuelHud(){
   $('#duelHud').classList.toggle('hidden',gameMode!=='duel');
-  $('#duelName').textContent=`${currentBatter.name}｜打席 ${state.duel.pa+1}`;
+  $('#duelName').textContent=`${currentBatter.name}｜${difficultySettings[difficulty].label}｜打席 ${state.duel.pa+1}`;
   $('#ballCount').textContent=`B ${balls}`;
   $('#strikeCount').textContent=`S ${strikesCount}`;
   $('#duelRecord').textContent=`K ${state.duel.ks} · BB ${state.duel.bb} · H ${state.duel.hits} · HR ${state.duel.hr}`;
@@ -426,7 +433,8 @@ function handleDuelPitch(actual,r,speed){
   const outsideY=actual.y<0?-actual.y:actual.y>1?actual.y-1:0;
   const outsideDist=Math.hypot(outsideX,outsideY);
   const repeatCount=recentPitchIds.filter(id=>id===selected.id).length;
-  let swingProb=r.inside?currentBatter.zoneSwing:currentBatter.chase*clamp(1-outsideDist/.6,.08,1);
+  const level=difficultySettings[difficulty];
+  let swingProb=r.inside?currentBatter.zoneSwing+level.swing:(currentBatter.chase+level.chase)*clamp(1-outsideDist/.6,.08,1);
   if(strikesCount===2)swingProb+=.12;if(balls===3&&!r.inside)swingProb-=.10;if(repeatCount>=2)swingProb+=.14;if(balls>=2&&r.inside)swingProb+=.07;
   swingProb=clamp(swingProb,.03,.96);
   const swings=Math.random()<swingProb;
@@ -438,7 +446,7 @@ function handleDuelPitch(actual,r,speed){
     swingBatter();
     const breakDifficulty=clamp((Math.abs(selected.breakX)+Math.abs(selected.breakY))/170,0,.22);
     const veloDifficulty=clamp((speed-145)/140,0,.12);
-    let contactProb=currentBatter.contact-breakDifficulty-veloDifficulty+(repeatCount*.08)+(strikesCount===2?.07:0);
+    let contactProb=currentBatter.contact+level.contact-breakDifficulty-veloDifficulty+(repeatCount*.08)+(strikesCount===2?.07:0);
     if(!r.inside)contactProb-=.13+outsideDist*.30;
     contactProb=clamp(contactProb,.22,.97);
     if(Math.random()>contactProb){strikesCount++;resultMain.textContent='揮棒落空！';resultSub.textContent=`${selected.name} 騙到打者`;showToast('SWING & MISS','good');buzz(22)}
@@ -446,12 +454,12 @@ function handleDuelPitch(actual,r,speed){
       const poor=(!r.inside&&outsideDist>.20)||r.dist>.30||Math.random()>.86;
       if(poor||Math.random()<.20){if(strikesCount<2)strikesCount++;resultMain.textContent='界外球';resultSub.textContent='打者碰到球，但沒有打好';showToast('FOUL');showBigFx('FOUL','foul');animateBattedBall('foul',actual);buzz(18)}
       else{
-        const hitChance=clamp(.42+currentBatter.power*.28-(r.dist<.12?.04:0),.36,.78);
+        const hitChance=clamp(.42+currentBatter.power*.28+level.hit-(r.dist<.12?.04:0),.15,.92);
         if(Math.random()<hitChance){
           state.duel.hits++;
           const centerDist=Math.hypot(actual.x-.5,actual.y-.5);
           const hrChance=clamp(.015+Math.max(0,currentBatter.power-.42)*.29+(centerDist<.42?.035:0)+(speed>145?.018:0),.01,.17);
-          if(Math.random()<hrChance){
+          if(Math.random()<clamp(hrChance*level.homeRun,.005,.40)){
             state.duel.hr++;showBigFx('HOME RUN!','homer');animateBattedBall('homer',actual);buzz([35,30,70,35,110]);
             endPlateAppearance('全壘打！',`${currentBatter.name} 把 ${selected.name} 轟出牆`,'bad');return true;
           }
@@ -492,6 +500,7 @@ function pitch(){
   })
 }
 function setMode(mode){
+  $('#difficultySelect').style.display=mode==='duel'?'':'none';
   if(throwing||paLocked)return;gameMode=mode;challenge=mode==='challenge';
   if(gameMode==='challenge'){challengeRound=0;challengePoints=0;challengeTarget=Math.floor(Math.random()*9);$('#modeLabel').textContent='10球控球挑戰';throwBtn.textContent='🎯 挑戰投球';resultMain.textContent='拖曳準星對準黃色目標';resultSub.textContent='10 球，可滑動微調到任意位置'}
   else if(gameMode==='duel'){challenge=false;newBatter();$('#modeLabel').textContent='打者對決';throwBtn.textContent='⚾ 投球對決';resultMain.textContent='配球給打者';resultSub.textContent='AI 會依球路與球數決定是否揮棒'}
@@ -516,9 +525,11 @@ function openSheet(type){
     $('#sheetBody').innerHTML=h;
   }else{
     $('#sheetTitle').textContent='玩法';
-    $('#sheetBody').innerHTML=`<div class="help"><p><b>打者對決：</b>AI 打者會依球的位置、球速、變化量與目前 B/S 球數決定是否揮棒。三振、四壞、安打、全壘打與出局都會記錄；打中球時會看到球飛往場內、界外或飛出牆。如果一直重複同一球種，打者會更容易抓到。</p><p><b>自由投球：</b>選球種後拖曳藍色準星，可瞄準好球帶內外任意位置。</p><p><b>控球挑戰：</b>共 10 球，實際落點越接近黃色目標分數越高。</p><p><b>配球提示：</b>兩好球時可用變化球引誘；三壞球時要小心保送；速球與變化球交錯會比一直投同一球更有效。</p><p>目前收錄 45 種球路，紀錄只存在這支手機，不會上傳。</p></div>`;
+    $('#sheetBody').innerHTML=`<div class="help"><p><b>打者對決：</b>可選普通、困難、地獄三種難度。普通適合練習，困難接近強打者，地獄模式更容易被安打及全壘打。AI 打者會依球的位置、球速、變化量與目前 B/S 球數決定是否揮棒。三振、四壞、安打、全壘打與出局都會記錄；打中球時會看到球飛往場內、界外或飛出牆。如果一直重複同一球種，打者會更容易抓到。</p><p><b>自由投球：</b>選球種後拖曳藍色準星，可瞄準好球帶內外任意位置。</p><p><b>控球挑戰：</b>共 10 球，實際落點越接近黃色目標分數越高。</p><p><b>配球提示：</b>兩好球時可用變化球引誘；三壞球時要小心保送；速球與變化球交錯會比一直投同一球更有效。</p><p>目前收錄 45 種球路，紀錄只存在這支手機，不會上傳。</p></div>`;
   }
 }
+$('#difficultySelect').value=difficulty;
+$('#difficultySelect').onchange=e=>{difficulty=e.target.value;localStorage.setItem('pitchKingDifficulty',difficulty);if(gameMode==='duel'){newBatter();resultMain.textContent=`${difficultySettings[difficulty].label}難度`;resultSub.textContent='新難度從下一球開始生效';}};
 $('#modeSelect').onchange=e=>setMode(e.target.value);throwBtn.onclick=pitch;
 $('#statsBtn').onclick=()=>openSheet('stats');$('#helpBtn').onclick=()=>openSheet('help');
 $('#closeSheet').onclick=()=>$('#sheet').classList.remove('open');$('#sheet').onclick=e=>{if(e.target.id==='sheet')$('#sheet').classList.remove('open')};
