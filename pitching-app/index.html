@@ -36,6 +36,7 @@
     .duelHud{position:absolute;left:12px;top:12px;z-index:18;padding:9px 11px;border-radius:14px;background:rgba(4,11,19,.76);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);min-width:150px}
     .baseBoard{display:flex;align-items:center;gap:9px;margin-top:7px;padding-top:6px;border-top:1px solid #ffffff22;font-size:11px;color:#e8eef7}.diamond{position:relative;width:51px;height:46px;flex-shrink:0}.base{position:absolute;width:13px;height:13px;transform:rotate(45deg);background:#536579;border:2px solid #bdc9d5;border-radius:2px}.base.on{background:#ffce48;border-color:#fff0a6;box-shadow:0 0 10px #f3b534}.base.first{right:3px;top:22px}.base.second{left:19px;top:3px}.base.third{left:3px;top:22px}.baseText{line-height:1.5;font-weight:700}
     .duelHud.aboveField{position:relative;top:auto;left:auto;width:100%;box-sizing:border-box;margin:0 0 8px;z-index:1;padding:9px 12px;border-radius:16px;background:rgba(4,11,19,.88)}
+    .stage.pitchInMotion{filter:brightness(1.07)}.stage.pitchInMotion .batter{transform:rotate(-4deg);transition:transform .18s}.stage.pitchInMotion .catcher{transform:translateY(-3px);transition:transform .18s}
     .duelHud.hidden{display:none}.duelName{font-size:11px;color:#c6d3e1}.duelCount{display:flex;align-items:center;gap:8px;margin-top:4px}.duelCount b{font-size:16px}.duelCount span{font-size:10px;color:var(--muted);margin-left:auto}
     .batter.swing{animation:batterSwing .42s cubic-bezier(.2,.8,.2,1)}
     @keyframes batterSwing{0%{transform:rotate(0) translateX(0)}34%{transform:rotate(-26deg) translateX(-11px) translateY(1px)}62%{transform:rotate(-10deg) translateX(-5px)}100%{transform:rotate(0) translateX(0)}}
@@ -332,7 +333,7 @@ if(!teamLineups[opponentTeam])opponentTeam='統一7-ELEVEn獅';
 function activeLineup(){return teamLineups[opponentTeam].map((name,i)=>({name,avg:verifiedAvg2026[name]??(.225+(i%5)*.023),verified:Object.hasOwn(verifiedAvg2026,name),power:verifiedHr2026[name]?clamp(.38+verifiedHr2026[name]*.026,.3,.95):clamp(.18+((i*7+3)%9)*.083,.1,.92)}))}
 // 打擊率部分為2026公開比賽參考，未核實者為遊戲估值。
 // 官方 2026 首頁排行榜快照；只覆寫有查證的數據，不把模擬值冒充官方。
-const verifiedEra2026={'蔣銲':1.49,'布雷克':1.61,'梅賽鍶':1.79,'黃子鵬':2.20,'鈴木駿輔':2.31};
+const verifiedEra2026={'蔣銲':1.49,'布雷克':1.61,'梅賽鍶':1.79,'黃子鵬':2.20,'鈴木駿輔':2.31,'李東洺':2.53,'勝騎士':3.37,'邱浩鈞':1.82};
 for(const p of pitcherRoster){if(Object.prototype.hasOwnProperty.call(verifiedEra2026,p.name)){p.era=verifiedEra2026[p.name];p.eraVerified=true}}
 const verifiedAvg2026={'陳傑憲':.322,'林澤彬':.311,'王博玄':.307,'潘傑楷':.305,'陳晨威':.304};
 const verifiedHr2026={'魔鷹':20,'張育成':16,'范國宸':13,'朱育賢':13,'郭天信':9};
@@ -350,13 +351,26 @@ function refreshGameStatus(){
  $('#stealBtn').disabled=gameMode!=='duel'||!bases.some(Boolean)||inningOuts>=3||throwing||paLocked;
 }
 function seasonRecord(){try{return JSON.parse(localStorage.getItem('pitchKingSeason')||'{"games":0,"runs":0}') }catch(e){return {games:0,runs:0}}}
-function seasonDetails(){const record=seasonRecord();alert(`⚾ 投球王賽季紀錄\n完成場次：${record.games}\n累計失分：${record.runs}\n場均失分：${record.games?(record.runs/record.games).toFixed(2):'—'}\n\n紀錄儲存在此裝置的瀏覽器中。`)}
+function seasonDetails(){const record=seasonRecord();const standings=seasonStandings();alert(`⚾ 模擬賽季｜${record.games} 場\n累計失分 ${record.runs}｜場均失分 ${record.games?(record.runs/record.games).toFixed(2):'—'}\n\n六隊模擬排名：\n`+standings.map((t,i)=>`${i+1}. ${t.name}　${t.w}勝${t.l}敗　勝率${(t.w/(t.w+t.l||1)).toFixed(3)}`).join('\n')+'\n\n以上排名與賽程為遊戲模擬，非中職官方戰績。')}
 function lineupDetails(){alert(`⚾ ${opponentTeam}｜遊戲模擬打線\n\n`+activeLineup().map((p,i)=>`${i+1}棒 ${p.name}｜打擊率 ${p.avg.toFixed(3)}${p.verified?'（2026官方榜單）':'（模擬）'}`).join('\n'))}
 function resetGameNow(){if(throwing||paLocked||fxBusy){showToast('請等待目前投球結束','bad');return}inningNumber=1;inningOuts=0;inningHits=0;inningWalks=0;inningKs=0;inningPitches=0;inningRuns=0;totalRuns=0;bases=[false,false,false];pitcherPitchCount=0;usedPitchers=new Set();lineupIndex=0;newBatter();resultMain.textContent='新比賽開始';resultSub.textContent='九局投球挑戰，祝你投出好球';refreshGameStatus()}
+function seasonStandings(){
+ let data;try{data=JSON.parse(localStorage.getItem('pitchKingStandings')||'null')}catch(e){}
+ if(!data||!Array.isArray(data)||data.length!==6)data=Object.keys(teamLineups).map(name=>({name,w:0,l:0}));
+ return data.sort((a,b)=>(b.w/(b.w+b.l||1))-(a.w/(a.w+a.l||1))||b.w-a.w)
+}
+function simulateSchedule(){
+ const standings=seasonStandings();
+ for(let i=0;i<3;i++){
+  const a=Math.floor(Math.random()*standings.length),b=(a+1+Math.floor(Math.random()*5))%6;
+  const winner=Math.random()<.5?a:b;standings[winner].w++;standings[winner===a?b:a].l++;
+ }
+ localStorage.setItem('pitchKingStandings',JSON.stringify(standings));
+}
 function finishGame(){
  seasonGames++;seasonRuns+=totalRuns;
  const record=seasonRecord();
- record.games++;record.runs+=totalRuns;localStorage.setItem('pitchKingSeason',JSON.stringify(record));
+ record.games++;record.runs+=totalRuns;localStorage.setItem('pitchKingSeason',JSON.stringify(record));simulateSchedule();
  resultMain.textContent='⚾ 九局投球完成！';resultSub.textContent=`本場失 ${totalRuns} 分｜賽季 ${record.games} 場、平均失分 ${(record.runs/record.games).toFixed(2)}`;
  showBigFx('GAME OVER','strikeout');
 }
@@ -520,14 +534,14 @@ function animateBall(actual,done){
   const start={x:rect.width*.5,y:rect.height*.83};
   const ctrl={x:(start.x+end.x)/2-selected.breakX*.65,y:(start.y+end.y)/2-selected.breakY*.8-25};
   ball.style.display='block';
-  const dur=430, t0=performance.now();
+  const dur=430, t0=performance.now();stage.classList.add('pitchInMotion');
   function frame(now){
     let t=clamp((now-t0)/dur,0,1), q=1-t;
     let x=q*q*start.x+2*q*t*ctrl.x+t*t*end.x;
     let y=q*q*start.y+2*q*t*ctrl.y+t*t*end.y;
     let scale=.68+t*.48;
     ball.style.left=(x-12)+'px';ball.style.top=(y-12)+'px';ball.style.bottom='auto';ball.style.transform=`scale(${scale}) rotate(${t*250}deg)`;
-    if(t<1)requestAnimationFrame(frame);else{setTimeout(()=>{ball.style.display='none';done();},120)}
+    if(t<1)requestAnimationFrame(frame);else{setTimeout(()=>{ball.style.display='none';stage.classList.remove('pitchInMotion');done();},120)}
   }requestAnimationFrame(frame)
 }
 function classify(actual){
@@ -615,11 +629,11 @@ function handleDuelPitch(actual,r,speed){
   const outsideX=actual.x<0?-actual.x:actual.x>1?actual.x-1:0;
   const outsideY=actual.y<0?-actual.y:actual.y>1?actual.y-1:0;
   const outsideDist=Math.hypot(outsideX,outsideY);
-  const repeatCount=recentPitchIds.filter(id=>id===selected.id).length;
+  const repeatCount=recentPitchIds.filter(id=>id===selected.id).length;const pitchPatternPenalty=Math.min(.17,repeatCount*.055);
   const level=difficultySettings[difficulty];
   const eraPenalty=chosenPitcher.era==null?0:clamp((chosenPitcher.era-3.5)*.045,-.13,.19);
   let swingProb=r.inside?currentBatter.zoneSwing+level.swing:(currentBatter.chase+level.chase)*clamp(1-outsideDist/.6,.08,1);
-  if(strikesCount===2)swingProb+=.12;if(balls===3&&!r.inside)swingProb-=.10;if(repeatCount>=2)swingProb+=.14;if(balls>=2&&r.inside)swingProb+=.07;
+  swingProb+=pitchPatternPenalty;if(strikesCount===2)swingProb+=.12;if(balls===3&&!r.inside)swingProb-=.10;if(repeatCount>=2)swingProb+=.14;if(balls>=2&&r.inside)swingProb+=.07;
   swingProb=clamp(swingProb,.03,.96);
   const swings=Math.random()<swingProb;
   recentPitchIds.push(selected.id);recentPitchIds=recentPitchIds.slice(-4);
