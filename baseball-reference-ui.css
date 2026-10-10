@@ -1,0 +1,435 @@
+/* Baseball reference HUD / camera v211
+   Rebuilds the live game composition to match the supplied landscape reference:
+   compact score bug top-left, utility controls top-right, batter foreground,
+   pitcher centered deep, subtle strike zone, stat rails at the bottom and a
+   floating swing control. Gameplay logic is untouched. */
+
+@media (orientation:landscape){
+  #gameApp{
+    position:relative!important;
+    height:100dvh!important;
+    min-height:100dvh!important;
+    padding-top:env(safe-area-inset-top)!important;
+    overflow:hidden!important;
+    background:#071416!important;
+  }
+
+  #gameApp #scene{
+    position:absolute!important;
+    inset:env(safe-area-inset-top) 0 0!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    flex:none!important;
+    overflow:hidden!important;
+  }
+
+  /* ===== compact broadcast scoreboard: top-left ===== */
+  #gameApp .gamebar{
+    position:absolute!important;
+    z-index:120!important;
+    top:calc(env(safe-area-inset-top) + 6px)!important;
+    left:8px!important;
+    width:250px!important;
+    height:58px!important;
+    display:block!important;
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    pointer-events:none!important;
+    color:#111!important;
+  }
+  #gameApp .gamebar .scoreteam{
+    position:absolute!important;
+    left:0!important;
+    width:92px!important;
+    height:27px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    padding:0 8px!important;
+    background:rgba(247,248,246,.94)!important;
+    color:#171717!important;
+    border-left:4px solid #f29b22!important;
+    border-radius:1px!important;
+    font-size:12px!important;
+    font-weight:950!important;
+    text-shadow:none!important;
+    box-shadow:0 2px 6px rgba(0,0,0,.18)!important;
+  }
+  #gameApp .gamebar .scoreteam:first-child{top:0!important}
+  #gameApp .gamebar .scoreteam.right{
+    top:29px!important;
+    text-align:left!important;
+    border-left-color:#8a4ba9!important;
+    flex-direction:row-reverse!important;
+  }
+  #gameApp .gamebar .centerScore{
+    position:absolute!important;
+    left:94px!important;
+    top:0!important;
+    width:156px!important;
+    height:56px!important;
+    padding:3px 6px!important;
+    display:grid!important;
+    grid-template-columns:50px 1fr!important;
+    grid-template-rows:21px 29px!important;
+    align-items:center!important;
+    gap:0 5px!important;
+    background:rgba(247,248,246,.94)!important;
+    color:#1a1a1a!important;
+    text-align:left!important;
+    border-radius:1px!important;
+    box-shadow:0 2px 6px rgba(0,0,0,.18)!important;
+    text-shadow:none!important;
+  }
+  #gameApp .gamebar .centerScore b{
+    grid-column:1!important;
+    grid-row:1!important;
+    display:block!important;
+    color:#111!important;
+    font-size:11px!important;
+    line-height:1!important;
+  }
+  #gameApp .gamebar #situation{
+    grid-column:2!important;
+    grid-row:1!important;
+    font-size:9px!important;
+    white-space:nowrap!important;
+    color:#333!important;
+  }
+  #gameApp .gamebar .minirow{
+    grid-column:1/3!important;
+    grid-row:2!important;
+    justify-content:flex-start!important;
+    align-items:center!important;
+    gap:4px!important;
+    margin:0!important;
+    font-size:9px!important;
+    font-weight:900!important;
+    color:#111!important;
+  }
+  #gameApp .gamebar .lamp{
+    width:7px!important;
+    height:7px!important;
+    border-radius:50%!important;
+    background:#87918d!important;
+    border:1px solid rgba(0,0,0,.15)!important;
+  }
+  #gameApp .gamebar .lamp.on.b{background:#54c96e!important}
+  #gameApp .gamebar .lamp.on.s{background:#f3cf3d!important}
+  #gameApp .gamebar .lamp.on.o{background:#f25b5b!important}
+
+  /* ===== right-top game utilities ===== */
+  #gameApp .controls{
+    position:absolute!important;
+    z-index:118!important;
+    inset:0!important;
+    display:block!important;
+    width:auto!important;
+    height:auto!important;
+    padding:0!important;
+    margin:0!important;
+    background:transparent!important;
+    border:0!important;
+    pointer-events:none!important;
+  }
+  #gameApp .controls .control{
+    position:absolute!important;
+    min-height:0!important;
+    min-width:0!important;
+    margin:0!important;
+    border-radius:3px!important;
+    box-shadow:0 2px 5px rgba(0,0,0,.30)!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
+  #gameApp #menuBtn,
+  #gameApp #pauseBtn,
+  #gameApp #tacticsBtn{
+    top:calc(env(safe-area-inset-top) + 8px)!important;
+    width:74px!important;
+    height:39px!important;
+    padding:0 8px!important;
+    font-size:11px!important;
+    line-height:39px!important;
+    color:#fff!important;
+    background:linear-gradient(180deg,#d9952d,#ad6e16)!important;
+    border:1px solid rgba(255,220,140,.65)!important;
+  }
+  #gameApp #menuBtn{right:8px!important;font-size:0!important;width:42px!important;background:linear-gradient(180deg,#526c96,#30486f)!important}
+  #gameApp #menuBtn:after{content:'›';font-size:30px;font-weight:900;line-height:34px;color:#fff}
+  #gameApp #pauseBtn{right:54px!important;width:78px!important;font-size:0!important}
+  #gameApp #pauseBtn:after{content:'Ⅱ';font-size:18px;letter-spacing:2px;font-weight:900;color:#fff}
+  #gameApp #tacticsBtn{right:136px!important;width:78px!important;font-size:11px!important}
+  #gameApp #tacticsBtn:before{content:'⚾ ';font-size:12px}
+
+  /* ===== reference batting camera ===== */
+  #gameApp.v202-mode-bat #scene,
+  #gameApp #scene.v202-cinematic-bat:not(.user-pitching){
+    perspective:1500px!important;
+    background:linear-gradient(#53aaf0 0 37%,#c7e8f6 37.5%,#4c7f54 38%,#1b472d 100%)!important;
+  }
+  #gameApp.v202-mode-bat #scene .skyGlow{inset:0 0 62% 0!important;opacity:.45!important}
+  #gameApp.v202-mode-bat #scene .stadium{
+    top:21%!important;
+    left:-3%!important;
+    right:-3%!important;
+    height:25%!important;
+    filter:brightness(1.04) saturate(.95)!important;
+  }
+  #gameApp.v202-mode-bat #scene .crowd{top:25%!important;height:17%!important;opacity:.96!important}
+  #gameApp.v202-mode-bat #scene .scoreboardBig{top:22%!important;left:76%!important;width:17%!important;height:11%!important;font-size:9px!important}
+  #gameApp.v202-mode-bat #scene .light.l1{left:12%!important;top:12%!important}
+  #gameApp.v202-mode-bat #scene .light.l2{right:16%!important;top:12%!important}
+  #gameApp.v202-mode-bat #scene .outfield{
+    top:39%!important;
+    left:-8%!important;
+    right:-8%!important;
+    bottom:-30%!important;
+    clip-path:polygon(0 0,100% 0,88% 100%,12% 100%)!important;
+  }
+  #gameApp.v202-mode-bat #scene .infieldDirt{
+    top:77%!important;
+    width:min(108vw,1140px)!important;
+    height:min(88vw,770px)!important;
+    clip-path:polygon(47.3% 0,52.7% 0,92% 100%,8% 100%)!important;
+  }
+  #gameApp.v202-mode-bat #scene .infieldGrass{
+    top:74%!important;
+    width:min(80vw,850px)!important;
+    height:min(68vw,600px)!important;
+    clip-path:polygon(48.6% 0,51.4% 0,72% 100%,28% 100%)!important;
+  }
+  #gameApp.v202-mode-bat #scene .mound{
+    top:53%!important;
+    width:54px!important;
+    height:16px!important;
+    transform:translate(-50%,-50%) scale(.78)!important;
+  }
+  #gameApp.v202-mode-bat #scene .pitcher{
+    left:50%!important;
+    top:48.5%!important;
+    transform:translate(-50%,-50%) scale(.60)!important;
+    z-index:17!important;
+  }
+  #gameApp.v202-mode-bat #scene .fielder{opacity:.78!important;transform:translate(-50%,-50%) scale(.42)!important}
+  #gameApp.v202-mode-bat #scene .f-lf{left:28%!important;top:48%!important}
+  #gameApp.v202-mode-bat #scene .f-cf{left:50%!important;top:44%!important}
+  #gameApp.v202-mode-bat #scene .f-rf{left:79%!important;top:48%!important}
+  #gameApp.v202-mode-bat #scene .f-ss{left:40%!important;top:57%!important}
+  #gameApp.v202-mode-bat #scene .f-2b{left:61%!important;top:57%!important}
+  #gameApp.v202-mode-bat #scene .f-1b{left:77%!important;top:61%!important}
+  #gameApp.v202-mode-bat #scene .f-3b{left:24%!important;top:61%!important}
+
+  /* batter foreground: reference places the hitter very close to camera */
+  #gameApp.v202-mode-bat #scene .batter{
+    --bscale:1.22!important;
+    right:12%!important;
+    left:auto!important;
+    bottom:-8%!important;
+    transform-origin:50% 100%!important;
+    z-index:34!important;
+    filter:drop-shadow(0 12px 8px rgba(0,0,0,.42))!important;
+  }
+  #gameApp.v202-mode-bat #scene.bat-left .batter{
+    right:auto!important;
+    left:12%!important;
+    transform-origin:50% 100%!important;
+  }
+  #gameApp.v202-mode-bat #scene .bat{
+    right:13.5%!important;
+    left:auto!important;
+    bottom:22%!important;
+    height:160px!important;
+    z-index:35!important;
+  }
+  #gameApp.v202-mode-bat #scene.bat-left .bat{
+    right:auto!important;
+    left:13.5%!important;
+  }
+  #gameApp.v202-mode-bat #scene .catcher,
+  #gameApp.v202-mode-bat #scene .umpire{opacity:.10!important}
+
+  /* strike box is small and deep like the reference */
+  #gameApp.v202-mode-bat #scene .zone{
+    left:50%!important;
+    bottom:27%!important;
+    width:76px!important;
+    height:92px!important;
+    border:1px solid rgba(255,255,255,.58)!important;
+    background:rgba(255,255,255,.008)!important;
+    box-shadow:none!important;
+    z-index:30!important;
+  }
+  #gameApp.v202-mode-bat #scene .zone:before,
+  #gameApp.v202-mode-bat #scene .zone:after{opacity:.42!important}
+  #gameApp.v202-mode-bat #scene .aim{opacity:.72!important;width:24px!important;height:24px!important}
+
+  /* ===== bottom information rails ===== */
+  #gameApp.v202-mode-bat #scene .hud,
+  #gameApp.v202-mode-bat #scene .batterCard{
+    display:block!important;
+    top:auto!important;
+    bottom:5px!important;
+    height:44px!important;
+    max-width:none!important;
+    border:0!important;
+    border-radius:0!important;
+    background:linear-gradient(90deg,rgba(18,20,23,.82),rgba(18,20,23,.58))!important;
+    box-shadow:none!important;
+    backdrop-filter:blur(2px)!important;
+    color:#fff!important;
+    text-shadow:none!important;
+    z-index:80!important;
+  }
+  #gameApp.v202-mode-bat #scene .hud{
+    left:6%!important;
+    width:44%!important;
+    padding:5px 12px 4px!important;
+    text-align:left!important;
+    font-size:9px!important;
+    border-left:5px solid #8c4cae!important;
+  }
+  #gameApp.v202-mode-bat #scene .batterCard{
+    right:6%!important;
+    width:44%!important;
+    padding:5px 12px 4px!important;
+    text-align:right!important;
+    font-size:9px!important;
+    border-right:5px solid #f29b22!important;
+  }
+  #gameApp.v202-mode-bat #scene .hud #pitchInfo{font-size:11px!important;font-weight:950!important;color:#fff!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  #gameApp.v202-mode-bat #scene .hud .pitcherPill{font-size:9px!important;color:#ffc85f!important;margin-top:2px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  #gameApp.v202-mode-bat #scene .hud > div:last-child{display:none!important}
+  #gameApp.v202-mode-bat #scene .batterCard strong{display:inline!important;color:#fff!important;font-size:12px!important;margin-left:6px!important}
+  #gameApp.v202-mode-bat #scene .batterCard .real{display:block!important;color:#ffcc6c!important;font-size:9px!important;margin-top:2px!important}
+  #gameApp.v202-mode-bat #scene .batterCard .gameRating{display:inline!important;color:#ddd!important;font-size:8px!important}
+  #gameApp.v202-mode-bat #scene .batterCard #nextBatters{display:none!important}
+
+  /* result text no longer occupies the middle of the batting view */
+  #gameApp.v202-mode-bat #scene > .message{
+    top:10%!important;
+    width:45%!important;
+    z-index:82!important;
+    opacity:.94!important;
+  }
+  #gameApp.v202-mode-bat #scene > .message strong{font-size:20px!important;line-height:1!important}
+  #gameApp.v202-mode-bat #scene > .message span{font-size:10px!important;margin-top:2px!important}
+
+  /* intro strip resembles the pre-pitch lower-third from the reference */
+  #gameApp.v202-mode-bat #scene .intro{
+    left:50%!important;
+    bottom:5px!important;
+    width:min(70%,760px)!important;
+    min-height:48px!important;
+    grid-template-columns:52px 1fr auto!important;
+    padding:5px 9px!important;
+    border-radius:0!important;
+    border:0!important;
+    border-left:5px solid #f29b22!important;
+    background:linear-gradient(90deg,rgba(15,18,20,.90),rgba(15,18,20,.58))!important;
+    box-shadow:none!important;
+    z-index:89!important;
+  }
+  #gameApp.v202-mode-bat #scene .intro .avatar{height:36px!important;font-size:18px!important;border-radius:2px!important}
+  #gameApp.v202-mode-bat #scene .intro .name{font-size:13px!important}
+  #gameApp.v202-mode-bat #scene .intro .teamname{font-size:9px!important}
+  #gameApp.v202-mode-bat #scene .intro .idata{font-size:8px!important;gap:8px!important}
+  #gameApp.v202-mode-bat #scene .intro .idata b{font-size:12px!important}
+
+  /* ===== circular batting control ===== */
+  #gameApp.v202-mode-bat #swingBtn{
+    display:block!important;
+    right:5.2%!important;
+    top:56%!important;
+    width:82px!important;
+    height:82px!important;
+    min-height:82px!important;
+    padding:0!important;
+    border-radius:50%!important;
+    border:1px solid rgba(255,255,255,.20)!important;
+    background:radial-gradient(circle,rgba(61,50,37,.52),rgba(37,31,26,.26))!important;
+    color:rgba(255,255,255,.82)!important;
+    font-size:16px!important;
+    font-weight:900!important;
+    box-shadow:inset 0 0 0 5px rgba(255,255,255,.035),0 4px 12px rgba(0,0,0,.18)!important;
+    text-shadow:0 2px 5px rgba(0,0,0,.7)!important;
+  }
+  #gameApp.v202-mode-bat #swingBtn:disabled{opacity:.26!important}
+
+  /* existing batting timing bar: keep it faint and low like the reference */
+  #gameApp.v202-mode-bat #scene .v20-batbar{
+    left:50%!important;
+    right:auto!important;
+    bottom:52px!important;
+    width:min(34%,360px)!important;
+    transform:translateX(-50%)!important;
+    opacity:.48!important;
+    background:rgba(0,0,0,.08)!important;
+  }
+  #gameApp.v202-mode-bat #scene .v20-batbar button{font-size:8px!important;padding:3px 5px!important}
+
+  /* ===== pitching half keeps the same broadcast shell, with selector tucked beneath it ===== */
+  #gameApp.v202-mode-pitch #scene > .pitch-mode-panel{
+    top:70px!important;
+    left:auto!important;
+    right:8px!important;
+    width:min(62%,620px)!important;
+    border-radius:4px!important;
+    padding:4px 6px!important;
+    background:rgba(13,24,25,.76)!important;
+    border:1px solid rgba(255,255,255,.15)!important;
+    box-shadow:0 3px 10px rgba(0,0,0,.25)!important;
+    backdrop-filter:blur(5px)!important;
+  }
+  #gameApp.v202-mode-pitch #scene > .message{
+    top:72px!important;
+    left:8px!important;
+    transform:none!important;
+    width:30%!important;
+    text-align:left!important;
+    z-index:90!important;
+  }
+  #gameApp.v202-mode-pitch #scene > .message strong{font-size:17px!important}
+  #gameApp.v202-mode-pitch #scene > .message span{font-size:9px!important}
+  #gameApp.v202-mode-pitch #userPitchBtn{
+    display:block!important;
+    right:5.2%!important;
+    top:56%!important;
+    width:82px!important;
+    height:82px!important;
+    min-height:82px!important;
+    padding:0!important;
+    border-radius:50%!important;
+    border:1px solid rgba(255,255,255,.22)!important;
+    background:radial-gradient(circle,rgba(63,110,84,.68),rgba(30,68,50,.46))!important;
+    color:#fff!important;
+    font-size:15px!important;
+    box-shadow:inset 0 0 0 5px rgba(255,255,255,.04),0 4px 12px rgba(0,0,0,.18)!important;
+  }
+
+  /* hit camera occupies the full screen with no footer jump */
+  #gameApp #scene .hitCam{inset:0!important;z-index:105!important}
+}
+
+/* Portrait stays fully playable; show a subtle landscape hint rather than rotating touch coordinates. */
+@media (orientation:portrait){
+  #gameApp:not(.hidden):before{
+    content:'橫向螢幕可使用影片同款實戰視角';
+    position:absolute;
+    z-index:140;
+    left:50%;
+    top:calc(env(safe-area-inset-top) + 4px);
+    transform:translateX(-50%);
+    max-width:66%;
+    padding:3px 7px;
+    border-radius:999px;
+    background:rgba(0,0,0,.46);
+    color:rgba(255,255,255,.78);
+    font-size:9px;
+    white-space:nowrap;
+    pointer-events:none;
+  }
+}
