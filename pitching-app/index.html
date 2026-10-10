@@ -156,7 +156,7 @@
   </div>
 
   <div class="panel">
-    <div class="pitchTools"><span id="gameStatus" style="font-size:12px;color:#f7d888">第1局｜0出局｜0失分</span><span id="staminaStatus" style="font-size:12px;color:#aee4ff">體力 100%</span><button id="bullpenBtn" class="pitchSelect" type="button">🔄 牛棚換投</button><button id="stealBtn" class="pitchSelect" type="button">🏃 盜壘</button></div><div class="pitchTools"><select id="teamSelect" class="pitchSelect" aria-label="選擇球隊"></select><select id="pitcherSelect" class="pitchSelect" aria-label="選擇投手"></select></div><div id="pitcherInfo" style="font-size:12px;color:#c8e2fa;margin:0 0 9px 3px"></div><div class="pitchTools">
+    <div class="pitchTools"><label style="font-size:12px;color:#bcd5e8" for="opponentSelect">對戰球隊</label><select id="opponentSelect" class="pitchSelect" aria-label="對戰球隊"></select><span id="lineupLabel" style="font-size:11px;color:#9fbad3">模擬九棒打線</span></div><div class="pitchTools"><span id="gameStatus" style="font-size:12px;color:#f7d888">第1局｜0出局｜0失分</span><span id="staminaStatus" style="font-size:12px;color:#aee4ff">體力 100%</span><button id="bullpenBtn" class="pitchSelect" type="button">🔄 牛棚換投</button><button id="stealBtn" class="pitchSelect" type="button">🏃 盜壘</button></div><div class="pitchTools"><select id="teamSelect" class="pitchSelect" aria-label="選擇球隊"></select><select id="pitcherSelect" class="pitchSelect" aria-label="選擇投手"></select></div><div id="pitcherInfo" style="font-size:12px;color:#c8e2fa;margin:0 0 9px 3px"></div><div class="pitchTools">
       <select id="pitchCategory" class="pitchSelect" aria-label="球種分類">
         <option value="all">全部球種</option>
         <option value="fast">速球系</option>
@@ -325,6 +325,11 @@ let pitcherPitchCount=0, usedPitchers=new Set(), seasonGames=0, seasonRuns=0, li
 const batterLineup=[
 {name:'王博玄',avg:.322,power:.12},{name:'潘傑楷',avg:.306,power:.33},{name:'陳傑憲',avg:.331,power:.30},{name:'蘇智傑',avg:.277,power:.75},{name:'邱智呈',avg:.232,power:.32},{name:'陳重羽',avg:.306,power:.25},{name:'王威晨',avg:.285,power:.18},{name:'吉力吉撈・鞏冠',avg:.260,power:.92},{name:'江坤宇',avg:.275,power:.20}
 ];
+// 以下六隊打線為遊戲示範排列，非官方當日先發名單；能力為模擬數值。
+const teamLineups={"中信兄弟":["王威晨","江坤宇","岳政華","陳子豪","許基宏","詹子賢","張志豪","宋晟睿","高宇杰"],"統一7-ELEVEn獅":["邱智呈","陳傑憲","潘傑楷","蘇智傑","陳鏞基","林子豪","陳重羽","陳聖平","林培緯"],"樂天桃猿":["林立","成晉","林泓育","廖健富","梁家榮","林承飛","林政華","何品室融","張閔勛"],"富邦悍將":["王正棠","張育成","范國宸","申皓瑋","戴培峰","王念好","董子恩","孔念恩","葉子霆"],"味全龍":["吉力吉撈・鞏冠","郭天信","李凱威","劉基鴻","朱育賢","張政禹","曾聖安","林智勝","蔣少宏"],"台鋼雄鷹":["王博玄","陳文杰","魔鷹","曾子祐","吳念庭","杜家明","林家鋐","張肇元","顏郁軒"]};
+let opponentTeam=localStorage.getItem('pitchKingOpponent')||'統一7-ELEVEn獅';
+if(!teamLineups[opponentTeam])opponentTeam='統一7-ELEVEn獅';
+function activeLineup(){return teamLineups[opponentTeam].map((name,i)=>({name,avg:.225+(i%5)*.023,power:clamp(.18+((i*7+3)%9)*.083,.1,.92)}))}
 // 打擊率部分為2026公開比賽參考，未核實者為遊戲估值。
 const pitchArsenals={
 '黃子鵬':['sinker','slider','change','two','curve'],'曾峻岳':['four','slider','fork','cutter'],'布雷克':['four','slider','change','curve','cutter'],'蔣銲':['four','slider','change','fork'],'威能帝':['four','slider','change','curve'],'陳冠宇':['four','slider','curve','change'],'林凱威':['four','slider','fork','change'],'羅戈':['four','slider','change','curve'],'鋼龍':['four','slider','curve','change'],'梅賽鍶':['four','slider','change','cutter']
@@ -527,7 +532,7 @@ function classify(actual){
 }
 function updateDuelHud(){
   $('#duelHud').classList.toggle('hidden',gameMode!=='duel');refreshGameStatus();
-  $('#duelName').textContent=`第 ${inningNumber} 局｜${currentBatter.name}｜${difficultySettings[difficulty].label}`;
+  $('#duelName').textContent=`第 ${inningNumber} 局｜${opponentTeam}｜${currentBatter.name}｜${difficultySettings[difficulty].label}`;
   [0,1,2].forEach(i=>$('#base'+(i+1)).classList.toggle('on',bases[i]));
   $('#runCount').textContent=`本局失分 ${inningRuns}｜總失分 ${totalRuns}`;
   $('#baseStatus').textContent=bases.every(x=>x)?'滿壘':bases.some(Boolean)?[bases[0]?'一壘':'',bases[1]?'二壘':'',bases[2]?'三壘':''].filter(Boolean).join('、')+'有人':'無人上壘';
@@ -538,7 +543,7 @@ function updateDuelHud(){
 }
 function newBatter(){
   balls=0;strikesCount=0;recentPitchIds=[];
-  const player=batterLineup[lineupIndex%9], archetype=batterProfiles[lineupIndex%batterProfiles.length];currentBatter={...archetype,name:player.name,contact:clamp(archetype.contact+(player.avg-.275)*1.5,.45,.99),power:player.power};lineupIndex++;
+  const player=activeLineup()[lineupIndex%9], archetype=batterProfiles[lineupIndex%batterProfiles.length];currentBatter={...archetype,name:player.name,contact:clamp(archetype.contact+(player.avg-.275)*1.5,.45,.99),power:player.power};lineupIndex++;
   updateDuelHud();
 }
 function buzz(pattern){try{if(navigator.vibrate)navigator.vibrate(pattern)}catch(e){}}
@@ -702,6 +707,9 @@ function openSheet(type){
 }
 $('#difficultySelect').value=difficulty;
 $('#difficultySelect').onchange=e=>{difficulty=e.target.value;localStorage.setItem('pitchKingDifficulty',difficulty);if(gameMode==='duel'){newBatter();resultMain.textContent=`${difficultySettings[difficulty].label}難度`;resultSub.textContent='新難度從下一球開始生效';}};
+$('#opponentSelect').innerHTML=Object.keys(teamLineups).map(t=>`<option value="${t}">${t}</option>`).join('');
+$('#opponentSelect').value=opponentTeam;
+$('#opponentSelect').onchange=e=>{if(throwing||paLocked||fxBusy){e.target.value=opponentTeam;return}opponentTeam=e.target.value;localStorage.setItem('pitchKingOpponent',opponentTeam);lineupIndex=0;newBatter();resultMain.textContent='對戰球隊：'+opponentTeam;resultSub.textContent='已切換模擬九棒打線'};
 $('#bullpenBtn').onclick=()=>{if(throwing||paLocked)return;const options=pitcherRoster.filter(p=>p.team===chosenPitcher.team&&!usedPitchers.has(p.name)&&p.name!==chosenPitcher.name);if(!options.length){showToast('牛棚已無可用投手','bad');return}const names=options.map(p=>p.name).join('、');const name=prompt('輸入要換上的投手姓名：\n'+names);if(name)switchPitcher(name.trim())};
 $('#stealBtn').onclick=attemptSteal;
 $('#teamSelect').onchange=e=>{if(throwing||paLocked){$('#teamSelect').value=chosenPitcher.team;return;}chosenPitcher=pitcherRoster.find(p=>p.team===e.target.value);localStorage.setItem('pitchKingPitcher',chosenPitcher.name);renderPitcherSelect();};
