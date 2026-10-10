@@ -146,7 +146,7 @@
     <div class="aim" id="aim"></div>
     <div class="landingRing" id="landingRing"></div><div class="trail" id="trail"></div><div class="ballFlight" id="ballFlight"></div><div class="battedBall" id="battedBall"></div><div class="impactFlash" id="impactFlash"></div><div class="bigFx" id="bigFx"></div>
     <div class="toast" id="toast">STRIKE!</div>
-    <div class="duelHud" id="duelHud"><div class="duelName" id="duelName">AI 打者</div><div class="duelCount"><b id="ballCount">B 0</b><b id="strikeCount">S 0</b><span id="duelRecord">K 0 · BB 0</span></div></div>
+    <div class="duelHud" id="duelHud"><div class="duelName" id="duelName">AI 打者</div><div class="duelCount"><b id="ballCount">B 0</b><b id="strikeCount">S 0</b><span id="outCount">● ● ●  0 OUT</span><span id="duelRecord">K 0 · BB 0</span></div></div>
     <div class="resultCard">
       <div><div class="resultMain" id="resultMain">拖曳準星瞄準</div><div class="resultSub" id="resultSub">可滑到好球帶內外任意位置</div></div>
       <div class="velo" id="velo">— <small>km/h</small></div>
@@ -234,6 +234,8 @@ let state = JSON.parse(localStorage.getItem('pitchKingState') || '{"total":0,"st
 state.duel=Object.assign({ks:0,bb:0,hits:0,hr:0,pa:0},state.duel||{});
 let selected = pitches[0], target={x:.5,y:.5}, throwing=false, challenge=false, challengeRound=0, challengePoints=0, challengeTarget=4;
 let aiming=false, aimPointer=null, gameMode='duel', balls=0, strikesCount=0, paLocked=false, recentPitchIds=[], fxBusy=false;
+let inningOuts=0, inningNumber=1, inningHits=0, inningWalks=0, inningKs=0, inningPitches=0;
+function resetInning(){inningOuts=0;inningHits=0;inningWalks=0;inningKs=0;inningPitches=0;inningNumber++;newBatter();updateDuelHud();}
 const difficultySettings={
   normal:{label:'普通',swing:-.07,contact:-.18,hit:-.16,homeRun:.72,chase:.03},
   hard:{label:'困難',swing:0,contact:0,hit:0,homeRun:1,chase:0},
@@ -373,7 +375,8 @@ function classify(actual){
 }
 function updateDuelHud(){
   $('#duelHud').classList.toggle('hidden',gameMode!=='duel');
-  $('#duelName').textContent=`${currentBatter.name}｜${difficultySettings[difficulty].label}｜打席 ${state.duel.pa+1}`;
+  $('#duelName').textContent=`第 ${inningNumber} 局｜${currentBatter.name}｜${difficultySettings[difficulty].label}`;
+  $('#outCount').textContent=`${'🔴'.repeat(inningOuts)}${'⚪'.repeat(3-inningOuts)} ${inningOuts} OUT`;
   $('#ballCount').textContent=`B ${balls}`;
   $('#strikeCount').textContent=`S ${strikesCount}`;
   $('#duelRecord').textContent=`K ${state.duel.ks} · BB ${state.duel.bb} · H ${state.duel.hits} · HR ${state.duel.hr}`;
@@ -424,11 +427,22 @@ function animateBattedBall(kind,actual){
   requestAnimationFrame(frame);
 }
 function swingBatter(){const b=$('.batter');b.classList.remove('swing');void b.offsetWidth;b.classList.add('swing');setTimeout(()=>b.classList.remove('swing'),460)}
-function endPlateAppearance(title,sub,kind='good'){
+function endPlateAppearance(title,sub,kind='good',isOut=false){
+  if(isOut)inningOuts++;
+  if(title==='四壞保送')inningWalks++;
+  if(title==='安打'||title==='長打！'||title==='全壘打！')inningHits++;
+  if(title==='三振！')inningKs++;
   paLocked=true;state.duel.pa++;resultMain.textContent=title;resultSub.textContent=sub;showToast(title,kind);updateDuelHud();save();updateStats();
-  setTimeout(()=>{newBatter();paLocked=false;throwing=false;throwBtn.disabled=fxBusy;resultMain.textContent='下一位打者';resultSub.textContent='重新配球，試著製造三振';},1050);
+  setTimeout(()=>{
+    if(inningOuts>=3){
+      const summary=`第 ${inningNumber} 局結束｜${inningPitches} 球、${inningKs} K、${inningHits} 安、${inningWalks} 保送`;
+      showBigFx('3 OUT!','strikeout');resultMain.textContent='三出局！攻守交換';resultSub.textContent=summary;
+      setTimeout(()=>{resetInning();paLocked=false;throwing=false;throwBtn.disabled=fxBusy;resultMain.textContent=`第 ${inningNumber} 局開始`;resultSub.textContent='三出局後進入下一局';},3500);
+    }else{newBatter();paLocked=false;throwing=false;throwBtn.disabled=fxBusy;resultMain.textContent='下一位打者';resultSub.textContent=`目前 ${inningOuts} 出局，繼續投球`;}
+  },1050);
 }
 function handleDuelPitch(actual,r,speed){
+  inningPitches++;
   const outsideX=actual.x<0?-actual.x:actual.x>1?actual.x-1:0;
   const outsideY=actual.y<0?-actual.y:actual.y>1?actual.y-1:0;
   const outsideDist=Math.hypot(outsideX,outsideY);
@@ -468,12 +482,12 @@ function handleDuelPitch(actual,r,speed){
           endPlateAppearance(extra?'長打！':'安打',`${currentBatter.name} 把 ${selected.name} 打進場內`,'bad');return true;
         }
         animateBattedBall(Math.random()<.45?'ground':'out',actual);buzz(16);
-        endPlateAppearance('打者出局','球被打進場內但形成出局','good');return true
+        endPlateAppearance('打者出局','球被打進場內但形成出局','good',true);return true
       }
     }
   }
   updateDuelHud();
-  if(strikesCount>=3){state.duel.ks++;showBigFx('STRIKE OUT!','strikeout');impact('strikeout');buzz([55,35,95]);endPlateAppearance('三振！',`${selected.name} 解決 ${currentBatter.name}`,'good');return true}
+  if(strikesCount>=3){state.duel.ks++;showBigFx('STRIKE OUT!','strikeout');impact('strikeout');buzz([55,35,95]);endPlateAppearance('三振！',`${selected.name} 解決 ${currentBatter.name}`,'good',true);return true}
   if(balls>=4){state.duel.bb++;endPlateAppearance('四壞保送',`${currentBatter.name} 選到保送`,'bad');return true}
   return false;
 }
@@ -503,7 +517,7 @@ function setMode(mode){
   $('#difficultySelect').style.display=mode==='duel'?'':'none';
   if(throwing||paLocked)return;gameMode=mode;challenge=mode==='challenge';
   if(gameMode==='challenge'){challengeRound=0;challengePoints=0;challengeTarget=Math.floor(Math.random()*9);$('#modeLabel').textContent='10球控球挑戰';throwBtn.textContent='🎯 挑戰投球';resultMain.textContent='拖曳準星對準黃色目標';resultSub.textContent='10 球，可滑動微調到任意位置'}
-  else if(gameMode==='duel'){challenge=false;newBatter();$('#modeLabel').textContent='打者對決';throwBtn.textContent='⚾ 投球對決';resultMain.textContent='配球給打者';resultSub.textContent='AI 會依球路與球數決定是否揮棒'}
+  else if(gameMode==='duel'){challenge=false;inningNumber=1;inningOuts=0;inningHits=0;inningWalks=0;inningKs=0;inningPitches=0;newBatter();$('#modeLabel').textContent='打者對決';throwBtn.textContent='⚾ 投球對決';resultMain.textContent='配球給打者';resultSub.textContent='AI 會依球路與球數決定是否揮棒'}
   else{challenge=false;$('#modeLabel').textContent='自由投球';throwBtn.textContent='⚾ 投球';resultMain.textContent='拖曳準星瞄準';resultSub.textContent='可投好球帶內外任意位置'}
   updateChallengeMarker();updateDuelHud();updateStats();
 }
@@ -525,7 +539,7 @@ function openSheet(type){
     $('#sheetBody').innerHTML=h;
   }else{
     $('#sheetTitle').textContent='玩法';
-    $('#sheetBody').innerHTML=`<div class="help"><p><b>打者對決：</b>可選普通、困難、地獄三種難度。普通適合練習，困難接近強打者，地獄模式更容易被安打及全壘打。AI 打者會依球的位置、球速、變化量與目前 B/S 球數決定是否揮棒。三振、四壞、安打、全壘打與出局都會記錄；打中球時會看到球飛往場內、界外或飛出牆。如果一直重複同一球種，打者會更容易抓到。</p><p><b>自由投球：</b>選球種後拖曳藍色準星，可瞄準好球帶內外任意位置。</p><p><b>控球挑戰：</b>共 10 球，實際落點越接近黃色目標分數越高。</p><p><b>配球提示：</b>兩好球時可用變化球引誘；三壞球時要小心保送；速球與變化球交錯會比一直投同一球更有效。</p><p>目前收錄 45 種球路，紀錄只存在這支手機，不會上傳。</p></div>`;
+    $('#sheetBody').innerHTML=`<div class="help"><p><b>打者對決：</b>可選普通、困難、地獄三種難度，每局三出局後顯示局結算並自動進入下一局。普通適合練習，困難接近強打者，地獄模式更容易被安打及全壘打。AI 打者會依球的位置、球速、變化量與目前 B/S 球數決定是否揮棒。三振、四壞、安打、全壘打與出局都會記錄；打中球時會看到球飛往場內、界外或飛出牆。如果一直重複同一球種，打者會更容易抓到。</p><p><b>自由投球：</b>選球種後拖曳藍色準星，可瞄準好球帶內外任意位置。</p><p><b>控球挑戰：</b>共 10 球，實際落點越接近黃色目標分數越高。</p><p><b>配球提示：</b>兩好球時可用變化球引誘；三壞球時要小心保送；速球與變化球交錯會比一直投同一球更有效。</p><p>目前收錄 45 種球路，紀錄只存在這支手機，不會上傳。</p></div>`;
   }
 }
 $('#difficultySelect').value=difficulty;
