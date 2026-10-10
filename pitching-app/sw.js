@@ -1,4 +1,4 @@
-const CACHE='pitch-king-v1';
+const CACHE='pitch-king-v2';
 const CACHE_PREFIX='pitch-king-';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));

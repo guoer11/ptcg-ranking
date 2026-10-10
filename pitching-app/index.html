@@ -69,6 +69,9 @@
     .resultCard{position:absolute;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:15px;background:rgba(4,11,19,.78);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.10)}
     .resultMain{font-size:14px;font-weight:800}.resultSub{font-size:11px;color:#c8d3df;margin-top:2px}.velo{font-size:21px;font-weight:900;white-space:nowrap}.velo small{font-size:10px;color:var(--muted)}
     .panel{margin-top:11px;background:rgba(14,27,45,.86);border:1px solid var(--line);border-radius:20px;padding:12px}
+    .pitchTools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+    .pitchSelect{min-width:132px;border:1px solid var(--line);background:#122238;color:var(--text);border-radius:11px;padding:8px 10px;font-size:12px;font-weight:700}
+    #pitchCountLabel{font-size:10px;color:var(--muted);white-space:nowrap}
     .pitchRow{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}.pitchRow::-webkit-scrollbar{display:none}
     .pitch{flex:0 0 auto;border:1px solid var(--line);background:#122238;border-radius:13px;padding:9px 12px;min-width:82px;text-align:left}
     .pitch strong{display:block;font-size:13px}.pitch span{font-size:10px;color:var(--muted)}
@@ -117,6 +120,18 @@
   </div>
 
   <div class="panel">
+    <div class="pitchTools">
+      <select id="pitchCategory" class="pitchSelect" aria-label="球種分類">
+        <option value="all">全部球種</option>
+        <option value="fast">速球系</option>
+        <option value="slider">滑球系</option>
+        <option value="curve">曲球系</option>
+        <option value="change">變速球系</option>
+        <option value="drop">下墜系</option>
+        <option value="special">特殊／歷史球種</option>
+      </select>
+      <span id="pitchCountLabel">45 種球路</span>
+    </div>
     <div class="pitchRow" id="pitchRow"></div>
     <button class="throwBtn" id="throwBtn">⚾ 投球</button>
   </div>
@@ -135,12 +150,51 @@
 
 <script>
 const pitches = [
-  {id:'four',name:'四縫線',short:'4-Seam',base:145,sd:5,control:.90,breakX:0,breakY:-2},
-  {id:'two',name:'二縫線',short:'2-Seam',base:141,sd:5,control:.84,breakX:13,breakY:4},
-  {id:'slider',name:'滑球',short:'Slider',base:132,sd:5,control:.78,breakX:25,breakY:14},
-  {id:'curve',name:'曲球',short:'Curve',base:119,sd:6,control:.72,breakX:-12,breakY:35},
-  {id:'change',name:'變速球',short:'Change',base:126,sd:5,control:.82,breakX:10,breakY:18},
-  {id:'fork',name:'指叉球',short:'Fork',base:136,sd:6,control:.75,breakX:3,breakY:31},
+  {id:'four',cat:'fast',name:'四縫線速球',short:'4-Seam Fastball',base:148,sd:5,control:0.92,breakX:0,breakY:-5},
+  {id:'two',cat:'fast',name:'二縫線速球',short:'2-Seam Fastball',base:145,sd:5,control:0.87,breakX:14,breakY:5},
+  {id:'one',cat:'fast',name:'一縫線伸卡',short:'1-Seam Sinker',base:143,sd:5,control:0.80,breakX:17,breakY:13},
+  {id:'sinker',cat:'fast',name:'伸卡球',short:'Sinker',base:144,sd:5,control:0.84,breakX:18,breakY:16},
+  {id:'cutter',cat:'fast',name:'卡特球',short:'Cutter',base:140,sd:4,control:0.87,breakX:-12,breakY:3},
+  {id:'running',cat:'fast',name:'跑動速球',short:'Running Fastball',base:145,sd:5,control:0.82,breakX:19,breakY:3},
+  {id:'riding',cat:'fast',name:'上竄速球',short:'Riding Fastball',base:149,sd:5,control:0.84,breakX:-2,breakY:-13},
+  {id:'heavy',cat:'fast',name:'重球速球',short:'Heavy Fastball',base:146,sd:5,control:0.84,breakX:8,breakY:10},
+  {id:'slider',cat:'slider',name:'滑球',short:'Slider',base:134,sd:5,control:0.79,breakX:-24,breakY:14},
+  {id:'sweeper',cat:'slider',name:'橫掃滑球',short:'Sweeper',base:129,sd:5,control:0.72,breakX:-39,breakY:10},
+  {id:'gyroSlider',cat:'slider',name:'陀螺滑球',short:'Gyro Slider',base:133,sd:5,control:0.75,breakX:-8,breakY:23},
+  {id:'powerSlider',cat:'slider',name:'高速滑球',short:'Power Slider',base:138,sd:4,control:0.76,breakX:-19,breakY:11},
+  {id:'slurve',cat:'slider',name:'滑曲球',short:'Slurve',base:126,sd:5,control:0.73,breakX:-28,breakY:26},
+  {id:'frisbee',cat:'slider',name:'飛盤滑球',short:'Frisbee Slider',base:126,sd:5,control:0.68,breakX:-43,breakY:6},
+  {id:'curve',cat:'curve',name:'曲球',short:'Curveball',base:121,sd:6,control:0.75,breakX:-11,breakY:35},
+  {id:'twelveSix',cat:'curve',name:'12–6 曲球',short:'12–6 Curve',base:119,sd:6,control:0.71,breakX:0,breakY:43},
+  {id:'knuckleCurve',cat:'curve',name:'彈指曲球',short:'Knuckle Curve',base:124,sd:5,control:0.74,breakX:-9,breakY:38},
+  {id:'spikeCurve',cat:'curve',name:'Spike 曲球',short:'Spike Curve',base:123,sd:5,control:0.72,breakX:-8,breakY:40},
+  {id:'powerCurve',cat:'curve',name:'高速曲球',short:'Power Curve',base:128,sd:5,control:0.75,breakX:-10,breakY:31},
+  {id:'slowCurve',cat:'curve',name:'慢速曲球',short:'Slow Curve',base:108,sd:7,control:0.67,breakX:-14,breakY:46},
+  {id:'sweepCurve',cat:'curve',name:'橫掃曲球',short:'Sweeping Curve',base:117,sd:6,control:0.68,breakX:-28,breakY:33},
+  {id:'change',cat:'change',name:'變速球',short:'Changeup',base:128,sd:5,control:0.84,breakX:10,breakY:19},
+  {id:'straightChange',cat:'change',name:'直線變速球',short:'Straight Change',base:127,sd:5,control:0.86,breakX:3,breakY:18},
+  {id:'circle',cat:'change',name:'圈指變速球',short:'Circle Change',base:126,sd:5,control:0.82,breakX:18,breakY:23},
+  {id:'vulcan',cat:'change',name:'火神變速球',short:'Vulcan Change',base:125,sd:5,control:0.75,breakX:12,breakY:26},
+  {id:'palm',cat:'change',name:'掌心球',short:'Palmball',base:118,sd:6,control:0.73,breakX:7,breakY:27},
+  {id:'fosh',cat:'change',name:'Fosh 變速球',short:'Fosh Change',base:122,sd:6,control:0.70,breakX:5,breakY:31},
+  {id:'fade',cat:'change',name:'Fade 變速球',short:'Fade Change',base:126,sd:5,control:0.78,breakX:22,breakY:20},
+  {id:'splitChange',cat:'change',name:'分指變速球',short:'Split-Change',base:130,sd:5,control:0.73,breakX:4,breakY:32},
+  {id:'kickChange',cat:'change',name:'Kick Change',short:'Kick Change',base:124,sd:6,control:0.68,breakX:15,breakY:30},
+  {id:'splitter',cat:'drop',name:'快速指叉球',short:'Splitter / SFF',base:136,sd:5,control:0.77,breakX:3,breakY:34},
+  {id:'fork',cat:'drop',name:'指叉球',short:'Forkball',base:129,sd:6,control:0.69,breakX:2,breakY:43},
+  {id:'forkChange',cat:'drop',name:'指叉變速球',short:'Fork Change',base:124,sd:6,control:0.68,breakX:5,breakY:39},
+  {id:'dropCurve',cat:'drop',name:'下墜曲球',short:'Drop Curve',base:116,sd:6,control:0.67,breakX:-5,breakY:48},
+  {id:'splitSinker',cat:'drop',name:'分指伸卡球',short:'Split Sinker',base:134,sd:5,control:0.70,breakX:12,breakY:34},
+  {id:'knuckle',cat:'special',name:'蝴蝶球',short:'Knuckleball',base:108,sd:8,control:0.48,breakX:0,breakY:22},
+  {id:'knuckleChange',cat:'special',name:'彈指變速球',short:'Knuckle Change',base:121,sd:6,control:0.64,breakX:7,breakY:29},
+  {id:'screw',cat:'special',name:'螺旋球',short:'Screwball',base:123,sd:6,control:0.66,breakX:27,breakY:30},
+  {id:'shuuto',cat:'special',name:'噴射球',short:'Shuuto',base:137,sd:5,control:0.76,breakX:24,breakY:10},
+  {id:'gyro',cat:'special',name:'陀螺球',short:'Gyroball',base:138,sd:5,control:0.70,breakX:-3,breakY:18},
+  {id:'eephus',cat:'special',name:'小便球／超慢曲球',short:'Eephus',base:75,sd:7,control:0.62,breakX:2,breakY:52},
+  {id:'screwChange',cat:'special',name:'反向變速球',short:'Screw Change',base:119,sd:6,control:0.63,breakX:31,breakY:30},
+  {id:'spitball',cat:'special',name:'口水球（歷史禁用）',short:'Spitball · Historical',base:126,sd:7,control:0.58,breakX:18,breakY:31},
+  {id:'scuffball',cat:'special',name:'磨球（歷史禁用）',short:'Scuffball · Historical',base:124,sd:7,control:0.55,breakX:-27,breakY:27},
+  {id:'emory',cat:'special',name:'砂紙球（歷史禁用）',short:'Emery Ball · Historical',base:123,sd:7,control:0.54,breakX:23,breakY:35},
 ];
 let state = JSON.parse(localStorage.getItem('pitchKingState') || '{"total":0,"strikes":0,"veloSum":0,"best":0,"history":[]}');
 let selected = pitches[0], targetCell = 4, throwing=false, challenge=false, challengeRound=0, challengePoints=0, challengeTarget=4;
@@ -167,7 +221,21 @@ function updateChallengeMarker(){
 }
 function renderPitches(){
   pitchRow.innerHTML='';
-  pitches.forEach(p=>{let b=document.createElement('button');b.className='pitch'+(p.id===selected.id?' active':'');b.innerHTML=`<strong>${p.name}</strong><span>${p.short}</span>`;b.onclick=()=>{if(throwing)return;selected=p;renderPitches();resultSub.textContent=`${p.name}｜預估 ${p.base-5}–${p.base+5} km/h`};pitchRow.appendChild(b)})
+  const category = $('#pitchCategory') ? $('#pitchCategory').value : 'all';
+  const visible = category === 'all' ? pitches : pitches.filter(p=>p.cat===category);
+  if($('#pitchCountLabel')) $('#pitchCountLabel').textContent = `${visible.length} / ${pitches.length} 種球路`;
+  visible.forEach(p=>{
+    let b=document.createElement('button');
+    b.className='pitch'+(p.id===selected.id?' active':'');
+    b.innerHTML=`<strong>${p.name}</strong><span>${p.short}</span>`;
+    b.onclick=()=>{
+      if(throwing)return;
+      selected=p;
+      renderPitches();
+      resultSub.textContent=`${p.name}｜預估 ${p.base-p.sd}–${p.base+p.sd} km/h`;
+    };
+    pitchRow.appendChild(b);
+  });
 }
 function updateStats(){
   $('#pitchCount').textContent=state.total;
@@ -271,14 +339,14 @@ function openSheet(type){
     $('#sheetBody').innerHTML=h;
   }else{
     $('#sheetTitle').textContent='玩法';
-    $('#sheetBody').innerHTML=`<div class="help"><p><b>自由投球：</b>先選球種，再點九宮格決定想投的位置，按「投球」即可。不同球種的球速、控球與位移都不一樣。</p><p><b>控球挑戰：</b>每回合會出現黃色目標，共 10 球。實際落點越接近指定目標，分數越高。</p><p><b>小技巧：</b>四縫線最好控制；曲球與指叉球位移大，但更容易失投。</p><p>所有紀錄只存在這支手機的瀏覽器裡，不會上傳。</p></div>`;
+    $('#sheetBody').innerHTML=`<div class="help"><p><b>自由投球：</b>先選球種，再點九宮格決定想投的位置，按「投球」即可。目前收錄 45 種球路，包含速球、滑球、曲球、變速、下墜與特殊／歷史球種；不同球種的球速、控球與位移都不一樣。</p><p><b>控球挑戰：</b>每回合會出現黃色目標，共 10 球。實際落點越接近指定目標，分數越高。</p><p><b>小技巧：</b>四縫線最好控制；曲球與指叉球位移大，但更容易失投。</p><p>所有紀錄只存在這支手機的瀏覽器裡，不會上傳。</p></div>`;
   }
 }
 $('#modeBtn').onclick=toggleChallenge;throwBtn.onclick=pitch;
 $('#statsBtn').onclick=()=>openSheet('stats');$('#helpBtn').onclick=()=>openSheet('help');
 $('#closeSheet').onclick=()=>$('#sheet').classList.remove('open');$('#sheet').onclick=e=>{if(e.target.id==='sheet')$('#sheet').classList.remove('open')};
 $('#resetBtn').onclick=()=>{if(confirm('要清除全部投球紀錄嗎？')){state={total:0,strikes:0,veloSum:0,best:0,history:[]};save();updateStats();resultMain.textContent='紀錄已重設';resultSub.textContent='可以重新開始投球'}};
-renderZone();renderPitches();updateStats();
+if($('#pitchCategory')) $('#pitchCategory').onchange=renderPitches;renderZone();renderPitches();updateStats();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 </body>
