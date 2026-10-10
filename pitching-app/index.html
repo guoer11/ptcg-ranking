@@ -46,7 +46,19 @@
     .stage{position:relative;height:min(52vh,455px);min-height:355px;border-radius:24px;overflow:hidden;border:1px solid rgba(255,255,255,.09);box-shadow:0 18px 45px rgba(0,0,0,.32);touch-action:none;user-select:none;-webkit-user-select:none;background:
       radial-gradient(ellipse at 50% 18%,rgba(204,233,255,.22),transparent 35%),
       linear-gradient(180deg,#1d4b71 0 29%,#1f6a4e 29% 64%,#8b5b37 64% 100%)}
-    .stadiumLights{position:absolute;inset:0;background:
+    /* iPhone 緊湊版：選投手時球場保持可見，投球按鈕固定底部 */
+    @media(max-width:600px){
+      .app{padding:calc(env(safe-area-inset-top) + 5px) 9px calc(env(safe-area-inset-bottom) + 76px)}
+      .topbar{margin-bottom:5px}.logo{width:34px;height:34px}.scorebar{gap:4px;margin-bottom:6px}.score{padding:5px 3px;border-radius:10px}.score b{font-size:15px}.score span{font-size:9px}
+      .stage{height:clamp(265px,40dvh,355px);min-height:265px;border-radius:17px}
+      .duelHud.aboveField{padding:6px 9px;margin-bottom:5px}.baseBoard{margin-top:3px;padding-top:3px}.diamond{height:36px}
+      .pitcherQuickBar{display:flex;gap:6px;align-items:center;margin:5px 0;position:relative;z-index:20}
+      .pitcherQuickBar select{flex:1;min-width:0;max-width:50%;font-size:13px;padding:8px 4px}
+      .pitcherQuickBar #pitcherInfo{display:none}
+      .throwBtn{position:fixed!important;bottom:calc(env(safe-area-inset-bottom) + 5px);left:50%;transform:translateX(-50%);width:min(calc(100% - 18px),500px);z-index:90;box-shadow:0 0 0 5px #07101dee,0 6px 22px #0009;padding:12px!important}
+      .pitchTools{flex-wrap:wrap;justify-content:flex-start}.pitchTools button{font-size:12px}
+    }
+        .stadiumLights{position:absolute;inset:0;background:
       radial-gradient(circle at 10% 7%,#fff 0 1px,transparent 2px),
       radial-gradient(circle at 21% 7%,#fff 0 1px,transparent 2px),
       radial-gradient(circle at 79% 7%,#fff 0 1px,transparent 2px),
@@ -429,7 +441,17 @@ const batterProfiles=[
 let currentBatter=batterProfiles[Math.floor(Math.random()*batterProfiles.length)];
 
 const $ = s=>document.querySelector(s);
-const hudAbove=$('#duelHud');stagePlaceholder();
+const hudAbove=$('#duelHud');stagePlaceholder();setupCompactPitcherBar();
+function setupCompactPitcherBar(){
+ const field=document.querySelector('#stage'),team=document.querySelector('#teamSelect'),pitcher=document.querySelector('#pitcherSelect');
+ if(!field||!team||!pitcher)return;
+ const bar=document.createElement('div');bar.className='pitcherQuickBar';bar.setAttribute('aria-label','快速選擇投手');
+ field.parentNode.insertBefore(bar,document.querySelector('#duelHud')||field);
+ bar.append(team,pitcher);
+ const title=document.createElement('span');title.textContent='⚾';title.setAttribute('aria-hidden','true');bar.prepend(title);
+ const oldRow=document.querySelector('#pitcherInfo');if(oldRow)oldRow.style.marginTop='5px';
+}
+
 function stagePlaceholder(){const field=document.querySelector('#stage');if(field&&hudAbove){field.parentNode.insertBefore(hudAbove,field);hudAbove.classList.add('aboveField');}}
 const pitchRow=$('#pitchRow'), zone=$('#strikeZone'), aim=$('#aim'), stage=$('#stage'), ball=$('#ballFlight'), toast=$('#toast');
 const resultMain=$('#resultMain'), resultSub=$('#resultSub'), velo=$('#velo'), throwBtn=$('#throwBtn'), battedBall=$('#battedBall'), impactFlash=$('#impactFlash'), bigFx=$('#bigFx');
