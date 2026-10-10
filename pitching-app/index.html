@@ -35,6 +35,7 @@
     .modeBtn{border:1px solid var(--line);background:#122238;color:var(--text);border-radius:12px;padding:10px 11px;font-size:12px;font-weight:700;appearance:none;-webkit-appearance:none}
     .duelHud{position:absolute;left:12px;top:12px;z-index:18;padding:9px 11px;border-radius:14px;background:rgba(4,11,19,.76);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);min-width:150px}
     .baseBoard{display:flex;align-items:center;gap:9px;margin-top:7px;padding-top:6px;border-top:1px solid #ffffff22;font-size:11px;color:#e8eef7}.diamond{position:relative;width:51px;height:46px;flex-shrink:0}.base{position:absolute;width:13px;height:13px;transform:rotate(45deg);background:#536579;border:2px solid #bdc9d5;border-radius:2px}.base.on{background:#ffce48;border-color:#fff0a6;box-shadow:0 0 10px #f3b534}.base.first{right:3px;top:22px}.base.second{left:19px;top:3px}.base.third{left:3px;top:22px}.baseText{line-height:1.5;font-weight:700}
+    .duelHud.aboveField{position:relative;top:auto;left:auto;width:100%;box-sizing:border-box;margin:0 0 8px;z-index:1;padding:9px 12px;border-radius:16px;background:rgba(4,11,19,.88)}
     .duelHud.hidden{display:none}.duelName{font-size:11px;color:#c6d3e1}.duelCount{display:flex;align-items:center;gap:8px;margin-top:4px}.duelCount b{font-size:16px}.duelCount span{font-size:10px;color:var(--muted);margin-left:auto}
     .batter.swing{animation:batterSwing .42s cubic-bezier(.2,.8,.2,1)}
     @keyframes batterSwing{0%{transform:rotate(0) translateX(0)}34%{transform:rotate(-26deg) translateX(-11px) translateY(1px)}62%{transform:rotate(-10deg) translateX(-5px)}100%{transform:rotate(0) translateX(0)}}
@@ -357,6 +358,8 @@ const batterProfiles=[
 let currentBatter=batterProfiles[Math.floor(Math.random()*batterProfiles.length)];
 
 const $ = s=>document.querySelector(s);
+const hudAbove=$('#duelHud');stagePlaceholder();
+function stagePlaceholder(){const field=document.querySelector('#stage');if(field&&hudAbove){field.parentNode.insertBefore(hudAbove,field);hudAbove.classList.add('aboveField');}}
 const pitchRow=$('#pitchRow'), zone=$('#strikeZone'), aim=$('#aim'), stage=$('#stage'), ball=$('#ballFlight'), toast=$('#toast');
 const resultMain=$('#resultMain'), resultSub=$('#resultSub'), velo=$('#velo'), throwBtn=$('#throwBtn'), battedBall=$('#battedBall'), impactFlash=$('#impactFlash'), bigFx=$('#bigFx');
 
