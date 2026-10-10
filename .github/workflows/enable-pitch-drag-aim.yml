@@ -1,0 +1,40 @@
+name: Enable Pitch Drag Aim
+
+on:
+  push:
+    paths:
+      - '.github/workflows/enable-pitch-drag-aim.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Enable continuous drag aiming
+        run: python scripts/enable_pitch_drag_aim.py
+      - name: Validate HTML JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          text=Path('pitching-app/index.html').read_text(encoding='utf-8')
+          m=re.search(r'<script>([\s\S]*?)</script>',text)
+          assert m, 'script block missing'
+          Path('/tmp/pitch-app.js').write_text(m.group(1),encoding='utf-8')
+          assert 'targetCell' not in m.group(1), 'legacy targetCell remains'
+          assert 'pointermove' in m.group(1), 'drag handler missing'
+          assert "target={x:.5,y:.5}" in m.group(1), 'continuous target state missing'
+          PY
+          node --check /tmp/pitch-app.js
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pitching-app/index.html pitching-app/sw.js pitching-app/version.txt
+          if ! git diff --cached --quiet; then
+            git commit -m "feat: add free drag aiming to pitching app"
+            git push
+          fi
