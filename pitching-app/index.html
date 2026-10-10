@@ -36,7 +36,7 @@
     .scorebar{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px}
     .score{background:rgba(14,27,45,.88);border:1px solid var(--line);border-radius:14px;padding:9px 8px;text-align:center}
     .score b{display:block;font-size:17px}.score span{font-size:10px;color:var(--muted)}
-    .stage{position:relative;height:min(52vh,455px);min-height:355px;border-radius:24px;overflow:hidden;border:1px solid rgba(255,255,255,.09);box-shadow:0 18px 45px rgba(0,0,0,.32);background:
+    .stage{position:relative;height:min(52vh,455px);min-height:355px;border-radius:24px;overflow:hidden;border:1px solid rgba(255,255,255,.09);box-shadow:0 18px 45px rgba(0,0,0,.32);touch-action:none;user-select:none;-webkit-user-select:none;background:
       radial-gradient(ellipse at 50% 18%,rgba(204,233,255,.22),transparent 35%),
       linear-gradient(180deg,#1d4b71 0 29%,#1f6a4e 29% 64%,#8b5b37 64% 100%)}
     .stadiumLights{position:absolute;inset:0;background:
@@ -53,11 +53,11 @@
     .batter:before{content:"";position:absolute;left:5px;top:0;width:22px;height:22px;border-radius:50%;background:#101820}
     .batter:after{content:"";position:absolute;left:9px;top:18px;width:15px;height:54px;border-radius:10px;background:#101820;box-shadow:-10px 47px 0 -4px #101820,11px 47px 0 -4px #101820,20px 0 0 -6px #101820;transform:rotate(-5deg)}
     .strikeWrap{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:145px;height:190px}
-    .strikeZone{width:100%;height:100%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);border:2px solid rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(0,0,0,.25),0 0 24px rgba(255,255,255,.08)}
-    .cell{border:1px solid rgba(255,255,255,.32);background:rgba(4,13,22,.12);position:relative}
+    .strikeZone{width:100%;height:100%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);border:2px solid rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(0,0,0,.25),0 0 24px rgba(255,255,255,.08);pointer-events:none}
+    .cell{border:1px solid rgba(255,255,255,.32);background:rgba(4,13,22,.12);position:relative;pointer-events:none}
     .cell.active{background:rgba(74,179,255,.25);box-shadow:inset 0 0 0 2px var(--accent)}
     .cell.challenge:after{content:"";position:absolute;inset:10px;border-radius:50%;border:3px solid #ffd75a;background:rgba(255,215,90,.17);box-shadow:0 0 22px rgba(255,215,90,.36)}
-    .aim{position:absolute;width:28px;height:28px;border:2px solid #8ce2ff;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 0 5px rgba(74,179,255,.13),0 0 18px rgba(74,179,255,.45)}
+    .aim{position:absolute;width:30px;height:30px;border:2px solid #8ce2ff;border-radius:50%;left:50%;top:48%;transform:translate(-50%,-50%);pointer-events:none;z-index:12;box-shadow:0 0 0 6px rgba(74,179,255,.13),0 0 18px rgba(74,179,255,.55)}
     .aim:before,.aim:after{content:"";position:absolute;background:#8ce2ff;opacity:.8}
     .aim:before{width:2px;height:38px;left:11px;top:-7px}.aim:after{height:2px;width:38px;top:11px;left:-7px}
     .ballFlight{display:none;position:absolute;left:50%;bottom:10%;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.35);z-index:9}
@@ -109,12 +109,12 @@
     <div class="stadiumLights"></div><div class="grass"></div><div class="dirt"></div><div class="mound"></div><div class="rubber"></div><div class="plate"></div><div class="batter"></div>
     <div class="strikeWrap" id="strikeWrap">
       <div class="strikeZone" id="strikeZone"></div>
-      <div class="aim" id="aim"></div>
     </div>
+    <div class="aim" id="aim"></div>
     <div class="trail" id="trail"></div><div class="ballFlight" id="ballFlight"></div>
     <div class="toast" id="toast">STRIKE!</div>
     <div class="resultCard">
-      <div><div class="resultMain" id="resultMain">點選九宮格瞄準</div><div class="resultSub" id="resultSub">選球種後按「投球」</div></div>
+      <div><div class="resultMain" id="resultMain">拖曳準星瞄準</div><div class="resultSub" id="resultSub">可滑到好球帶內外任意位置</div></div>
       <div class="velo" id="velo">— <small>km/h</small></div>
     </div>
   </div>
@@ -197,7 +197,8 @@ const pitches = [
   {id:'emory',cat:'special',name:'砂紙球（歷史禁用）',short:'Emery Ball · Historical',base:123,sd:7,control:0.54,breakX:23,breakY:35},
 ];
 let state = JSON.parse(localStorage.getItem('pitchKingState') || '{"total":0,"strikes":0,"veloSum":0,"best":0,"history":[]}');
-let selected = pitches[0], targetCell = 4, throwing=false, challenge=false, challengeRound=0, challengePoints=0, challengeTarget=4;
+let selected = pitches[0], target={x:.5,y:.5}, throwing=false, challenge=false, challengeRound=0, challengePoints=0, challengeTarget=4;
+let aiming=false, aimPointer=null;
 
 const $ = s=>document.querySelector(s);
 const pitchRow=$('#pitchRow'), zone=$('#strikeZone'), aim=$('#aim'), stage=$('#stage'), ball=$('#ballFlight'), toast=$('#toast');
@@ -208,17 +209,57 @@ function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 function randn(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
 function cellCenter(i){return {x:(i%3+.5)/3,y:(Math.floor(i/3)+.5)/3}}
 function updateAim(){
-  const c=cellCenter(targetCell); aim.style.left=(c.x*100)+'%'; aim.style.top=(c.y*100)+'%';
-  document.querySelectorAll('.cell').forEach((el,i)=>el.classList.toggle('active',i===targetCell));
+  const p=targetPixel(target.x,target.y);
+  aim.style.left=p.x+'px';
+  aim.style.top=p.y+'px';
 }
 function renderZone(){
   zone.innerHTML='';
-  for(let i=0;i<9;i++){let c=document.createElement('button');c.className='cell';c.dataset.i=i;c.setAttribute('aria-label','瞄準第'+(i+1)+'格');c.onclick=()=>{if(!throwing){targetCell=i;updateAim();}};zone.appendChild(c)}
+  for(let i=0;i<9;i++){
+    const c=document.createElement('div');
+    c.className='cell';
+    c.dataset.i=i;
+    zone.appendChild(c);
+  }
   updateChallengeMarker(); updateAim();
 }
 function updateChallengeMarker(){
   document.querySelectorAll('.cell').forEach((el,i)=>el.classList.toggle('challenge',challenge&&i===challengeTarget));
 }
+function setTargetFromPointer(e){
+  const s=stage.getBoundingClientRect();
+  const z=$('#strikeWrap').getBoundingClientRect();
+  const resultRect=$('.resultCard').getBoundingClientRect();
+  const x=clamp(e.clientX,s.left+15,s.right-15);
+  const y=clamp(e.clientY,s.top+18,Math.min(s.bottom-86,resultRect.top-8));
+  target.x=(x-z.left)/z.width;
+  target.y=(y-z.top)/z.height;
+  updateAim();
+  resultMain.textContent=challenge?'拖曳準星對準黃色目標':'拖曳準星瞄準';
+  resultSub.textContent=challenge?'放開後按「挑戰投球」':'可投好球帶內外任意位置';
+}
+function beginAim(e){
+  if(throwing || (typeof e.button==='number' && e.button>0))return;
+  if(e.target.closest && e.target.closest('.resultCard'))return;
+  aiming=true;aimPointer=e.pointerId;
+  if(stage.setPointerCapture)stage.setPointerCapture(e.pointerId);
+  setTargetFromPointer(e);
+  e.preventDefault();
+}
+function moveAim(e){
+  if(!aiming || e.pointerId!==aimPointer || throwing)return;
+  setTargetFromPointer(e);
+  e.preventDefault();
+}
+function endAim(e){
+  if(e.pointerId!==aimPointer)return;
+  aiming=false;aimPointer=null;
+  if(stage.releasePointerCapture && stage.hasPointerCapture && stage.hasPointerCapture(e.pointerId))stage.releasePointerCapture(e.pointerId);
+}
+stage.addEventListener('pointerdown',beginAim);
+stage.addEventListener('pointermove',moveAim);
+stage.addEventListener('pointerup',endAim);
+stage.addEventListener('pointercancel',endAim);
 function renderPitches(){
   pitchRow.innerHTML='';
   const category = $('#pitchCategory') ? $('#pitchCategory').value : 'all';
@@ -251,9 +292,8 @@ function targetPixel(normX,normY){
   return {x:z.left-s.left+normX*z.width,y:z.top-s.top+normY*z.height};
 }
 function actualPitch(){
-  const c=cellCenter(targetCell);
   const spread=(1-selected.control)*.68 + .055;
-  let x=c.x+randn()*spread*.33, y=c.y+randn()*spread*.42;
+  let x=target.x+randn()*spread*.33, y=target.y+randn()*spread*.42;
   x+=selected.breakX/520; y+=selected.breakY/580;
   return {x,y};
 }
@@ -274,7 +314,7 @@ function animateBall(actual,done){
 }
 function classify(actual){
   const inside=actual.x>=0&&actual.x<=1&&actual.y>=0&&actual.y<=1;
-  const tc=cellCenter(targetCell), dist=Math.hypot(actual.x-tc.x,actual.y-tc.y);
+  const dist=Math.hypot(actual.x-target.x,actual.y-target.y);
   let label,kind;
   if(!inside){label='BALL';kind='bad'}
   else if(dist<.16){label='漂亮好球';kind='good'}
@@ -291,8 +331,10 @@ function pitch(){
     state.history.unshift({t:Date.now(),pitch:selected.name,speed,result:r.label});state.history=state.history.slice(0,40);
     if(challenge){
       challengeRound++;
-      const hit=(targetCell===challengeTarget && r.dist<.19);
-      const pts=hit?Math.max(50,Math.round(100-r.dist*260)):Math.max(0,Math.round(35-r.dist*80));
+      const goal=cellCenter(challengeTarget);
+      const goalDist=Math.hypot(actual.x-goal.x,actual.y-goal.y);
+      const hit=goalDist<.19;
+      const pts=hit?Math.max(50,Math.round(100-goalDist*260)):Math.max(0,Math.round(35-goalDist*80));
       challengePoints+=pts;
       resultMain.textContent=hit?`命中目標 +${pts}`:`偏掉了 +${pts}`;
       resultSub.textContent=`第 ${challengeRound}/10 球｜${r.label}`;
@@ -300,7 +342,7 @@ function pitch(){
       if(challengeRound>=10){
         setTimeout(()=>finishChallenge(),700);
       }else{
-        do{challengeTarget=Math.floor(Math.random()*9)}while(challengeTarget===targetCell&&Math.random()<.5);
+        const previous=challengeTarget;do{challengeTarget=Math.floor(Math.random()*9)}while(challengeTarget===previous);
         updateChallengeMarker();
       }
     } else {
@@ -317,8 +359,8 @@ function toggleChallenge(){
   $('#modeLabel').textContent=challenge?'10球控球挑戰':'自由投球';
   $('#modeBtn').textContent=challenge?'⚾ 自由投球':'🎯 控球挑戰';
   throwBtn.textContent=challenge?'🎯 挑戰投球':'⚾ 投球';
-  resultMain.textContent=challenge?'瞄準黃色目標':'點選九宮格瞄準';
-  resultSub.textContent=challenge?'10 球，越接近目標分數越高':'選球種後按「投球」';
+  resultMain.textContent=challenge?'拖曳準星對準黃色目標':'拖曳準星瞄準';
+  resultSub.textContent=challenge?'10 球，可滑動微調到任意位置':'可投好球帶內外任意位置';
   updateChallengeMarker();updateStats();
 }
 function finishChallenge(){
@@ -339,7 +381,7 @@ function openSheet(type){
     $('#sheetBody').innerHTML=h;
   }else{
     $('#sheetTitle').textContent='玩法';
-    $('#sheetBody').innerHTML=`<div class="help"><p><b>自由投球：</b>先選球種，再點九宮格決定想投的位置，按「投球」即可。目前收錄 45 種球路，包含速球、滑球、曲球、變速、下墜與特殊／歷史球種；不同球種的球速、控球與位移都不一樣。</p><p><b>控球挑戰：</b>每回合會出現黃色目標，共 10 球。實際落點越接近指定目標，分數越高。</p><p><b>小技巧：</b>四縫線最好控制；曲球與指叉球位移大，但更容易失投。</p><p>所有紀錄只存在這支手機的瀏覽器裡，不會上傳。</p></div>`;
+    $('#sheetBody').innerHTML=`<div class="help"><p><b>自由投球：</b>先選球種，直接在球場上按住並拖曳藍色準星，可瞄準好球帶內或外側任意位置，放開後按「投球」。目前收錄 45 種球路，包含速球、滑球、曲球、變速、下墜與特殊／歷史球種；不同球種的球速、控球與位移都不一樣。</p><p><b>控球挑戰：</b>每回合會出現黃色目標，共 10 球。實際落點越接近指定目標，分數越高。</p><p><b>小技巧：</b>四縫線最好控制；曲球與指叉球位移大，但更容易失投。</p><p>所有紀錄只存在這支手機的瀏覽器裡，不會上傳。</p></div>`;
   }
 }
 $('#modeBtn').onclick=toggleChallenge;throwBtn.onclick=pitch;
