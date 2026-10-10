@@ -322,7 +322,16 @@ let selected = pitches[0], target={x:.5,y:.5}, throwing=false, challenge=false, 
 let aiming=false, aimPointer=null, gameMode='duel', balls=0, strikesCount=0, paLocked=false, recentPitchIds=[], fxBusy=false;
 let inningOuts=0, inningNumber=1, inningHits=0, inningWalks=0, inningKs=0, inningPitches=0, inningRuns=0, totalRuns=0, bases=[false,false,false];
 let pitcherPitchCount=0, usedPitchers=new Set(), seasonGames=0, seasonRuns=0, lineupIndex=0;
-const batterLineup=['開路先鋒','選球高手','中心打者','重砲打者','安打製造機','長打型打者','速度型打者','守備型打者','第九棒打者'];
+const batterLineup=[
+{name:'王博玄',avg:.322,power:.12},{name:'潘傑楷',avg:.306,power:.33},{name:'陳傑憲',avg:.331,power:.30},{name:'蘇智傑',avg:.277,power:.75},{name:'邱智呈',avg:.232,power:.32},{name:'陳重羽',avg:.306,power:.25},{name:'王威晨',avg:.285,power:.18},{name:'吉力吉撈・鞏冠',avg:.260,power:.92},{name:'江坤宇',avg:.275,power:.20}
+];
+// 打擊率部分為2026公開比賽參考，未核實者為遊戲估值。
+const pitchArsenals={
+'黃子鵬':['sinker','slider','change','two','curve'],'曾峻岳':['four','slider','fork','cutter'],'布雷克':['four','slider','change','curve','cutter'],'蔣銲':['four','slider','change','fork'],'威能帝':['four','slider','change','curve'],'陳冠宇':['four','slider','curve','change'],'林凱威':['four','slider','fork','change'],'羅戈':['four','slider','change','curve'],'鋼龍':['four','slider','curve','change'],'梅賽鍶':['four','slider','change','cutter']
+};
+// 球種配置為遊戲模擬，未經官方逐人球種資料核對。
+function availablePitches(){const ids=pitchArsenals[chosenPitcher.name]||chosenPitcher.special;return pitches.filter(p=>ids.includes(p.id))}
+
 function stamina(){const limit=chosenPitcher.era!=null&&chosenPitcher.era<2.2?95:75;return clamp(Math.round(100-pitcherPitchCount/limit*100),0,100)}
 function refreshGameStatus(){
  const el=$('#gameStatus');if(!el)return;
@@ -342,7 +351,7 @@ function switchPitcher(name){
  const next=pitcherRoster.find(p=>p.name===name&&p.team===chosenPitcher.team);
  if(!next||next.name===chosenPitcher.name||usedPitchers.has(next.name))return;
  usedPitchers.add(chosenPitcher.name);chosenPitcher=next;pitcherPitchCount=0;
- localStorage.setItem('pitchKingPitcher',next.name);renderPitcherSelect();refreshGameStatus();
+ localStorage.setItem('pitchKingPitcher',next.name);renderPitcherSelect();renderPitches();refreshGameStatus();
  resultMain.textContent='牛棚換投';resultSub.textContent=`換上 ${next.name}，體力恢復 100%`;
 }
 function attemptSteal(){
@@ -454,10 +463,10 @@ stage.addEventListener('pointermove',moveAim);
 stage.addEventListener('pointerup',endAim);
 stage.addEventListener('pointercancel',endAim);
 function renderPitches(){
-  pitchRow.innerHTML='';
+  pitchRow.innerHTML='';if(!availablePitches().some(p=>p.id===selected.id))selected=availablePitches()[0]||pitches[0];
   const category = $('#pitchCategory') ? $('#pitchCategory').value : 'all';
-  const visible = category === 'all' ? pitches : pitches.filter(p=>p.cat===category);
-  if($('#pitchCountLabel')) $('#pitchCountLabel').textContent = `${visible.length} / ${pitches.length} 種球路`;
+  const allowed=availablePitches();const visible = category === 'all' ? allowed : allowed.filter(p=>p.cat===category);
+  if($('#pitchCountLabel')) $('#pitchCountLabel').textContent = `${visible.length} / ${allowed.length} 種可用球路`;
   visible.forEach(p=>{
     let b=document.createElement('button');
     b.className='pitch'+(p.id===selected.id?' active':'');
@@ -529,7 +538,7 @@ function updateDuelHud(){
 }
 function newBatter(){
   balls=0;strikesCount=0;recentPitchIds=[];
-  currentBatter={...batterProfiles[lineupIndex%batterProfiles.length],name:batterLineup[lineupIndex%9]};lineupIndex++;
+  const player=batterLineup[lineupIndex%9], archetype=batterProfiles[lineupIndex%batterProfiles.length];currentBatter={...archetype,name:player.name,contact:clamp(archetype.contact+(player.avg-.275)*1.5,.45,.99),power:player.power};lineupIndex++;
   updateDuelHud();
 }
 function buzz(pattern){try{if(navigator.vibrate)navigator.vibrate(pattern)}catch(e){}}
@@ -628,7 +637,9 @@ function handleDuelPitch(actual,r,speed){
           showBigFx(extra?'EXTRA BASE!':'BASE HIT','hit');animateBattedBall(extra?'double':'hit',actual);buzz(34);
           endPlateAppearance(extra?'長打！':'安打',`${currentBatter.name} 把 ${selected.name} 打進場內${scored?'，攻下 '+scored+' 分':''}`,'bad');return true;
         }
-        animateBattedBall(Math.random()<.45?'ground':'out',actual);buzz(16);
+        const ground=Math.random()<.58;animateBattedBall(ground?'ground':'out',actual);buzz(16);
+        if(ground&&bases[0]&&inningOuts<2&&Math.random()<.43){bases[0]=false;inningOuts+=2;endPlateAppearance('雙殺打！','內野滾地球形成雙殺','good',false);return true}
+        if(!ground&&bases[2]&&inningOuts<2&&Math.random()<.32){bases[2]=false;inningRuns++;totalRuns++;endPlateAppearance('高飛犧牲打','三壘跑者回本壘得分','bad',true);return true}
         endPlateAppearance('打者出局','球被打進場內但形成出局','good',true);return true
       }
     }
@@ -694,7 +705,7 @@ $('#difficultySelect').onchange=e=>{difficulty=e.target.value;localStorage.setIt
 $('#bullpenBtn').onclick=()=>{if(throwing||paLocked)return;const options=pitcherRoster.filter(p=>p.team===chosenPitcher.team&&!usedPitchers.has(p.name)&&p.name!==chosenPitcher.name);if(!options.length){showToast('牛棚已無可用投手','bad');return}const names=options.map(p=>p.name).join('、');const name=prompt('輸入要換上的投手姓名：\n'+names);if(name)switchPitcher(name.trim())};
 $('#stealBtn').onclick=attemptSteal;
 $('#teamSelect').onchange=e=>{if(throwing||paLocked){$('#teamSelect').value=chosenPitcher.team;return;}chosenPitcher=pitcherRoster.find(p=>p.team===e.target.value);localStorage.setItem('pitchKingPitcher',chosenPitcher.name);renderPitcherSelect();};
-$('#pitcherSelect').onchange=e=>{if(throwing||paLocked){$('#pitcherSelect').value=chosenPitcher.name;return;}chosenPitcher=pitcherRoster.find(p=>p.name===e.target.value);localStorage.setItem('pitchKingPitcher',chosenPitcher.name);renderPitcherSelect();pitcherPitchCount=0;refreshGameStatus();resultSub.textContent='已換投：'+chosenPitcher.name;};
+$('#pitcherSelect').onchange=e=>{if(throwing||paLocked){$('#pitcherSelect').value=chosenPitcher.name;return;}chosenPitcher=pitcherRoster.find(p=>p.name===e.target.value);localStorage.setItem('pitchKingPitcher',chosenPitcher.name);renderPitcherSelect();renderPitches();pitcherPitchCount=0;refreshGameStatus();resultSub.textContent='已換投：'+chosenPitcher.name;};
 renderPitcherSelect();
 $('#modeSelect').onchange=e=>setMode(e.target.value);throwBtn.onclick=pitch;
 $('#statsBtn').onclick=()=>openSheet('stats');$('#helpBtn').onclick=()=>openSheet('help');
