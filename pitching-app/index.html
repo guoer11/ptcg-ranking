@@ -35,8 +35,8 @@
     .modeBtn{border:1px solid var(--line);background:#122238;color:var(--text);border-radius:12px;padding:10px 11px;font-size:12px;font-weight:700;appearance:none;-webkit-appearance:none}
     .duelHud{position:absolute;left:12px;top:12px;z-index:18;padding:9px 11px;border-radius:14px;background:rgba(4,11,19,.76);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);min-width:150px}
     .duelHud.hidden{display:none}.duelName{font-size:11px;color:#c6d3e1}.duelCount{display:flex;align-items:center;gap:8px;margin-top:4px}.duelCount b{font-size:16px}.duelCount span{font-size:10px;color:var(--muted);margin-left:auto}
-    .batter.swing{animation:batterSwing .36s ease-out}
-    @keyframes batterSwing{0%{transform:rotate(0) translateX(0)}45%{transform:rotate(-15deg) translateX(-6px)}100%{transform:rotate(0) translateX(0)}}
+    .batter.swing{animation:batterSwing .42s cubic-bezier(.2,.8,.2,1)}
+    @keyframes batterSwing{0%{transform:rotate(0) translateX(0)}34%{transform:rotate(-26deg) translateX(-11px) translateY(1px)}62%{transform:rotate(-10deg) translateX(-5px)}100%{transform:rotate(0) translateX(0)}}
     .scorebar{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px}
     .score{background:rgba(14,27,45,.88);border:1px solid var(--line);border-radius:14px;padding:9px 8px;text-align:center}
     .score b{display:block;font-size:17px}.score span{font-size:10px;color:var(--muted)}
@@ -70,6 +70,15 @@
     .trail{display:none;position:absolute;width:4px;height:70px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.0),rgba(140,226,255,.55));transform-origin:bottom center;z-index:8}
     .toast{position:absolute;left:50%;top:16%;transform:translateX(-50%) scale(.95);min-width:150px;text-align:center;padding:10px 15px;border-radius:999px;background:rgba(5,12,21,.83);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.14);font-weight:800;opacity:0;transition:.2s;z-index:20;pointer-events:none}
     .toast.show{opacity:1;transform:translateX(-50%) scale(1)}
+    .battedBall{display:none;position:absolute;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.2),0 2px 8px rgba(0,0,0,.38),0 0 12px rgba(255,255,255,.8);z-index:24;pointer-events:none}
+    .battedBall:before,.battedBall:after{content:"";position:absolute;top:2px;width:3px;height:9px;border:1px solid #d34a4a;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%}.battedBall:before{left:2px}.battedBall:after{right:2px}
+    .impactFlash{position:absolute;inset:0;opacity:0;pointer-events:none;z-index:21;background:radial-gradient(circle at 58% 48%,rgba(255,255,255,.95) 0 2%,rgba(255,215,90,.46) 3% 10%,transparent 28%)}
+    .impactFlash.show{animation:impactFlash .32s ease-out}.impactFlash.homer{background:radial-gradient(circle at 58% 48%,rgba(255,255,255,1) 0 2%,rgba(255,130,50,.62) 3% 12%,transparent 34%)}
+    @keyframes impactFlash{0%{opacity:0}20%{opacity:1}100%{opacity:0}}
+    .bigFx{position:absolute;left:50%;top:22%;transform:translate(-50%,-50%) scale(.72);opacity:0;z-index:26;pointer-events:none;white-space:nowrap;font-size:30px;font-weight:1000;letter-spacing:.04em;text-shadow:0 4px 14px rgba(0,0,0,.65)}
+    .bigFx.show{animation:bigFxPop .9s cubic-bezier(.18,.85,.2,1)}.bigFx.strikeout{color:#9ce9ff}.bigFx.homer{color:#ffd76a;font-size:34px}.bigFx.hit{color:#9df5b9}.bigFx.foul{color:#fff}
+    @keyframes bigFxPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.55)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-58%) scale(1.03)}}
+    .stage.fxShake{animation:stageShake .28s ease-out}@keyframes stageShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-2px)}}
     .resultCard{position:absolute;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:15px;background:rgba(4,11,19,.78);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.10)}
     .resultMain{font-size:14px;font-weight:800}.resultSub{font-size:11px;color:#c8d3df;margin-top:2px}.velo{font-size:21px;font-weight:900;white-space:nowrap}.velo small{font-size:10px;color:var(--muted)}
     .panel{margin-top:11px;background:rgba(14,27,45,.86);border:1px solid var(--line);border-radius:20px;padding:12px}
@@ -115,7 +124,7 @@
       <div class="strikeZone" id="strikeZone"></div>
     </div>
     <div class="aim" id="aim"></div>
-    <div class="trail" id="trail"></div><div class="ballFlight" id="ballFlight"></div>
+    <div class="trail" id="trail"></div><div class="ballFlight" id="ballFlight"></div><div class="battedBall" id="battedBall"></div><div class="impactFlash" id="impactFlash"></div><div class="bigFx" id="bigFx"></div>
     <div class="toast" id="toast">STRIKE!</div>
     <div class="duelHud" id="duelHud"><div class="duelName" id="duelName">AI 打者</div><div class="duelCount"><b id="ballCount">B 0</b><b id="strikeCount">S 0</b><span id="duelRecord">K 0 · BB 0</span></div></div>
     <div class="resultCard">
@@ -202,9 +211,9 @@ const pitches = [
   {id:'emory',cat:'special',name:'砂紙球（歷史禁用）',short:'Emery Ball · Historical',base:123,sd:7,control:0.54,breakX:23,breakY:35},
 ];
 let state = JSON.parse(localStorage.getItem('pitchKingState') || '{"total":0,"strikes":0,"veloSum":0,"best":0,"history":[]}');
-state.duel=Object.assign({ks:0,bb:0,hits:0,pa:0},state.duel||{});
+state.duel=Object.assign({ks:0,bb:0,hits:0,hr:0,pa:0},state.duel||{});
 let selected = pitches[0], target={x:.5,y:.5}, throwing=false, challenge=false, challengeRound=0, challengePoints=0, challengeTarget=4;
-let aiming=false, aimPointer=null, gameMode='duel', balls=0, strikesCount=0, paLocked=false, recentPitchIds=[];
+let aiming=false, aimPointer=null, gameMode='duel', balls=0, strikesCount=0, paLocked=false, recentPitchIds=[], fxBusy=false;
 const batterProfiles=[
   {name:'選球型打者',zoneSwing:.58,chase:.14,contact:.80,power:.30},
   {name:'強打者',zoneSwing:.80,chase:.31,contact:.67,power:.76},
@@ -215,7 +224,7 @@ let currentBatter=batterProfiles[Math.floor(Math.random()*batterProfiles.length)
 
 const $ = s=>document.querySelector(s);
 const pitchRow=$('#pitchRow'), zone=$('#strikeZone'), aim=$('#aim'), stage=$('#stage'), ball=$('#ballFlight'), toast=$('#toast');
-const resultMain=$('#resultMain'), resultSub=$('#resultSub'), velo=$('#velo'), throwBtn=$('#throwBtn');
+const resultMain=$('#resultMain'), resultSub=$('#resultSub'), velo=$('#velo'), throwBtn=$('#throwBtn'), battedBall=$('#battedBall'), impactFlash=$('#impactFlash'), bigFx=$('#bigFx');
 
 function save(){localStorage.setItem('pitchKingState',JSON.stringify(state));}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
@@ -339,17 +348,52 @@ function updateDuelHud(){
   $('#duelName').textContent=`${currentBatter.name}｜打席 ${state.duel.pa+1}`;
   $('#ballCount').textContent=`B ${balls}`;
   $('#strikeCount').textContent=`S ${strikesCount}`;
-  $('#duelRecord').textContent=`K ${state.duel.ks} · BB ${state.duel.bb} · H ${state.duel.hits}`;
+  $('#duelRecord').textContent=`K ${state.duel.ks} · BB ${state.duel.bb} · H ${state.duel.hits} · HR ${state.duel.hr}`;
 }
 function newBatter(){
   balls=0;strikesCount=0;recentPitchIds=[];
   currentBatter=batterProfiles[Math.floor(Math.random()*batterProfiles.length)];
   updateDuelHud();
 }
-function swingBatter(){const b=$('.batter');b.classList.remove('swing');void b.offsetWidth;b.classList.add('swing');setTimeout(()=>b.classList.remove('swing'),420)}
+function buzz(pattern){try{if(navigator.vibrate)navigator.vibrate(pattern)}catch(e){}}
+function impact(kind='hit'){
+  impactFlash.className='impactFlash';
+  stage.classList.remove('fxShake');
+  void impactFlash.offsetWidth;
+  impactFlash.classList.add('show');
+  if(kind==='homer')impactFlash.classList.add('homer');
+  void stage.offsetWidth;stage.classList.add('fxShake');
+  setTimeout(()=>stage.classList.remove('fxShake'),320);
+}
+function showBigFx(text,kind=''){
+  bigFx.textContent=text;bigFx.className='bigFx';void bigFx.offsetWidth;
+  bigFx.classList.add('show');if(kind)bigFx.classList.add(kind);
+}
+function animateBattedBall(kind,actual){
+  fxBusy=true;throwBtn.disabled=true;
+  const rect=stage.getBoundingClientRect(),start=targetPixel(actual.x,actual.y),side=Math.random()<.5?-1:1;
+  let end={x:rect.width*.5,y:rect.height*.32},ctrl={x:rect.width*.5,y:rect.height*.12},dur=720;
+  if(kind==='foul'){end={x:side<0?-28:rect.width+28,y:rect.height*(.34+Math.random()*.20)};ctrl={x:rect.width*(side<0?.18:.82),y:rect.height*.16};dur=560}
+  else if(kind==='ground'){end={x:rect.width*(.36+Math.random()*.28),y:rect.height*.57};ctrl={x:rect.width*.5,y:rect.height*.47};dur=520}
+  else if(kind==='out'){end={x:rect.width*(.28+Math.random()*.44),y:rect.height*(.24+Math.random()*.13)};ctrl={x:rect.width*(.34+Math.random()*.32),y:rect.height*.07};dur=720}
+  else if(kind==='double'){end={x:rect.width*(.20+Math.random()*.60),y:rect.height*.14};ctrl={x:rect.width*(.26+Math.random()*.48),y:-12};dur=820}
+  else if(kind==='homer'){end={x:rect.width*(.12+Math.random()*.76),y:-38};ctrl={x:rect.width*(.20+Math.random()*.60),y:-70};dur=980}
+  else{end={x:rect.width*(.24+Math.random()*.52),y:rect.height*.29};ctrl={x:rect.width*(.30+Math.random()*.40),y:rect.height*.03};dur=700}
+  battedBall.style.display='block';battedBall.style.left=(start.x-6.5)+'px';battedBall.style.top=(start.y-6.5)+'px';battedBall.style.transform='scale(1)';
+  impact(kind);const t0=performance.now();
+  function frame(now){
+    const t=clamp((now-t0)/dur,0,1),q=1-t;
+    const x=q*q*start.x+2*q*t*ctrl.x+t*t*end.x,y=q*q*start.y+2*q*t*ctrl.y+t*t*end.y;
+    const scale=kind==='homer'?1-t*.58:1-t*.38;
+    battedBall.style.left=(x-6.5)+'px';battedBall.style.top=(y-6.5)+'px';battedBall.style.transform=`scale(${Math.max(.34,scale)}) rotate(${t*720}deg)`;
+    if(t<1)requestAnimationFrame(frame);else{setTimeout(()=>{battedBall.style.display='none';fxBusy=false;if(!throwing&&!paLocked)throwBtn.disabled=false;},80)}
+  }
+  requestAnimationFrame(frame);
+}
+function swingBatter(){const b=$('.batter');b.classList.remove('swing');void b.offsetWidth;b.classList.add('swing');setTimeout(()=>b.classList.remove('swing'),460)}
 function endPlateAppearance(title,sub,kind='good'){
   paLocked=true;state.duel.pa++;resultMain.textContent=title;resultSub.textContent=sub;showToast(title,kind);updateDuelHud();save();updateStats();
-  setTimeout(()=>{newBatter();paLocked=false;throwing=false;throwBtn.disabled=false;resultMain.textContent='下一位打者';resultSub.textContent='重新配球，試著製造三振';},900);
+  setTimeout(()=>{newBatter();paLocked=false;throwing=false;throwBtn.disabled=fxBusy;resultMain.textContent='下一位打者';resultSub.textContent='重新配球，試著製造三振';},1050);
 }
 function handleDuelPitch(actual,r,speed){
   const outsideX=actual.x<0?-actual.x:actual.x>1?actual.x-1:0;
@@ -371,24 +415,36 @@ function handleDuelPitch(actual,r,speed){
     let contactProb=currentBatter.contact-breakDifficulty-veloDifficulty+(repeatCount*.07);
     if(!r.inside)contactProb-=.20+outsideDist*.35;
     contactProb=clamp(contactProb,.12,.94);
-    if(Math.random()>contactProb){strikesCount++;resultMain.textContent='揮棒落空！';resultSub.textContent=`${selected.name} 騙到打者`;showToast('SWING & MISS','good')}
+    if(Math.random()>contactProb){strikesCount++;resultMain.textContent='揮棒落空！';resultSub.textContent=`${selected.name} 騙到打者`;showToast('SWING & MISS','good');buzz(22)}
     else{
       const poor=(!r.inside)||r.dist>.22||Math.random()>.72;
-      if(poor||Math.random()<.38){if(strikesCount<2)strikesCount++;resultMain.textContent='界外球';resultSub.textContent='打者碰到球，但沒有打好';showToast('FOUL')}
+      if(poor||Math.random()<.38){if(strikesCount<2)strikesCount++;resultMain.textContent='界外球';resultSub.textContent='打者碰到球，但沒有打好';showToast('FOUL');showBigFx('FOUL','foul');animateBattedBall('foul',actual);buzz(18)}
       else{
         const hitChance=clamp(.24+currentBatter.power*.18-(r.dist<.12?.08:0),.16,.48);
-        if(Math.random()<hitChance){state.duel.hits++;const extra=Math.random()<currentBatter.power*.22;endPlateAppearance(extra?'長打！':'安打',`${currentBatter.name} 把 ${selected.name} 打進場內`,'bad');return true}
+        if(Math.random()<hitChance){
+          state.duel.hits++;
+          const centerDist=Math.hypot(actual.x-.5,actual.y-.5);
+          const hrChance=clamp(.015+Math.max(0,currentBatter.power-.42)*.20+(centerDist<.42?.035:0)+(speed>145?.018:0),.01,.17);
+          if(Math.random()<hrChance){
+            state.duel.hr++;showBigFx('HOME RUN!','homer');animateBattedBall('homer',actual);buzz([35,30,70,35,110]);
+            endPlateAppearance('全壘打！',`${currentBatter.name} 把 ${selected.name} 轟出牆`,'bad');return true;
+          }
+          const extra=Math.random()<currentBatter.power*.24;
+          showBigFx(extra?'EXTRA BASE!':'BASE HIT','hit');animateBattedBall(extra?'double':'hit',actual);buzz(34);
+          endPlateAppearance(extra?'長打！':'安打',`${currentBatter.name} 把 ${selected.name} 打進場內`,'bad');return true;
+        }
+        animateBattedBall(Math.random()<.45?'ground':'out',actual);buzz(16);
         endPlateAppearance('打者出局','球被打進場內但形成出局','good');return true
       }
     }
   }
   updateDuelHud();
-  if(strikesCount>=3){state.duel.ks++;endPlateAppearance('三振！',`${selected.name} 解決 ${currentBatter.name}`,'good');return true}
+  if(strikesCount>=3){state.duel.ks++;showBigFx('STRIKE OUT!','strikeout');impact('strikeout');buzz([55,35,95]);endPlateAppearance('三振！',`${selected.name} 解決 ${currentBatter.name}`,'good');return true}
   if(balls>=4){state.duel.bb++;endPlateAppearance('四壞保送',`${currentBatter.name} 選到保送`,'bad');return true}
   return false;
 }
 function pitch(){
-  if(throwing||paLocked)return;throwing=true;throwBtn.disabled=true;
+  if(throwing||paLocked||fxBusy)return;throwing=true;throwBtn.disabled=true;
   const actual=actualPitch(), speed=Math.max(70,Math.round(selected.base+randn()*selected.sd));
   velo.innerHTML=`${speed} <small>km/h</small>`;resultMain.textContent='投球中…';resultSub.textContent=selected.name;
   animateBall(actual,()=>{
@@ -406,7 +462,7 @@ function pitch(){
     }else{
       resultMain.textContent=r.label;resultSub.textContent=`${selected.name}｜落點誤差 ${Math.round(r.dist*100)}%`;showToast(r.label,r.kind);state.history.unshift({t:Date.now(),pitch:selected.name,speed,result:r.label});state.history=state.history.slice(0,40);
     }
-    save();updateStats();throwing=false;throwBtn.disabled=false;
+    save();updateStats();throwing=false;throwBtn.disabled=fxBusy;
   })
 }
 function setMode(mode){
@@ -428,19 +484,19 @@ function openSheet(type){
   if(type==='stats'){
     $('#sheetTitle').textContent='投球紀錄';
     const pct=state.total?Math.round(state.strikes/state.total*100):0, avg=state.total?Math.round(state.veloSum/state.total):0;
-    let h=`<div class="statsGrid"><div class="statBox"><b>${state.total}</b><span>累計投球</span></div><div class="statBox"><b>${pct}%</b><span>好球率</span></div><div class="statBox"><b>${avg||'—'}</b><span>平均球速 km/h</span></div><div class="statBox"><b>${state.best||'—'}</b><span>最快球速 km/h</span></div><div class="statBox"><b>${state.duel.ks}</b><span>對決三振</span></div><div class="statBox"><b>${state.duel.bb}</b><span>四壞保送</span></div><div class="statBox"><b>${state.duel.hits}</b><span>被敲安打</span></div><div class="statBox"><b>${state.duel.pa}</b><span>完成打席</span></div></div>`;
+    let h=`<div class="statsGrid"><div class="statBox"><b>${state.total}</b><span>累計投球</span></div><div class="statBox"><b>${pct}%</b><span>好球率</span></div><div class="statBox"><b>${avg||'—'}</b><span>平均球速 km/h</span></div><div class="statBox"><b>${state.best||'—'}</b><span>最快球速 km/h</span></div><div class="statBox"><b>${state.duel.ks}</b><span>對決三振</span></div><div class="statBox"><b>${state.duel.bb}</b><span>四壞保送</span></div><div class="statBox"><b>${state.duel.hits}</b><span>被敲安打</span></div><div class="statBox"><b>${state.duel.hr}</b><span>被轟全壘打</span></div><div class="statBox"><b>${state.duel.pa}</b><span>完成打席</span></div></div>`;
     h+=`<div style="margin-top:15px;font-size:12px;color:#91a3b8">最近投球</div>`;
     h+=state.history.length?state.history.slice(0,12).map(x=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px"><span>${x.pitch}・${x.result}</span><b>${x.speed} km/h</b></div>`).join(''):`<p class="help">還沒有紀錄，先投幾球吧。</p>`;
     $('#sheetBody').innerHTML=h;
   }else{
     $('#sheetTitle').textContent='玩法';
-    $('#sheetBody').innerHTML=`<div class="help"><p><b>打者對決：</b>AI 打者會依球的位置、球速、變化量與目前 B/S 球數決定是否揮棒。三振、四壞、安打與出局都會記錄；如果一直重複同一球種，打者會更容易抓到。</p><p><b>自由投球：</b>選球種後拖曳藍色準星，可瞄準好球帶內外任意位置。</p><p><b>控球挑戰：</b>共 10 球，實際落點越接近黃色目標分數越高。</p><p><b>配球提示：</b>兩好球時可用變化球引誘；三壞球時要小心保送；速球與變化球交錯會比一直投同一球更有效。</p><p>目前收錄 45 種球路，紀錄只存在這支手機，不會上傳。</p></div>`;
+    $('#sheetBody').innerHTML=`<div class="help"><p><b>打者對決：</b>AI 打者會依球的位置、球速、變化量與目前 B/S 球數決定是否揮棒。三振、四壞、安打、全壘打與出局都會記錄；打中球時會看到球飛往場內、界外或飛出牆。如果一直重複同一球種，打者會更容易抓到。</p><p><b>自由投球：</b>選球種後拖曳藍色準星，可瞄準好球帶內外任意位置。</p><p><b>控球挑戰：</b>共 10 球，實際落點越接近黃色目標分數越高。</p><p><b>配球提示：</b>兩好球時可用變化球引誘；三壞球時要小心保送；速球與變化球交錯會比一直投同一球更有效。</p><p>目前收錄 45 種球路，紀錄只存在這支手機，不會上傳。</p></div>`;
   }
 }
 $('#modeSelect').onchange=e=>setMode(e.target.value);throwBtn.onclick=pitch;
 $('#statsBtn').onclick=()=>openSheet('stats');$('#helpBtn').onclick=()=>openSheet('help');
 $('#closeSheet').onclick=()=>$('#sheet').classList.remove('open');$('#sheet').onclick=e=>{if(e.target.id==='sheet')$('#sheet').classList.remove('open')};
-$('#resetBtn').onclick=()=>{if(confirm('要清除全部投球紀錄嗎？')){state={total:0,strikes:0,veloSum:0,best:0,history:[],duel:{ks:0,bb:0,hits:0,pa:0}};balls=0;strikesCount=0;save();updateStats();updateDuelHud();resultMain.textContent='紀錄已重設';resultSub.textContent='可以重新開始投球'}};
+$('#resetBtn').onclick=()=>{if(confirm('要清除全部投球紀錄嗎？')){state={total:0,strikes:0,veloSum:0,best:0,history:[],duel:{ks:0,bb:0,hits:0,hr:0,pa:0}};balls=0;strikesCount=0;save();updateStats();updateDuelHud();resultMain.textContent='紀錄已重設';resultSub.textContent='可以重新開始投球'}};
 if($('#pitchCategory')) $('#pitchCategory').onchange=renderPitches;renderZone();renderPitches();setMode('duel');updateStats();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>

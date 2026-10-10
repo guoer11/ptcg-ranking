@@ -1,1 +1,1 @@
-Pitch King v3 - batter duel AI
+Pitch King v4 - batted ball flight, HR and strikeout FX
