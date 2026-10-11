@@ -2,6 +2,18 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-10-12T00:03:50+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-10-12T00:03:50+08:00",
+      "summary": "狀態變更 1 場",
+      "details": [
+        "狀態｜#69000｜2026-10-26｜拉比卡牌｜臺北市｜active → unavailable"
+      ],
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "tournaments-2026-10-11T23:38:33+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -40,16 +52,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "tournaments-2026-10-11T04:05:26+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-10-11T04:05:26+08:00",
-      "summary": "例行檢查完成；賽事可見內容無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }
