@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-10T04:50:35+08:00",
+  "updated_at": "2026-10-14T00:05:38+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -3288,14 +3288,6 @@
       },
       {
         "rank": 372,
-        "name": "Hypno_Sammu",
-        "player_id": "tw25488947",
-        "region": "臺中市",
-        "points": 4,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw25488947/"
-      },
-      {
-        "rank": 372,
         "name": "JKR",
         "player_id": "tw89941209",
         "region": "臺北市",
@@ -3429,6 +3421,14 @@
         "region": "新竹市",
         "points": 4,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw99888650/"
+      },
+      {
+        "rank": 372,
+        "name": "Leafia",
+        "player_id": "tw25488947",
+        "region": "臺北市",
+        "points": 4,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw25488947/"
       },
       {
         "rank": 372,
@@ -14730,14 +14730,6 @@
       },
       {
         "rank": 92,
-        "name": "987654321",
-        "player_id": "tw79702513",
-        "region": "新竹縣",
-        "points": 4,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw79702513/"
-      },
-      {
-        "rank": 92,
         "name": "Alan",
         "player_id": "tw18197442",
         "region": "臺北市",
@@ -14863,6 +14855,14 @@
         "region": "彰化縣",
         "points": 4,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw42891021/"
+      },
+      {
+        "rank": 92,
+        "name": "Wayne",
+        "player_id": "tw79702513",
+        "region": "臺中市",
+        "points": 4,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw79702513/"
       },
       {
         "rank": 92,
