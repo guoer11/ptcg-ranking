@@ -12,6 +12,7 @@ on:
     paths:
       - "scraper.py"
       - "update_log.py"
+      - "ensure_ranking_update_log.py"
       - "scrape_identity.py"
       - "scrape_identity_preflight.py"
       - "merge_te_identity.py"
@@ -75,7 +76,9 @@ jobs:
         run: python scraper.py
 
       - name: Build ranking update log
-        run: python update_log.py ranking
+        run: |
+          python update_log.py ranking
+          python ensure_ranking_update_log.py
 
       - name: Commit data changes
         id: commit
