@@ -2,6 +2,18 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-10-15T04:13:46+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-10-15T04:13:46+08:00",
+      "summary": "狀態變更 1 場",
+      "details": [
+        "狀態｜#69000｜2026-10-26｜拉比卡牌｜臺北市｜unavailable → removed"
+      ],
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
+    },
+    {
       "id": "tournaments-2026-10-15T00:04:23+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -57,16 +69,6 @@
         "新增官方成績｜#68813｜2026-10-11｜B ONE桌遊｜高雄市｜32 筆"
       ],
       "notified": true,
-      "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "tournaments-2026-10-14T12:03:59+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-10-14T12:03:59+08:00",
-      "summary": "例行檢查完成；賽事可見內容無變動",
-      "details": [],
-      "notified": false,
       "trigger_source": "主排程（Supabase）"
     }
   ]
