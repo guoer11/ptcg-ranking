@@ -80,6 +80,14 @@
           font-size: 10px;
           letter-spacing: -0.15px;
         }
+        .player-nickname.player-nickname-mobile-block {
+          flex: 0 0 100%;
+          width: 100%;
+          margin-top: 1px;
+          font-size: 12px;
+          line-height: 1.2;
+          white-space: nowrap;
+        }
         .player-id-line {
           gap: 5px;
           margin-top: 3px;
@@ -126,9 +134,10 @@
         && nickname.toLowerCase() !== playerId.toLowerCase()
       );
       const nicknameIsLatin = /[A-Za-z]/.test(nickname);
+      const nicknameLength = Array.from(nickname).length;
       const nicknameClass = nicknameIsLatin
-        ? ` player-nickname-latin${Array.from(nickname).length >= 13 ? ' player-nickname-long' : ''}`
-        : '';
+        ? ` player-nickname-latin${nicknameLength >= 13 ? ' player-nickname-long' : ''}`
+        : (nicknameLength >= 8 ? ' player-nickname-mobile-block' : '');
       const history = typeof priorSeasonFor === 'function' ? priorSeasonFor(row.player_id) : null;
       const worldsIcon = history?.worlds_2026 && typeof worldsIconHtml === 'function'
         ? `<span class="wcs-id-icon">${worldsIconHtml()}</span>`
