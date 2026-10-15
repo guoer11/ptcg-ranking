@@ -60,6 +60,11 @@ jobs:
           cp data/pairing-odds-3000442*.json _site/data/
           cp data/ranking.json _site/data/ranking.json
           cp data/ranking_history.json _site/data/ranking_history.json
+          if [ -f data/season_2025_26.json ]; then
+            cp data/season_2025_26.json _site/data/season_2025_26.json
+          else
+            printf '%s\n' '{"season":"2025-26","updated_at":null,"players":{}}' > _site/data/season_2025_26.json
+          fi
           cp data/tournaments.json _site/data/tournaments.json
           cp data/update_log_ranking.json _site/data/update_log_ranking.json
           cp data/update_log_tournaments.json _site/data/update_log_tournaments.json
