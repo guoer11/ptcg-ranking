@@ -71,10 +71,28 @@
       @media (max-width: 620px) {
         .account-app-version-badge { padding: 5px 8px; font-size: 10px; }
         .ranking-table td:nth-child(2) {
+          min-width: 0;
+          overflow: hidden;
+        }
+        .player-name-line.player-name-combined {
+          width: 100%;
+          max-width: 100%;
           overflow: hidden;
         }
         .player-name-primary {
           font-size: inherit;
+          max-width: 100%;
+        }
+        .player-name-primary.player-primary-mobile-wrap {
+          display: block;
+          flex: 0 0 100%;
+          width: 100%;
+          max-width: 100%;
+          white-space: normal;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+          font-size: 13px;
+          line-height: 1.18;
         }
         .player-nickname.player-nickname-latin {
           font-size: 11px;
@@ -91,14 +109,17 @@
           max-width: 100%;
           margin-top: 1px;
           font-size: 11px;
-          line-height: 1.2;
-          letter-spacing: -0.15px;
-          white-space: nowrap;
-          overflow: hidden;
+          line-height: 1.18;
+          letter-spacing: -0.1px;
+          white-space: normal;
+          overflow-wrap: anywhere;
+          word-break: break-word;
         }
         .player-id-line {
           gap: 5px;
           margin-top: 3px;
+          max-width: 100%;
+          overflow: hidden;
         }
         .player-id-line .wcs-id-icon .wcs-player-icon {
           width: 19px;
@@ -143,6 +164,8 @@
       );
       const nicknameIsLatin = /[A-Za-z]/.test(nickname);
       const nicknameLength = Array.from(nickname).length;
+      const primaryLength = Array.from(primaryName).length;
+      const primaryClass = !realName && primaryLength >= 8 ? ' player-primary-mobile-wrap' : '';
       const nicknameClass = nicknameIsLatin
         ? ` player-nickname-latin${nicknameLength >= 13 ? ' player-nickname-long' : ''}`
         : (nicknameLength >= 8 ? ' player-nickname-mobile-block' : '');
@@ -153,7 +176,7 @@
 
       return `
         <div class="player-name-line player-name-combined">
-          <strong class="player-name-primary">${esc(primaryName)}</strong>${hasNickname ? `<span class="player-nickname${nicknameClass}">(${esc(nickname)})</span>` : ''}
+          <strong class="player-name-primary${primaryClass}">${esc(primaryName)}</strong>${hasNickname ? `<span class="player-nickname${nicknameClass}">(${esc(nickname)})</span>` : ''}
         </div>
         ${playerId ? `<div class="player-id-line"><span class="hint row-id">${esc(playerId)}</span>${worldsIcon}</div>` : ''}`;
     };
