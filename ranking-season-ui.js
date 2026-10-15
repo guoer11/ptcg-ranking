@@ -284,3 +284,109 @@ async function loadRankingHistory() {
 seasonWorldSlotsLabel();
 updateSummary();
 loadRankingHistory();
+
+
+// v2.1.0: IvanPTCG 2025-26 history + WCS 2026 badges.
+let priorSeasonHistoryData = { season: '2025-26', players: {} };
+let priorSeasonHistoryPromise = null;
+
+function priorSeasonFor(playerId) {
+  if (!playerId) return null;
+  return priorSeasonHistoryData?.players?.[String(playerId).trim().toLowerCase()] || null;
+}
+
+function worldsIconHtml(label = '2025-2026 世界賽選手') {
+  return `<span class="wcs-player-icon" title="${esc(label)}" aria-label="${esc(label)}" role="img">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M3.5 12h17M12 3c2.5 2.4 3.8 5.4 3.8 9S14.5 18.6 12 21M12 3C9.5 5.4 8.2 8.4 8.2 12S9.5 18.6 12 21"></path>
+    </svg>
+  </span>`;
+}
+
+playerNameHtml = function playerNameHtmlV210(row) {
+  const identity = identityFor(row.player_id);
+  const realName = identity?.real_name;
+  const displayName = String(row.name || row.player_id || '—');
+  const nameLength = Array.from(displayName).length;
+  const sizeClass = nameLength >= 13 ? ' player-name-xlong' : (nameLength >= 8 ? ' player-name-long' : '');
+  const history = priorSeasonFor(row.player_id);
+  return `
+    <div class="player-name-line">
+      <strong class="player-name${sizeClass}">${esc(displayName)}</strong>
+      ${history?.worlds_2026 ? worldsIconHtml() : ''}
+    </div>
+    ${realName ? `<div class="player-real-name">${esc(realName)}</div>` : ''}
+    ${row.player_id ? `<div class="hint row-id">${esc(row.player_id)}</div>` : ''}`;
+};
+
+function priorSeasonDetailHtml(playerId) {
+  const history = priorSeasonFor(playerId);
+  if (!history) return '';
+  const rank = Number(history.rank);
+  const points = Number(history.points);
+  const rankText = Number.isFinite(rank) && rank > 0 ? `第 ${rank} 名` : '—';
+  const pointsText = Number.isFinite(points) ? `${points} pt` : '—';
+  return `
+    <section class="prior-season-card">
+      <div class="prior-season-head">
+        <div><span>2025-2026 賽季</span><strong>上季成績</strong></div>
+        ${history.worlds_2026 ? `<div class="prior-worlds-label">${worldsIconHtml()}<span>2025-2026 世界賽選手</span></div>` : ''}
+      </div>
+      <div class="prior-season-grid">
+        <article><strong>${esc(history.league || '—')}</strong><span>組別</span></article>
+        <article><strong>${esc(rankText)}</strong><span>最終排名</span></article>
+        <article><strong>${esc(pointsText)}</strong><span>積分</span></article>
+      </div>
+      <small class="prior-season-source">歷史資料來源：IvanPTCG 公開排名資料</small>
+    </section>`;
+}
+
+function injectPriorSeasonDetail(playerId) {
+  if (!modalBody || !playerId) return;
+  modalBody.querySelector('.prior-season-card')?.remove();
+  const html = priorSeasonDetailHtml(playerId);
+  if (!html) return;
+  const trend = modalBody.querySelector('.ranking-trend-card');
+  if (trend) {
+    trend.insertAdjacentHTML('afterend', html);
+    return;
+  }
+  const stats = modalBody.querySelector('.player-stat-grid');
+  if (stats) stats.insertAdjacentHTML('afterend', html);
+  else modalBody.insertAdjacentHTML('afterbegin', html);
+}
+
+async function loadPriorSeasonHistory() {
+  try {
+    const response = await fetch(`data/season_2025_26.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) return priorSeasonHistoryData;
+    const data = await response.json();
+    if (data?.players && typeof data.players === 'object') priorSeasonHistoryData = data;
+  } catch (error) {
+    console.warn('2025-26 歷史排名資料載入失敗', error);
+  }
+  return priorSeasonHistoryData;
+}
+
+function ensurePriorSeasonHistory() {
+  if (!priorSeasonHistoryPromise) priorSeasonHistoryPromise = loadPriorSeasonHistory();
+  return priorSeasonHistoryPromise;
+}
+
+const baseOpenPlayerModalV210 = openPlayerModal;
+openPlayerModal = async function openPlayerModalV210(playerId) {
+  await Promise.all([baseOpenPlayerModalV210(playerId), ensurePriorSeasonHistory()]);
+  injectPriorSeasonDetail(playerId);
+};
+
+const baseOpenDemoPlayerModalV210 = openDemoPlayerModal;
+openDemoPlayerModal = function openDemoPlayerModalV210(demoKey) {
+  baseOpenDemoPlayerModalV210(demoKey);
+  const row = DEMO_ROWS.find(item => item.demo_key === demoKey);
+  if (row) ensurePriorSeasonHistory().then(() => injectPriorSeasonDetail(row.player_id));
+};
+
+ensurePriorSeasonHistory().then(() => {
+  if (Object.values(rankingData?.groups || {}).some(rows => rows?.length)) renderRanking();
+});
