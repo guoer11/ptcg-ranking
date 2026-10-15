@@ -1,0 +1,99 @@
+name: Probe Ivan 2025-26
+
+on:
+  push:
+    branches:
+      - probe-ivan-2025-26
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Probe Ivan endpoints
+        shell: python
+        run: |
+          import json, re, sys
+          from urllib.parse import urljoin, urlparse
+          import requests
+
+          BASE = 'https://ptcg.bcb.idv.tw'
+          PAGE = BASE + '/TE'
+          HEADERS = {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/151 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/json,text/plain,*/*',
+              'Referer': PAGE,
+          }
+          s = requests.Session(); s.headers.update(HEADERS)
+
+          def get(url, **kwargs):
+              r = s.get(url, timeout=60, **kwargs)
+              print('\nGET', r.url, '->', r.status_code, r.headers.get('content-type'), 'len', len(r.content))
+              r.raise_for_status()
+              return r
+
+          html = get(PAGE).text
+          print('HTML first 1000 chars:\n', html[:1000])
+
+          for needle in ['2025-26','玩家排名','世界賽','SearchPlayers','ranking','Rank','World']:
+              print('\n=== HTML snippets for', needle, '===')
+              for m in list(re.finditer(re.escape(needle), html, re.I))[:10]:
+                  a=max(0,m.start()-220); b=min(len(html),m.end()+420)
+                  print(html[a:b].replace('\n',' ')[:900])
+
+          scripts = re.findall(r'<script[^>]+src=[\"\']([^\"\']+)', html, re.I)
+          print('\nSCRIPTS', scripts)
+          script_texts=[]
+          for src in scripts:
+              u=urljoin(PAGE,src)
+              try:
+                  t=get(u).text
+                  script_texts.append((u,t))
+              except Exception as e:
+                  print('script fetch failed',u,repr(e))
+
+          combined = html + '\n' + '\n'.join(t for _,t in script_texts)
+          print('\n=== candidate /TE endpoints in page+scripts ===')
+          paths = sorted(set(re.findall(r'[\"\']((?:https?://ptcg\.bcb\.idv\.tw)?/TE/[A-Za-z0-9_./?=&%{}$:-]+)[\"\']', combined, re.I)))
+          for p in paths:
+              print(p)
+
+          print('\n=== fetch/axios snippets ===')
+          for pat in [r'fetch\s*\([^\n]{0,300}', r'axios\.[a-z]+\s*\([^\n]{0,300}', r'\$\.ajax\s*\([^\n]{0,500}', r'url\s*:\s*[\"\'][^\"\']+[\"\']']:
+              for m in re.finditer(pat, combined, re.I):
+                  txt=m.group(0)
+                  if 'TE' in txt or 'Rank' in txt or 'World' in txt or 'player' in txt.lower():
+                      print(txt[:700])
+
+          sp = get(BASE + '/TE/SearchPlayers', params={'keyword':'tw'}).json()
+          print('\nSearchPlayers top keys:', list(sp) if isinstance(sp,dict) else type(sp).__name__)
+          rows=(sp.get('players') or []) if isinstance(sp,dict) else []
+          print('SearchPlayers row count:',len(rows))
+          if rows:
+              print('SearchPlayers first row keys:', sorted(rows[0].keys()))
+              print('SearchPlayers first row sample:', json.dumps(rows[0], ensure_ascii=False))
+          wanted={'tw22756831','tw37208259'}
+          for row in rows:
+              pid=str(row.get('twpid','')).lower()
+              if pid in wanted:
+                  print('WANTED SearchPlayers', pid, json.dumps(row, ensure_ascii=False))
+
+          # Probe likely ranking endpoints inferred from naming conventions.
+          guesses = [
+              '/TE/Ranking','/TE/Rank','/TE/GetRanking','/TE/GetRankings','/TE/PlayerRanking',
+              '/TE/Rankings','/TE/SearchRanking','/TE/GetPlayerRanking','/TE/GetPlayersRanking',
+              '/TE/RankingData','/TE/GetRankingData','/TE/Worlds','/TE/WorldRanking'
+          ]
+          print('\n=== guessed endpoint probes ===')
+          for p in guesses:
+              try:
+                  r=s.get(BASE+p,timeout=20,allow_redirects=False)
+                  ct=r.headers.get('content-type','')
+                  preview=r.text[:500].replace('\n',' ')
+                  print(p,'->',r.status_code,ct,'len',len(r.content),'preview',preview)
+              except Exception as e:
+                  print(p,'-> ERROR',repr(e))
