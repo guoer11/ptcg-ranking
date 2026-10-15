@@ -114,9 +114,9 @@
 }
 .league-tab.active { background: #17233a; color: #fff; }
 .league-tab[data-league="Great"].active { background: #2f6fed; }
-.league-tab[data-league="Ultra"].active { background: #7b5bb5; }
-.league-tab[data-league="Premier"].active { background: #c28b00; }
-.league-tab[data-league="Master"].active { background: #26364f; }
+.league-tab[data-league="Ultra"].active { background: #c28b00; }
+.league-tab[data-league="Premier"].active { background: #8a94a3; }
+.league-tab[data-league="Master"].active { background: #7b5bb5; }
 
 .tournament-list {
   display: grid;
@@ -218,9 +218,9 @@
 }
 .league-badge { background: #eef2f8; color: #44526a; }
 .league-badge.Great { background: #eaf1ff; color: #245fc7; }
-.league-badge.Ultra { background: #f0ebfa; color: #684c9e; }
-.league-badge.Premier { background: #fff5d7; color: #8a6500; }
-.league-badge.Master { background: #e9edf3; color: #26364f; }
+.league-badge.Ultra { background: #fff5d7; color: #8a6500; }
+.league-badge.Premier { background: #eef1f4; color: #596273; }
+.league-badge.Master { background: #f0ebfa; color: #684c9e; }
 .location-badge { background: #f4f6f9; color: #526078; }
 .result-badge { flex: 0 0 auto; }
 .result-badge.upcoming { background: #eaf1ff; color: #245fc7; }
