@@ -44,9 +44,26 @@
         font-size: 13px;
         font-weight: 500;
       }
-      .player-name-combined .wcs-player-icon {
-        margin-left: 6px;
-        align-self: center;
+
+      /* v2.1.2 同功能微調：WCS 圖示移到得分上方，避免姓名區斷行。 */
+      .ranking-points-stack {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        vertical-align: middle;
+      }
+      .ranking-points-stack .wcs-player-icon {
+        margin: 0;
+        width: 24px;
+        height: 28px;
+        flex: 0 0 28px;
+      }
+      .ranking-points-value {
+        display: inline-block;
+        white-space: nowrap;
+        font-weight: 800;
       }
 
       @media (max-width: 620px) {
@@ -55,6 +72,11 @@
         .player-name-primary.player-primary-xlong { font-size: 13px; }
         .player-nickname { font-size: 12px; }
         .player-nickname.player-nickname-long { font-size: 11px; }
+        .ranking-points-stack .wcs-player-icon {
+          width: 22px;
+          height: 26px;
+          flex-basis: 26px;
+        }
       }
     `;
     document.head.appendChild(style);
@@ -96,18 +118,53 @@
         && nickname !== realName
         && nickname.toLowerCase() !== playerId.toLowerCase()
       );
-      const history = typeof priorSeasonFor === 'function' ? priorSeasonFor(row.player_id) : null;
-      const worldsIcon = history?.worlds_2026 && typeof worldsIconHtml === 'function'
-        ? worldsIconHtml()
-        : '';
 
       return `
         <div class="player-name-line player-name-combined">
           <strong class="player-name-primary${primaryClass}">${esc(primaryName)}</strong>${hasNickname ? `<span class="player-nickname${nicknameClass}">(${esc(nickname)})</span>` : ''}
-          ${worldsIcon}
         </div>
         ${playerId ? `<div class="hint row-id">${esc(playerId)}</div>` : ''}`;
     };
+
+    function decorateRankingWorldsBadges() {
+      if (
+        typeof filteredRows !== 'function'
+        || typeof priorSeasonFor !== 'function'
+        || typeof worldsIconHtml !== 'function'
+      ) return;
+
+      const rows = filteredRows();
+      const tableRows = Array.from(document.querySelectorAll(
+        '#rankingContainer .ranking-table tbody tr:not(.world-cut-line)'
+      ));
+
+      tableRows.forEach((tableRow, index) => {
+        const row = rows[index];
+        const pointsCell = tableRow.children[2];
+        if (!row || !pointsCell) return;
+
+        const pointsText = `${esc(row.points ?? '—')} pt`;
+        const history = priorSeasonFor(row.player_id);
+        if (history?.worlds_2026) {
+          pointsCell.innerHTML = `
+            <div class="ranking-points-stack">
+              ${worldsIconHtml()}
+              <strong class="ranking-points-value">${pointsText}</strong>
+            </div>`;
+        } else {
+          pointsCell.innerHTML = `<strong class="ranking-points-value">${pointsText}</strong>`;
+        }
+      });
+    }
+
+    if (typeof renderRanking === 'function') {
+      const baseRenderRankingV212 = renderRanking;
+      renderRanking = function renderRankingV212(...args) {
+        const result = baseRenderRankingV212.apply(this, args);
+        decorateRankingWorldsBadges();
+        return result;
+      };
+    }
 
     if (
       typeof renderRanking === 'function'
