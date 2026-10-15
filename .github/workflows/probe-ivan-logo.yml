@@ -1,4 +1,4 @@
-name: Probe Ivan WCS logo
+name: Apply WCS 2026 official icon
 
 on:
   push:
@@ -8,47 +8,175 @@ on:
       - ".github/workflows/probe-ivan-logo.yml"
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: apply-wcs-2026-icon
+  cancel-in-progress: false
 
 jobs:
-  probe:
+  apply:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect Ivan TE assets
+      - name: Checkout latest main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Download and prepare WCS 2026 icon
         shell: bash
         run: |
+          set -euo pipefail
+          curl -fsSL "https://ptcg.bcb.idv.tw/images/wcs2026icon.png" -o /tmp/wcs2026icon.png
+          python -m pip install --disable-pip-version-check --quiet pillow
           python - <<'PY'
-          import re
-          from urllib.parse import urljoin
-          from urllib.request import Request, urlopen
+          from collections import deque
+          from pathlib import Path
+          from PIL import Image
 
-          base = 'https://ptcg.bcb.idv.tw/TE'
-          headers = {'User-Agent':'Mozilla/5.0'}
-          def fetch(url):
-              req = Request(url, headers=headers)
-              with urlopen(req, timeout=60) as r:
-                  return r.read().decode('utf-8', 'ignore')
+          src = Image.open('/tmp/wcs2026icon.png').convert('RGBA')
+          px = src.load()
+          w, h = src.size
 
-          html = fetch(base)
-          print('HTML length', len(html))
-          for m in re.findall(r'''(?:src|href)=["']([^"']+)["']''', html, re.I):
-              if re.search(r'wcs|world|2026|logo|\.png|\.webp|\.svg|\.jpg|\.jpeg', m, re.I):
-                  print('ASSET', urljoin(base, m))
+          # 若來源仍有實色背景，只移除「與四角連通」的背景，不動 Logo 內部白色區域。
+          corners = [px[0,0][:3], px[w-1,0][:3], px[0,h-1][:3], px[w-1,h-1][:3]]
+          def close_to_corner(rgb):
+              return any(sum((int(rgb[i]) - int(c[i])) ** 2 for i in range(3)) <= 28 ** 2 for c in corners)
 
-          scripts = [urljoin(base, s) for s in re.findall(r'''<script[^>]+src=["']([^"']+)["']''', html, re.I)]
-          print('SCRIPTS', len(scripts))
-          for url in scripts:
-              try:
-                  text = fetch(url)
-              except Exception as e:
-                  print('SCRIPT_ERR', url, e)
-                  continue
-              if re.search(r'hasWcs2026|GetPlayerRankings|wcs|world', text, re.I):
-                  print('MATCH_SCRIPT', url, 'len', len(text))
-                  for pat in [r'[^\n]{0,180}hasWcs2026[^\n]{0,240}', r'[^\n]{0,180}GetPlayerRankings[^\n]{0,240}', r'''[^\n]{0,180}(?:wcs|world)[^\n]{0,240}''']:
-                      for x in re.findall(pat, text, re.I):
-                          print('SNIP', x if isinstance(x,str) else str(x))
-                  for asset in re.findall(r'''["']([^"']+\.(?:png|webp|svg|jpg|jpeg)(?:\?[^"']*)?)["']''', text, re.I):
-                      if re.search(r'wcs|world|2026|logo', asset, re.I):
-                          print('SCRIPT_ASSET', urljoin(url, asset))
+          seen = set()
+          q = deque()
+          for x in range(w):
+              for y in (0, h-1):
+                  if px[x,y][3] and close_to_corner(px[x,y][:3]):
+                      seen.add((x,y)); q.append((x,y))
+          for y in range(h):
+              for x in (0, w-1):
+                  if px[x,y][3] and close_to_corner(px[x,y][:3]) and (x,y) not in seen:
+                      seen.add((x,y)); q.append((x,y))
+
+          while q:
+              x, y = q.popleft()
+              for dx, dy in ((1,0),(-1,0),(0,1),(0,-1),(1,1),(1,-1),(-1,1),(-1,-1)):
+                  xx, yy = x + dx, y + dy
+                  if 0 <= xx < w and 0 <= yy < h and (xx,yy) not in seen:
+                      if px[xx,yy][3] and close_to_corner(px[xx,yy][:3]):
+                          seen.add((xx,yy)); q.append((xx,yy))
+
+          for x, y in seen:
+              r,g,b,_ = px[x,y]
+              px[x,y] = (r,g,b,0)
+
+          bbox = src.getbbox()
+          if bbox:
+              src = src.crop(bbox)
+          out = Path('assets/q-icons/wcs2026icon.webp')
+          out.parent.mkdir(parents=True, exist_ok=True)
+          src.save(out, 'WEBP', lossless=True, quality=100, method=6)
+          print('WCS icon saved:', src.size, '->', out)
           PY
+
+      - name: Use WCS logo in ranking UI
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          js_path = Path('ranking-season-ui.js')
+          js = js_path.read_text(encoding='utf-8')
+          old = '''function worldsIconHtml(label = '2025-2026 世界賽選手') {
+            return `<span class="wcs-player-icon" title="${esc(label)}" aria-label="${esc(label)}" role="img">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M3.5 12h17M12 3c2.5 2.4 3.8 5.4 3.8 9S14.5 18.6 12 21M12 3C9.5 5.4 8.2 8.4 8.2 12S9.5 18.6 12 21"></path>
+              </svg>
+            </span>`;
+          }'''
+          # 實際檔案沒有上述縮排，使用精確原字串再替換。
+          old_exact = '''function worldsIconHtml(label = '2025-2026 世界賽選手') {
+  return `<span class="wcs-player-icon" title="${esc(label)}" aria-label="${esc(label)}" role="img">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M3.5 12h17M12 3c2.5 2.4 3.8 5.4 3.8 9S14.5 18.6 12 21M12 3C9.5 5.4 8.2 8.4 8.2 12S9.5 18.6 12 21"></path>
+    </svg>
+  </span>`;
+}'''
+          new = '''function worldsIconHtml(label = '2025-2026 世界賽選手') {
+  return `<span class="wcs-player-icon" title="${esc(label)}" aria-label="${esc(label)}" role="img">
+    <img src="assets/q-icons/wcs2026icon.webp?v=2026" alt="" aria-hidden="true" />
+  </span>`;
+}'''
+          if old_exact not in js:
+              raise SystemExit('找不到 worldsIconHtml 原始內容，停止修改')
+          js_path.write_text(js.replace(old_exact, new, 1), encoding='utf-8')
+
+          css_path = Path('ranking-season-ui.css')
+          css = css_path.read_text(encoding='utf-8')
+          marker = '/* v2.1.0 refinement: official WCS 2026 logo */'
+          if marker not in css:
+              css += '''\n\n/* v2.1.0 refinement: official WCS 2026 logo */
+.wcs-player-icon {
+  width: 28px;
+  height: 32px;
+  flex: 0 0 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.wcs-player-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.prior-worlds-label .wcs-player-icon {
+  width: 28px;
+  height: 32px;
+  flex-basis: 28px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@media (max-width: 620px) {
+  .wcs-player-icon {
+    width: 24px;
+    height: 28px;
+    flex-basis: 24px;
+  }
+  .prior-worlds-label .wcs-player-icon {
+    width: 26px;
+    height: 30px;
+    flex-basis: 26px;
+  }
+}
+'''
+              css_path.write_text(css, encoding='utf-8')
+
+          index_path = Path('index.html')
+          index = index_path.read_text(encoding='utf-8')
+          index = index.replace('ranking-season-ui.css?v=2.1.0-r1', 'ranking-season-ui.css?v=2.1.0-r2')
+          index = index.replace('ranking-season-ui.js?v=2.1.0-r1', 'ranking-season-ui.js?v=2.1.0-r2')
+          index_path.write_text(index, encoding='utf-8')
+          PY
+
+      - name: Commit icon refinement
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/q-icons/wcs2026icon.webp ranking-season-ui.js ranking-season-ui.css index.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Use WCS 2026 logo for player badge"
+          git pull --rebase origin main
+          git push origin HEAD:main
