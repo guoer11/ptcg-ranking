@@ -21,15 +21,16 @@ jobs:
           fetch-depth: 0
 
       - name: Apply v2.1.0 patch
-        run: python apply_ivan_v210.py
+        run: |
+          python apply_ivan_v210.py
+          git checkout -- .github/workflows/update-ranking.yml .github/workflows/deploy-pages.yml
 
-      - name: Commit v2.1.0
+      - name: Commit v2.1.0 site files
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm .github/workflows/apply-ivan-history-v210.yml apply_ivan_v210.py
-          git add sync_ivan_history.py ranking-season-ui.js ranking-season-ui.css index.html site-version.js .github/workflows/update-ranking.yml .github/workflows/deploy-pages.yml data/season_2025_26.json
+          git add sync_ivan_history.py ranking-season-ui.js ranking-season-ui.css index.html site-version.js data/season_2025_26.json
           git commit -m "Add 2025-26 player history and WCS badges"
           git pull --rebase origin main
           git push origin HEAD:main
