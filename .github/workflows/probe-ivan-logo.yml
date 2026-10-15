@@ -1,0 +1,54 @@
+name: Probe Ivan WCS logo
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/probe-ivan-logo.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect Ivan TE assets
+        shell: bash
+        run: |
+          python - <<'PY'
+          import re
+          from urllib.parse import urljoin
+          from urllib.request import Request, urlopen
+
+          base = 'https://ptcg.bcb.idv.tw/TE'
+          headers = {'User-Agent':'Mozilla/5.0'}
+          def fetch(url):
+              req = Request(url, headers=headers)
+              with urlopen(req, timeout=60) as r:
+                  return r.read().decode('utf-8', 'ignore')
+
+          html = fetch(base)
+          print('HTML length', len(html))
+          for m in re.findall(r'''(?:src|href)=["']([^"']+)["']''', html, re.I):
+              if re.search(r'wcs|world|2026|logo|\.png|\.webp|\.svg|\.jpg|\.jpeg', m, re.I):
+                  print('ASSET', urljoin(base, m))
+
+          scripts = [urljoin(base, s) for s in re.findall(r'''<script[^>]+src=["']([^"']+)["']''', html, re.I)]
+          print('SCRIPTS', len(scripts))
+          for url in scripts:
+              try:
+                  text = fetch(url)
+              except Exception as e:
+                  print('SCRIPT_ERR', url, e)
+                  continue
+              if re.search(r'hasWcs2026|GetPlayerRankings|wcs|world', text, re.I):
+                  print('MATCH_SCRIPT', url, 'len', len(text))
+                  for pat in [r'[^\n]{0,180}hasWcs2026[^\n]{0,240}', r'[^\n]{0,180}GetPlayerRankings[^\n]{0,240}', r'''[^\n]{0,180}(?:wcs|world)[^\n]{0,240}''']:
+                      for x in re.findall(pat, text, re.I):
+                          print('SNIP', x if isinstance(x,str) else str(x))
+                  for asset in re.findall(r'''["']([^"']+\.(?:png|webp|svg|jpg|jpeg)(?:\?[^"']*)?)["']''', text, re.I):
+                      if re.search(r'wcs|world|2026|logo', asset, re.I):
+                          print('SCRIPT_ASSET', urljoin(url, asset))
+          PY
