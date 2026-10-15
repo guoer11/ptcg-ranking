@@ -20,15 +20,15 @@
         white-space: nowrap;
       }
 
-      /* v2.1.2：姓名、暱稱、WCS 圖示固定同一行。 */
+      /* v2.1.2 同功能微調：姓名維持正常大小，WCS 圖示改放 PTCG ID 右側。 */
       .player-name-line.player-name-combined {
         display: flex;
-        flex-wrap: nowrap;
-        align-items: center;
+        flex-wrap: wrap;
+        align-items: baseline;
         gap: 0;
+        row-gap: 2px;
         min-width: 0;
         line-height: 1.25;
-        white-space: nowrap;
       }
       .player-name-primary {
         white-space: nowrap;
@@ -41,34 +41,46 @@
         word-break: keep-all;
         overflow-wrap: normal;
         color: var(--muted);
-        font-size: 13px;
+        font-size: inherit;
         font-weight: 500;
       }
-      .wcs-inline-icon {
+      .player-id-line {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        margin-top: 4px;
+      }
+      .player-id-line .row-id {
+        margin: 0;
+        white-space: nowrap;
+      }
+      .player-id-line .wcs-id-icon {
         display: inline-flex;
         flex: 0 0 auto;
-        align-self: center;
-        margin-left: 6px;
+        align-items: center;
       }
-      .wcs-inline-icon .wcs-player-icon {
-        width: 24px;
-        height: 28px;
-        flex-basis: 24px;
+      .player-id-line .wcs-id-icon .wcs-player-icon {
+        width: 20px;
+        height: 23px;
+        flex: 0 0 20px;
+        margin: 0;
       }
 
       @media (max-width: 620px) {
         .account-app-version-badge { padding: 5px 8px; font-size: 10px; }
-        .player-name-line.player-name-combined { flex-wrap: nowrap; }
-        .player-name-combined.player-combined-long .player-name-primary { font-size: 13px; }
-        .player-name-combined.player-combined-long .player-nickname { font-size: 11px; }
-        .player-name-combined.player-combined-xlong .player-name-primary { font-size: 12px; }
-        .player-name-combined.player-combined-xlong .player-nickname { font-size: 10px; }
-        .player-nickname { font-size: 12px; }
-        .wcs-inline-icon { margin-left: 4px; }
-        .wcs-inline-icon .wcs-player-icon {
-          width: 20px;
-          height: 23px;
-          flex-basis: 20px;
+        .player-name-primary,
+        .player-nickname {
+          font-size: inherit;
+        }
+        .player-id-line {
+          gap: 5px;
+          margin-top: 3px;
+        }
+        .player-id-line .wcs-id-icon .wcs-player-icon {
+          width: 19px;
+          height: 22px;
+          flex-basis: 19px;
         }
       }
     `;
@@ -106,20 +118,16 @@
         && nickname !== realName
         && nickname.toLowerCase() !== playerId.toLowerCase()
       );
-      const combinedLength = Array.from(primaryName).length + (hasNickname ? Array.from(nickname).length + 2 : 0);
-      const combinedClass = combinedLength >= 18
-        ? ' player-combined-xlong'
-        : (combinedLength >= 13 ? ' player-combined-long' : '');
       const history = typeof priorSeasonFor === 'function' ? priorSeasonFor(row.player_id) : null;
       const worldsIcon = history?.worlds_2026 && typeof worldsIconHtml === 'function'
-        ? `<span class="wcs-inline-icon">${worldsIconHtml()}</span>`
+        ? `<span class="wcs-id-icon">${worldsIconHtml()}</span>`
         : '';
 
       return `
-        <div class="player-name-line player-name-combined${combinedClass}">
-          <strong class="player-name-primary">${esc(primaryName)}</strong>${hasNickname ? `<span class="player-nickname">(${esc(nickname)})</span>` : ''}${worldsIcon}
+        <div class="player-name-line player-name-combined">
+          <strong class="player-name-primary">${esc(primaryName)}</strong>${hasNickname ? `<span class="player-nickname">(${esc(nickname)})</span>` : ''}
         </div>
-        ${playerId ? `<div class="hint row-id">${esc(playerId)}</div>` : ''}`;
+        ${playerId ? `<div class="player-id-line"><span class="hint row-id">${esc(playerId)}</span>${worldsIcon}</div>` : ''}`;
     };
 
     if (
