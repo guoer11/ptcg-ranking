@@ -20,14 +20,15 @@
         white-space: nowrap;
       }
 
-      /* v2.1.2：排行榜姓名改為「真實姓名(暱稱)」，桌機維持同一行。 */
+      /* v2.1.2：姓名、暱稱、WCS 圖示固定同一行。 */
       .player-name-line.player-name-combined {
         display: flex;
         flex-wrap: nowrap;
-        align-items: baseline;
+        align-items: center;
         gap: 0;
         min-width: 0;
         line-height: 1.25;
+        white-space: nowrap;
       }
       .player-name-primary {
         white-space: nowrap;
@@ -43,53 +44,31 @@
         font-size: 13px;
         font-weight: 500;
       }
-      .wcs-desktop-icon {
+      .wcs-inline-icon {
         display: inline-flex;
         flex: 0 0 auto;
         align-self: center;
         margin-left: 6px;
       }
-
-      /* 手機才把 WCS 圖示移到得分上方；桌機仍放在姓名後面。 */
-      .ranking-points-stack {
-        display: inline;
-        vertical-align: middle;
-      }
-      .ranking-points-stack .wcs-mobile-icon {
-        display: none;
-      }
-      .ranking-points-value {
-        display: inline-block;
-        white-space: nowrap;
-        font-weight: 800;
+      .wcs-inline-icon .wcs-player-icon {
+        width: 24px;
+        height: 28px;
+        flex-basis: 24px;
       }
 
       @media (max-width: 620px) {
         .account-app-version-badge { padding: 5px 8px; font-size: 10px; }
-        .player-name-line.player-name-combined {
-          flex-wrap: wrap;
-          row-gap: 2px;
-        }
-        .player-name-primary.player-primary-long { font-size: 14px; }
-        .player-name-primary.player-primary-xlong { font-size: 13px; }
+        .player-name-line.player-name-combined { flex-wrap: nowrap; }
+        .player-name-combined.player-combined-long .player-name-primary { font-size: 13px; }
+        .player-name-combined.player-combined-long .player-nickname { font-size: 11px; }
+        .player-name-combined.player-combined-xlong .player-name-primary { font-size: 12px; }
+        .player-name-combined.player-combined-xlong .player-nickname { font-size: 10px; }
         .player-nickname { font-size: 12px; }
-        .player-nickname.player-nickname-long { font-size: 11px; }
-        .wcs-desktop-icon { display: none; }
-        .ranking-points-stack {
-          display: inline-flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 2px;
-        }
-        .ranking-points-stack .wcs-mobile-icon {
-          display: inline-flex;
-        }
-        .ranking-points-stack .wcs-player-icon {
-          margin: 0;
-          width: 22px;
-          height: 26px;
-          flex: 0 0 26px;
+        .wcs-inline-icon { margin-left: 4px; }
+        .wcs-inline-icon .wcs-player-icon {
+          width: 20px;
+          height: 23px;
+          flex-basis: 20px;
         }
       }
     `;
@@ -121,68 +100,27 @@
       const playerId = String(row.player_id || '').trim();
       const fallbackName = nickname || playerId || '—';
       const primaryName = realName || fallbackName;
-      const primaryLength = Array.from(primaryName).length;
-      const primaryClass = primaryLength >= 10
-        ? ' player-primary-xlong'
-        : (primaryLength >= 7 ? ' player-primary-long' : '');
-      const nicknameClass = Array.from(nickname).length >= 12 ? ' player-nickname-long' : '';
       const hasNickname = Boolean(
         realName
         && nickname
         && nickname !== realName
         && nickname.toLowerCase() !== playerId.toLowerCase()
       );
+      const combinedLength = Array.from(primaryName).length + (hasNickname ? Array.from(nickname).length + 2 : 0);
+      const combinedClass = combinedLength >= 18
+        ? ' player-combined-xlong'
+        : (combinedLength >= 13 ? ' player-combined-long' : '');
       const history = typeof priorSeasonFor === 'function' ? priorSeasonFor(row.player_id) : null;
-      const desktopWorldsIcon = history?.worlds_2026 && typeof worldsIconHtml === 'function'
-        ? `<span class="wcs-desktop-icon">${worldsIconHtml()}</span>`
+      const worldsIcon = history?.worlds_2026 && typeof worldsIconHtml === 'function'
+        ? `<span class="wcs-inline-icon">${worldsIconHtml()}</span>`
         : '';
 
       return `
-        <div class="player-name-line player-name-combined">
-          <strong class="player-name-primary${primaryClass}">${esc(primaryName)}</strong>${hasNickname ? `<span class="player-nickname${nicknameClass}">(${esc(nickname)})</span>` : ''}${desktopWorldsIcon}
+        <div class="player-name-line player-name-combined${combinedClass}">
+          <strong class="player-name-primary">${esc(primaryName)}</strong>${hasNickname ? `<span class="player-nickname">(${esc(nickname)})</span>` : ''}${worldsIcon}
         </div>
         ${playerId ? `<div class="hint row-id">${esc(playerId)}</div>` : ''}`;
     };
-
-    function decorateRankingWorldsBadges() {
-      if (
-        typeof filteredRows !== 'function'
-        || typeof priorSeasonFor !== 'function'
-        || typeof worldsIconHtml !== 'function'
-      ) return;
-
-      const rows = filteredRows();
-      const tableRows = Array.from(document.querySelectorAll(
-        '#rankingContainer .ranking-table tbody tr:not(.world-cut-line)'
-      ));
-
-      tableRows.forEach((tableRow, index) => {
-        const row = rows[index];
-        const pointsCell = tableRow.children[2];
-        if (!row || !pointsCell) return;
-
-        const pointsText = `${esc(row.points ?? '—')} pt`;
-        const history = priorSeasonFor(row.player_id);
-        if (history?.worlds_2026) {
-          pointsCell.innerHTML = `
-            <div class="ranking-points-stack">
-              <span class="wcs-mobile-icon">${worldsIconHtml()}</span>
-              <strong class="ranking-points-value">${pointsText}</strong>
-            </div>`;
-        } else {
-          pointsCell.innerHTML = `<strong class="ranking-points-value">${pointsText}</strong>`;
-        }
-      });
-    }
-
-    if (typeof renderRanking === 'function') {
-      const baseRenderRankingV212 = renderRanking;
-      renderRanking = function renderRankingV212(...args) {
-        const result = baseRenderRankingV212.apply(this, args);
-        decorateRankingWorldsBadges();
-        return result;
-      };
-    }
 
     if (
       typeof renderRanking === 'function'
