@@ -20,7 +20,7 @@
         white-space: nowrap;
       }
 
-      /* v2.1.2 同功能微調：姓名維持正常大小，WCS 圖示改放 PTCG ID 右側。 */
+      /* v2.1.2 同功能微調：姓名維持正常大小，WCS 圖示放 PTCG ID 右側。 */
       .player-name-line.player-name-combined {
         display: flex;
         flex-wrap: wrap;
@@ -69,9 +69,16 @@
 
       @media (max-width: 620px) {
         .account-app-version-badge { padding: 5px 8px; font-size: 10px; }
-        .player-name-primary,
-        .player-nickname {
+        .player-name-primary {
           font-size: inherit;
+        }
+        .player-nickname.player-nickname-latin {
+          font-size: 11px;
+          line-height: 1.15;
+        }
+        .player-nickname.player-nickname-latin.player-nickname-long {
+          font-size: 10px;
+          letter-spacing: -0.15px;
         }
         .player-id-line {
           gap: 5px;
@@ -118,6 +125,10 @@
         && nickname !== realName
         && nickname.toLowerCase() !== playerId.toLowerCase()
       );
+      const nicknameIsLatin = /[A-Za-z]/.test(nickname);
+      const nicknameClass = nicknameIsLatin
+        ? ` player-nickname-latin${Array.from(nickname).length >= 13 ? ' player-nickname-long' : ''}`
+        : '';
       const history = typeof priorSeasonFor === 'function' ? priorSeasonFor(row.player_id) : null;
       const worldsIcon = history?.worlds_2026 && typeof worldsIconHtml === 'function'
         ? `<span class="wcs-id-icon">${worldsIconHtml()}</span>`
@@ -125,7 +136,7 @@
 
       return `
         <div class="player-name-line player-name-combined">
-          <strong class="player-name-primary">${esc(primaryName)}</strong>${hasNickname ? `<span class="player-nickname">(${esc(nickname)})</span>` : ''}
+          <strong class="player-name-primary">${esc(primaryName)}</strong>${hasNickname ? `<span class="player-nickname${nicknameClass}">(${esc(nickname)})</span>` : ''}
         </div>
         ${playerId ? `<div class="player-id-line"><span class="hint row-id">${esc(playerId)}</span>${worldsIcon}</div>` : ''}`;
     };
