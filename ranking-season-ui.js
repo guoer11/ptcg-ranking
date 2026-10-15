@@ -297,10 +297,7 @@ function priorSeasonFor(playerId) {
 
 function worldsIconHtml(label = '2025-2026 世界賽選手') {
   return `<span class="wcs-player-icon" title="${esc(label)}" aria-label="${esc(label)}" role="img">
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="12" r="9"></circle>
-      <path d="M3.5 12h17M12 3c2.5 2.4 3.8 5.4 3.8 9S14.5 18.6 12 21M12 3C9.5 5.4 8.2 8.4 8.2 12S9.5 18.6 12 21"></path>
-    </svg>
+    <img src="assets/q-icons/wcs2026icon.webp?v=2026" alt="" aria-hidden="true" />
   </span>`;
 }
 

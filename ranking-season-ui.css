@@ -288,3 +288,46 @@
     padding: 0 12px 12px;
   }
 }
+
+
+/* v2.1.0 refinement: official WCS 2026 logo */
+.wcs-player-icon {
+  width: 28px;
+  height: 32px;
+  flex: 0 0 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.wcs-player-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.prior-worlds-label .wcs-player-icon {
+  width: 28px;
+  height: 32px;
+  flex-basis: 28px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@media (max-width: 620px) {
+  .wcs-player-icon {
+    width: 24px;
+    height: 28px;
+    flex-basis: 24px;
+  }
+  .prior-worlds-label .wcs-player-icon {
+    width: 26px;
+    height: 30px;
+    flex-basis: 26px;
+  }
+}
