@@ -28,6 +28,7 @@
         gap: 0;
         row-gap: 2px;
         min-width: 0;
+        max-width: 100%;
         line-height: 1.25;
       }
       .player-name-primary {
@@ -69,6 +70,9 @@
 
       @media (max-width: 620px) {
         .account-app-version-badge { padding: 5px 8px; font-size: 10px; }
+        .ranking-table td:nth-child(2) {
+          overflow: hidden;
+        }
         .player-name-primary {
           font-size: inherit;
         }
@@ -81,12 +85,16 @@
           letter-spacing: -0.15px;
         }
         .player-nickname.player-nickname-mobile-block {
+          display: block;
           flex: 0 0 100%;
           width: 100%;
+          max-width: 100%;
           margin-top: 1px;
-          font-size: 12px;
+          font-size: 11px;
           line-height: 1.2;
+          letter-spacing: -0.15px;
           white-space: nowrap;
+          overflow: hidden;
         }
         .player-id-line {
           gap: 5px;
