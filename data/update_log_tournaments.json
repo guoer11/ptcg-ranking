@@ -2,6 +2,16 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-10-16T03:55:03+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-10-16T03:55:03+08:00",
+      "summary": "例行檢查完成；賽事可見內容無變動",
+      "details": [],
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
+    },
+    {
       "id": "tournaments-2026-10-16T00:04:08+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -36,16 +46,6 @@
       "type": "tournaments",
       "title": "賽事資訊更新",
       "updated_at": "2026-10-15T17:04:11+08:00",
-      "summary": "例行檢查完成；賽事可見內容無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "tournaments-2026-10-15T12:04:38+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-10-15T12:04:38+08:00",
       "summary": "例行檢查完成；賽事可見內容無變動",
       "details": [],
       "notified": false,
