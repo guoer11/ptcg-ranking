@@ -16,6 +16,7 @@ on:
       - "scrape_identity.py"
       - "scrape_identity_preflight.py"
       - "merge_te_identity.py"
+      - "sync_ivan_history.py"
       - "sync_identity_supabase.py"
       - "encrypt_identity.py"
       - "privacy/player_identity_public.pem"
@@ -68,6 +69,9 @@ jobs:
             echo "Plain-text identity data is still present; refusing to commit."
             exit 1
           fi
+
+      - name: Sync 2025-26 Ivan history
+        run: python sync_ivan_history.py
 
       - name: Fetch official ranking
         env:
