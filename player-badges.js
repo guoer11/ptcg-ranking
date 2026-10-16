@@ -88,6 +88,23 @@
     return parts.filter(Boolean).join('');
   }
 
+  function badgeSignature(playerId, options = {}) {
+    const id = normalizeId(playerId);
+    const info = playerInfo(id);
+    const forcedAttention = options.attentionOverride;
+    const attention = typeof forcedAttention === 'boolean' ? forcedAttention : attentionSet.has(id);
+    return [
+      id,
+      info.wcs_2026 ? 1 : 0,
+      Number(info.premier?.best_rank || 0),
+      Number(info.ultra?.best_rank || 0),
+      Number(info.great?.best_rank || 0),
+      attention ? 1 : 0,
+      options.interactiveAttention ? 1 : 0,
+      wcsIconSrc ? 1 : 0
+    ].join('|');
+  }
+
   function legendHtml() {
     return `<div class="player-badge-legend">
       <strong>標記說明</strong>
@@ -238,9 +255,11 @@
       if (!id) continue;
 
       let badgeRow = playerCell.querySelector(':scope > .player-badge-row');
-      const existingWcs = playerCell.querySelector('.wcs-id-icon');
-      const generated = badgesHtml(id, { skipWcs: Boolean(existingWcs) });
-      if (!generated && !existingWcs) {
+      const legacyWcs = playerCell.querySelector('.player-id-line > .wcs-id-icon');
+      if (legacyWcs) legacyWcs.remove();
+      const generated = badgesHtml(id);
+      const signature = badgeSignature(id);
+      if (!generated) {
         badgeRow?.remove();
         continue;
       }
@@ -249,10 +268,9 @@
         badgeRow.className = 'player-badge-row';
         playerCell.appendChild(badgeRow);
       }
-      badgeRow.innerHTML = generated;
-      if (existingWcs) {
-        existingWcs.classList.add('player-badge-wcs');
-        badgeRow.prepend(existingWcs);
+      if (badgeRow.dataset.badgeSignature !== signature) {
+        badgeRow.innerHTML = generated;
+        badgeRow.dataset.badgeSignature = signature;
       }
     }
     ensureLegend('rankingBadgeLegend', container, 'afterend');
@@ -265,14 +283,22 @@
 
   function renderArticleBadges(article, playerId, options = {}) {
     if (!article || !playerId) return;
+    const generated = badgesHtml(playerId, options);
+    const signature = badgeSignature(playerId, options);
     let row = article.querySelector('.player-badge-row');
+    if (!generated) {
+      row?.remove();
+      return;
+    }
     if (!row) {
       row = document.createElement('div');
       row.className = 'player-badge-row';
       article.appendChild(row);
     }
-    row.innerHTML = badgesHtml(playerId, options);
-    if (!row.innerHTML) row.remove();
+    if (row.dataset.badgeSignature !== signature) {
+      row.innerHTML = generated;
+      row.dataset.badgeSignature = signature;
+    }
   }
 
   function decoratePairing(detail = null) {
@@ -359,7 +385,12 @@
       if (anchor) anchor.insertAdjacentElement('beforebegin', box);
       else body.prepend(box);
     }
-    box.innerHTML = `<div class="player-badge-row">${infoHtml}</div>${auth ? `<button class="player-attention-modal-control${attentionSet.has(id) ? ' is-active' : ''}" type="button" data-player-attention-toggle="${esc(id)}">${attentionSet.has(id) ? '★ 已標記注意' : '☆ 標記注意'}</button>` : ''}`;
+    const modalHtml = `<div class="player-badge-row">${infoHtml}</div>${auth ? `<button class="player-attention-modal-control${attentionSet.has(id) ? ' is-active' : ''}" type="button" data-player-attention-toggle="${esc(id)}">${attentionSet.has(id) ? '★ 已標記注意' : '☆ 標記注意'}</button>` : ''}`;
+    const modalSignature = `${badgeSignature(id)}|${auth ? 1 : 0}`;
+    if (box.dataset.badgeSignature !== modalSignature) {
+      box.innerHTML = modalHtml;
+      box.dataset.badgeSignature = modalSignature;
+    }
   }
 
   function decorateAll() {
