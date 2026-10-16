@@ -19,6 +19,7 @@ on:
       - "sync_ivan_history.py"
       - "sync_identity_supabase.py"
       - "encrypt_identity.py"
+      - "build_player_badges.py"
       - "privacy/player_identity_public.pem"
       - "requirements.txt"
       - "data/player_identity_sources.json"
@@ -78,6 +79,9 @@ jobs:
           POKEMON_EMAIL: ${{ secrets.POKEMON_EMAIL }}
           POKEMON_PASSWORD: ${{ secrets.POKEMON_PASSWORD }}
         run: python scraper.py
+
+      - name: Build player badge summary
+        run: python build_player_badges.py
 
       - name: Build ranking update log
         run: |
