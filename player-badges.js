@@ -1,5 +1,5 @@
 (() => {
-  const DATA_URL = 'data/player_badges.json?v=2.2.0-r1';
+  const DATA_URL = 'data/player_badges.json?v=2.2.0-r2';
   const WCS_SOURCE_URL = 'ranking-season-ui.js?v=2.1.0-r3';
   const FAMILY_BADGE_STORAGE_KEY = 'ptcgFamilyBadgeContextV1';
   const FAMILY_BADGE_TTL_MS = 24 * 60 * 60 * 1000;
