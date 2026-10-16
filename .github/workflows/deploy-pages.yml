@@ -54,7 +54,7 @@ jobs:
           set -euo pipefail
           rm -rf _site
           mkdir -p _site/data _site/data/players _site/data/seasons _site/assets/q-icons
-          cp index.html tournaments.html pairing.html family-notify.html pun-game.html baseball-game.html baseball-roster.html manifest.webmanifest sw.js app.js identity-ui.js auth-ui.js auth-ui.css lookup-ui.js lookup-ui.css ranking-season-ui.js ranking-season-ui.css tournaments.js tournaments.css pairing.js pairing.css pairing-odds.js pairing-odds-engine.js pairing-odds-worker.js pairing-odds.css pairing-quick-lookup.js pairing-quick-lookup.css pairing-deck-scout.js pairing-deck-scout.css pairing-history.js pairing-history.css deck-settings-ui.js deck-settings-ui.css update-log-ui.js update-log-ui.css site-version.js site-nav.css styles.css summary-compact.css push-ui.js push-ui.css push-fix.js line-ui.js site-account-ui.js account-hub-v2.js account-hub-v2.css family-owner-ui.js family-owner-ui.css family-notify.js family-notify.css _site/
+          cp index.html tournaments.html pairing.html family-notify.html pun-game.html baseball-game.html baseball-roster.html manifest.webmanifest sw.js app.js identity-ui.js auth-ui.js auth-ui.css lookup-ui.js lookup-ui.css ranking-season-ui.js ranking-season-ui.css tournaments.js tournaments.css pairing.js pairing.css pairing-odds.js pairing-odds-engine.js pairing-odds-worker.js pairing-odds.css pairing-quick-lookup.js pairing-quick-lookup.css pairing-deck-scout.js pairing-deck-scout.css pairing-history.js pairing-history.css deck-settings-ui.js deck-settings-ui.css update-log-ui.js update-log-ui.css site-version.js site-nav.css styles.css summary-compact.css push-ui.js push-ui.css push-fix.js line-ui.js site-account-ui.js account-hub-v2.js account-hub-v2.css family-owner-ui.js family-owner-ui.css family-notify.js family-notify.css player-badges.js player-badges.css family-attention-bridge.js _site/
           cp -R pitching-app _site/pitching-app
           cp assets/q-icons/*.webp _site/assets/q-icons/
           cp data/pairing-odds-3000442*.json _site/data/
@@ -66,6 +66,11 @@ jobs:
             printf '%s\n' '{"season":"2025-26","updated_at":null,"players":{}}' > _site/data/season_2025_26.json
           fi
           cp data/tournaments.json _site/data/tournaments.json
+          if [ -f data/player_badges.json ]; then
+            cp data/player_badges.json _site/data/player_badges.json
+          else
+            printf '%s\n' '{"season":"2026-27","generated_at":null,"great_window_days":60,"players":{}}' > _site/data/player_badges.json
+          fi
           cp data/update_log_ranking.json _site/data/update_log_ranking.json
           cp data/update_log_tournaments.json _site/data/update_log_tournaments.json
           if [ -f data/cpbl_batting_2026.json ]; then
