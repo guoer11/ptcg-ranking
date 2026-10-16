@@ -13,16 +13,8 @@ on:
       - "scraper.py"
       - "update_log.py"
       - "ensure_ranking_update_log.py"
-      - "scrape_identity.py"
-      - "scrape_identity_preflight.py"
-      - "merge_te_identity.py"
-      - "sync_ivan_history.py"
-      - "sync_identity_supabase.py"
-      - "encrypt_identity.py"
       - "build_player_badges.py"
-      - "privacy/player_identity_public.pem"
       - "requirements.txt"
-      - "data/player_identity_sources.json"
       - ".github/workflows/update-ranking.yml"
 
 permissions:
@@ -52,50 +44,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # 歷史姓名／Ivan 為輔助資料，來源暫時故障時不可阻斷官方排名更新。
-      - name: Update historical player names
-        id: identity
-        continue-on-error: true
-        run: |
-          python scrape_identity.py
-          python scrape_identity_preflight.py
-          python merge_te_identity.py
-          python - <<'PY'
-          import json
-          from pathlib import Path
-
-          payload = json.loads(Path("data/player_identity.json").read_text(encoding="utf-8"))
-          count = int(payload.get("count") or 0)
-          if count < 5000:
-              raise SystemExit(f"Identity sanity check failed: only {count} players")
-          print(f"Identity sanity check passed: {count} players")
-          PY
-
-      - name: Restore existing identity data when historical sources are unavailable
-        if: steps.identity.outcome != 'success'
-        run: |
-          echo "::warning::Historical player-name sources are unavailable; preserving existing identity data and continuing the official ranking update."
-          git restore --source=HEAD -- data/player_identity.json data/player_identity.enc.json
-
-      - name: Sync private player names to Supabase
-        if: steps.identity.outcome == 'success'
-        env:
-          PLAYER_IDENTITY_PRIVATE_KEY: ${{ secrets.PLAYER_IDENTITY_PRIVATE_KEY }}
-        run: python sync_identity_supabase.py
-
-      - name: Encrypt historical player names
-        if: steps.identity.outcome == 'success'
-        run: |
-          python encrypt_identity.py data/player_identity.json data/player_identity.enc.json data/player_identity.json
-          if grep -q '"real_name"' data/player_identity.json; then
-            echo "Plain-text identity data is still present; refusing to commit."
-            exit 1
-          fi
-
-      - name: Sync 2025-26 Ivan history
-        continue-on-error: true
-        run: python sync_ivan_history.py
-
+      # 排行榜例行更新只抓 Pokémon Asia 官網。
+      # Ivan／歷史姓名等資料已另行保存，不在每日排行更新時重新抓取。
       - name: Fetch official ranking
         env:
           POKEMON_EMAIL: ${{ secrets.POKEMON_EMAIL }}
@@ -127,7 +77,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/
-          git commit -m "Update ranking history and encrypted player identity data"
+          git commit -m "Update official ranking data"
           git pull --rebase origin main
           git push origin HEAD:main
           echo "changed=true" >> "$GITHUB_OUTPUT"
@@ -137,7 +87,6 @@ jobs:
         if: steps.commit.outputs.ranking_changed == 'true'
         run: |
           # 只有排名／積分／玩家進出榜等有效排名變動才立即通知。
-          # 暱稱、地區、加密姓名資料或時間戳更新不觸發通知。
           sleep 3
           curl --fail-with-body --silent --show-error \
             -X POST "https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-line" \
