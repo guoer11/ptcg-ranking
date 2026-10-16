@@ -13,7 +13,7 @@
     if (!document.getElementById('ptcgPlayerBadgesJs')) {
       const script = document.createElement('script');
       script.id = 'ptcgPlayerBadgesJs';
-      script.src = 'player-badges.js?v=2.2.0-r2';
+      script.src = 'player-badges.js?v=2.2.0-r3';
       script.defer = true;
       document.head.appendChild(script);
     }

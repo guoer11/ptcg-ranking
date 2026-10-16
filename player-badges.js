@@ -48,7 +48,7 @@
       great: '超級球'
     };
     const label = labels[type] || '';
-    const range = type === 'great' ? '近60天' : '本賽季';
+    const range = type === 'great' ? '自該次冠／亞軍日起60天內' : '本賽季';
     return `<span class="player-ball-badge player-ball-${type}" title="${label}｜${range}${rankLabel(numericRank)}" aria-label="${label}${rankLabel(numericRank)}">
       <span class="player-ball-icon" aria-hidden="true"></span><span class="player-ball-rank">${numericRank}</span>
     </span>`;
@@ -109,7 +109,7 @@
     return `<div class="player-badge-legend">
       <strong>標記說明</strong>
       <span class="player-badge-legend-line">WCS Logo＝世界賽選手　<span class="player-attention-star is-active" aria-hidden="true">★</span>＝注意名單</span>
-      <span class="player-badge-legend-line"><b>¹</b>＝冠軍　<b>²</b>＝亞軍；超級球看近60天，高級球／紀念球看本賽季</span>
+      <span class="player-badge-legend-line"><b>¹</b>＝冠軍　<b>²</b>＝亞軍；超級球自該次冠／亞軍日起保留60天，高級球／紀念球看本賽季</span>
     </div>`;
   }
 
@@ -385,7 +385,7 @@
       if (anchor) anchor.insertAdjacentElement('beforebegin', box);
       else body.prepend(box);
     }
-    const modalHtml = `<div class="player-badge-row">${infoHtml}</div>${auth ? `<button class="player-attention-modal-control${attentionSet.has(id) ? ' is-active' : ''}" type="button" data-player-attention-toggle="${esc(id)}">${attentionSet.has(id) ? '★ 已標記注意' : '☆ 標記注意'}</button>` : ''}`;
+    const modalHtml = `<div class="player-badge-row">${infoHtml}</div>${auth ? `<button class="player-attention-modal-control${attentionSet.has(id) ? ' is-active' : ''}" type="button" data-player-attention-toggle="${esc(id)}">${attentionSet.has(id) ? '★ 已加入注意名單' : '☆ 加入注意名單'}</button>` : ''}`;
     const modalSignature = `${badgeSignature(id)}|${auth ? 1 : 0}`;
     if (box.dataset.badgeSignature !== modalSignature) {
       box.innerHTML = modalHtml;
