@@ -1,7 +1,1002 @@
 {
   "season": "2026-27",
-  "generated_at": null,
+  "generated_at": "2026-10-16T09:35:00+08:00",
   "great_window_days": 60,
-  "great_cutoff": null,
-  "players": {}
+  "great_cutoff": "2026-08-18",
+  "players": {
+    "tw00057543": {
+      "wcs_2026": true
+    },
+    "tw00357547": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-04"
+      }
+    },
+    "tw00387540": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 2,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-27"
+      }
+    },
+    "tw01111702": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-10-04"
+      }
+    },
+    "tw01856787": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-13"
+      }
+    },
+    "tw01909140": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-10-11"
+      }
+    },
+    "tw02658166": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-05"
+      }
+    },
+    "tw03103631": {
+      "wcs_2026": true
+    },
+    "tw03132048": {
+      "wcs_2026": true
+    },
+    "tw03538932": {
+      "wcs_2026": true
+    },
+    "tw04057117": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-13"
+      }
+    },
+    "tw05602573": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-13"
+      }
+    },
+    "tw05925639": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-11"
+      }
+    },
+    "tw06034751": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-28"
+      }
+    },
+    "tw07460167": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-19"
+      }
+    },
+    "tw08069127": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-09"
+      }
+    },
+    "tw08952821": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-25"
+      }
+    },
+    "tw09472918": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-13"
+      }
+    },
+    "tw09704151": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-06"
+      }
+    },
+    "tw10141695": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-19"
+      }
+    },
+    "tw10467123": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-26"
+      }
+    },
+    "tw11292760": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-26"
+      }
+    },
+    "tw11612248": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-13"
+      }
+    },
+    "tw12134806": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-20"
+      }
+    },
+    "tw12360786": {
+      "wcs_2026": true
+    },
+    "tw12769027": {
+      "wcs_2026": true
+    },
+    "tw13624938": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-13"
+      }
+    },
+    "tw13995413": {
+      "wcs_2026": true
+    },
+    "tw15026318": {
+      "wcs_2026": true
+    },
+    "tw15435377": {
+      "wcs_2026": true
+    },
+    "tw15533641": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-05"
+      }
+    },
+    "tw18638755": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-05"
+      }
+    },
+    "tw19067728": {
+      "wcs_2026": true
+    },
+    "tw21820105": {
+      "wcs_2026": true
+    },
+    "tw22529091": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 2,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-20"
+      }
+    },
+    "tw22756831": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-13"
+      }
+    },
+    "tw23205294": {
+      "wcs_2026": true
+    },
+    "tw23764220": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-26"
+      }
+    },
+    "tw24120338": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-06"
+      }
+    },
+    "tw24854365": {
+      "wcs_2026": true
+    },
+    "tw24889276": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-11"
+      }
+    },
+    "tw26175828": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-13"
+      }
+    },
+    "tw26529339": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-04"
+      }
+    },
+    "tw27568465": {
+      "wcs_2026": true
+    },
+    "tw28186951": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-10-04"
+      }
+    },
+    "tw29265523": {
+      "wcs_2026": true
+    },
+    "tw29404493": {
+      "wcs_2026": true
+    },
+    "tw29536370": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 2,
+        "runner_up_count": 0,
+        "latest_date": "2026-10-09"
+      }
+    },
+    "tw30267620": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-27"
+      }
+    },
+    "tw32020032": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-28"
+      }
+    },
+    "tw32830944": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-10"
+      }
+    },
+    "tw33446875": {
+      "wcs_2026": true
+    },
+    "tw33544977": {
+      "wcs_2026": true
+    },
+    "tw34406887": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-10-10"
+      }
+    },
+    "tw35717087": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-20"
+      }
+    },
+    "tw36271539": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-04"
+      }
+    },
+    "tw36759052": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 3,
+        "runner_up_count": 0,
+        "latest_date": "2026-10-10"
+      }
+    },
+    "tw37208259": {
+      "wcs_2026": true
+    },
+    "tw37286261": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-20"
+      }
+    },
+    "tw37556303": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-05"
+      }
+    },
+    "tw38080173": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-26"
+      }
+    },
+    "tw39185310": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-09"
+      }
+    },
+    "tw39371632": {
+      "wcs_2026": true
+    },
+    "tw39894258": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-06"
+      }
+    },
+    "tw40670915": {
+      "wcs_2026": true
+    },
+    "tw41286139": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-26"
+      }
+    },
+    "tw41523616": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-13"
+      }
+    },
+    "tw42309306": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-27"
+      }
+    },
+    "tw42619935": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-04"
+      }
+    },
+    "tw42912360": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-10"
+      }
+    },
+    "tw43380150": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-11"
+      }
+    },
+    "tw44127879": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-10"
+      }
+    },
+    "tw46076033": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-06"
+      }
+    },
+    "tw46798799": {
+      "wcs_2026": true
+    },
+    "tw46877625": {
+      "wcs_2026": true
+    },
+    "tw47904340": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-26"
+      }
+    },
+    "tw48711959": {
+      "wcs_2026": true
+    },
+    "tw48793078": {
+      "wcs_2026": true
+    },
+    "tw49340794": {
+      "wcs_2026": true
+    },
+    "tw49759795": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 2,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-27"
+      }
+    },
+    "tw50023354": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-06"
+      }
+    },
+    "tw50680843": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-25"
+      }
+    },
+    "tw50896397": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-10"
+      }
+    },
+    "tw51144227": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-13"
+      }
+    },
+    "tw53540804": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-06"
+      }
+    },
+    "tw53723254": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 2,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-20"
+      }
+    },
+    "tw53917462": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-20"
+      }
+    },
+    "tw54152249": {
+      "wcs_2026": true
+    },
+    "tw54760232": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-10-11"
+      }
+    },
+    "tw56336073": {
+      "wcs_2026": true
+    },
+    "tw56605426": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-26"
+      }
+    },
+    "tw57062134": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-09"
+      }
+    },
+    "tw57615176": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-19"
+      }
+    },
+    "tw58176881": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-11"
+      }
+    },
+    "tw58817602": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-10-10"
+      }
+    },
+    "tw59054436": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-05"
+      }
+    },
+    "tw59096586": {
+      "wcs_2026": true
+    },
+    "tw59842400": {
+      "wcs_2026": true
+    },
+    "tw59914357": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-27"
+      }
+    },
+    "tw60273793": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-05"
+      }
+    },
+    "tw61881775": {
+      "wcs_2026": true
+    },
+    "tw63508480": {
+      "wcs_2026": true
+    },
+    "tw65972314": {
+      "wcs_2026": true
+    },
+    "tw66134077": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 2,
+        "latest_date": "2026-09-28"
+      }
+    },
+    "tw66588143": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-19"
+      }
+    },
+    "tw69293104": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-13"
+      }
+    },
+    "tw69848864": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-25"
+      }
+    },
+    "tw71161900": {
+      "wcs_2026": true
+    },
+    "tw71688252": {
+      "wcs_2026": true
+    },
+    "tw73048413": {
+      "wcs_2026": true
+    },
+    "tw73106123": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-10-11"
+      }
+    },
+    "tw74390718": {
+      "wcs_2026": true
+    },
+    "tw74697953": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-20"
+      }
+    },
+    "tw75551324": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-26"
+      }
+    },
+    "tw75863784": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-09"
+      }
+    },
+    "tw75922385": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-19"
+      }
+    },
+    "tw76369505": {
+      "wcs_2026": true
+    },
+    "tw76708967": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-05"
+      }
+    },
+    "tw77414759": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-28"
+      }
+    },
+    "tw77699656": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 2,
+        "latest_date": "2026-09-28"
+      }
+    },
+    "tw77877383": {
+      "wcs_2026": true
+    },
+    "tw77919530": {
+      "wcs_2026": true
+    },
+    "tw78403870": {
+      "wcs_2026": true
+    },
+    "tw78657682": {
+      "wcs_2026": true
+    },
+    "tw78670690": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-28"
+      }
+    },
+    "tw79280986": {
+      "wcs_2026": true
+    },
+    "tw81419386": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-13"
+      }
+    },
+    "tw81886933": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-25"
+      }
+    },
+    "tw82119121": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-20"
+      }
+    },
+    "tw82272345": {
+      "wcs_2026": true
+    },
+    "tw82494238": {
+      "wcs_2026": true
+    },
+    "tw82755386": {
+      "wcs_2026": true
+    },
+    "tw82928313": {
+      "wcs_2026": true
+    },
+    "tw84778743": {
+      "wcs_2026": true
+    },
+    "tw85147749": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-10-09"
+      }
+    },
+    "tw85313935": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-20"
+      }
+    },
+    "tw86591343": {
+      "wcs_2026": true
+    },
+    "tw87203702": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-06"
+      }
+    },
+    "tw88209015": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-06"
+      }
+    },
+    "tw88506619": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-28"
+      }
+    },
+    "tw89297350": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-06"
+      }
+    },
+    "tw89368672": {
+      "wcs_2026": true
+    },
+    "tw89973725": {
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 2,
+        "runner_up_count": 0,
+        "latest_date": "2026-09-20"
+      }
+    },
+    "tw91466649": {
+      "wcs_2026": true
+    },
+    "tw91677599": {
+      "wcs_2026": true
+    },
+    "tw92544749": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-06"
+      }
+    },
+    "tw93433450": {
+      "wcs_2026": true
+    },
+    "tw93955100": {
+      "wcs_2026": true
+    },
+    "tw94971550": {
+      "wcs_2026": true
+    },
+    "tw95120042": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-06"
+      }
+    },
+    "tw95299182": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-05"
+      }
+    },
+    "tw96234784": {
+      "wcs_2026": true
+    },
+    "tw96313655": {
+      "wcs_2026": true
+    },
+    "tw96947201": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 2,
+        "latest_date": "2026-10-04"
+      }
+    },
+    "tw97931731": {
+      "wcs_2026": true
+    },
+    "tw98129328": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 1,
+        "latest_date": "2026-09-28"
+      }
+    },
+    "tw98358576": {
+      "wcs_2026": true
+    },
+    "tw98425963": {
+      "wcs_2026": true
+    },
+    "tw99589299": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-11"
+      }
+    }
+  }
 }
