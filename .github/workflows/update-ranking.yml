@@ -52,18 +52,39 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # 歷史姓名／Ivan 為輔助資料，來源暫時故障時不可阻斷官方排名更新。
       - name: Update historical player names
+        id: identity
+        continue-on-error: true
         run: |
           python scrape_identity.py
           python scrape_identity_preflight.py
           python merge_te_identity.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          payload = json.loads(Path("data/player_identity.json").read_text(encoding="utf-8"))
+          count = int(payload.get("count") or 0)
+          if count < 5000:
+              raise SystemExit(f"Identity sanity check failed: only {count} players")
+          print(f"Identity sanity check passed: {count} players")
+          PY
+
+      - name: Restore existing identity data when historical sources are unavailable
+        if: steps.identity.outcome != 'success'
+        run: |
+          echo "::warning::Historical player-name sources are unavailable; preserving existing identity data and continuing the official ranking update."
+          git restore --source=HEAD -- data/player_identity.json data/player_identity.enc.json
 
       - name: Sync private player names to Supabase
+        if: steps.identity.outcome == 'success'
         env:
           PLAYER_IDENTITY_PRIVATE_KEY: ${{ secrets.PLAYER_IDENTITY_PRIVATE_KEY }}
         run: python sync_identity_supabase.py
 
       - name: Encrypt historical player names
+        if: steps.identity.outcome == 'success'
         run: |
           python encrypt_identity.py data/player_identity.json data/player_identity.enc.json data/player_identity.json
           if grep -q '"real_name"' data/player_identity.json; then
@@ -72,6 +93,7 @@ jobs:
           fi
 
       - name: Sync 2025-26 Ivan history
+        continue-on-error: true
         run: python sync_ivan_history.py
 
       - name: Fetch official ranking
