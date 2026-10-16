@@ -1,6 +1,23 @@
 (() => {
-  const SITE_VERSION = 'v2.1.2';
+  const SITE_VERSION = 'v2.2.0';
   window.PTCG_SITE_VERSION = SITE_VERSION;
+
+  function ensurePlayerBadgeAssets() {
+    if (!document.getElementById('ptcgPlayerBadgesCss')) {
+      const link = document.createElement('link');
+      link.id = 'ptcgPlayerBadgesCss';
+      link.rel = 'stylesheet';
+      link.href = 'player-badges.css?v=2.2.0-r1';
+      document.head.appendChild(link);
+    }
+    if (!document.getElementById('ptcgPlayerBadgesJs')) {
+      const script = document.createElement('script');
+      script.id = 'ptcgPlayerBadgesJs';
+      script.src = 'player-badges.js?v=2.2.0-r1';
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+  }
 
   function ensureStyle() {
     if (document.getElementById('ptcgSiteVersionStyle')) return;
@@ -20,7 +37,7 @@
         white-space: nowrap;
       }
 
-      /* v2.1.2 同功能微調：姓名維持正常大小，WCS 圖示放 PTCG ID 右側。 */
+      /* 姓名維持正常大小；WCS 初始圖示由既有資料產生，再由玩家標記列統一整理。 */
       .player-name-line.player-name-combined {
         display: flex;
         flex-wrap: wrap;
@@ -190,6 +207,7 @@
     }
   }
 
+  ensurePlayerBadgeAssets();
   ensureStyle();
   document.addEventListener('DOMContentLoaded', installCompactRankingNames, { once: true });
 })();
