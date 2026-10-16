@@ -1,0 +1,81 @@
+name: Fix v2.2.0 badge deployment
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-v220-badge-deploy.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Include player badge assets in Pages and refresh cache keys
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          # Pages artifact previously omitted the new badge JS/CSS/data and family bridge.
+          p = Path('.github/workflows/deploy-pages.yml')
+          text = p.read_text(encoding='utf-8')
+          old = 'family-notify.js family-notify.css _site/'
+          new = 'family-notify.js family-notify.css player-badges.js player-badges.css family-attention-bridge.js _site/'
+          if old in text:
+              text = text.replace(old, new, 1)
+          elif new not in text:
+              raise SystemExit('deploy asset copy target not found')
+
+          anchor = '          cp data/tournaments.json _site/data/tournaments.json\n'
+          addition = '''          cp data/tournaments.json _site/data/tournaments.json\n          if [ -f data/player_badges.json ]; then\n            cp data/player_badges.json _site/data/player_badges.json\n          else\n            printf '%s\\n' '{"season":"2026-27","generated_at":null,"great_window_days":60,"players":{}}' > _site/data/player_badges.json\n          fi\n'''
+          if addition not in text:
+              if anchor not in text:
+                  raise SystemExit('player_badges data copy anchor not found')
+              text = text.replace(anchor, addition, 1)
+          p.write_text(text, encoding='utf-8')
+
+          # Refresh public asset URLs so earlier 404 responses cannot linger on iPhone/PWA.
+          p = Path('site-version.js')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace('player-badges.css?v=2.2.0-r2', 'player-badges.css?v=2.2.0-r4')
+          text = text.replace('player-badges.js?v=2.2.0-r3', 'player-badges.js?v=2.2.0-r4')
+          p.write_text(text, encoding='utf-8')
+
+          p = Path('player-badges.js')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace("data/player_badges.json?v=2.2.0-r1", "data/player_badges.json?v=2.2.0-r2")
+          p.write_text(text, encoding='utf-8')
+
+          for filename in ('index.html', 'pairing.html'):
+              p = Path(filename)
+              text = p.read_text(encoding='utf-8')
+              text = text.replace('site-version.js?v=2.2.0-r3', 'site-version.js?v=2.2.0-r4')
+              p.write_text(text, encoding='utf-8')
+
+          p = Path('family-notify.html')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace('player-badges.css?v=2.2.0-r2', 'player-badges.css?v=2.2.0-r4')
+          text = text.replace('player-badges.js?v=2.2.0-r3', 'player-badges.js?v=2.2.0-r4')
+          text = text.replace('family-attention-bridge.js?v=2.2.0-r1', 'family-attention-bridge.js?v=2.2.0-r2')
+          p.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/deploy-pages.yml site-version.js player-badges.js index.html pairing.html family-notify.html
+          if git diff --cached --quiet; then
+            echo 'Already fixed.'
+            exit 0
+          fi
+          git commit -m 'Fix v2.2.0 player badge Pages artifact'
+          git pull --rebase origin main
+          git push origin HEAD:main
