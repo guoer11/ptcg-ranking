@@ -158,6 +158,15 @@
   gap: 4px;
 }
 
+/* 冠軍／亞軍標記維持同一列，後段說明仍可在自己的文字區塊內換行。 */
+.player-badge-legend-line:last-child {
+  flex-wrap: nowrap;
+}
+
+.player-badge-legend-line:last-child > b {
+  flex: 0 0 auto;
+}
+
 .player-badge-legend .player-attention-star {
   width: 15px;
   height: 15px;
