@@ -7,7 +7,7 @@
       const link = document.createElement('link');
       link.id = 'ptcgPlayerBadgesCss';
       link.rel = 'stylesheet';
-      link.href = 'player-badges.css?v=2.2.0-r4';
+      link.href = 'player-badges.css?v=2.3.0-r1';
       document.head.appendChild(link);
     }
     if (!document.getElementById('ptcgPlayerBadgesJs')) {
