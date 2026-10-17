@@ -23,6 +23,31 @@
       .replaceAll("'", '&#039;');
   }
 
+  function installScoreLayoutStyle() {
+    if (document.getElementById('pairingScoreLayoutV222')) return;
+    const style = document.createElement('style');
+    style.id = 'pairingScoreLayoutV222';
+    style.textContent = `
+      #pairingResult .pairing-match-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      #pairingResult .pairing-match-grid > .pairing-table-card {
+        grid-column: 1 / -1;
+      }
+      #pairingResult .pairing-match-grid > .pairing-player-card,
+      #pairingResult .pairing-match-grid > .pairing-ttl-score-card {
+        grid-column: auto;
+      }
+      @media (max-width: 560px) {
+        #pairingResult .pairing-match-grid > .pairing-opponent-card,
+        #pairingResult .pairing-match-grid > .pairing-source-card {
+          grid-column: 1 / -1;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   function scoutArticles() {
     return [...document.querySelectorAll('#pairingScoutResult .pairing-scout-player')];
   }
@@ -67,6 +92,30 @@
     return document.querySelector('#pairingResult .pairing-match-grid');
   }
 
+  function classifyGridCards() {
+    const grid = resultGrid();
+    if (!grid) return {};
+    const cards = {};
+    for (const article of grid.querySelectorAll(':scope > article')) {
+      if (article.classList.contains('pairing-ttl-score-card')) continue;
+      const label = article.querySelector('span')?.textContent?.trim() || '';
+      if (label === '桌號') {
+        article.classList.add('pairing-table-card');
+        cards.table = article;
+      } else if (label === '你的玩家') {
+        article.classList.add('pairing-player-card');
+        cards.player = article;
+      } else if (label === '對手') {
+        article.classList.add('pairing-opponent-card');
+        cards.opponent = article;
+      } else if (label === '來源') {
+        article.classList.add('pairing-source-card');
+        cards.source = article;
+      }
+    }
+    return cards;
+  }
+
   function scoreCard() {
     return resultGrid()?.querySelector('.pairing-ttl-score-card') || null;
   }
@@ -74,11 +123,17 @@
   function ensureScoreCard(value = '讀取中…', note = '正在讀取官方 TtlScore') {
     const grid = resultGrid();
     if (!grid) return null;
+    installScoreLayoutStyle();
+    const cards = classifyGridCards();
     let card = scoreCard();
     if (!card) {
       card = document.createElement('article');
       card.className = 'pairing-ttl-score-card';
-      const source = [...grid.querySelectorAll(':scope > article')]
+    }
+    if (cards.player && cards.player.nextElementSibling !== card) {
+      cards.player.insertAdjacentElement('afterend', card);
+    } else if (!card.isConnected) {
+      const source = cards.source || [...grid.querySelectorAll(':scope > article')]
         .find(article => article.querySelector('span')?.textContent?.trim() === '來源');
       if (source) source.before(card);
       else grid.appendChild(card);
@@ -163,7 +218,9 @@
   }
 
   function refresh() {
+    installScoreLayoutStyle();
     decorateScoutBadges();
+    classifyGridCards();
     if (resultGrid()) scheduleScore(false);
   }
 
@@ -177,10 +234,12 @@
 
   const observer = new MutationObserver(() => {
     window.setTimeout(decorateScoutBadges, 0);
+    classifyGridCards();
     if (resultGrid() && !scoreCard()) scheduleScore(false);
   });
 
   function start() {
+    installScoreLayoutStyle();
     if (document.body) observer.observe(document.body, { childList: true, subtree: true });
     refresh();
     let count = 0;
