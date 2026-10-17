@@ -35,35 +35,58 @@
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
   }
 
-  function paramsSummary() {
-    const params = new URLSearchParams(window.location.search);
-    if ((params.get('type') || '') !== 'round') return null;
-    return {
-      type: 'round',
-      round: params.get('round') || '',
-      player: params.get('player') || '',
-      table: params.get('table') || '',
-      opponent: params.get('opponent') || '',
-      opponent_id: params.get('opponent_id') || '',
-      deck: params.get('deck') || '',
-      possible_deck: params.get('possible_deck') || '',
-      previous_deck: params.get('previous_deck') || '',
-      ttl_score: params.get('ttl_score') || '',
-      official: params.get('official') || '',
-      saved_at: new Date().toISOString()
-    };
-  }
-
-  function latestSummary() {
-    return paramsSummary() || (() => {
-      const stored = readJson(SUMMARY_KEY, null);
-      return stored?.type === 'round' ? stored : null;
-    })();
-  }
-
   function tidFromOfficial(value = '') {
     try { return new URL(value, window.location.origin).searchParams.get('tid') || ''; }
     catch (_) { return ''; }
+  }
+
+  function summaryFromUrl(value = window.location.href) {
+    try {
+      const url = new URL(value, window.location.origin);
+      const params = url.searchParams;
+      if ((params.get('type') || '') !== 'round') return null;
+      return {
+        type: 'round',
+        round: params.get('round') || '',
+        player: params.get('player') || '',
+        table: params.get('table') || '',
+        opponent: params.get('opponent') || '',
+        opponent_id: params.get('opponent_id') || '',
+        deck: params.get('deck') || '',
+        possible_deck: params.get('possible_deck') || '',
+        previous_deck: params.get('previous_deck') || '',
+        ttl_score: params.get('ttl_score') || '',
+        official: params.get('official') || '',
+        saved_at: new Date().toISOString()
+      };
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function sameRound(a, b) {
+    if (!a || !b) return false;
+    return String(a.round || '') === String(b.round || '')
+      && tidFromOfficial(a.official) === tidFromOfficial(b.official);
+  }
+
+  function mergeSummary(base, incoming) {
+    if (!base) return incoming;
+    if (!incoming) return base;
+    if (!sameRound(base, incoming)) return incoming;
+    const merged = { ...base };
+    for (const [key, value] of Object.entries(incoming)) {
+      if (value !== '' && value !== null && value !== undefined) merged[key] = value;
+    }
+    merged.saved_at = new Date().toISOString();
+    return merged;
+  }
+
+  function latestSummary() {
+    const fromUrl = summaryFromUrl();
+    const stored = readJson(SUMMARY_KEY, null);
+    if (fromUrl?.type === 'round') return mergeSummary(stored?.type === 'round' ? stored : null, fromUrl);
+    return stored?.type === 'round' ? stored : null;
   }
 
   function historyMap() {
@@ -79,21 +102,25 @@
     const tid = tidFromOfficial(official);
     if (!Number.isInteger(round) || round < 1 || !playerId || !tid || !official) return null;
 
+    const stored = readJson(SUMMARY_KEY, null);
+    const merged = mergeSummary(stored?.type === 'round' ? stored : null, summary);
+    writeJson(SUMMARY_KEY, merged);
+
     const old = readJson(CONTEXT_KEY, null);
     const same = old?.tid === tid && old?.player_id === playerId;
     const context = {
       tid,
       player_id: playerId,
-      player: summary.player || playerId,
+      player: merged.player || summary.player || playerId,
       official,
       max_round: same ? Math.max(Number(old.max_round || 0), round) : round,
       updated_at: new Date().toISOString()
     };
     writeJson(CONTEXT_KEY, context);
-    writeJson(SUMMARY_KEY, summary);
 
     const history = historyMap();
-    history[`${tid}:${round}`] = { ...summary, tid, round: String(round), saved_at: new Date().toISOString() };
+    const key = `${tid}:${round}`;
+    history[key] = mergeSummary(history[key] || null, { ...merged, tid, round: String(round) });
     const trimmed = Object.entries(history)
       .sort((a, b) => Date.parse(b[1]?.saved_at || '') - Date.parse(a[1]?.saved_at || ''))
       .slice(0, 24);
@@ -139,7 +166,8 @@
     const max = Math.max(1, Number(context.max_round || 1));
     const input = byId('familyRoundInput');
     const fallback = Number(input?.value || max) || max;
-    const current = Math.min(max, Math.max(1, Number(selectedRound ?? fallback) || max));
+    const chosen = selectedRound === null || selectedRound === undefined ? fallback : Number(selectedRound);
+    const current = Math.min(max, Math.max(1, Number(chosen) || max));
     if (input) {
       input.min = '1';
       input.max = String(max);
@@ -229,6 +257,7 @@
     if (summary.possible_deck) params.set('possible_deck', summary.possible_deck);
     if (summary.previous_deck) params.set('previous_deck', summary.previous_deck);
     if (summary.ttl_score) params.set('ttl_score', summary.ttl_score);
+    params.set('_v', '230r3');
     history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
   }
 
@@ -251,7 +280,7 @@
       <article class="family-match-wide family-table-card"><span>桌號</span><strong>${esc(summary.table || '—')}</strong></article>
       <article class="family-player-card"><span>玩家</span><strong>${esc(summary.player || context.player_id)}</strong></article>
       <article class="family-score-card"><span>TtlScore</span><strong>${esc(summary.ttl_score || '—')}</strong></article>
-      <article class="family-opponent-card"><span>對手</span><strong>${esc(summary.opponent || '—')}</strong></article>
+      <article class="family-opponent-card"><span>對手</span><strong>${esc(summary.opponent || summary.opponent_id || '—')}</strong></article>
       <article class="family-deck-card"><span>${esc(deckLabel)}</span><strong>${esc(deckValue)}</strong></article>`;
 
     const link = byId('familyOfficialLink');
@@ -264,24 +293,32 @@
     window.PTCGPlayerBadges?.refresh?.();
   }
 
-  async function queryRound(roundValue) {
+  function summaryNeedsRefresh(summary) {
+    if (!summary || summary.type !== 'round') return false;
+    const table = String(summary.table || '').trim();
+    const opponent = String(summary.opponent || summary.opponent_id || '').trim();
+    return !table || table === '—' || !opponent || opponent === '—';
+  }
+
+  async function queryRound(roundValue, options = {}) {
+    const { silent = false, updateUrl = true } = options;
     const context = currentContext();
     if (!context) {
-      setMessage('尚未取得可查詢的比賽資料，請先收到一則 Round 配對通知。', 'error');
-      return;
+      if (!silent) setMessage('尚未取得可查詢的比賽資料，請先收到一則 Round 配對通知。', 'error');
+      return false;
     }
 
     const max = Number(context.max_round || 0);
     const round = Number(roundValue);
     if (!Number.isInteger(round) || round < 1 || round > max) {
-      setMessage(`可查詢 Round 1～${max}。`, 'error');
+      if (!silent) setMessage(`可查詢 Round 1～${max}。`, 'error');
       syncControls(context);
-      return;
+      return false;
     }
 
     const button = byId('familyRoundLookupButton');
     if (button) button.disabled = true;
-    setMessage(`正在查詢 Round ${round}…`);
+    if (!silent) setMessage(`正在查詢 Round ${round}…`);
 
     try {
       const official = roundUrl(context, round);
@@ -296,12 +333,22 @@
         !known?.deck && !known?.possible_deck && !known?.previous_deck ? previousDeckLookup(context, opponentId) : Promise.resolve('')
       ]);
 
+      const opponentLabel = known?.opponent
+        || pairing.match.opponent_name
+        || opponentId
+        || pairing.match.opponent
+        || '—';
+      const playerLabel = known?.player
+        || (pairing.match.player_name ? `${pairing.match.player_name} (${context.player_id})` : '')
+        || context.player
+        || context.player_id;
+
       const summary = {
         type: 'round',
         round: String(round),
-        player: known?.player || context.player || context.player_id,
+        player: playerLabel,
         table: String(pairing.match.table || known?.table || '—'),
-        opponent: known?.opponent || pairing.match.opponent_name || opponentId || pairing.match.opponent || '—',
+        opponent: opponentLabel,
         opponent_id: opponentId,
         deck: known?.deck || '',
         possible_deck: known?.possible_deck || '',
@@ -311,22 +358,49 @@
         saved_at: new Date().toISOString()
       };
 
-      rememberSummary(summary);
-      updateAddress(summary);
-      renderRound(summary, currentContext() || context);
-      syncControls(currentContext() || context, round);
-      setMessage(`Round ${round} 查詢完成。`, 'success');
+      const nextContext = rememberSummary(summary) || context;
+      if (updateUrl) updateAddress(summary);
+      renderRound(summary, nextContext);
+      syncControls(nextContext, round);
+      if (!silent) setMessage(`Round ${round} 查詢完成。`, 'success');
+      return true;
     } catch (error) {
-      setMessage(error?.message || String(error), 'error');
+      if (!silent) setMessage(error?.message || String(error), 'error');
+      return false;
     } finally {
       if (button) button.disabled = false;
     }
   }
 
+  function ingestNotificationUrl(urlValue) {
+    const incoming = summaryFromUrl(urlValue);
+    if (!incoming) return;
+    const stored = readJson(SUMMARY_KEY, null);
+    const merged = mergeSummary(stored?.type === 'round' ? stored : null, incoming);
+    const context = rememberSummary(merged) || currentContext();
+    if (context) {
+      renderRound(merged, context);
+      syncControls(context, Number(merged.round || context.max_round));
+      if (summaryNeedsRefresh(merged)) {
+        window.setTimeout(() => queryRound(context.max_round, { silent: true, updateUrl: true }), 80);
+      }
+    }
+  }
+
+  function refreshFromCurrentState({ autoFill = true } = {}) {
+    const summary = latestSummary();
+    if (summary) rememberSummary(summary);
+    const context = currentContext();
+    syncControls(context, summary?.round || context?.max_round || null);
+    if (context && summary) renderRound(summary, context);
+    if (autoFill && context && summaryNeedsRefresh(summary)) {
+      window.setTimeout(() => queryRound(context.max_round, { silent: true, updateUrl: true }), 120);
+    }
+  }
+
   function install() {
     document.querySelectorAll('#familyMatchGrid .family-source-card').forEach(card => card.remove());
-    const context = currentContext();
-    syncControls(context, context?.max_round || null);
+    refreshFromCurrentState({ autoFill: true });
 
     byId('familyRoundLookupButton')?.addEventListener('click', () => queryRound(byId('familyRoundInput')?.value));
     byId('familyRoundCurrentButton')?.addEventListener('click', () => {
@@ -347,22 +421,23 @@
     });
 
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.addEventListener('message', () => setTimeout(() => {
-        const next = latestSummary();
-        if (next) rememberSummary(next);
-        const now = currentContext();
-        syncControls(now, now?.max_round || null);
-      }, 150));
+      navigator.serviceWorker.addEventListener('message', event => {
+        const message = event?.data || {};
+        if (message.type === 'ptcg-family-update' && message.url) {
+          window.setTimeout(() => ingestNotificationUrl(message.url), 20);
+          return;
+        }
+        window.setTimeout(() => refreshFromCurrentState({ autoFill: true }), 120);
+      });
     }
 
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) {
-        const next = latestSummary();
-        if (next) rememberSummary(next);
-        const now = currentContext();
-        syncControls(now, now?.max_round || null);
-      }
+      if (!document.hidden) refreshFromCurrentState({ autoFill: true });
     });
+    window.addEventListener('pageshow', () => refreshFromCurrentState({ autoFill: true }));
+
+    const version = document.querySelector('.family-notify-version strong');
+    if (version) version.textContent = '目前版本 v2.3.0';
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true });
