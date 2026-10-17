@@ -30,6 +30,7 @@ function buildPairingSummaryUrl(payload = {}) {
   const tableLine = lines.find(line => /^桌號：/.test(line)) || '';
   const opponentLine = lines.find(line => /^對手：/.test(line)) || '';
   const deckLine = lines.find(line => /^已記錄牌組：/.test(line)) || '';
+  const previousDeckLine = lines.find(line => /^上次比賽牌組：/.test(line)) || '';
   const possibleDeckLine = lines.find(line => /^可能牌組：/.test(line)) || '';
   params.set('type', 'round');
   if (roundMatch?.[1]) params.set('round', roundMatch[1]);
@@ -37,6 +38,7 @@ function buildPairingSummaryUrl(payload = {}) {
   if (tableLine) params.set('table', tableLine.replace(/^桌號：/, '').trim());
   if (opponentLine) params.set('opponent', opponentLine.replace(/^對手：/, '').trim());
   if (deckLine) params.set('deck', deckLine.replace(/^已記錄牌組：/, '').trim());
+  if (previousDeckLine) params.set('previous_deck', previousDeckLine.replace(/^上次比賽牌組：/, '').trim());
   if (possibleDeckLine) params.set('possible_deck', possibleDeckLine.replace(/^可能牌組：/, '').trim());
   if (official) params.set('official', official);
   return `/ptcg-ranking/family-notify.html?${params.toString()}`;
@@ -67,9 +69,13 @@ self.addEventListener('push', event => {
 
   const title = payload.title || 'PTCG 更新';
   const tag = payload.tag || 'ptcg-update';
-  const targetUrl = tag === 'ptcg-pairing'
-    ? buildPairingSummaryUrl(payload)
-    : (payload.url || '/ptcg-ranking/');
+  let targetUrl = payload.url || '/ptcg-ranking/';
+  if (tag === 'ptcg-pairing') {
+    targetUrl = payload.url || '/ptcg-ranking/pairing.html';
+  } else if (tag === 'ptcg-family-pairing') {
+    targetUrl = payload.url || buildPairingSummaryUrl(payload);
+  }
+
   const options = {
     body: payload.body || '網站有新的資料更新。',
     tag,
@@ -77,7 +83,7 @@ self.addEventListener('push', event => {
   };
 
   const tasks = [self.registration.showNotification(title, options)];
-  if (tag === 'ptcg-pairing') tasks.push(broadcastFamilyPairingUpdate(targetUrl));
+  if (tag === 'ptcg-family-pairing') tasks.push(broadcastFamilyPairingUpdate(targetUrl));
   event.waitUntil(Promise.all(tasks));
 });
 
