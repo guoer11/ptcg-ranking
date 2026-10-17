@@ -181,7 +181,7 @@
 
   function updateFamilyVersion() {
     const version = document.querySelector('.family-notify-version strong');
-    if (version) version.textContent = '目前版本 v2.2.2';
+    if (version) version.textContent = '目前版本 v2.3.0';
   }
 
   function scheduleRefresh(delay = 250) {
