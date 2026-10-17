@@ -1,5 +1,5 @@
 (() => {
-  const SITE_VERSION = 'v2.2.1';
+  const SITE_VERSION = 'v2.2.2';
   window.PTCG_SITE_VERSION = SITE_VERSION;
 
   function ensurePlayerBadgeAssets() {
@@ -17,6 +17,16 @@
       script.defer = true;
       document.head.appendChild(script);
     }
+  }
+
+  function ensurePairingV222Hotfix() {
+    if (!/\/pairing\.html$/i.test(window.location.pathname)) return;
+    if (document.getElementById('ptcgPairingV222Hotfix')) return;
+    const script = document.createElement('script');
+    script.id = 'ptcgPairingV222Hotfix';
+    script.src = 'pairing-hotfix-v2.2.2.js?v=2.2.2-r1';
+    script.defer = true;
+    document.head.appendChild(script);
   }
 
   function ensureStyle() {
@@ -208,6 +218,7 @@
   }
 
   ensurePlayerBadgeAssets();
+  ensurePairingV222Hotfix();
   ensureStyle();
   document.addEventListener('DOMContentLoaded', installCompactRankingNames, { once: true });
 })();
