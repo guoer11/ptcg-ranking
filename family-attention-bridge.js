@@ -1,6 +1,7 @@
 (() => {
   const MARK_URL = 'https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-family-player-mark';
   const DECK_HISTORY_URL = 'https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-family-deck-history';
+  const SCORE_URL = 'https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-pairing-score';
   const FAMILY_MATCH_STORAGE_KEY = 'ptcgFamilyLatestMatch';
 
   function extractPlayerId(value) {
@@ -16,28 +17,46 @@
     }
   }
 
+  function currentParams() {
+    return new URLSearchParams(window.location.search);
+  }
+
+  function currentPlayerId() {
+    const params = currentParams();
+    return extractPlayerId(params.get('player')) || extractPlayerId(storedSummary()?.player);
+  }
+
   function currentOpponentId() {
-    const params = new URLSearchParams(window.location.search);
+    const params = currentParams();
     return String(params.get('opponent_id') || '').trim().toLowerCase()
       || extractPlayerId(params.get('opponent'))
       || extractPlayerId(storedSummary()?.opponent);
   }
 
+  function currentOfficial() {
+    const params = currentParams();
+    return params.get('official') || storedSummary()?.official || '';
+  }
+
   function currentTid() {
-    const params = new URLSearchParams(window.location.search);
-    const official = params.get('official') || storedSummary()?.official || '';
     try {
-      return new URL(official).searchParams.get('tid') || '';
+      return new URL(currentOfficial()).searchParams.get('tid') || '';
     } catch (_) {
       return '';
     }
   }
 
+  function isRoundSummary() {
+    const params = currentParams();
+    const type = params.get('type') || storedSummary()?.type || '';
+    return type === 'round';
+  }
+
   function currentSummaryHasDeck() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('deck') || params.get('possible_deck')) return true;
+    const params = currentParams();
+    if (params.get('deck') || params.get('possible_deck') || params.get('previous_deck')) return true;
     const stored = storedSummary();
-    return Boolean(stored?.deck || stored?.possible_deck);
+    return Boolean(stored?.deck || stored?.possible_deck || stored?.previous_deck);
   }
 
   async function familySubscriptionEndpoint() {
@@ -75,31 +94,36 @@
     }
   }
 
-  function renderPreviousDeck(deck = '') {
-    const grid = document.getElementById('familyMatchGrid');
-    if (!grid) return;
-    grid.querySelector('.family-previous-deck')?.remove();
-    if (!deck || currentSummaryHasDeck()) return;
+  function setDeckCard(label, deck, state = '') {
+    const card = document.querySelector('#familyMatchGrid .family-deck-card');
+    if (!card) return;
+    card.classList.remove('is-known', 'is-possible', 'is-previous');
+    if (state) card.classList.add(state);
+    const span = card.querySelector('span');
+    const strong = card.querySelector('strong');
+    if (span) span.textContent = label;
+    if (strong) strong.textContent = deck;
+  }
 
-    const article = document.createElement('article');
-    article.className = 'family-match-wide family-previous-deck';
-    const span = document.createElement('span');
-    span.textContent = '上次比賽牌組';
-    const strong = document.createElement('strong');
-    strong.textContent = deck;
-    article.append(span, strong);
-    grid.appendChild(article);
+  function renderPreviousDeck(deck = '') {
+    if (currentSummaryHasDeck()) return;
+    if (deck) setDeckCard('上次比賽牌組', deck, 'is-previous');
+    else setDeckCard('對手牌組', '尚未記錄');
   }
 
   async function refreshPreviousDeck() {
-    if (currentSummaryHasDeck()) {
+    if (!isRoundSummary()) return;
+    if (currentSummaryHasDeck()) return;
+    const playerId = currentOpponentId();
+    if (!playerId) {
       renderPreviousDeck('');
       return;
     }
-    const playerId = currentOpponentId();
-    if (!playerId) return;
     const endpoint = await familySubscriptionEndpoint();
-    if (!endpoint) return;
+    if (!endpoint) {
+      renderPreviousDeck('');
+      return;
+    }
 
     try {
       const response = await fetch(DECK_HISTORY_URL, {
@@ -112,6 +136,46 @@
       renderPreviousDeck(data.found ? String(data.deck || '') : '');
     } catch (error) {
       console.warn('家庭上次牌組讀取失敗', error);
+      renderPreviousDeck('');
+    }
+  }
+
+  function setScoreCard(value, note = '') {
+    const card = document.querySelector('#familyMatchGrid .family-score-card');
+    if (!card) return;
+    const strong = card.querySelector('strong');
+    if (strong) strong.textContent = value;
+    if (note) card.title = note;
+  }
+
+  async function refreshFamilyScore() {
+    if (!isRoundSummary()) return;
+    const playerId = currentPlayerId();
+    const official = currentOfficial();
+    if (!playerId || !official) {
+      setScoreCard('—', '無法取得玩家或官方網址');
+      return;
+    }
+
+    setScoreCard('讀取中…', '正在讀取官方 TtlScore');
+    try {
+      const response = await fetch(SCORE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+        body: JSON.stringify({ url: official, player: playerId })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data?.ok) throw new Error(data?.error || 'score lookup failed');
+      const score = data?.ttl_score;
+      if (score !== null && score !== undefined && String(score).trim() !== '') {
+        setScoreCard(String(score).trim(), '官方目前累計分數');
+      } else {
+        setScoreCard('—', '官方頁目前未取得 TtlScore');
+      }
+    } catch (error) {
+      console.warn('家庭 TtlScore 讀取失敗', error);
+      setScoreCard('—', 'TtlScore 讀取失敗');
     }
   }
 
@@ -124,6 +188,7 @@
     window.setTimeout(() => {
       refreshFamilyAttention();
       refreshPreviousDeck();
+      refreshFamilyScore();
       updateFamilyVersion();
     }, delay);
   }
