@@ -22,6 +22,12 @@
     return match ? match[0].toLowerCase() : '';
   }
 
+  function isBarePlayerId(value = '', expectedId = '') {
+    const text = String(value || '').trim().toLowerCase();
+    const id = String(expectedId || extractPlayerId(text) || '').toLowerCase();
+    return Boolean(id && text === id);
+  }
+
   function readJson(key, fallback = null) {
     try {
       const value = JSON.parse(localStorage.getItem(key) || 'null');
@@ -217,10 +223,11 @@
     }
   }
 
-  async function previousDeckLookup(context, opponentId) {
-    if (!opponentId) return '';
+  async function opponentKnowledgeLookup(context, opponentId) {
+    const empty = { name: '', confirmedDeck: '', possibleDeck: '', previousDeck: '' };
+    if (!opponentId) return empty;
     const endpoint = await subscriptionEndpoint();
-    if (!endpoint) return '';
+    if (!endpoint) return empty;
     try {
       const response = await fetch(DECK_HISTORY_URL, {
         method: 'POST',
@@ -229,9 +236,18 @@
         body: JSON.stringify({ endpoint, player_id: opponentId, current_tid: context.tid })
       });
       const data = await response.json().catch(() => ({}));
-      return response.ok && data?.ok && data?.found ? String(data.deck || '') : '';
+      if (!response.ok || !data?.ok) return empty;
+      const possible = Array.isArray(data.possible_decks)
+        ? data.possible_decks.map(value => String(value || '').trim()).filter(Boolean).join(' / ')
+        : '';
+      return {
+        name: String(data.name || '').trim(),
+        confirmedDeck: String(data.confirmed_deck || '').trim(),
+        possibleDeck: possible,
+        previousDeck: String(data.previous_deck || '').trim()
+      };
     } catch (_) {
-      return '';
+      return empty;
     }
   }
 
@@ -257,7 +273,7 @@
     if (summary.possible_deck) params.set('possible_deck', summary.possible_deck);
     if (summary.previous_deck) params.set('previous_deck', summary.previous_deck);
     if (summary.ttl_score) params.set('ttl_score', summary.ttl_score);
-    params.set('_v', '230r3');
+    params.set('_v', '230r4');
     history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
   }
 
@@ -297,7 +313,8 @@
     if (!summary || summary.type !== 'round') return false;
     const table = String(summary.table || '').trim();
     const opponent = String(summary.opponent || summary.opponent_id || '').trim();
-    return !table || table === '—' || !opponent || opponent === '—';
+    const opponentId = extractPlayerId(summary.opponent_id || opponent);
+    return !table || table === '—' || !opponent || opponent === '—' || isBarePlayerId(opponent, opponentId);
   }
 
   async function queryRound(roundValue, options = {}) {
@@ -328,13 +345,17 @@
 
       const opponentId = extractPlayerId(pairing.match.opponent);
       const known = rememberedRound(context, round, opponentId);
-      const [score, fallbackDeck] = await Promise.all([
+      const [score, knowledge] = await Promise.all([
         scoreLookup(official, context.player_id),
-        !known?.deck && !known?.possible_deck && !known?.previous_deck ? previousDeckLookup(context, opponentId) : Promise.resolve('')
+        opponentKnowledgeLookup(context, opponentId)
       ]);
 
-      const opponentLabel = known?.opponent
-        || pairing.match.opponent_name
+      const knownOpponent = known?.opponent && !isBarePlayerId(known.opponent, opponentId)
+        ? String(known.opponent)
+        : '';
+      const resolvedOpponentName = knowledge.name || String(pairing.match.opponent_name || '').trim();
+      const opponentLabel = knownOpponent
+        || (resolvedOpponentName && opponentId ? `${resolvedOpponentName} (${opponentId})` : resolvedOpponentName)
         || opponentId
         || pairing.match.opponent
         || '—';
@@ -343,6 +364,10 @@
         || context.player
         || context.player_id;
 
+      const confirmedDeck = known?.deck || knowledge.confirmedDeck || '';
+      const possibleDeck = confirmedDeck ? '' : (known?.possible_deck || knowledge.possibleDeck || '');
+      const previousDeck = confirmedDeck || possibleDeck ? '' : (known?.previous_deck || knowledge.previousDeck || '');
+
       const summary = {
         type: 'round',
         round: String(round),
@@ -350,9 +375,9 @@
         table: String(pairing.match.table || known?.table || '—'),
         opponent: opponentLabel,
         opponent_id: opponentId,
-        deck: known?.deck || '',
-        possible_deck: known?.possible_deck || '',
-        previous_deck: known?.previous_deck || fallbackDeck || '',
+        deck: confirmedDeck,
+        possible_deck: possibleDeck,
+        previous_deck: previousDeck,
         ttl_score: score || String(pairing.match.ttl_score || known?.ttl_score || ''),
         official,
         saved_at: new Date().toISOString()
