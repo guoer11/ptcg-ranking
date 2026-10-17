@@ -127,7 +127,7 @@
     section.hidden = false;
     const max = Number(context.max_round || 1);
     const input = $('familyRoundInput');
-    const current = round ?? Number(input?.value || max) || max;
+    const current = round ?? (Number(input?.value || max) || max);
     if (input) {
       input.max = String(max);
       input.value = String(Math.min(Math.max(current, 1), max));
@@ -222,7 +222,7 @@
     if (summary.ttl_score) params.set('ttl_score', summary.ttl_score);
     history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
 
-    if (typeof window.familyRenderMatchSummary === 'function') window.familyRenderMatchSummary();
+    window.familyRenderMatchSummary?.();
     removeSourceCard();
     const eyebrow = $('familyMatchEyebrow');
     if (eyebrow) eyebrow.textContent = Number(summary.round) === Number(context.max_round) ? '目前配對' : '歷史查詢';
