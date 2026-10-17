@@ -33,15 +33,40 @@
       }
       #pairingResult .pairing-match-grid > .pairing-table-card {
         grid-column: 1 / -1;
+        grid-row: 1;
       }
-      #pairingResult .pairing-match-grid > .pairing-player-card,
+      #pairingResult .pairing-match-grid > .pairing-player-card {
+        grid-column: 1;
+        grid-row: 2;
+      }
       #pairingResult .pairing-match-grid > .pairing-ttl-score-card {
-        grid-column: auto;
+        grid-column: 2;
+        grid-row: 2;
+      }
+      #pairingResult .pairing-match-grid > .pairing-opponent-card {
+        grid-column: 1;
+        grid-row: 3;
+      }
+      #pairingResult .pairing-match-grid > .pairing-deck-card {
+        grid-column: 2;
+        grid-row: 3;
+      }
+      #pairingResult .pairing-match-grid > .pairing-source-card {
+        grid-column: 1 / -1;
+        grid-row: 4;
+      }
+      #pairingResult .pairing-deck-card strong {
+        font-size: 15px;
+      }
+      #pairingResult .pairing-deck-card.is-known {
+        background: #eef9f3;
+      }
+      #pairingResult .pairing-deck-card.is-possible {
+        background: #fff8e8;
       }
       @media (max-width: 560px) {
-        #pairingResult .pairing-match-grid > .pairing-opponent-card,
-        #pairingResult .pairing-match-grid > .pairing-source-card {
-          grid-column: 1 / -1;
+        #pairingResult .pairing-match-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
     `;
@@ -97,7 +122,14 @@
     if (!grid) return {};
     const cards = {};
     for (const article of grid.querySelectorAll(':scope > article')) {
-      if (article.classList.contains('pairing-ttl-score-card')) continue;
+      if (article.classList.contains('pairing-ttl-score-card')) {
+        cards.score = article;
+        continue;
+      }
+      if (article.classList.contains('pairing-deck-card')) {
+        cards.deck = article;
+        continue;
+      }
       const label = article.querySelector('span')?.textContent?.trim() || '';
       if (label === '桌號') {
         article.classList.add('pairing-table-card');
@@ -120,19 +152,81 @@
     return resultGrid()?.querySelector('.pairing-ttl-score-card') || null;
   }
 
+  function deckCard() {
+    return resultGrid()?.querySelector('.pairing-deck-card') || null;
+  }
+
+  function ensureDeckCard() {
+    const grid = resultGrid();
+    if (!grid) return null;
+    installScoreLayoutStyle();
+    const cards = classifyGridCards();
+    let card = deckCard();
+    if (!card) {
+      card = document.createElement('article');
+      card.className = 'pairing-deck-card';
+      card.innerHTML = '<span>對手牌組</span><strong>尚未記錄</strong>';
+    }
+    if (cards.opponent && cards.opponent.nextElementSibling !== card) {
+      cards.opponent.insertAdjacentElement('afterend', card);
+    } else if (!card.isConnected) {
+      const source = cards.source || [...grid.querySelectorAll(':scope > article')]
+        .find(article => article.querySelector('span')?.textContent?.trim() === '來源');
+      if (source) source.before(card);
+      else grid.appendChild(card);
+    }
+    return card;
+  }
+
+  function syncOpponentDeckCard() {
+    const grid = resultGrid();
+    if (!grid) return false;
+    const cards = classifyGridCards();
+    const candidates = [
+      cards.opponent?.querySelector('.pairing-scout-known'),
+      scoreCard()?.querySelector('.pairing-scout-known'),
+      ...[...grid.querySelectorAll(':scope > article .pairing-scout-known')]
+    ].filter(Boolean);
+    const badge = candidates[0];
+    const card = ensureDeckCard();
+    if (!card || !badge) return false;
+
+    const text = String(badge.textContent || '').trim();
+    let label = '對手牌組';
+    let value = '尚未記錄';
+    let state = '';
+    if (badge.classList.contains('possible') || /^可能牌組/.test(text)) {
+      label = '可能牌組';
+      value = text.replace(/^可能牌組[：:]?\s*/, '') || '—';
+      state = 'is-possible';
+    } else if (badge.classList.contains('unknown') || /尚未記錄/.test(text)) {
+      label = '對手牌組';
+      value = '尚未記錄';
+    } else if (text) {
+      label = '已記錄牌組';
+      value = text.replace(/^已記錄牌組[：:]?\s*/, '') || text;
+      state = 'is-known';
+    }
+
+    card.classList.remove('is-known', 'is-possible');
+    if (state) card.classList.add(state);
+    card.innerHTML = `<span>${esc(label)}</span><strong>${esc(value)}</strong>`;
+    badge.remove();
+    return true;
+  }
+
   function ensureScoreCard(value = '讀取中…', note = '正在讀取官方 TtlScore') {
     const grid = resultGrid();
     if (!grid) return null;
     installScoreLayoutStyle();
     const cards = classifyGridCards();
+    ensureDeckCard();
     let card = scoreCard();
     if (!card) {
       card = document.createElement('article');
       card.className = 'pairing-ttl-score-card';
     }
-    if (cards.player && cards.player.nextElementSibling !== card) {
-      cards.player.insertAdjacentElement('afterend', card);
-    } else if (!card.isConnected) {
+    if (!card.isConnected) {
       const source = cards.source || [...grid.querySelectorAll(':scope > article')]
         .find(article => article.querySelector('span')?.textContent?.trim() === '來源');
       if (source) source.before(card);
@@ -221,20 +315,32 @@
     installScoreLayoutStyle();
     decorateScoutBadges();
     classifyGridCards();
-    if (resultGrid()) scheduleScore(false);
+    if (resultGrid()) {
+      ensureDeckCard();
+      syncOpponentDeckCard();
+      scheduleScore(false);
+    }
   }
 
-  document.addEventListener('pairing:match-rendered', () => scheduleScore(true));
+  document.addEventListener('pairing:match-rendered', () => {
+    ensureDeckCard();
+    scheduleScore(true);
+    window.setTimeout(syncOpponentDeckCard, 120);
+  });
   document.addEventListener('pairing:auth-ready', () => {
     window.PTCGPlayerBadges?.refreshAttention?.();
     window.setTimeout(decorateScoutBadges, 60);
+    window.setTimeout(syncOpponentDeckCard, 120);
     scheduleScore(false);
   });
   document.addEventListener('ptcg:attention-changed', () => window.setTimeout(decorateScoutBadges, 0));
 
   const observer = new MutationObserver(() => {
-    window.setTimeout(decorateScoutBadges, 0);
-    classifyGridCards();
+    window.setTimeout(() => {
+      decorateScoutBadges();
+      classifyGridCards();
+      syncOpponentDeckCard();
+    }, 0);
     if (resultGrid() && !scoreCard()) scheduleScore(false);
   });
 
