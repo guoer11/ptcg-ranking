@@ -13,6 +13,13 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="family-notify.css?v=2.3.0-r1" />
   <link rel="stylesheet" href="player-badges.css?v=2.2.0-r4" />
+  <style>
+    .family-notify-page .player-badge-legend-rank {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+  </style>
 </head>
 <body class="family-notify-page">
   <header class="family-notify-header">
@@ -99,6 +106,23 @@
 
   <script src="family-notify.js?v=2.3.0-r1" defer></script>
   <script src="player-badges.js?v=2.2.0-r4" defer></script>
+  <script>
+    (() => {
+      function fixFamilyBadgeLegend() {
+        document.querySelectorAll('.player-badge-legend-line').forEach(line => {
+          if (line.dataset.rankWrapFixed === '1') return;
+          if (!line.textContent.includes('¹＝冠軍') || !line.textContent.includes('²＝亞軍')) return;
+          line.innerHTML = '<span class="player-badge-legend-rank"><b>¹</b>＝冠軍</span><span class="player-badge-legend-rank"><b>²</b>＝亞軍</span><span>；超級球自該次冠／亞軍日起保留60天，高級球／紀念球看本賽季</span>';
+          line.dataset.rankWrapFixed = '1';
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        fixFamilyBadgeLegend();
+        new MutationObserver(fixFamilyBadgeLegend).observe(document.body, { childList: true, subtree: true });
+      }, { once: true });
+    })();
+  </script>
   <script src="family-attention-bridge.js?v=2.3.0-r1" defer></script>
   <script src="family-round-query.js?v=2.3.0-r4" defer></script>
 </body>
