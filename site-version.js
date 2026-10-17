@@ -1,5 +1,5 @@
 (() => {
-  const SITE_VERSION = 'v2.2.2';
+  const SITE_VERSION = 'v2.3.0';
   window.PTCG_SITE_VERSION = SITE_VERSION;
 
   function ensurePlayerBadgeAssets() {
