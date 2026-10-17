@@ -7,7 +7,7 @@
       const link = document.createElement('link');
       link.id = 'ptcgPlayerBadgesCss';
       link.rel = 'stylesheet';
-      link.href = 'player-badges.css?v=2.3.0-r1';
+      link.href = 'player-badges.css?v=2.3.0-r2';
       document.head.appendChild(link);
     }
     if (!document.getElementById('ptcgPlayerBadgesJs')) {
@@ -217,8 +217,33 @@
     }
   }
 
+  function fixBadgeLegendLayout() {
+    document.querySelectorAll('.player-badge-legend-line').forEach(line => {
+      if (line.dataset.rankWrapFixed === '2') return;
+      const text = line.textContent || '';
+      if (!text.includes('¹＝冠軍') || !text.includes('²＝亞軍')) return;
+      line.innerHTML = '<span class="player-badge-legend-rank"><b>¹</b>＝冠軍</span><span class="player-badge-legend-rank"><b>²</b>＝亞軍</span><span class="player-badge-legend-note">超級球自該次冠／亞軍日起保留60天，高級球／紀念球看本賽季</span>';
+      line.dataset.rankWrapFixed = '2';
+    });
+  }
+
+  function installBadgeLegendFix() {
+    fixBadgeLegendLayout();
+    if (!document.body || document.body.dataset.badgeLegendObserver === '1') return;
+    document.body.dataset.badgeLegendObserver = '1';
+    new MutationObserver(fixBadgeLegendLayout).observe(document.body, { childList: true, subtree: true });
+  }
+
   ensurePlayerBadgeAssets();
   ensurePairingV222Hotfix();
   ensureStyle();
-  document.addEventListener('DOMContentLoaded', installCompactRankingNames, { once: true });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      installCompactRankingNames();
+      installBadgeLegendFix();
+    }, { once: true });
+  } else {
+    installCompactRankingNames();
+    installBadgeLegendFix();
+  }
 })();
