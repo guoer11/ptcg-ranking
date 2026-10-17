@@ -41,6 +41,8 @@ function familySummaryFromParams(params) {
     opponent: params.get('opponent') || '—',
     deck: params.get('deck') || '',
     possible_deck: params.get('possible_deck') || '',
+    previous_deck: params.get('previous_deck') || '',
+    ttl_score: params.get('ttl_score') || '',
     official: params.get('official') || '',
     saved_at: new Date().toISOString()
   };
@@ -104,15 +106,21 @@ function familyRenderMatchSummary() {
     const opponent = data.opponent || '—';
     const deck = data.deck || '';
     const possibleDeck = data.possible_deck || '';
+    const previousDeck = data.previous_deck || '';
+    const ttlScore = data.ttl_score || '讀取中…';
+    const deckLabel = deck ? '已記錄牌組' : (possibleDeck ? '可能牌組' : (previousDeck ? '上次比賽牌組' : '對手牌組'));
+    const deckValue = deck || possibleDeck || previousDeck || '查詢中…';
+
     eyebrow.textContent = querySummary ? '最新配對' : '最近一次配對';
     title.textContent = `Round ${round}`;
     badge.textContent = `Round ${round}`;
     grid.innerHTML = `
-      <article><span>玩家</span><strong>${familyEscape(player)}</strong></article>
-      <article><span>桌號</span><strong>${familyEscape(table)}</strong></article>
-      <article class="family-match-wide"><span>對手</span><strong>${familyEscape(opponent)}</strong></article>
-      ${deck ? `<article class="family-match-wide"><span>對手牌組</span><strong>${familyEscape(deck)}</strong></article>` : ''}
-      ${!deck && possibleDeck ? `<article class="family-match-wide"><span>可能牌組</span><strong>${familyEscape(possibleDeck)}</strong></article>` : ''}`;
+      <article class="family-match-wide family-table-card"><span>桌號</span><strong>${familyEscape(table)}</strong></article>
+      <article class="family-player-card"><span>玩家</span><strong>${familyEscape(player)}</strong></article>
+      <article class="family-score-card"><span>TtlScore</span><strong>${familyEscape(ttlScore)}</strong></article>
+      <article class="family-opponent-card"><span>對手</span><strong>${familyEscape(opponent)}</strong></article>
+      <article class="family-deck-card"><span>${familyEscape(deckLabel)}</span><strong>${familyEscape(deckValue)}</strong></article>
+      <article class="family-match-wide family-source-card"><span>來源</span><strong>TCG マイスター</strong></article>`;
     officialLink.textContent = '開啟官方配對';
   }
 
