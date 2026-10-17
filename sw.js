@@ -23,6 +23,7 @@ function buildPairingSummaryUrl(payload = {}) {
     if (player) params.set('player', player);
     if (rank) params.set('rank', rank);
     if (official) params.set('official', official);
+    params.set('_v', '230r3');
     return `/ptcg-ranking/family-notify.html?${params.toString()}`;
   }
 
@@ -41,11 +42,23 @@ function buildPairingSummaryUrl(payload = {}) {
   if (previousDeckLine) params.set('previous_deck', previousDeckLine.replace(/^上次比賽牌組：/, '').trim());
   if (possibleDeckLine) params.set('possible_deck', possibleDeckLine.replace(/^可能牌組：/, '').trim());
   if (official) params.set('official', official);
+  params.set('_v', '230r3');
   return `/ptcg-ranking/family-notify.html?${params.toString()}`;
 }
 
+function withFamilyRevision(value) {
+  try {
+    const url = new URL(value, self.location.origin);
+    if (!/\/family-notify\.html$/i.test(url.pathname)) return url.href;
+    url.searchParams.set('_v', '230r3');
+    return url.href;
+  } catch (_) {
+    return value;
+  }
+}
+
 async function broadcastFamilyPairingUpdate(targetUrl) {
-  const absoluteUrl = new URL(targetUrl, self.location.origin).href;
+  const absoluteUrl = withFamilyRevision(targetUrl);
   const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
   for (const client of windows) {
     try {
@@ -73,7 +86,7 @@ self.addEventListener('push', event => {
   if (tag === 'ptcg-pairing') {
     targetUrl = payload.url || '/ptcg-ranking/pairing.html';
   } else if (tag === 'ptcg-family-pairing') {
-    targetUrl = payload.url || buildPairingSummaryUrl(payload);
+    targetUrl = withFamilyRevision(payload.url || buildPairingSummaryUrl(payload));
   }
 
   const options = {
@@ -89,10 +102,28 @@ self.addEventListener('push', event => {
 
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  const targetUrl = new URL(event.notification?.data?.url || '/ptcg-ranking/', self.location.origin).href;
+  const tag = String(event.notification?.tag || '');
+  const rawTarget = event.notification?.data?.url || '/ptcg-ranking/';
+  const targetUrl = tag === 'ptcg-family-pairing'
+    ? withFamilyRevision(rawTarget)
+    : new URL(rawTarget, self.location.origin).href;
 
   event.waitUntil((async () => {
     const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+
+    if (tag === 'ptcg-family-pairing') {
+      for (const client of windows) {
+        try {
+          const clientUrl = new URL(client.url);
+          if (!/\/family-notify\.html$/i.test(clientUrl.pathname)) continue;
+          client.postMessage({ type: 'ptcg-family-update', url: targetUrl });
+          if ('focus' in client) return client.focus();
+        } catch (_) {}
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(targetUrl);
+      return;
+    }
+
     for (const client of windows) {
       if ('navigate' in client && client.url !== targetUrl) {
         try { await client.navigate(targetUrl); } catch (_) {}
