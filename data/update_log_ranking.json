@@ -2,6 +2,19 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-10-19T00:05:17+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-10-19T00:05:17+08:00",
+      "summary": "無排名／積分變動；暱稱 1、地區 0 筆異動",
+      "details": [
+        "Master：暱稱 1",
+        "Master｜tw44806541｜暱稱 Jmi → Cleo"
+      ],
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "ranking-2026-10-18T02:26:37+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -64,16 +77,6 @@
         "其餘 2386 筆細節省略"
       ],
       "notified": true,
-      "trigger_source": "程式更新觸發"
-    },
-    {
-      "id": "ranking-2026-10-16T09:35:00+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-10-16T09:35:00+08:00",
-      "summary": "例行檢查完成；官方排名無變動",
-      "details": [],
-      "notified": false,
       "trigger_source": "程式更新觸發"
     }
   ]

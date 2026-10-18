@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-18T00:05:19+08:00",
+  "updated_at": "2026-10-19T00:05:17+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -6408,6 +6408,14 @@
       },
       {
         "rank": 608,
+        "name": "Cleo",
+        "player_id": "tw44806541",
+        "region": "新北市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw44806541/"
+      },
+      {
+        "rank": 608,
         "name": "CloBA",
         "player_id": "tw82669156",
         "region": "新北市",
@@ -8357,14 +8365,6 @@
         "region": "臺南市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw71261324/"
-      },
-      {
-        "rank": 608,
-        "name": "Jmi",
-        "player_id": "tw44806541",
-        "region": "新北市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw44806541/"
       },
       {
         "rank": 608,
