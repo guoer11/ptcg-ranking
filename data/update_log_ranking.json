@@ -2,6 +2,16 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-10-20T00:05:23+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-10-20T00:05:23+08:00",
+      "summary": "例行檢查完成；官方排名無變動",
+      "details": [],
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "ranking-2026-10-19T02:36:16+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -46,16 +56,6 @@
       ],
       "notified": false,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "ranking-2026-10-17T03:58:24+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-10-17T03:58:24+08:00",
-      "summary": "例行檢查完成；官方排名無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "程式更新觸發"
     }
   ]
 }
