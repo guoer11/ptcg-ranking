@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-21T01:51:55+08:00",
+  "updated_at": "2026-10-21T03:58:54+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -168,19 +168,19 @@
       },
       {
         "rank": 21,
-        "name": "CaraaGTuiBao",
-        "player_id": "tw18638755",
-        "region": "彰化縣",
-        "points": 42,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw18638755/"
-      },
-      {
-        "rank": 21,
         "name": "LUN",
         "player_id": "tw56605426",
         "region": "臺南市",
         "points": 42,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw56605426/"
+      },
+      {
+        "rank": 21,
+        "name": "Weninne",
+        "player_id": "tw18638755",
+        "region": "彰化縣",
+        "points": 42,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw18638755/"
       },
       {
         "rank": 21,
