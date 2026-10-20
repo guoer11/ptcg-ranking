@@ -13,7 +13,6 @@ on:
       - "scraper.py"
       - "update_log.py"
       - "ensure_ranking_update_log.py"
-      - "build_player_badges.py"
       - "requirements.txt"
       - ".github/workflows/update-ranking.yml"
 
@@ -45,15 +44,13 @@ jobs:
         run: pip install -r requirements.txt
 
       # 排行榜例行更新只抓 Pokémon Asia 官網。
-      # Ivan／歷史姓名等資料已另行保存，不在每日排行更新時重新抓取。
+      # Ivan／歷史姓名等資料不在每日排行更新時重新抓取。
+      # 玩家實績徽章由賽事更新 workflow 建立，避免兩個 workflow 同時修改同一資料檔。
       - name: Fetch official ranking
         env:
           POKEMON_EMAIL: ${{ secrets.POKEMON_EMAIL }}
           POKEMON_PASSWORD: ${{ secrets.POKEMON_PASSWORD }}
         run: python scraper.py
-
-      - name: Build player badge summary
-        run: python build_player_badges.py
 
       - name: Build ranking update log
         run: |
@@ -63,20 +60,22 @@ jobs:
       - name: Commit data changes
         id: commit
         run: |
-          if git diff --quiet; then
+          # 僅提交排行榜專屬檔案，避免與賽事流程同時寫入 player_badges.json 衝突。
+          git add data/ranking.json data/ranking_history.json data/update_log_ranking.json
+          if [ -d data/seasons ]; then git add data/seasons; fi
+          if git diff --cached --quiet; then
             echo "No data changes."
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "ranking_changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          if git diff --quiet -- data/ranking_history.json; then
+          if git diff --cached --quiet -- data/ranking_history.json; then
             ranking_changed=false
           else
             ranking_changed=true
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/
           git commit -m "Update official ranking data"
           git pull --rebase origin main
           git push origin HEAD:main
