@@ -2,6 +2,20 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-10-20T17:04:30+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-10-20T17:04:30+08:00",
+      "summary": "新增成績 3 場",
+      "details": [
+        "新增官方成績｜#68478｜2026-10-04｜Play Lab Game 休閒館 高雄｜高雄市｜16 筆",
+        "新增官方成績｜#68811｜2026-10-04｜南瓜鎮｜新北市｜8 筆",
+        "新增官方成績｜#67536｜2026-10-18｜享玩桌遊｜桃園市｜32 筆"
+      ],
+      "notified": true,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "tournaments-2026-10-20T12:04:33+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -40,16 +54,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "tournaments-2026-10-19T17:52:38+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-10-19T17:52:38+08:00",
-      "summary": "例行檢查完成；賽事可見內容無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }
