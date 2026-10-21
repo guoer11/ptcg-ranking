@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-08T00:04:58+08:00",
+  "updated_at": "2026-10-21T12:05:30+08:00",
   "source": "https://asia.pokemon-card.com/tw/event-search/list/",
   "events": {
     "66951": {
@@ -448,6 +448,11 @@
       "registration_period": "08.07.2026 - 10.05.2026 12:00"
     },
     "69264": {
+      "registration_start_at": "2026-08-07T00:00:00+08:00",
+      "registration_end_at": "2026-10-05T12:00:00+08:00",
+      "registration_period": "08.07.2026 - 10.05.2026 12:00"
+    },
+    "67665": {
       "registration_start_at": "2026-08-07T00:00:00+08:00",
       "registration_end_at": "2026-10-05T12:00:00+08:00",
       "registration_period": "08.07.2026 - 10.05.2026 12:00"

@@ -1,6 +1,6 @@
 {
   "season": "2026-27",
-  "generated_at": "2026-10-21T04:02:39+08:00",
+  "generated_at": "2026-10-21T12:05:30+08:00",
   "great_window_days": 60,
   "great_cutoff": "2026-08-23",
   "players": {
@@ -84,10 +84,10 @@
     "tw05925639": {
       "wcs_2026": true,
       "great": {
-        "best_rank": 2,
-        "champion_count": 0,
+        "best_rank": 1,
+        "champion_count": 1,
         "runner_up_count": 1,
-        "latest_date": "2026-10-11"
+        "latest_date": "2026-10-18"
       }
     },
     "tw06034751": {
@@ -486,6 +486,14 @@
         "champion_count": 1,
         "runner_up_count": 1,
         "latest_date": "2026-10-10"
+      }
+    },
+    "tw45806310": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-18"
       }
     },
     "tw46076033": {

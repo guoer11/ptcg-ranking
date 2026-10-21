@@ -2,6 +2,20 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-10-21T12:04:35+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-10-21T12:04:35+08:00",
+      "summary": "新增 1 場；新增成績 1 場；報名期間更新 1 場",
+      "details": [
+        "新增｜#67665｜2026-11-01｜拉比卡牌｜臺北市｜超級球｜64 人",
+        "新增官方成績｜#67509｜2026-10-18｜漢謚玩具社｜高雄市｜64 筆",
+        "報名期間｜#67665｜2026-11-01｜拉比卡牌｜臺北市｜— → 08.07.2026 - 10.05.2026 12:00"
+      ],
+      "notified": true,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "tournaments-2026-10-21T04:01:49+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -40,20 +54,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "GitHub 備援排程"
-    },
-    {
-      "id": "tournaments-2026-10-20T17:04:30+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-10-20T17:04:30+08:00",
-      "summary": "新增成績 3 場",
-      "details": [
-        "新增官方成績｜#68478｜2026-10-04｜Play Lab Game 休閒館 高雄｜高雄市｜16 筆",
-        "新增官方成績｜#68811｜2026-10-04｜南瓜鎮｜新北市｜8 筆",
-        "新增官方成績｜#67536｜2026-10-18｜享玩桌遊｜桃園市｜32 筆"
-      ],
-      "notified": true,
-      "trigger_source": "主排程（Supabase）"
     }
   ]
 }
