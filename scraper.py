@@ -207,6 +207,23 @@ def fetch_group(session: requests.Session, group: str) -> list[dict]:
             raise RuntimeError(f"{group} 排名頁被導回登入頁，Session 已失效。")
 
         soup = BeautifulSoup(response.text, "html.parser")
+        if not soup.select_one(".rankingTable"):
+            # 診斷官方回傳頁面（只紀錄頁面結構，不輸出私人帳號／原始 HTML）。
+            title = clean_text(soup.title)[:100] if soup.title else "(no title)"
+            path = urlparse(response.url).path
+            redirects = " -> ".join(urlparse(item.url).path for item in response.history) or "(none)"
+            rank_classes = sorted({
+                str(cls) for tag in soup.find_all(class_=True)
+                for cls in (tag.get("class") or []) if "rank" in str(cls).lower()
+            })[:20]
+            print(
+                f"{group} 官方頁面異常：status={response.status_code}, path={path}, "
+                f"title={title!r}, content_type={response.headers.get('Content-Type', '')}, "
+                f"body_length={len(response.content)}, redirects={redirects}, "
+                f"ranking_classes={rank_classes}",
+                file=sys.stderr,
+                flush=True,
+            )
         page_rows = parse_rows(soup)
         rows.extend(page_rows)
         for link in pagination_links(soup, group, response.url):
