@@ -50,7 +50,19 @@ jobs:
         env:
           POKEMON_EMAIL: ${{ secrets.POKEMON_EMAIL }}
           POKEMON_PASSWORD: ${{ secrets.POKEMON_PASSWORD }}
-        run: python scraper.py
+        run: |
+          # 官方網站偶爾回傳登入／維護頁而非排行榜；採有限重試，避免單次異常直接中斷。
+          for attempt in 1 2 3; do
+            echo "官方排行榜抓取：第 ${attempt}/3 次"
+            if python -u scraper.py; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "三次均失敗，保留既有排名資料並標示本次執行失敗。"
+              exit 1
+            fi
+            if [ "$attempt" -eq 1 ]; then sleep 30; else sleep 90; fi
+          done
 
       - name: Build ranking update log
         run: |
