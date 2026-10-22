@@ -2,6 +2,16 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-10-23T04:02:03+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-10-23T04:02:03+08:00",
+      "summary": "例行檢查完成；官方排名無變動",
+      "details": [],
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
+    },
+    {
       "id": "ranking-2026-10-23T00:05:22+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -91,16 +101,6 @@
       ],
       "notified": true,
       "trigger_source": "程式更新觸發"
-    },
-    {
-      "id": "ranking-2026-10-20T05:01:27+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-10-20T05:01:27+08:00",
-      "summary": "例行檢查完成；官方排名無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }
