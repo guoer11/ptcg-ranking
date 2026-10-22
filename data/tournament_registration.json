@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-21T12:05:30+08:00",
+  "updated_at": "2026-10-22T21:03:58+08:00",
   "source": "https://asia.pokemon-card.com/tw/event-search/list/",
   "events": {
     "66951": {
@@ -601,6 +601,66 @@
       "registration_start_at": "2026-08-24T00:00:00+08:00",
       "registration_end_at": "2026-08-31T12:00:00+08:00",
       "registration_period": "08.24.2026 - 08.31.2026 12:00"
+    },
+    "69893": {
+      "registration_start_at": "2026-10-22T00:00:00+08:00",
+      "registration_end_at": "2026-11-02T12:00:00+08:00",
+      "registration_period": "10.22.2026 - 11.02.2026 12:00"
+    },
+    "69891": {
+      "registration_start_at": "2026-10-22T00:00:00+08:00",
+      "registration_end_at": "2026-11-02T12:00:00+08:00",
+      "registration_period": "10.22.2026 - 11.02.2026 12:00"
+    },
+    "69892": {
+      "registration_start_at": "2026-10-22T00:00:00+08:00",
+      "registration_end_at": "2026-11-02T12:00:00+08:00",
+      "registration_period": "10.22.2026 - 11.02.2026 12:00"
+    },
+    "69896": {
+      "registration_start_at": "2026-10-22T00:00:00+08:00",
+      "registration_end_at": "2026-11-02T12:00:00+08:00",
+      "registration_period": "10.22.2026 - 11.02.2026 12:00"
+    },
+    "69894": {
+      "registration_start_at": "2026-10-22T00:00:00+08:00",
+      "registration_end_at": "2026-11-02T12:00:00+08:00",
+      "registration_period": "10.22.2026 - 11.02.2026 12:00"
+    },
+    "69895": {
+      "registration_start_at": "2026-10-22T00:00:00+08:00",
+      "registration_end_at": "2026-11-02T12:00:00+08:00",
+      "registration_period": "10.22.2026 - 11.02.2026 12:00"
+    },
+    "69899": {
+      "registration_start_at": "2026-10-22T00:00:00+08:00",
+      "registration_end_at": "2027-01-11T12:00:00+08:00",
+      "registration_period": "10.22.2026 - 01.11.2027 12:00"
+    },
+    "69897": {
+      "registration_start_at": "2026-10-22T00:00:00+08:00",
+      "registration_end_at": "2027-01-11T12:00:00+08:00",
+      "registration_period": "10.22.2026 - 01.11.2027 12:00"
+    },
+    "69898": {
+      "registration_start_at": "2026-10-22T00:00:00+08:00",
+      "registration_end_at": "2027-01-11T12:00:00+08:00",
+      "registration_period": "10.22.2026 - 01.11.2027 12:00"
+    },
+    "69902": {
+      "registration_start_at": "2026-10-22T00:00:00+08:00",
+      "registration_end_at": "2027-01-11T12:00:00+08:00",
+      "registration_period": "10.22.2026 - 01.11.2027 12:00"
+    },
+    "69900": {
+      "registration_start_at": "2026-10-22T00:00:00+08:00",
+      "registration_end_at": "2027-01-11T12:00:00+08:00",
+      "registration_period": "10.22.2026 - 01.11.2027 12:00"
+    },
+    "69901": {
+      "registration_start_at": "2026-10-22T00:00:00+08:00",
+      "registration_end_at": "2027-01-11T12:00:00+08:00",
+      "registration_period": "10.22.2026 - 01.11.2027 12:00"
     }
   }
 }
