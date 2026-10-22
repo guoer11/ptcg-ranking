@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-22T20:19:13+08:00",
+  "updated_at": "2026-10-23T00:05:22+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -104,7 +104,7 @@
       },
       {
         "rank": 13,
-        "name": "XiJinping",
+        "name": "30cm",
         "player_id": "tw97165922",
         "region": "新竹市",
         "points": 72,
@@ -168,7 +168,7 @@
       },
       {
         "rank": 21,
-        "name": "XJH_AndyChou",
+        "name": "AndyChou",
         "player_id": "tw44127879",
         "region": "新北市",
         "points": 59,
