@@ -2,6 +2,16 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-10-22T12:01:33+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-10-22T12:01:33+08:00",
+      "summary": "例行檢查完成；賽事可見內容無變動",
+      "details": [],
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "tournaments-2026-10-22T04:07:01+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -62,23 +72,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "GitHub 備援排程"
-    },
-    {
-      "id": "tournaments-2026-10-21T17:04:38+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-10-21T17:04:38+08:00",
-      "summary": "新增成績 6 場",
-      "details": [
-        "新增官方成績｜#66951｜2026-09-12｜Saka Saka Limited Taiwan Branch｜臺北市｜32 筆",
-        "新增官方成績｜#66949｜2026-09-12｜Saka Saka Limited Taiwan Branch｜臺北市｜256 筆",
-        "新增官方成績｜#66950｜2026-09-12｜Saka Saka Limited Taiwan Branch｜臺北市｜32 筆",
-        "新增官方成績｜#66954｜2026-10-03｜Saka Saka Limited Taiwan Branch｜臺中市｜32 筆",
-        "新增官方成績｜#66952｜2026-10-03｜Saka Saka Limited Taiwan Branch｜臺中市｜256 筆",
-        "新增官方成績｜#66953｜2026-10-03｜Saka Saka Limited Taiwan Branch｜臺中市｜32 筆"
-      ],
-      "notified": true,
-      "trigger_source": "主排程（Supabase）"
     }
   ]
 }
