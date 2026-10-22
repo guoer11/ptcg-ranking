@@ -2,6 +2,16 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-10-22T17:22:16+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-10-22T17:22:16+08:00",
+      "summary": "例行檢查完成；賽事可見內容無變動",
+      "details": [],
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
+    },
+    {
       "id": "tournaments-2026-10-22T17:01:34+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -40,38 +50,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "tournaments-2026-10-21T22:27:31+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-10-21T22:27:31+08:00",
-      "summary": "狀態變更 51 場",
-      "details": [
-        "狀態｜#67569｜2026-10-24｜卡多卡牌遊戲店｜南投縣｜active → unavailable",
-        "狀態｜#67655｜2026-10-24｜松梅桌遊｜高雄市｜active → unavailable",
-        "狀態｜#68104｜2026-10-24｜模羊玩具店｜宜蘭縣｜active → unavailable",
-        "狀態｜#68116｜2026-10-24｜幽靈屋｜臺北市｜active → unavailable",
-        "狀態｜#68317｜2026-10-24｜Ririco - 集換式卡牌專賣｜臺中市｜active → unavailable",
-        "狀態｜#69395｜2026-10-24｜Card Master｜臺北市｜active → unavailable",
-        "狀態｜#67540｜2026-10-25｜KYD遊樂園｜桃園市｜active → unavailable",
-        "狀態｜#67609｜2026-10-25｜貓腳印松江店｜臺北市｜active → unavailable",
-        "狀態｜#67743｜2026-10-25｜躲貓貓桌遊店｜臺中市｜active → unavailable",
-        "狀態｜#68937｜2026-10-25｜卡市牌場｜臺中市｜active → unavailable",
-        "狀態｜#67537｜2026-10-26｜一刻館卡片遊戲專賣店｜桃園市｜active → unavailable",
-        "狀態｜#68119｜2026-10-26｜紙牌屋｜臺南市｜active → unavailable",
-        "狀態｜#68226｜2026-10-26｜Bruce桌遊空間 福華飯店｜高雄市｜active → unavailable",
-        "狀態｜#68315｜2026-10-26｜卡舖啦啦｜臺中市｜active → unavailable",
-        "狀態｜#68688｜2026-10-26｜The ONE集換式卡牌會所｜臺北市｜active → unavailable",
-        "狀態｜#69000｜2026-10-26｜拉比卡牌｜臺北市｜active → unavailable",
-        "狀態｜#67538｜2026-10-31｜鬥樂一中店｜臺中市｜active → unavailable",
-        "狀態｜#67679｜2026-10-31｜茶咖｜臺北市｜active → unavailable",
-        "狀態｜#67696｜2026-10-31｜磚櫃玩具店(台北店)｜新北市｜active → unavailable",
-        "狀態｜#67806｜2026-10-31｜卡卡邦尼樂遊館｜新北市｜active → unavailable",
-        "其餘 31 筆細節省略"
-      ],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }
