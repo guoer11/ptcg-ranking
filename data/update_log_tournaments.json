@@ -2,6 +2,16 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-10-23T17:04:45+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-10-23T17:04:45+08:00",
+      "summary": "例行檢查完成；賽事可見內容無變動",
+      "details": [],
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "tournaments-2026-10-23T12:05:01+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -39,38 +49,6 @@
       "summary": "例行檢查完成；賽事可見內容無變動",
       "details": [],
       "notified": false,
-      "trigger_source": "GitHub 備援排程"
-    },
-    {
-      "id": "tournaments-2026-10-22T21:02:59+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-10-22T21:02:59+08:00",
-      "summary": "新增 12 場；恢復上架 51 場；報名期間更新 12 場",
-      "details": [
-        "新增｜#69893｜2026-12-19｜Saka Saka Limited Taiwan Branch｜臺中市｜高級球｜128 人",
-        "新增｜#69891｜2026-12-19｜Saka Saka Limited Taiwan Branch｜臺中市｜高級球｜744 人",
-        "新增｜#69892｜2026-12-19｜Saka Saka Limited Taiwan Branch｜臺中市｜高級球｜128 人",
-        "新增｜#69896｜2027-01-09｜Saka Saka Limited Taiwan Branch｜臺北市｜高級球｜128 人",
-        "新增｜#69894｜2027-01-09｜Saka Saka Limited Taiwan Branch｜臺北市｜高級球｜996 人",
-        "新增｜#69895｜2027-01-09｜Saka Saka Limited Taiwan Branch｜臺北市｜高級球｜128 人",
-        "新增｜#69899｜2027-02-20｜Saka Saka Limited Taiwan Branch｜桃園市｜高級球｜128 人",
-        "新增｜#69897｜2027-02-20｜Saka Saka Limited Taiwan Branch｜桃園市｜高級球｜660 人",
-        "新增｜#69898｜2027-02-20｜Saka Saka Limited Taiwan Branch｜桃園市｜高級球｜128 人",
-        "新增｜#69902｜2027-03-13｜Saka Saka Limited Taiwan Branch｜高雄市｜高級球｜128 人",
-        "新增｜#69900｜2027-03-13｜Saka Saka Limited Taiwan Branch｜高雄市｜高級球｜720 人",
-        "新增｜#69901｜2027-03-13｜Saka Saka Limited Taiwan Branch｜高雄市｜高級球｜128 人",
-        "恢復上架｜#67569｜2026-10-24｜卡多卡牌遊戲店｜南投縣",
-        "恢復上架｜#67655｜2026-10-24｜松梅桌遊｜高雄市",
-        "恢復上架｜#68104｜2026-10-24｜模羊玩具店｜宜蘭縣",
-        "恢復上架｜#68116｜2026-10-24｜幽靈屋｜臺北市",
-        "恢復上架｜#68317｜2026-10-24｜Ririco - 集換式卡牌專賣｜臺中市",
-        "恢復上架｜#69395｜2026-10-24｜Card Master｜臺北市",
-        "恢復上架｜#67540｜2026-10-25｜KYD遊樂園｜桃園市",
-        "恢復上架｜#67609｜2026-10-25｜貓腳印松江店｜臺北市",
-        "其餘 55 筆細節省略"
-      ],
-      "notified": true,
       "trigger_source": "GitHub 備援排程"
     }
   ]
