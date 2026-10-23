@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-23T00:05:22+08:00",
+  "updated_at": "2026-10-24T00:05:22+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -808,7 +808,7 @@
       },
       {
         "rank": 85,
-        "name": "iamnotman0000",
+        "name": "duduman0000",
         "player_id": "tw02105248",
         "region": "臺北市",
         "points": 30,
@@ -18530,19 +18530,19 @@
       },
       {
         "rank": 86,
-        "name": "ChenRichCanFly~",
-        "player_id": "tw12360786",
-        "region": "新北市",
-        "points": 14,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw12360786/"
-      },
-      {
-        "rank": 86,
         "name": "Chris",
         "player_id": "tw56976478",
         "region": "新北市",
         "points": 14,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw56976478/"
+      },
+      {
+        "rank": 86,
+        "name": "SMALLFIREDRAGON",
+        "player_id": "tw12360786",
+        "region": "新北市",
+        "points": 14,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw12360786/"
       },
       {
         "rank": 86,

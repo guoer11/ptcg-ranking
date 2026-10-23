@@ -2,6 +2,21 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-10-24T00:05:22+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-10-24T00:05:22+08:00",
+      "summary": "無排名／積分變動；暱稱 2、地區 0 筆異動",
+      "details": [
+        "Master：暱稱 1",
+        "Senior：暱稱 1",
+        "Master｜tw02105248｜暱稱 iamnotman0000 → duduman0000",
+        "Senior｜tw12360786｜暱稱 ChenRichCanFly~ → SMALLFIREDRAGON"
+      ],
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "ranking-2026-10-23T04:02:03+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -69,38 +84,6 @@
       ],
       "notified": false,
       "trigger_source": "GitHub 備援排程"
-    },
-    {
-      "id": "ranking-2026-10-21T01:51:55+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-10-21T01:51:55+08:00",
-      "summary": "有效排名變動：名次 2421、積分 98、進榜 59、離榜 0",
-      "details": [
-        "Master：名次 1875、積分 70、進榜 43",
-        "Senior：名次 346、積分 23、進榜 6",
-        "Junior：名次 200、積分 5、進榜 10",
-        "Master｜tw42619935｜積分 58 → 72",
-        "Master｜tw33544977｜名次 4 → 3；積分 56 → 58",
-        "Master｜tw43380150｜名次 2 → 3",
-        "Master｜tw42309306｜名次 4 → 5",
-        "Master｜tw32020032｜名次 16 → 10；積分 42 → 48",
-        "Master｜tw00387540｜名次 19 → 13；積分 40 → 46",
-        "Master｜tw01909140｜名次 66 → 13；積分 22 → 46",
-        "Master｜tw35707148｜名次 49 → 15；積分 25 → 45",
-        "Master｜tw23764220｜名次 19 → 16；積分 40 → 44",
-        "Master｜tw11739209｜名次 12 → 16",
-        "Master｜tw29536370｜名次 12 → 16",
-        "Master｜tw44127879｜名次 12 → 16",
-        "Master｜tw55000893｜名次 15 → 20",
-        "Master｜tw18638755｜名次 25 → 21；積分 36 → 42",
-        "Master｜tw56605426｜名次 16 → 21",
-        "Master｜tw54760232｜名次 16 → 21",
-        "Master｜tw98129328｜名次 19 → 24",
-        "其餘 2466 筆細節省略"
-      ],
-      "notified": true,
-      "trigger_source": "程式更新觸發"
     }
   ]
 }
