@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-24T00:05:22+08:00",
+  "updated_at": "2026-10-25T00:05:20+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -8160,6 +8160,14 @@
       },
       {
         "rank": 875,
+        "name": "CAIHANYU",
+        "player_id": "tw94451081",
+        "region": "基隆市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw94451081/"
+      },
+      {
+        "rank": 875,
         "name": "CC-Lin",
         "player_id": "tw30043028",
         "region": "臺中市",
@@ -9621,14 +9629,6 @@
         "region": "新北市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw25559677/"
-      },
-      {
-        "rank": 875,
-        "name": "Gojo",
-        "player_id": "tw94451081",
-        "region": "基隆市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw94451081/"
       },
       {
         "rank": 875,
@@ -21212,7 +21212,7 @@
       },
       {
         "rank": 5,
-        "name": "Klefki_Alice1023",
+        "name": "Alice_Feng",
         "player_id": "tw69121729",
         "region": "高雄市",
         "points": 72,
@@ -21732,7 +21732,7 @@
       },
       {
         "rank": 65,
-        "name": "Morpeko",
+        "name": "Patty",
         "player_id": "tw90786092",
         "region": "臺北市",
         "points": 4,
