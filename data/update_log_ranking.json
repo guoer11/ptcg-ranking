@@ -2,6 +2,16 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-10-26T02:58:41+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-10-26T02:58:41+08:00",
+      "summary": "例行檢查完成；官方排名無變動",
+      "details": [],
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
+    },
+    {
       "id": "ranking-2026-10-26T00:05:18+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -49,21 +59,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "GitHub 備援排程"
-    },
-    {
-      "id": "ranking-2026-10-24T00:05:22+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-10-24T00:05:22+08:00",
-      "summary": "無排名／積分變動；暱稱 2、地區 0 筆異動",
-      "details": [
-        "Master：暱稱 1",
-        "Senior：暱稱 1",
-        "Master｜tw02105248｜暱稱 iamnotman0000 → duduman0000",
-        "Senior｜tw12360786｜暱稱 ChenRichCanFly~ → SMALLFIREDRAGON"
-      ],
-      "notified": false,
-      "trigger_source": "主排程（Supabase）"
     }
   ]
 }
