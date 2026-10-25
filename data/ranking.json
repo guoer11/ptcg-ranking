@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-25T00:05:20+08:00",
+  "updated_at": "2026-10-26T00:05:18+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -152,7 +152,7 @@
       },
       {
         "rank": 19,
-        "name": "Yemen!!",
+        "name": "ThunderUp",
         "player_id": "tw35707148",
         "region": "臺南市",
         "points": 61,
