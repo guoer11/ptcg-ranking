@@ -1,5 +1,540 @@
 {
   "version": 1,
-  "updated_at": null,
-  "events": {}
+  "updated_at": "2026-10-27T11:44:39+08:00",
+  "events": {
+    "66987": {
+      "event_id": "66987",
+      "tid": "8123029",
+      "league": "Ultra",
+      "group": "Junior",
+      "date": "2026-10-17",
+      "ranking_type": "preliminary",
+      "participants": 87,
+      "source_url": "https://tcg.sfc-jpn.jp/tourround.asp?tid=8123029&kno=9999999&Page=1&Sort=Number&Order=&znt=1",
+      "standings": [
+        {
+          "player_id": "tw33000082",
+          "rank": 1,
+          "points": null,
+          "status": "pending-final"
+        },
+        {
+          "player_id": "tw06034751",
+          "rank": 2,
+          "points": null,
+          "status": "pending-final"
+        },
+        {
+          "player_id": "tw90786092",
+          "rank": 3,
+          "points": null,
+          "status": "pending-final"
+        },
+        {
+          "player_id": "tw71161900",
+          "rank": 4,
+          "points": null,
+          "status": "pending-final"
+        },
+        {
+          "player_id": "tw63041398",
+          "rank": 5,
+          "points": null,
+          "status": "pending-final"
+        },
+        {
+          "player_id": "tw86591343",
+          "rank": 6,
+          "points": null,
+          "status": "pending-final"
+        },
+        {
+          "player_id": "tw82755386",
+          "rank": 7,
+          "points": null,
+          "status": "pending-final"
+        },
+        {
+          "player_id": "tw46877625",
+          "rank": 8,
+          "points": null,
+          "status": "pending-final"
+        },
+        {
+          "player_id": "tw48375877",
+          "rank": 9,
+          "points": 20,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw13995413",
+          "rank": 10,
+          "points": 20,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw65932690",
+          "rank": 11,
+          "points": 20,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw61881775",
+          "rank": 12,
+          "points": 20,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw42397162",
+          "rank": 13,
+          "points": 20,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw13886746",
+          "rank": 14,
+          "points": 20,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw74390718",
+          "rank": 15,
+          "points": 20,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw83709077",
+          "rank": 16,
+          "points": 20,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw77088088",
+          "rank": 17,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw22911522",
+          "rank": 18,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw67765608",
+          "rank": 19,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw20997286",
+          "rank": 20,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw42484676",
+          "rank": 21,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw51725453",
+          "rank": 22,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw48538169",
+          "rank": 23,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw49350731",
+          "rank": 24,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw02551230",
+          "rank": 25,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw79237929",
+          "rank": 26,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw09395817",
+          "rank": 27,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw64474352",
+          "rank": 28,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw47765933",
+          "rank": 29,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw45361307",
+          "rank": 30,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw15384084",
+          "rank": 31,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw10112482",
+          "rank": 32,
+          "points": 15,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw72740783",
+          "rank": 33,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw69121729",
+          "rank": 34,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw55474671",
+          "rank": 35,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw86826208",
+          "rank": 36,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw07986193",
+          "rank": 37,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw27928464",
+          "rank": 38,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw18609960",
+          "rank": 39,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw82928313",
+          "rank": 40,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw09658991",
+          "rank": 41,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw79968805",
+          "rank": 42,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw69197193",
+          "rank": 43,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw89645111",
+          "rank": 44,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw90174716",
+          "rank": 45,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw28641931",
+          "rank": 46,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw62394804",
+          "rank": 47,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw50268688",
+          "rank": 48,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw94807838",
+          "rank": 49,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw97537976",
+          "rank": 50,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw37208259",
+          "rank": 51,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw77684021",
+          "rank": 52,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw92114726",
+          "rank": 53,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw56703325",
+          "rank": 54,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw44472901",
+          "rank": 55,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw65187155",
+          "rank": 56,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw52890746",
+          "rank": 57,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw68210121",
+          "rank": 58,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw68355833",
+          "rank": 59,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw58170732",
+          "rank": 60,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw12320398",
+          "rank": 61,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw38788190",
+          "rank": 62,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw43232705",
+          "rank": 63,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw39371632",
+          "rank": 64,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw82777276",
+          "rank": 65,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw95273659",
+          "rank": 66,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw07200032",
+          "rank": 67,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw13010294",
+          "rank": 68,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw22756831",
+          "rank": 69,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw87477790",
+          "rank": 70,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw26592131",
+          "rank": 71,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw98478191",
+          "rank": 72,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw71381282",
+          "rank": 73,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw21246501",
+          "rank": 74,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw41153137",
+          "rank": 75,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw14448913",
+          "rank": 76,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw00423103",
+          "rank": 77,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw78007123",
+          "rank": 78,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw13046045",
+          "rank": 79,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw99809524",
+          "rank": 80,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw68768100",
+          "rank": 81,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw82798831",
+          "rank": 82,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw02796493",
+          "rank": 83,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw67458411",
+          "rank": 84,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw76622951",
+          "rank": 85,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw97727764",
+          "rank": 86,
+          "points": 0,
+          "status": "estimated"
+        },
+        {
+          "player_id": "tw38324381",
+          "rank": 87,
+          "points": 0,
+          "status": "estimated"
+        }
+      ]
+    }
+  }
 }
