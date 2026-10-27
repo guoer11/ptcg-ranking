@@ -131,11 +131,45 @@ def sync():
     parser = argparse.ArgumentParser()
     parser.add_argument("--event-id", help="Optional official event ID to register after a live pairing event")
     parser.add_argument("--tid", help="TCG Meister tournament ID for the official event")
+    parser.add_argument("--auto-sources-json", default="", help="Verified matches from trusted Supabase cron")
     args = parser.parse_args()
     if bool(args.event_id) != bool(args.tid):
         parser.error("--event-id and --tid must be provided together")
     config = read_json(SOURCES, {"version": 1, "sources": []})
     events = {str(event["event_id"]): event for event in read_json(TOURNAMENTS)["events"]}
+    added_sources = False
+    if args.auto_sources_json:
+        if args.event_id or args.tid:
+            parser.error("automatic sources cannot be combined with manual source input")
+        incoming = json.loads(args.auto_sources_json)
+        if not isinstance(incoming, list) or len(incoming) > 25:
+            parser.error("automatic sources must be an array with at most 25 entries")
+        for entry in incoming:
+            if not isinstance(entry, dict):
+                parser.error("automatic source must be a record")
+            event_id, tid = str(entry.get("event_id", "")), str(entry.get("tid", ""))
+            if not re.fullmatch(r"\d{1,12}", event_id) or not re.fullmatch(r"\d{1,12}", tid):
+                parser.error("invalid automatic event ID or TID")
+            event = events.get(event_id)
+            if (not event or event.get("group") != "Junior" or event.get("league") not in ("Ultra", "Premier")
+                    or "waiting list" in str(event.get("title", "")).lower()
+                    or "候補" in str(event.get("title", ""))
+                    or event.get("results")):
+                print(f"Skipping unverified event {event_id}")
+                continue
+            collision = next((x for x in config["sources"] if str(x.get("tid")) == tid
+                              and str(x.get("event_id")) != event_id), None)
+            match = next((x for x in config["sources"] if str(x.get("event_id")) == event_id), None)
+            if collision or (match and str(match.get("tid")) != tid):
+                print(f"Skipping conflicting mapping for event {event_id}")
+                continue
+            if not match:
+                config["sources"].append({"event_id": event_id, "tid": tid,
+                                         "league": event["league"], "group": "Junior",
+                                         "ranking_type": "preliminary" if event["league"] == "Ultra" else "final"})
+                added_sources = True
+                print(f"Auto-registered event {event_id} -> TID {tid}")
+
     if args.event_id:
         if not (args.event_id.isdigit() and re.fullmatch(r"\d{1,12}", args.tid)):
             parser.error("Invalid official event ID or TID")
@@ -168,7 +202,12 @@ def sync():
             print(f"Event {event_id}: Pokémon Asia official result already exists; retained as priority")
             continue
         attempted += 1
-        standings = fetch_standings(session, tid)
+        try:
+            standings = fetch_standings(session, tid)
+        except (requests.RequestException, ValueError) as error:
+            # An unavailable or incomplete official result must never wipe saved scores.
+            print(f"Event {event_id}: official standings unavailable; retain previous data ({error})")
+            continue
         participants = len(standings)
         ranking_type = source["ranking_type"]
         if ranking_type not in ("preliminary", "final"):
@@ -198,7 +237,7 @@ def sync():
         save_json(OUTPUT, {"version": 1,
                            "updated_at": datetime.now(timezone(timedelta(hours=8))).isoformat(timespec="seconds"),
                            "events": new_events})
-    if args.event_id:
+    if args.event_id or added_sources:
         save_json(SOURCES, config)
     print(f"Changes: {changed}; sources registered: {len(config['sources'])}")
 

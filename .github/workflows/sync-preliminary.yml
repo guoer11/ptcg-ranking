@@ -11,6 +11,10 @@ on:
         description: 'TCG Meister TID (required with event_id)'
         required: false
         type: string
+      auto_sources:
+        description: 'Trusted event matches from Supabase, JSON list'
+        required: false
+        type: string
   schedule:
     - cron: '40 17 * * *'
     - cron: '40 9 * * *'
@@ -45,8 +49,11 @@ jobs:
         env:
           SOURCE_EVENT_ID: ${{ inputs.event_id }}
           SOURCE_TID: ${{ inputs.tid }}
+          AUTO_SOURCES: ${{ inputs.auto_sources }}
         run: |
-          if [[ -n "$SOURCE_EVENT_ID" || -n "$SOURCE_TID" ]]; then
+          if [[ -n "$AUTO_SOURCES" ]]; then
+            python sync_preliminary.py --auto-sources-json "$AUTO_SOURCES"
+          elif [[ -n "$SOURCE_EVENT_ID" || -n "$SOURCE_TID" ]]; then
             python sync_preliminary.py --event-id "$SOURCE_EVENT_ID" --tid "$SOURCE_TID"
           else
             python sync_preliminary.py
