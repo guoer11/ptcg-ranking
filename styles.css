@@ -431,6 +431,11 @@ h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
 .event-table th, .event-table td { padding: 12px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
 .event-table th { position: sticky; top: 0; z-index: 1; background: #f8fafc; font-size: 13px; }
 .event-table tr:last-child td { border-bottom: 0; }
+/* 桌機版賽事表：賽事主體維持一行、組別換行、日期不折行。 */
+.event-table .event-name-cell { min-width: 345px; }
+.event-table .event-name-main { display: block; white-space: nowrap; }
+.event-table .event-name-group { display: block; }
+.event-table .event-date { width: 118px; min-width: 108px; white-space: nowrap; }
 .event-points { font-weight: 800; text-align: right !important; }
 .event-mobile-list { display: none; }
 .event-mobile-card {

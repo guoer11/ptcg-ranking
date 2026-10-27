@@ -372,6 +372,14 @@ function formatEventDate(date) {
   return match ? `${match[1]}/${match[2]}/${match[3]}` : (date || '—');
 }
 
+// 桌機賽事表：組別獨立成第二行，不影響手機卡片。
+function desktopEventNameHtml(value) {
+  const text = String(value || '').trim();
+  const group = text.match(/^(.*?)\s*[（(]\s*(孩童組|少年組|大師組)\s*[）)]\s*$/);
+  if (!group) return esc(text || '—');
+  return `<span class="event-name-main">${esc(group[1].trim())}</span><span class="event-name-group">(${esc(group[2])})</span>`;
+}
+
 function eventsHtml(data) {
   const events = Array.isArray(data.events) ? data.events : [];
   if (!events.length) {
@@ -382,8 +390,8 @@ function eventsHtml(data) {
     const rankText = Number.isFinite(rank) && rank > 0 ? `第 ${rank} 名` : '—';
     return `
       <tr>
-        <td>${esc(event.name || '—')}</td>
-        <td>${esc(event.date || '—')}</td>
+        <td class="event-name-cell">${desktopEventNameHtml(event.name)}</td>
+        <td class="event-date">${esc(event.date || '—')}</td>
         <td title="${esc(event.locationAddress || event.location || '—')}">${esc(event.location || '—')}</td>
         <td><strong>${esc(rankText)}</strong></td>
         <td class="event-points">${esc(event.points ?? '—')}</td>
