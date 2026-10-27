@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "updated_at": "2026-10-27",
+  "events": {
+    "66987": {
+      "event_id": "66987",
+      "date": "2026-10-17",
+      "league": "Ultra",
+      "group": "Junior",
+      "source_type": "community_knockout_bracket",
+      "source_url": "https://ptcg.bcb.idv.tw/te?viewtour=66987",
+      "verification": "Screenshot-provided knockout bracket; Pokémon Asia final scores take precedence",
+      "results": [
+        {
+          "player_id": "tw82755386",
+          "preliminary_rank": 7,
+          "final_rank": 1,
+          "finish": "冠軍",
+          "points": 100
+        },
+        {
+          "player_id": "tw63041398",
+          "preliminary_rank": 5,
+          "final_rank": 2,
+          "finish": "亞軍",
+          "points": 75
+        },
+        {
+          "player_id": "tw33000082",
+          "preliminary_rank": 1,
+          "final_rank": 3,
+          "finish": "四強",
+          "points": 50
+        },
+        {
+          "player_id": "tw86591343",
+          "preliminary_rank": 6,
+          "final_rank": 3,
+          "finish": "四強",
+          "points": 50
+        },
+        {
+          "player_id": "tw06034751",
+          "preliminary_rank": 2,
+          "final_rank": 5,
+          "finish": "八強",
+          "points": 25
+        },
+        {
+          "player_id": "tw90786092",
+          "preliminary_rank": 3,
+          "final_rank": 5,
+          "finish": "八強",
+          "points": 25
+        },
+        {
+          "player_id": "tw71161900",
+          "preliminary_rank": 4,
+          "final_rank": 5,
+          "finish": "八強",
+          "points": 25
+        },
+        {
+          "player_id": "tw46877625",
+          "preliminary_rank": 8,
+          "final_rank": 5,
+          "finish": "八強",
+          "points": 25
+        }
+      ]
+    }
+  }
+}
