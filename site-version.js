@@ -1,6 +1,31 @@
 (() => {
-  const SITE_VERSION = 'v2.3.1';
+  const SITE_VERSION = 'v2.3.2';
   window.PTCG_SITE_VERSION = SITE_VERSION;
+
+  // 官方 Ultra 賽事的「會場」欄位是主辦單位；地點與地址在 address。
+  // 賽季 1 為「地址(場館)」，賽季 2 為「場館(地址)」，僅解析可確定的台灣地址。
+  window.ptcgOfficialVenue = function ptcgOfficialVenue(event) {
+    const venue = String(event?.venue || '').trim();
+    const sourceAddress = String(event?.address || '').trim();
+    if (event?.league !== 'Ultra' || !sourceAddress) {
+      return { name: venue || String(event?.region || '').trim(), address: sourceAddress };
+    }
+    const match = sourceAddress.match(/^(.+?)\s*[（(]([^()（）]+)[）)]\s*$/);
+    if (match) {
+      const outer = match[1].trim();
+      const inner = match[2].trim();
+      const addressStart = /^(?:臺北市|台北市|新北市|桃園市|臺中市|台中市|臺南市|台南市|高雄市|基隆市|新竹市|新竹縣|苗栗縣|彰化縣|南投縣|雲林縣|嘉義市|嘉義縣|屏東縣|宜蘭縣|花蓮縣|臺東縣|台東縣|澎湖縣|金門縣|連江縣)/;
+      const isStreetAddress = text => addressStart.test(text) && /(?:路|街|大道|巷|弄|號)/.test(text);
+      if (isStreetAddress(outer) && !isStreetAddress(inner)) {
+        return { name: inner, address: outer };
+      }
+      if (!isStreetAddress(outer) && isStreetAddress(inner)) {
+        return { name: outer, address: inner };
+      }
+    }
+    // 無法辨識格式時不猜場館；顯示官方完整地址，保留地圖資訊。
+    return { name: sourceAddress, address: sourceAddress };
+  };
 
   function ensurePlayerBadgeAssets() {
     if (!document.getElementById('ptcgPlayerBadgesCss')) {

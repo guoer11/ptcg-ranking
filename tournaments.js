@@ -196,21 +196,10 @@ function eventGroupLabel(group) {
 
 function eventVenueLabel(event) {
   const venue = String(event?.venue || '').trim();
-  const address = String(event?.address || '').trim();
   if (event?.league === 'Ultra') {
-    return address || venue;
+    return window.ptcgOfficialVenue?.(event)?.name || String(event?.address || '').trim() || venue;
   }
   return venue;
-}
-
-function splitUltraAddress(value) {
-  const text = String(value || '').trim();
-  const match = text.match(/^(.*?)(\s*[（(][^()（）]+[）)])\s*$/);
-  if (!match || !match[1].trim()) return { main: text, note: '' };
-  return {
-    main: match[1].trim(),
-    note: match[2].trim()
-  };
 }
 
 function eventHasResults(event) {
@@ -364,8 +353,9 @@ function renderTournamentList() {
 
     const date = formatEventDate(event.date, event.time || '');
     const status = eventStatus(event);
-    const venue = String(event.venue || '').trim();
-    const address = String(event.address || '').trim();
+    const display = window.ptcgOfficialVenue?.(event);
+    const venue = String(display?.name || event.venue || '').trim();
+    const address = String(display?.address || event.address || '').trim();
     const mapUrl = tournamentGoogleMapsUrl(address);
     const hasResults = eventHasResults(event);
     const officialStateClass = event.official_status === 'removed' ? ' tournament-card-official-removed' : (event.official_status === 'unavailable' ? ' tournament-card-official-unavailable' : '');
@@ -390,7 +380,7 @@ function renderTournamentList() {
 
         <div class="tournament-card-info">
           ${venue ? `<span title="${tournamentEsc(venue)}"><i class="tournament-info-icon" aria-hidden="true">⌂</i><span>${tournamentEsc(venue)}</span></span>` : ''}
-          ${address ? `<a class="tournament-address-link" href="${tournamentEsc(mapUrl)}" target="_blank" rel="noopener noreferrer" title="在 Google 地圖開啟：${tournamentEsc(address)}" aria-label="在 Google 地圖開啟 ${tournamentEsc(address)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-12A7 7 0 1 0 5 9c0 5.9 7 12 7 12Zm0-9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg><span>${tournamentEsc(address)}</span></a>` : ''}
+          ${address && address !== venue ? `<a class="tournament-address-link" href="${tournamentEsc(mapUrl)}" target="_blank" rel="noopener noreferrer" title="在 Google 地圖開啟：${tournamentEsc(address)}" aria-label="在 Google 地圖開啟 ${tournamentEsc(address)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-12A7 7 0 1 0 5 9c0 5.9 7 12 7 12Zm0-9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/></svg><span>${tournamentEsc(address)}</span></a>` : ''}
           ${event.capacity ? `<span><i class="tournament-info-icon" aria-hidden="true">♟</i><span>${tournamentEsc(event.capacity)} 人</span></span>` : ''}
           ${event.group && event.group !== 'Open' ? `<span class="tournament-group-label">${tournamentEsc(eventGroupLabel(event.group))}</span>` : ''}
         </div>
@@ -428,9 +418,11 @@ function openTournamentModal(eventId) {
   const event = (tournamentData.events || []).find(item => String(item.event_id) === String(eventId));
   if (!event) return;
   const venue = eventVenueLabel(event);
-  const venueParts = event.league === 'Ultra' ? splitUltraAddress(venue) : { main: venue, note: '' };
-  const detailAddress = String(event.address || '').trim();
-  const showAddress = detailAddress && detailAddress !== venue;
+  const detailAddress = String((event.league === 'Ultra' ? window.ptcgOfficialVenue?.(event)?.address : event.address) || event.address || '').trim();
+  const venueParts = event.league === 'Ultra'
+    ? { main: venue, note: detailAddress !== venue ? detailAddress : '' }
+    : { main: venue, note: '' };
+  const showAddress = event.league !== 'Ultra' && detailAddress && detailAddress !== venue;
 
   tournamentModal.dataset.eventId = String(eventId);
   tournamentModal.classList.add('open');

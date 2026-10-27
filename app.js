@@ -311,10 +311,12 @@ function calculatedEventsForPlayer(tournaments, playerId) {
     const result = (event.results || []).find(row => String(row.player_id || '').trim().toLowerCase() === key);
     if (!result) return [];
     const points = Number(result.points);
+    const display = window.ptcgOfficialVenue?.(event);
     return [{
       name: event.title || '官方賽事',
       date: event.date || '—',
-      location: event.venue || event.region || '—',
+      location: display?.name || event.venue || event.region || '—',
+      locationAddress: event.league === 'Ultra' ? (display?.address || event.address || '') : '',
       points: Number.isFinite(points) ? points : 0,
       rank: result.rank ?? null,
       url: event.url || ''
@@ -382,7 +384,7 @@ function eventsHtml(data) {
       <tr>
         <td>${esc(event.name || '—')}</td>
         <td>${esc(event.date || '—')}</td>
-        <td>${esc(event.location || '—')}</td>
+        <td title="${esc(event.locationAddress || event.location || '—')}">${esc(event.location || '—')}</td>
         <td><strong>${esc(rankText)}</strong></td>
         <td class="event-points">${esc(event.points ?? '—')}</td>
       </tr>`;
@@ -396,7 +398,7 @@ function eventsHtml(data) {
           <strong>${esc(compactEventName(event.name))}</strong>
           <span>${esc(event.points ?? '—')} pt</span>
         </div>
-        <div class="event-mobile-location">${esc(event.location || '—')}</div>
+        <div class="event-mobile-location" title="${esc(event.locationAddress || event.location || '—')}">${esc(event.location || '—')}</div>
         <div class="event-mobile-meta">
           <span>${esc(formatEventDate(event.date))}</span>
           ${rankText ? `<span class="event-mobile-rank">${esc(rankText)}</span>` : ''}
