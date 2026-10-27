@@ -49,6 +49,11 @@ jobs:
         with:
           ref: main
 
+      - name: Verify preliminary standings UI
+        run: |
+          node --check preliminary-ui.js
+          node tests/preliminary-ui.test.cjs
+
       - name: Build public site artifact
         run: |
           set -euo pipefail
@@ -59,6 +64,7 @@ jobs:
           cp assets/q-icons/*.webp _site/assets/q-icons/
           cp data/pairing-odds-3000442*.json _site/data/
           cp data/ranking.json _site/data/ranking.json
+          cp data/preliminary_results.json _site/data/preliminary_results.json
           cp data/ranking_history.json _site/data/ranking_history.json
           if [ -f data/season_2025_26.json ]; then
             cp data/season_2025_26.json _site/data/season_2025_26.json
