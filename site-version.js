@@ -1,5 +1,5 @@
 (() => {
-  const SITE_VERSION = 'v2.4.1';
+  const SITE_VERSION = 'v2.5.0';
   window.PTCG_SITE_VERSION = SITE_VERSION;
 
   // 官方 Ultra 賽事的「會場」欄位是主辦單位；地點與地址在 address。

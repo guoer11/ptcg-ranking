@@ -12,6 +12,59 @@ let identityData = { updated_at: null, count: 0, players: {} };
 let activeGroup = 'Junior';
 let searchKeyword = '';
 let tournamentDataCache = null;
+let rankingView = 'official';
+let projectedRankingRows = null;
+let projectionRequestId = 0;
+
+function isProjectedView() {
+  return activeGroup === 'Junior' && rankingView === 'trial';
+}
+
+function displayedRankingRows() {
+  if (isProjectedView()) return projectedRankingRows;
+  return rankingData.groups[activeGroup] || [];
+}
+
+function updateRankingModeButtons() {
+  const mode = document.getElementById('rankingModeSwitch');
+  if (!mode) return;
+  mode.hidden = activeGroup !== 'Junior';
+  for (const button of mode.querySelectorAll('[data-ranking-mode]')) {
+    const active = button.dataset.rankingMode === rankingView;
+    button.setAttribute('aria-pressed', String(active));
+    button.classList.toggle('active', active);
+  }
+}
+
+async function refreshProjectedRanking() {
+  if (!isProjectedView()) return;
+  const requestId = ++projectionRequestId;
+  projectedRankingRows = null;
+  updateRankingModeButtons();
+  renderRanking();
+  try {
+    if (typeof window.buildProjectedRankingRows !== 'function') {
+      throw new Error('試算模組尚未載入');
+    }
+    const rows = await window.buildProjectedRankingRows(rankingData.groups.Junior || []);
+    if (requestId !== projectionRequestId || !isProjectedView()) return;
+    projectedRankingRows = rows;
+    renderRanking();
+  } catch (error) {
+    console.warn('本站試算排名載入失敗，恢復官方排名：', error);
+    if (requestId !== projectionRequestId) return;
+    rankingView = 'official';
+    projectedRankingRows = null;
+    updateRankingModeButtons();
+    renderRanking();
+    const note = document.getElementById('rankingProjectionNotice');
+    if (note) {
+      note.hidden = false;
+      note.textContent = '試算資料目前無法載入，已保留官方排名。請稍後重新讀取。';
+    }
+  }
+}
+
 
 const container = document.getElementById('rankingContainer');
 const searchInput = document.getElementById('rankingSearch');
@@ -76,12 +129,12 @@ function updateSummary() {
 }
 
 function filteredRows() {
-  const rows = rankingData.groups[activeGroup] || [];
+  const rows = displayedRankingRows() || [];
   if (!searchKeyword) return rows;
   const key = searchKeyword.toLowerCase();
   return rows.filter(row => {
     const realName = identityFor(row.player_id)?.real_name;
-    return [row.name, realName, row.player_id, row.region, row.points, row.rank]
+    return [row.name, realName, row.player_id, row.region, row.points, row.rank, row.officialPoints, row.officialRank]
       .some(v => String(v ?? '').toLowerCase().includes(key));
   });
 }
@@ -137,7 +190,18 @@ function demoTable() {
 }
 
 function renderRanking() {
-  const allRows = rankingData.groups[activeGroup] || [];
+  updateRankingModeButtons();
+  const trial = isProjectedView();
+  const notice = document.getElementById('rankingProjectionNotice');
+  if (notice) {
+    notice.hidden = !trial;
+    if (trial) notice.textContent = '依 Pokémon Asia 官方目前積分為基準，補入本站已知、尚未完全入帳的賽事積分；涉及 Best 8 或官方尚未匯入的成績，試算名次僅供參考，不是官方排名。';
+  }
+  const allRows = displayedRankingRows();
+  if (trial && allRows === null) {
+    container.innerHTML = '<div class="empty-state"><strong>正在建立本站試算排名…</strong><span>官方排名資料不受影響。</span></div>';
+    return;
+  }
   const rows = filteredRows();
 
   if (!allRows.length) {
@@ -162,9 +226,9 @@ function renderRanking() {
 
   const body = rows.map(row => `
     <tr>
-      <td><span class="rank-badge">${esc(row.rank ?? '—')}</span></td>
+      <td><span class="rank-badge">${esc(row.rank ?? '—')}</span>${trial ? `<small class="projection-rank-change ${esc(row.officialRank == null ? 'new' : row.rank < row.officialRank ? 'up' : row.rank > row.officialRank ? 'down' : 'same')}">${row.officialRank == null ? '新入榜' : row.rank < row.officialRank ? '↑' + (row.officialRank - row.rank) + ' 名' : row.rank > row.officialRank ? '↓' + (row.rank - row.officialRank) + ' 名' : '名次不變'}</small>` : ''}</td>
       <td>${playerNameHtml(row)}</td>
-      <td>${esc(row.points ?? '—')} pt</td>
+      <td>${trial ? `<strong>${esc(row.points)} pt</strong><small class="projection-official-points">官方 ${esc(row.officialPoints)} pt${row.uncertainCap ? ' · 暫估' : ''}</small>` : `${esc(row.points ?? '—')} pt`}</td>
       <td>${esc(GROUP_LABELS[activeGroup])}</td>
       <td>${esc(row.region || '—')}</td>
       <td class="detail-col">${detailButton(row.player_id)}</td>
@@ -173,7 +237,7 @@ function renderRanking() {
   container.innerHTML = `
     <div class="table-scroll">
       <table class="ranking-table">
-        <thead><tr><th>排名</th><th>玩家</th><th>得分</th><th>組別</th><th>地區</th><th aria-label="詳細資料"></th></tr></thead>
+        <thead><tr><th>${trial ? '試算排名' : '排名'}</th><th>玩家</th><th>${trial ? '試算積分' : '得分'}</th><th>組別</th><th>地區</th><th aria-label="詳細資料"></th></tr></thead>
         <tbody>${body}</tbody>
       </table>
     </div>`;
@@ -209,7 +273,11 @@ async function loadData(options = {}) {
     statusDot.classList.remove('error');
     statusDot.classList.add('ok');
     updateSummary();
-    renderRanking();
+    if (isProjectedView()) {
+      void refreshProjectedRanking();
+    } else {
+      renderRanking();
+    }
   } catch (error) {
     console.error(error);
     statusText.textContent = '資料讀取失敗';
@@ -556,8 +624,24 @@ document.querySelectorAll('.tab').forEach(button => {
     document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
     button.classList.add('active');
     activeGroup = button.dataset.group;
+    updateRankingModeButtons();
     updateSummary();
     renderRanking();
+  });
+});
+
+document.querySelectorAll('[data-ranking-mode]').forEach(button => {
+  button.addEventListener('click', () => {
+    const next = button.dataset.rankingMode;
+    if (!['official', 'trial'].includes(next) || next === rankingView) return;
+    rankingView = next;
+    updateRankingModeButtons();
+    if (next === 'trial') {
+      void refreshProjectedRanking();
+    } else {
+      ++projectionRequestId;
+      renderRanking();
+    }
   });
 });
 

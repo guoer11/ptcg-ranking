@@ -207,6 +207,17 @@ h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
 .secondary-btn:hover:not(:disabled) { background: #f5f8fd; border-color: #b8c6db; }
 .secondary-btn:disabled { opacity: .55; cursor: wait; }
 
+.ranking-mode-toolbar { display: flex; flex-wrap: wrap; align-items: center; column-gap: 12px; margin-top: 15px; row-gap: 8px; }
+.ranking-mode-switch { display: inline-flex; align-items: center; padding: 3px; border: 1px solid #cbd5e1; border-radius: 11px; background: #f1f5f9; }
+.ranking-mode-button { border: 0; background: transparent; border-radius: 8px; color: #52627b; cursor: pointer; font-size: 14px; font-weight: 700; padding: 9px 14px; }
+.ranking-mode-button.active, .ranking-mode-button[aria-pressed="true"] { color: #fff; background: #176a50; box-shadow: 0 1px 4px #0002; }
+.ranking-projection-note { flex: 1 1 260px; min-width: 0; color: #73551a; font-size: 12px; line-height: 1.5; margin: 0; }
+.ranking-mode-toolbar[hidden], .ranking-projection-note[hidden] { display: none; }
+.projection-rank-change { display: block; white-space: nowrap; font-size: 11px; font-weight: 700; margin-top: 3px; }
+.projection-rank-change.up, .projection-rank-change.new { color: #047857; }
+.projection-rank-change.down { color: #b45309; }
+.projection-rank-change.same { color: #64748b; }
+.projection-official-points { display: block; white-space: nowrap; font-size: 11px; font-weight: 500; color: #64748b; margin-top: 4px; }
 .ranking-container { margin-top: 10px; }
 .table-scroll { overflow-x: auto; }
 .ranking-table { width: 100%; border-collapse: collapse; min-width: 760px; }
@@ -490,6 +501,9 @@ h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
   .ranking-table th:nth-child(5), .ranking-table td:nth-child(5) { width: 18%; white-space: nowrap; }
   .ranking-table th:nth-child(6), .ranking-table td:nth-child(6) { width: 10%; padding-left: 2px; padding-right: 2px; }
   .ranking-table td:nth-child(2) { overflow-wrap: normal; word-break: normal; }
+  .ranking-mode-button { padding: 9px 10px; font-size: 13px; }
+  .projection-rank-change { font-size: 10px; letter-spacing: -.2px; }
+  .projection-official-points { font-size: 10px; white-space: normal; }
   .ranking-table .player-name { display: block; line-height: 1.22; white-space: nowrap; overflow-wrap: normal; word-break: keep-all; }
   .ranking-table .player-name-long { font-size: 14.5px; letter-spacing: -.15px; }
   .ranking-table .player-name-xlong { font-size: 13px; letter-spacing: -.3px; }

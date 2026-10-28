@@ -227,6 +227,9 @@
     };
   }
 
+  // Share the exact same validated standings cache with the separate trial ranking.
+  window.loadPreliminaryForRanking = loadPreliminary;
+
   window.openPlayerModal = async function(playerId) {
     await loadPreliminary();
     return priorModal(playerId);
