@@ -95,8 +95,9 @@
     const knockout = row.rank <= 8 ? bracket?.results.find(item => item.player_id === playerId) : null;
     const pending = event.league === 'Ultra' && cached.ranking_type === 'preliminary'
       && row.rank <= 8 && !knockout;
+    // 已確認是 0 LP 的預賽不顯示；尚待複賽確認的 null LP 照常顯示。
     const estimated = row.status === 'estimated' && typeof row.points === 'number'
-      && Number.isFinite(row.points) && row.points >= 0;
+      && Number.isFinite(row.points) && row.points > 0;
     const knownMode = (event.league === 'Ultra' && cached.ranking_type === 'preliminary')
       || (event.league === 'Premier' && cached.ranking_type === 'final');
     if (!knownMode || (pending && (row.status !== 'pending-final' || row.points !== null))

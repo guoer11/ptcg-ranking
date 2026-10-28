@@ -311,13 +311,15 @@ function calculatedEventsForPlayer(tournaments, playerId) {
     const result = (event.results || []).find(row => String(row.player_id || '').trim().toLowerCase() === key);
     if (!result) return [];
     const points = Number(result.points);
+    // 官方列出 0 分的參賽名次也不佔玩家積分賽事列表；原始資料仍保留供查證。
+    if (result.points == null || !Number.isFinite(points) || points <= 0) return [];
     const display = window.ptcgOfficialVenue?.(event);
     return [{
       name: event.title || '官方賽事',
       date: event.date || '—',
       location: display?.name || event.venue || event.region || '—',
       locationAddress: event.league === 'Ultra' ? (display?.address || event.address || '') : '',
-      points: Number.isFinite(points) ? points : 0,
+      points,
       rank: result.rank ?? null,
       url: event.url || ''
     }];

@@ -13,7 +13,8 @@ const vm = require('node:vm');
   const tournaments = {season: official.season, events:[matching]};
   const baseline = (t,id) => t.events.flatMap(e => {
     const row = (e.results || []).find(r => String(r.player_id).toLowerCase() === id);
-    return row ? [{name:e.title,date:e.date,points:row.points,rank:row.rank,url:e.url}] : [];
+    return row && Number.isFinite(Number(row.points)) && Number(row.points) > 0
+      ? [{name:e.title,date:e.date,points:row.points,rank:row.rank,url:e.url}] : [];
   });
 
   function createHarness(bracketData = knockout) {
@@ -65,6 +66,12 @@ const vm = require('node:vm');
   assert.equal(ninth[0].points,20);
   assert.equal(ninth[0].resultStatus,'estimated');
 
+  // 第 69 名的 0 LP 不應進入本站已知官方賽事。
+  const zeroRow=prelim.standings.find(x=>x.rank===69);
+  assert(zeroRow && zeroRow.points===0, 'rank 69 has zero LP');
+  const zeroEstimated=await win.openPlayerModal(zeroRow.player_id);
+  assert.equal(zeroEstimated.length,0,'zero-LP provisional event must be hidden');
+
   const fallback=createHarness({version:1,events:{}});
   const pending=await fallback.openPlayerModal('tw82755386');
   assert.equal(pending[0].rank,7);
@@ -79,6 +86,9 @@ const vm = require('node:vm');
   assert.equal(officialResult[0].resultStatus,undefined);
   const other=await win.openPlayerModal('tw63041398');
   assert.equal(other.length,0,'official results must suppress provisional rows for this event');
+  matching.results=[{player_id:zeroRow.player_id,rank:69,points:0}];
+  const zeroOfficial=await win.openPlayerModal(zeroRow.player_id);
+  assert.equal(zeroOfficial.length,0,'zero-LP Pokémon Asia result must be hidden too');
   matching.results=[];
-  console.log('PASS: all 8 verified bracket ID joins, LP estimates, 9th unaffected, fallback pending, official first');
+  console.log('PASS: bracket joins, score estimates, pending preserved, official first, 0-LP rows hidden');
 })().catch(err=>{console.error(err);process.exitCode=1;});
