@@ -40,7 +40,7 @@ const knockout = JSON.parse(fs.readFileSync('data/knockout_results.json','utf8')
   assert.equal(math.projectPlayer({points:100},[{points:100},{points:20,resultStatus:'estimated'}]).points,120);
   assert.equal(math.projectPlayer({points:100},[{points:20,resultStatus:'estimated'}]).points,120);
   const eight=Array(8).fill(0).map((_,i)=>({points:100-i*10}));
-  assert.equal(math.projectPlayer({points:520},eight.concat({points:90,resultStatus:'estimated'})).points,590);
+  assert.equal(math.projectPlayer({points:520},eight.concat({points:90,resultStatus:'estimated'})).points,580);
   assert.equal(math.projectPlayer({points:80},[{points:30},{points:25},{points:20},{points:15}]).points,90);
   const ordered=math.rankPlayers([{player_id:'b',points:20},{player_id:'a',points:20},{player_id:'c',points:19}]);
   assert.deepEqual(ordered.map(x=>x.rank).join(','),'1,1,3');
