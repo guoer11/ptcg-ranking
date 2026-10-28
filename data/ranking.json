@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-28T00:05:21+08:00",
+  "updated_at": "2026-10-29T00:05:32+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -20234,6 +20234,14 @@
       },
       {
         "rank": 171,
+        "name": "Colton",
+        "player_id": "tw48904561",
+        "region": "新北市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw48904561/"
+      },
+      {
+        "rank": 171,
         "name": "Curcur",
         "player_id": "tw64407893",
         "region": "高雄市",
@@ -21775,14 +21783,6 @@
         "region": "南投縣",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw98510615/"
-      },
-      {
-        "rank": 171,
-        "name": "paq",
-        "player_id": "tw48904561",
-        "region": "新北市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw48904561/"
       },
       {
         "rank": 171,
