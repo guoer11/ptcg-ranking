@@ -2,6 +2,19 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-10-29T18:54:46+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-10-29T18:54:46+08:00",
+      "summary": "新增成績 2 場",
+      "details": [
+        "新增官方成績｜#68688｜2026-10-26｜The ONE集換式卡牌會所｜臺北市｜16 筆",
+        "新增官方成績｜#69000｜2026-10-26｜拉比卡牌｜臺北市｜16 筆"
+      ],
+      "notified": true,
+      "trigger_source": "GitHub 備援排程"
+    },
+    {
       "id": "tournaments-2026-10-29T17:05:06+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -40,16 +53,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "tournaments-2026-10-28T18:35:26+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-10-28T18:35:26+08:00",
-      "summary": "例行檢查完成；賽事可見內容無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }
