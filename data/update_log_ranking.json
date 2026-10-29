@@ -2,6 +2,38 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-10-30T00:05:21+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-10-30T00:05:21+08:00",
+      "summary": "有效排名變動：名次 2651、積分 30、進榜 15、離榜 0",
+      "details": [
+        "Master：名次 2247、積分 19、進榜 11",
+        "Senior：名次 381、積分 10、進榜 1",
+        "Junior：名次 23、積分 1、進榜 3",
+        "Master｜tw57017359｜名次 3 → 2；積分 106 → 116",
+        "Master｜tw00387540｜名次 13 → 9；積分 80 → 86",
+        "Master｜tw42619935｜名次 10 → 11",
+        "Master｜tw49759795｜名次 11 → 12",
+        "Master｜tw85026999｜名次 12 → 13",
+        "Master｜tw75551324｜積分 76 → 78",
+        "Master｜tw28179733｜名次 14 → 15",
+        "Master｜tw96947201｜名次 66 → 51；積分 38 → 44",
+        "Master｜tw59842400｜名次 56 → 57",
+        "Master｜tw73358187｜名次 56 → 57",
+        "Master｜tw69848864｜名次 56 → 57",
+        "Master｜tw67604361｜名次 78 → 60；積分 35 → 41",
+        "Master｜tw07410887｜名次 59 → 61",
+        "Master｜tw88506619｜名次 59 → 61",
+        "Master｜tw10467123｜名次 59 → 61",
+        "Master｜tw60273793｜名次 59 → 61",
+        "Master｜tw02105248｜名次 59 → 61",
+        "其餘 2650 筆細節省略"
+      ],
+      "notified": true,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "ranking-2026-10-29T05:00:47+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -65,16 +97,6 @@
       ],
       "notified": true,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "ranking-2026-10-27T05:00:05+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-10-27T05:00:05+08:00",
-      "summary": "例行檢查完成；官方排名無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }
