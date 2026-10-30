@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-30T00:05:21+08:00",
+  "updated_at": "2026-10-31T00:05:23+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -5608,6 +5608,14 @@
       },
       {
         "rank": 596,
+        "name": "O_Brandon",
+        "player_id": "tw72313605",
+        "region": "新北市",
+        "points": 6,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw72313605/"
+      },
+      {
+        "rank": 596,
         "name": "OgeeTaku0219",
         "player_id": "tw44380087",
         "region": "臺中市",
@@ -5773,14 +5781,6 @@
         "region": "臺北市",
         "points": 6,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw04552155/"
-      },
-      {
-        "rank": 596,
-        "name": "TG_Brandon",
-        "player_id": "tw72313605",
-        "region": "新北市",
-        "points": 6,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw72313605/"
       },
       {
         "rank": 596,
@@ -21258,6 +21258,14 @@
       },
       {
         "rank": 172,
+        "name": "O_Oscar",
+        "player_id": "tw79421519",
+        "region": "新北市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw79421519/"
+      },
+      {
+        "rank": 172,
         "name": "Olly",
         "player_id": "tw24008175",
         "region": "嘉義市",
@@ -21455,14 +21463,6 @@
         "region": "新北市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw88014909/"
-      },
-      {
-        "rank": 172,
-        "name": "TG_Oscar",
-        "player_id": "tw79421519",
-        "region": "新北市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw79421519/"
       },
       {
         "rank": 172,
@@ -23612,6 +23612,14 @@
       },
       {
         "rank": 80,
+        "name": "O_Oswald",
+        "player_id": "tw98185930",
+        "region": "新北市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw98185930/"
+      },
+      {
+        "rank": 80,
         "name": "Ollie",
         "player_id": "tw59345575",
         "region": "新北市",
@@ -23921,14 +23929,6 @@
         "region": "彰化縣",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw21813037/"
-      },
-      {
-        "rank": 80,
-        "name": "TG_Oswald",
-        "player_id": "tw98185930",
-        "region": "新北市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw98185930/"
       },
       {
         "rank": 80,

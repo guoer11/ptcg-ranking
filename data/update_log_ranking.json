@@ -2,6 +2,23 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-10-31T00:05:23+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-10-31T00:05:23+08:00",
+      "summary": "無排名／積分變動；暱稱 3、地區 0 筆異動",
+      "details": [
+        "Master：暱稱 1",
+        "Senior：暱稱 1",
+        "Junior：暱稱 1",
+        "Master｜tw72313605｜暱稱 TG_Brandon → O_Brandon",
+        "Senior｜tw79421519｜暱稱 TG_Oscar → O_Oscar",
+        "Junior｜tw98185930｜暱稱 TG_Oswald → O_Oswald"
+      ],
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "ranking-2026-10-30T05:03:25+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -65,16 +82,6 @@
       ],
       "notified": false,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "ranking-2026-10-28T04:39:34+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-10-28T04:39:34+08:00",
-      "summary": "例行檢查完成；官方排名無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }
