@@ -2,6 +2,19 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-11-02T00:05:21+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-11-02T00:05:21+08:00",
+      "summary": "無排名／積分變動；暱稱 1、地區 0 筆異動",
+      "details": [
+        "Senior：暱稱 1",
+        "Senior｜tw82943130｜暱稱 Ben → ben"
+      ],
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "ranking-2026-11-01T03:55:41+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -47,16 +60,6 @@
       ],
       "notified": false,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "ranking-2026-10-30T05:03:25+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-10-30T05:03:25+08:00",
-      "summary": "例行檢查完成；官方排名無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }

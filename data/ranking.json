@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-10-31T00:05:23+08:00",
+  "updated_at": "2026-11-02T00:05:21+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -20154,14 +20154,6 @@
       },
       {
         "rank": 172,
-        "name": "Ben",
-        "player_id": "tw82943130",
-        "region": "高雄市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw82943130/"
-      },
-      {
-        "rank": 172,
         "name": "Bernard",
         "player_id": "tw58300323",
         "region": "宜蘭縣",
@@ -21703,6 +21695,14 @@
         "region": "高雄市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw67489398/"
+      },
+      {
+        "rank": 172,
+        "name": "ben",
+        "player_id": "tw82943130",
+        "region": "高雄市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw82943130/"
       },
       {
         "rank": 172,
