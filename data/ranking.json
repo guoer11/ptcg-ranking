@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-11-02T00:05:21+08:00",
+  "updated_at": "2026-11-03T00:05:21+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -1984,6 +1984,14 @@
       },
       {
         "rank": 248,
+        "name": "7b",
+        "player_id": "tw69372013",
+        "region": "臺中市",
+        "points": 16,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw69372013/"
+      },
+      {
+        "rank": 248,
         "name": "CHORD",
         "player_id": "tw68209544",
         "region": "臺北市",
@@ -2045,14 +2053,6 @@
         "region": "臺中市",
         "points": 16,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw45498080/"
-      },
-      {
-        "rank": 248,
-        "name": "Jimin",
-        "player_id": "tw69372013",
-        "region": "臺中市",
-        "points": 16,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw69372013/"
       },
       {
         "rank": 248,
@@ -8953,6 +8953,14 @@
       {
         "rank": 925,
         "name": "Chris",
+        "player_id": "tw81806985",
+        "region": "新北市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw81806985/"
+      },
+      {
+        "rank": 925,
+        "name": "Chris",
         "player_id": "tw00242943",
         "region": "臺北市",
         "points": 0,
@@ -9021,14 +9029,6 @@
         "region": "新北市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw07329342/"
-      },
-      {
-        "rank": 925,
-        "name": "CityShower",
-        "player_id": "tw81806985",
-        "region": "新北市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw81806985/"
       },
       {
         "rank": 925,
