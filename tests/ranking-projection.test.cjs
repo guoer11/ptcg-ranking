@@ -49,7 +49,10 @@ const knockout = JSON.parse(fs.readFileSync('data/knockout_results.json','utf8')
   assert(rows.length>=ranking.groups.Junior.length,'all official players stay present');
   assert.equal(JSON.stringify(ranking.groups.Junior),copy,'original official rows must stay unchanged');
   const byId=new Map(rows.map(x=>[x.player_id,x]));
-  assert.equal(byId.get('tw82755386').officialRank,30);
+  // 官方排行榜每天會變動：必須對照當次 ranking.json，不可把玩家名次寫死。
+  const officialBenson = ranking.groups.Junior.find(row => row.player_id === 'tw82755386');
+  assert(officialBenson, 'expected the tracked player to exist in official ranking');
+  assert.equal(byId.get('tw82755386').officialRank, officialBenson.rank);
   assert(byId.get('tw82755386').points>byId.get('tw82755386').officialPoints);
   assert(rows.every(x=>Number.isFinite(x.points)&&x.points>=0));
   assert(rows.every((x,i)=>i===0||rows[i-1].points>=x.points));
