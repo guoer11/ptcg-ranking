@@ -1,6 +1,6 @@
 {
   "season": "2026-27",
-  "generated_at": "2026-11-03T12:06:33+08:00",
+  "generated_at": "2026-11-03T17:06:23+08:00",
   "great_window_days": 60,
   "great_cutoff": "2026-09-05",
   "players": {
@@ -130,6 +130,14 @@
         "champion_count": 1,
         "runner_up_count": 1,
         "latest_date": "2026-09-28"
+      }
+    },
+    "tw06400208": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-10-31"
       }
     },
     "tw07460167": {
@@ -495,6 +503,14 @@
         "latest_date": "2026-10-18"
       }
     },
+    "tw39174853": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-31"
+      }
+    },
     "tw39185310": {
       "wcs_2026": true,
       "great": {
@@ -558,6 +574,14 @@
         "champion_count": 1,
         "runner_up_count": 2,
         "latest_date": "2026-10-25"
+      }
+    },
+    "tw42723639": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-31"
       }
     },
     "tw42912360": {
@@ -1012,9 +1036,9 @@
     "tw81419386": {
       "great": {
         "best_rank": 1,
-        "champion_count": 1,
+        "champion_count": 2,
         "runner_up_count": 0,
-        "latest_date": "2026-09-13"
+        "latest_date": "2026-10-31"
       }
     },
     "tw81886933": {
