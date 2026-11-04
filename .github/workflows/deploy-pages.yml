@@ -1,6 +1,7 @@
 name: Deploy PTCG ranking site
 
 # GitHub Pages source: GitHub Actions
+# Re-trigger Pages publish after GitHub Actions/Pages incident on 2026-11-05 (no functional change)
 # Baseball realism v7 deployment marker
 # Baseball full strategy v13 deployment marker
 # Baseball complete v14 deployment marker
