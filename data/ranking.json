@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-11-04T05:44:31+08:00",
+  "updated_at": "2026-11-05T00:05:19+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -20098,6 +20098,14 @@
       },
       {
         "rank": 115,
+        "name": "KianaKaslana",
+        "player_id": "tw47069747",
+        "region": "苗栗縣",
+        "points": 8,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw47069747/"
+      },
+      {
+        "rank": 115,
         "name": "Lester",
         "player_id": "tw22254647",
         "region": "彰化縣",
@@ -20175,14 +20183,6 @@
         "region": "桃園市",
         "points": 8,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw13175197/"
-      },
-      {
-        "rank": 115,
-        "name": "nbnb94nb",
-        "player_id": "tw47069747",
-        "region": "苗栗縣",
-        "points": 8,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw47069747/"
       },
       {
         "rank": 129,

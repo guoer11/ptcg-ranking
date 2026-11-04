@@ -2,6 +2,19 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-11-05T00:05:19+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-11-05T00:05:19+08:00",
+      "summary": "無排名／積分變動；暱稱 1、地區 0 筆異動",
+      "details": [
+        "Senior：暱稱 1",
+        "Senior｜tw47069747｜暱稱 nbnb94nb → KianaKaslana"
+      ],
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "ranking-2026-11-04T05:44:31+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -69,16 +82,6 @@
       ],
       "notified": false,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "ranking-2026-11-02T04:27:27+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-11-02T04:27:27+08:00",
-      "summary": "例行檢查完成；官方排名無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }
