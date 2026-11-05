@@ -1,6 +1,6 @@
 {
   "season": "2026-27",
-  "generated_at": "2026-11-05T12:07:42+08:00",
+  "generated_at": "2026-11-05T17:07:49+08:00",
   "great_window_days": 60,
   "great_cutoff": "2026-09-07",
   "players": {
@@ -235,6 +235,14 @@
     },
     "tw15435377": {
       "wcs_2026": true
+    },
+    "tw16132632": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-10-26"
+      }
     },
     "tw16965198": {
       "great": {
@@ -632,6 +640,14 @@
         "latest_date": "2026-11-01"
       }
     },
+    "tw49198811": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-11-01"
+      }
+    },
     "tw49340794": {
       "wcs_2026": true
     },
@@ -899,8 +915,8 @@
     "tw73048413": {
       "wcs_2026": true,
       "great": {
-        "best_rank": 2,
-        "champion_count": 0,
+        "best_rank": 1,
+        "champion_count": 1,
         "runner_up_count": 1,
         "latest_date": "2026-10-26"
       }
@@ -1039,7 +1055,13 @@
       "wcs_2026": true
     },
     "tw82494238": {
-      "wcs_2026": true
+      "wcs_2026": true,
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-10-31"
+      }
     },
     "tw82755386": {
       "wcs_2026": true
@@ -1062,8 +1084,8 @@
       "great": {
         "best_rank": 1,
         "champion_count": 1,
-        "runner_up_count": 0,
-        "latest_date": "2026-10-09"
+        "runner_up_count": 1,
+        "latest_date": "2026-10-10"
       }
     },
     "tw85313935": {
@@ -1084,6 +1106,14 @@
         "latest_date": "2026-10-03"
       }
     },
+    "tw86683243": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-31"
+      }
+    },
     "tw88506619": {
       "great": {
         "best_rank": 2,
@@ -1094,6 +1124,14 @@
     },
     "tw89368672": {
       "wcs_2026": true
+    },
+    "tw89644458": {
+      "great": {
+        "best_rank": 2,
+        "champion_count": 0,
+        "runner_up_count": 1,
+        "latest_date": "2026-10-26"
+      }
     },
     "tw89973725": {
       "wcs_2026": true,
@@ -1161,6 +1199,14 @@
         "champion_count": 0,
         "runner_up_count": 2,
         "latest_date": "2026-10-04"
+      }
+    },
+    "tw97066779": {
+      "great": {
+        "best_rank": 1,
+        "champion_count": 1,
+        "runner_up_count": 0,
+        "latest_date": "2026-11-01"
       }
     },
     "tw97885633": {

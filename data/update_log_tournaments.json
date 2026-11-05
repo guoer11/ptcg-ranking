@@ -2,6 +2,21 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-11-05T17:06:28+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-11-05T17:06:28+08:00",
+      "summary": "新增成績 4 場",
+      "details": [
+        "新增官方成績｜#68118｜2026-10-10｜紙牌屋｜臺南市｜32 筆",
+        "新增官方成績｜#67537｜2026-10-26｜一刻館卡片遊戲專賣店｜桃園市｜32 筆",
+        "新增官方成績｜#67696｜2026-10-31｜磚櫃玩具店(台北店)｜新北市｜32 筆",
+        "新增官方成績｜#68479｜2026-11-01｜Play Lab Game 休閒館 台南｜臺南市｜16 筆"
+      ],
+      "notified": true,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "tournaments-2026-11-05T12:06:27+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -62,16 +77,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "tournaments-2026-11-04T20:06:22+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-11-04T20:06:22+08:00",
-      "summary": "例行檢查完成；賽事可見內容無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }
