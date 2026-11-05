@@ -2,7 +2,7 @@
   "year": 2026,
   "source": "https://stats.cpbl.com.tw/api/proxy/v1/leaderboards/pr-table?year=2026&searchType=batter&gameKind=A",
   "roster_source": "https://www.cpbl.com.tw/player",
-  "updated_at": "2026-11-04T18:04:09.866581+00:00",
+  "updated_at": "2026-11-05T18:07:16.174712+00:00",
   "count": 341,
   "players": {
     "中信兄弟|王奕凱": {
@@ -3872,9 +3872,9 @@
     "統一7-ELEVEn獅|王翾祐": {
       "team": "統一7-ELEVEn獅",
       "player": "王翾祐",
-      "AVG": null,
+      "AVG": 0.37037037037037035,
       "G": null,
-      "PA": null,
+      "PA": 31,
       "AB": null,
       "R": null,
       "RBI": null,
@@ -3887,9 +3887,9 @@
       "HBP": null,
       "K": null,
       "SB": null,
-      "OBP": null,
-      "SLG": null,
-      "OPS": null,
+      "OBP": 0.43333333333333335,
+      "SLG": 0.48148148148148145,
+      "OPS": 0.915,
       "OPSplus": null
     },
     "統一7-ELEVEn獅|王鏡銘": {
