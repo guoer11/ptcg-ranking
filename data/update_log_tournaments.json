@@ -2,6 +2,18 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-11-06T01:24:47+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-11-06T01:24:47+08:00",
+      "summary": "狀態變更 1 場",
+      "details": [
+        "狀態｜#72101｜2026-12-20｜桌遊帝國咖啡廳｜高雄市｜active → unavailable"
+      ],
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
+    },
+    {
       "id": "tournaments-2026-11-05T20:18:39+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -63,16 +75,6 @@
       "type": "tournaments",
       "title": "賽事資訊更新",
       "updated_at": "2026-11-05T05:55:00+08:00",
-      "summary": "例行檢查完成；賽事可見內容無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
-    },
-    {
-      "id": "tournaments-2026-11-05T01:13:01+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-11-05T01:13:01+08:00",
       "summary": "例行檢查完成；賽事可見內容無變動",
       "details": [],
       "notified": false,
