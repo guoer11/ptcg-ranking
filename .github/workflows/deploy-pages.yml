@@ -36,9 +36,11 @@ permissions:
   pages: write
   id-token: write
 
+# Ranking and tournament syncs can finish minutes apart: never cancel an active Pages upload.
+# GitHub retains at most one pending run per concurrency group; the latest will publish.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
