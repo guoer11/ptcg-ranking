@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-11-07T00:05:25+08:00",
+  "updated_at": "2026-11-07T05:27:56+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -7408,6 +7408,14 @@
       },
       {
         "rank": 839,
+        "name": "TSAI",
+        "player_id": "tw51677666",
+        "region": "新北市",
+        "points": 4,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw51677666/"
+      },
+      {
+        "rank": 839,
         "name": "TYCHU",
         "player_id": "tw09914156",
         "region": "臺北市",
@@ -7741,14 +7749,6 @@
         "region": "新北市",
         "points": 4,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw38400660/"
-      },
-      {
-        "rank": 839,
-        "name": "大雞是一隻雞",
-        "player_id": "tw51677666",
-        "region": "新北市",
-        "points": 4,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw51677666/"
       },
       {
         "rank": 969,
