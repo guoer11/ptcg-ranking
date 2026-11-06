@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-11-06T05:57:48+08:00",
+  "updated_at": "2026-11-07T00:05:25+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -312,6 +312,14 @@
       },
       {
         "rank": 36,
+        "name": "TEAM_David",
+        "player_id": "tw10467123",
+        "region": "臺北市",
+        "points": 58,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw10467123/"
+      },
+      {
+        "rank": 36,
         "name": "Terry",
         "player_id": "tw32020032",
         "region": "高雄市",
@@ -319,7 +327,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw32020032/"
       },
       {
-        "rank": 40,
+        "rank": 41,
         "name": "Galaxy",
         "player_id": "tw27568465",
         "region": "臺中市",
@@ -327,7 +335,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw27568465/"
       },
       {
-        "rank": 40,
+        "rank": 41,
         "name": "阿童",
         "player_id": "tw39185310",
         "region": "臺北市",
@@ -335,7 +343,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw39185310/"
       },
       {
-        "rank": 42,
+        "rank": 43,
         "name": "Johnny",
         "player_id": "tw50567676",
         "region": "苗栗縣",
@@ -343,7 +351,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw50567676/"
       },
       {
-        "rank": 43,
+        "rank": 44,
         "name": "DCG_Martin",
         "player_id": "tw76086171",
         "region": "桃園市",
@@ -351,7 +359,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw76086171/"
       },
       {
-        "rank": 43,
+        "rank": 44,
         "name": "JP",
         "player_id": "tw11739209",
         "region": "臺中市",
@@ -359,7 +367,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw11739209/"
       },
       {
-        "rank": 43,
+        "rank": 44,
         "name": "Weninne",
         "player_id": "tw18638755",
         "region": "彰化縣",
@@ -367,7 +375,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw18638755/"
       },
       {
-        "rank": 46,
+        "rank": 47,
         "name": "Jeremy0224",
         "player_id": "tw58817602",
         "region": "臺北市",
@@ -375,7 +383,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw58817602/"
       },
       {
-        "rank": 46,
+        "rank": 47,
         "name": "Leo",
         "player_id": "tw98129328",
         "region": "新竹縣",
@@ -383,7 +391,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw98129328/"
       },
       {
-        "rank": 46,
+        "rank": 47,
         "name": "cianbojheng",
         "player_id": "tw78657682",
         "region": "高雄市",
@@ -391,7 +399,15 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw78657682/"
       },
       {
-        "rank": 49,
+        "rank": 47,
+        "name": "zivchen",
+        "player_id": "tw30267620",
+        "region": "臺中市",
+        "points": 52,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw30267620/"
+      },
+      {
+        "rank": 51,
         "name": "PANYOUCHEN",
         "player_id": "tw27347873",
         "region": "新北市",
@@ -399,7 +415,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw27347873/"
       },
       {
-        "rank": 49,
+        "rank": 51,
         "name": "Ray",
         "player_id": "tw73106123",
         "region": "高雄市",
@@ -407,7 +423,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw73106123/"
       },
       {
-        "rank": 51,
+        "rank": 53,
         "name": "B.N.C 林宇廷",
         "player_id": "tw37556303",
         "region": "高雄市",
@@ -415,7 +431,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw37556303/"
       },
       {
-        "rank": 51,
+        "rank": 53,
         "name": "Dantes",
         "player_id": "tw13965222",
         "region": "高雄市",
@@ -423,7 +439,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw13965222/"
       },
       {
-        "rank": 51,
+        "rank": 53,
         "name": "Jay",
         "player_id": "tw07410887",
         "region": "桃園市",
@@ -431,7 +447,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw07410887/"
       },
       {
-        "rank": 51,
+        "rank": 53,
         "name": "Pin",
         "player_id": "tw96947201",
         "region": "新北市",
@@ -439,7 +455,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw96947201/"
       },
       {
-        "rank": 51,
+        "rank": 53,
         "name": "QQ",
         "player_id": "tw26175828",
         "region": "臺中市",
@@ -447,15 +463,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw26175828/"
       },
       {
-        "rank": 51,
-        "name": "TEAM_David",
-        "player_id": "tw10467123",
-        "region": "臺北市",
-        "points": 50,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw10467123/"
-      },
-      {
-        "rank": 57,
+        "rank": 58,
         "name": "39,60_or_whatever",
         "player_id": "tw56336073",
         "region": "臺中市",
@@ -463,7 +471,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw56336073/"
       },
       {
-        "rank": 57,
+        "rank": 58,
         "name": "Modred1104",
         "player_id": "tw44821842",
         "region": "臺中市",
@@ -471,7 +479,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw44821842/"
       },
       {
-        "rank": 59,
+        "rank": 60,
         "name": "John",
         "player_id": "tw02559687",
         "region": "高雄市",
@@ -479,7 +487,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw02559687/"
       },
       {
-        "rank": 59,
+        "rank": 60,
         "name": "OP_TheCry",
         "player_id": "tw52194649",
         "region": "臺中市",
@@ -487,7 +495,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw52194649/"
       },
       {
-        "rank": 61,
+        "rank": 62,
         "name": "Jason",
         "player_id": "tw10410998",
         "region": "新北市",
@@ -495,7 +503,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw10410998/"
       },
       {
-        "rank": 61,
+        "rank": 62,
         "name": "Pinkey",
         "player_id": "tw04722294",
         "region": "高雄市",
@@ -503,7 +511,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw04722294/"
       },
       {
-        "rank": 61,
+        "rank": 62,
         "name": "Sin",
         "player_id": "tw61279434",
         "region": "高雄市",
@@ -511,7 +519,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw61279434/"
       },
       {
-        "rank": 64,
+        "rank": 65,
         "name": "XRY",
         "player_id": "tw93076075",
         "region": "臺中市",
@@ -519,7 +527,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw93076075/"
       },
       {
-        "rank": 64,
+        "rank": 65,
         "name": "hihilifestyle",
         "player_id": "tw67604361",
         "region": "新北市",
@@ -527,7 +535,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw67604361/"
       },
       {
-        "rank": 66,
+        "rank": 67,
         "name": "Yeen",
         "player_id": "tw73048413",
         "region": "臺南市",
@@ -535,7 +543,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw73048413/"
       },
       {
-        "rank": 66,
+        "rank": 67,
         "name": "duduman0000",
         "player_id": "tw02105248",
         "region": "臺北市",
@@ -543,20 +551,12 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw02105248/"
       },
       {
-        "rank": 66,
+        "rank": 67,
         "name": "will",
         "player_id": "tw79188375",
         "region": "高雄市",
         "points": 44,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw79188375/"
-      },
-      {
-        "rank": 66,
-        "name": "zivchen",
-        "player_id": "tw30267620",
-        "region": "臺中市",
-        "points": 44,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw30267620/"
       },
       {
         "rank": 70,
@@ -608,6 +608,14 @@
       },
       {
         "rank": 76,
+        "name": "Amy",
+        "player_id": "tw89047117",
+        "region": "彰化縣",
+        "points": 39,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw89047117/"
+      },
+      {
+        "rank": 77,
         "name": "Jack",
         "player_id": "tw54430001",
         "region": "新竹市",
@@ -615,7 +623,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw54430001/"
       },
       {
-        "rank": 76,
+        "rank": 77,
         "name": "JayC",
         "player_id": "tw07460167",
         "region": "新北市",
@@ -623,7 +631,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw07460167/"
       },
       {
-        "rank": 76,
+        "rank": 77,
         "name": "Jia",
         "player_id": "tw84991038",
         "region": "臺南市",
@@ -631,7 +639,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw84991038/"
       },
       {
-        "rank": 76,
+        "rank": 77,
         "name": "Moon",
         "player_id": "tw97931731",
         "region": "臺北市",
@@ -639,7 +647,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw97931731/"
       },
       {
-        "rank": 76,
+        "rank": 77,
         "name": "mj730709",
         "player_id": "tw66591069",
         "region": "新北市",
@@ -647,7 +655,15 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw66591069/"
       },
       {
-        "rank": 81,
+        "rank": 82,
+        "name": "DONG_JI_WU",
+        "player_id": "tw59054436",
+        "region": "臺中市",
+        "points": 36,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw59054436/"
+      },
+      {
+        "rank": 82,
         "name": "FrankChu",
         "player_id": "tw48512422",
         "region": "新北市",
@@ -655,7 +671,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw48512422/"
       },
       {
-        "rank": 81,
+        "rank": 82,
         "name": "GMS_Mew",
         "player_id": "tw67759215",
         "region": "新北市",
@@ -663,7 +679,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw67759215/"
       },
       {
-        "rank": 81,
+        "rank": 82,
         "name": "Iyiu",
         "player_id": "tw57615176",
         "region": "彰化縣",
@@ -671,7 +687,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw57615176/"
       },
       {
-        "rank": 81,
+        "rank": 82,
         "name": "KCyen",
         "player_id": "tw47904340",
         "region": "宜蘭縣",
@@ -679,7 +695,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw47904340/"
       },
       {
-        "rank": 81,
+        "rank": 82,
         "name": "Ming",
         "player_id": "tw90996252",
         "region": "宜蘭縣",
@@ -687,7 +703,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw90996252/"
       },
       {
-        "rank": 81,
+        "rank": 82,
         "name": "TCGSTORE_阿元",
         "player_id": "tw79280986",
         "region": "臺北市",
@@ -695,7 +711,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw79280986/"
       },
       {
-        "rank": 81,
+        "rank": 82,
         "name": "Tony777",
         "player_id": "tw89297350",
         "region": "臺中市",
@@ -703,7 +719,15 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw89297350/"
       },
       {
-        "rank": 81,
+        "rank": 82,
+        "name": "XiaoJun",
+        "player_id": "tw16645990",
+        "region": "臺中市",
+        "points": 36,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw16645990/"
+      },
+      {
+        "rank": 82,
         "name": "bamboo",
         "player_id": "tw65483922",
         "region": "新北市",
@@ -711,7 +735,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw65483922/"
       },
       {
-        "rank": 81,
+        "rank": 82,
         "name": "jj9990253",
         "player_id": "tw41805810",
         "region": "新北市",
@@ -719,7 +743,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw41805810/"
       },
       {
-        "rank": 81,
+        "rank": 82,
         "name": "kino",
         "player_id": "tw09472918",
         "region": "高雄市",
@@ -727,7 +751,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw09472918/"
       },
       {
-        "rank": 81,
+        "rank": 82,
         "name": "薄荷Echo",
         "player_id": "tw55332465",
         "region": "高雄市",
@@ -735,7 +759,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw55332465/"
       },
       {
-        "rank": 92,
+        "rank": 95,
         "name": "ReyLu",
         "player_id": "tw91797530",
         "region": "桃園市",
@@ -743,7 +767,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw91797530/"
       },
       {
-        "rank": 92,
+        "rank": 95,
         "name": "ting",
         "player_id": "tw18906406",
         "region": "新北市",
@@ -751,7 +775,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw18906406/"
       },
       {
-        "rank": 94,
+        "rank": 97,
         "name": "1212wr",
         "player_id": "tw15533641",
         "region": "新北市",
@@ -759,7 +783,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw15533641/"
       },
       {
-        "rank": 94,
+        "rank": 97,
         "name": ":(",
         "player_id": "tw50858481",
         "region": "桃園市",
@@ -767,7 +791,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw50858481/"
       },
       {
-        "rank": 94,
+        "rank": 97,
         "name": "CTSYUHAO",
         "player_id": "tw24889276",
         "region": "嘉義縣",
@@ -775,7 +799,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw24889276/"
       },
       {
-        "rank": 94,
+        "rank": 97,
         "name": "INMU-KING",
         "player_id": "tw93624549",
         "region": "臺中市",
@@ -783,7 +807,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw93624549/"
       },
       {
-        "rank": 94,
+        "rank": 97,
         "name": "Jester",
         "player_id": "tw63343435",
         "region": "彰化縣",
@@ -791,7 +815,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw63343435/"
       },
       {
-        "rank": 94,
+        "rank": 97,
         "name": "Shooting",
         "player_id": "tw66459371",
         "region": "臺北市",
@@ -799,7 +823,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw66459371/"
       },
       {
-        "rank": 100,
+        "rank": 103,
         "name": "DCG_J35815916",
         "player_id": "tw09574160",
         "region": "高雄市",
@@ -807,7 +831,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw09574160/"
       },
       {
-        "rank": 100,
+        "rank": 103,
         "name": "Mapu0215",
         "player_id": "tw81121676",
         "region": "臺中市",
@@ -815,7 +839,15 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw81121676/"
       },
       {
-        "rank": 102,
+        "rank": 103,
+        "name": "Ming",
+        "player_id": "tw02106832",
+        "region": "臺中市",
+        "points": 33,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw02106832/"
+      },
+      {
+        "rank": 106,
         "name": "0645124010615",
         "player_id": "tw59914357",
         "region": "桃園市",
@@ -823,7 +855,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw59914357/"
       },
       {
-        "rank": 102,
+        "rank": 106,
         "name": "Cookie",
         "player_id": "tw42912360",
         "region": "高雄市",
@@ -831,7 +863,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw42912360/"
       },
       {
-        "rank": 102,
+        "rank": 106,
         "name": "Gai",
         "player_id": "tw89609352",
         "region": "桃園市",
@@ -839,7 +871,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw89609352/"
       },
       {
-        "rank": 102,
+        "rank": 106,
         "name": "Jack",
         "player_id": "tw77414759",
         "region": "臺北市",
@@ -847,7 +879,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw77414759/"
       },
       {
-        "rank": 102,
+        "rank": 106,
         "name": "Jyun",
         "player_id": "tw35995465",
         "region": "高雄市",
@@ -855,7 +887,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw35995465/"
       },
       {
-        "rank": 102,
+        "rank": 106,
         "name": "Ken",
         "player_id": "tw82119121",
         "region": "臺南市",
@@ -863,7 +895,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw82119121/"
       },
       {
-        "rank": 102,
+        "rank": 106,
         "name": "MoonCake",
         "player_id": "tw30898169",
         "region": "新北市",
@@ -871,7 +903,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw30898169/"
       },
       {
-        "rank": 102,
+        "rank": 106,
         "name": "Spawn",
         "player_id": "tw42740359",
         "region": "高雄市",
@@ -879,7 +911,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw42740359/"
       },
       {
-        "rank": 102,
+        "rank": 106,
         "name": "TaipeiCCC",
         "player_id": "tw45696531",
         "region": "臺北市",
@@ -887,7 +919,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw45696531/"
       },
       {
-        "rank": 102,
+        "rank": 106,
         "name": "TsaiYaoChing",
         "player_id": "tw76258268",
         "region": "屏東縣",
@@ -895,7 +927,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw76258268/"
       },
       {
-        "rank": 102,
+        "rank": 106,
         "name": "abao",
         "player_id": "tw26582888",
         "region": "高雄市",
@@ -903,7 +935,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw26582888/"
       },
       {
-        "rank": 102,
+        "rank": 106,
         "name": "曉致",
         "player_id": "tw63508480",
         "region": "高雄市",
@@ -911,15 +943,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw63508480/"
       },
       {
-        "rank": 114,
-        "name": "Amy",
-        "player_id": "tw89047117",
-        "region": "彰化縣",
-        "points": 31,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw89047117/"
-      },
-      {
-        "rank": 115,
+        "rank": 118,
         "name": "BonBon",
         "player_id": "tw33785925",
         "region": "新竹市",
@@ -927,7 +951,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw33785925/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "CARDGAMECEO",
         "player_id": "tw56970260",
         "region": "臺中市",
@@ -935,7 +959,15 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw56970260/"
       },
       {
-        "rank": 115,
+        "rank": 118,
+        "name": "Charlie",
+        "player_id": "tw64567116",
+        "region": "臺中市",
+        "points": 30,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw64567116/"
+      },
+      {
+        "rank": 118,
         "name": "Eup",
         "player_id": "tw72630270",
         "region": "新北市",
@@ -943,7 +975,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw72630270/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "Kyrie",
         "player_id": "tw53540804",
         "region": "新北市",
@@ -951,7 +983,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw53540804/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "Lin",
         "player_id": "tw74542521",
         "region": "新北市",
@@ -959,7 +991,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw74542521/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "NewFlavors",
         "player_id": "tw17203659",
         "region": "臺北市",
@@ -967,7 +999,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw17203659/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "Owen",
         "player_id": "tw13120137",
         "region": "新北市",
@@ -975,7 +1007,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw13120137/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "PiJie",
         "player_id": "tw81599190",
         "region": "新竹市",
@@ -983,7 +1015,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw81599190/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "TonyYeh",
         "player_id": "tw11612248",
         "region": "新北市",
@@ -991,7 +1023,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw11612248/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "Will",
         "player_id": "tw95120042",
         "region": "臺中市",
@@ -999,7 +1031,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw95120042/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "XJH_KC",
         "player_id": "tw66134077",
         "region": "嘉義縣",
@@ -1007,7 +1039,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw66134077/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "Yuan._84",
         "player_id": "tw12769027",
         "region": "新北市",
@@ -1015,7 +1047,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw12769027/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "^-^",
         "player_id": "tw16965198",
         "region": "臺北市",
@@ -1023,7 +1055,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw16965198/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "dented-Dusknoir",
         "player_id": "tw32830944",
         "region": "彰化縣",
@@ -1031,7 +1063,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw32830944/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "rio1022",
         "player_id": "tw68088789",
         "region": "高雄市",
@@ -1039,7 +1071,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw68088789/"
       },
       {
-        "rank": 115,
+        "rank": 118,
         "name": "wiishindra",
         "player_id": "tw05980017",
         "region": "彰化縣",
@@ -1047,7 +1079,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw05980017/"
       },
       {
-        "rank": 131,
+        "rank": 135,
         "name": "Benny",
         "player_id": "tw94173678",
         "region": "臺中市",
@@ -1055,7 +1087,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw94173678/"
       },
       {
-        "rank": 131,
+        "rank": 135,
         "name": "SemagJC",
         "player_id": "tw42455002",
         "region": "新北市",
@@ -1063,7 +1095,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw42455002/"
       },
       {
-        "rank": 131,
+        "rank": 135,
         "name": "Yuh",
         "player_id": "tw11642031",
         "region": "高雄市",
@@ -1071,7 +1103,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw11642031/"
       },
       {
-        "rank": 134,
+        "rank": 138,
         "name": "Aki",
         "player_id": "tw41073870",
         "region": "臺中市",
@@ -1079,7 +1111,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw41073870/"
       },
       {
-        "rank": 134,
+        "rank": 138,
         "name": "Corgi",
         "player_id": "tw12035691",
         "region": "基隆市",
@@ -1087,7 +1119,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw12035691/"
       },
       {
-        "rank": 134,
+        "rank": 138,
         "name": "KANG,TAI-YUAN",
         "player_id": "tw64460639",
         "region": "新北市",
@@ -1095,7 +1127,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw64460639/"
       },
       {
-        "rank": 134,
+        "rank": 138,
         "name": "LUGIA",
         "player_id": "tw38080173",
         "region": "臺南市",
@@ -1103,7 +1135,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw38080173/"
       },
       {
-        "rank": 134,
+        "rank": 138,
         "name": "Lion",
         "player_id": "tw42723639",
         "region": "臺北市",
@@ -1111,7 +1143,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw42723639/"
       },
       {
-        "rank": 134,
+        "rank": 138,
         "name": "Ming",
         "player_id": "tw21601458",
         "region": "高雄市",
@@ -1119,7 +1151,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw21601458/"
       },
       {
-        "rank": 134,
+        "rank": 138,
         "name": "Nice",
         "player_id": "tw06400208",
         "region": "臺中市",
@@ -1127,7 +1159,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw06400208/"
       },
       {
-        "rank": 134,
+        "rank": 138,
         "name": "SJin0213",
         "player_id": "tw31422118",
         "region": "高雄市",
@@ -1135,7 +1167,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw31422118/"
       },
       {
-        "rank": 134,
+        "rank": 138,
         "name": "Sean",
         "player_id": "tw66588143",
         "region": "臺南市",
@@ -1143,7 +1175,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw66588143/"
       },
       {
-        "rank": 134,
+        "rank": 138,
         "name": "XJH_Tangfen",
         "player_id": "tw02826499",
         "region": "新北市",
@@ -1151,15 +1183,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw02826499/"
       },
       {
-        "rank": 134,
-        "name": "XiaoJun",
-        "player_id": "tw16645990",
-        "region": "臺中市",
-        "points": 28,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw16645990/"
-      },
-      {
-        "rank": 134,
+        "rank": 138,
         "name": "Xinyu",
         "player_id": "tw67716132",
         "region": "臺北市",
@@ -1167,7 +1191,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw67716132/"
       },
       {
-        "rank": 134,
+        "rank": 138,
         "name": "Yuzuna",
         "player_id": "tw80392170",
         "region": "新北市",
@@ -1175,7 +1199,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw80392170/"
       },
       {
-        "rank": 134,
+        "rank": 138,
         "name": "jim",
         "player_id": "tw72244502",
         "region": "苗栗縣",
@@ -1183,7 +1207,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw72244502/"
       },
       {
-        "rank": 148,
+        "rank": 151,
         "name": "Aragari",
         "player_id": "tw92466220",
         "region": "新竹縣",
@@ -1191,7 +1215,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw92466220/"
       },
       {
-        "rank": 148,
+        "rank": 151,
         "name": "ShaArRK",
         "player_id": "tw51496473",
         "region": "桃園市",
@@ -1199,7 +1223,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw51496473/"
       },
       {
-        "rank": 150,
+        "rank": 153,
         "name": "DCG_M1DSKY",
         "player_id": "tw16152234",
         "region": "新竹市",
@@ -1207,15 +1231,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw16152234/"
       },
       {
-        "rank": 150,
-        "name": "DONG_JI_WU",
-        "player_id": "tw59054436",
-        "region": "臺中市",
-        "points": 26,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw59054436/"
-      },
-      {
-        "rank": 150,
+        "rank": 153,
         "name": "Lastdaymeet",
         "player_id": "tw55210501",
         "region": "苗栗縣",
@@ -1223,7 +1239,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw55210501/"
       },
       {
-        "rank": 150,
+        "rank": 153,
         "name": "Lazurite",
         "player_id": "tw41523616",
         "region": "臺中市",
@@ -1231,7 +1247,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw41523616/"
       },
       {
-        "rank": 150,
+        "rank": 153,
         "name": "Maomao",
         "player_id": "tw79180495",
         "region": "新北市",
@@ -1239,7 +1255,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw79180495/"
       },
       {
-        "rank": 150,
+        "rank": 153,
         "name": "OP-Jeff",
         "player_id": "tw12134806",
         "region": "臺中市",
@@ -1247,7 +1263,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw12134806/"
       },
       {
-        "rank": 150,
+        "rank": 153,
         "name": "TCGSTORE_HSUAN",
         "player_id": "tw49340794",
         "region": "臺北市",
@@ -1255,7 +1271,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw49340794/"
       },
       {
-        "rank": 150,
+        "rank": 153,
         "name": "WangLin",
         "player_id": "tw50680843",
         "region": "高雄市",
@@ -1263,7 +1279,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw50680843/"
       },
       {
-        "rank": 150,
+        "rank": 153,
         "name": "Yang",
         "player_id": "tw88209015",
         "region": "南投縣",
@@ -1271,7 +1287,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw88209015/"
       },
       {
-        "rank": 150,
+        "rank": 153,
         "name": "john1029",
         "player_id": "tw04057117",
         "region": "臺北市",
@@ -1279,7 +1295,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw04057117/"
       },
       {
-        "rank": 160,
+        "rank": 162,
         "name": "DCG_01",
         "player_id": "tw24854365",
         "region": "新竹縣",
@@ -1287,7 +1303,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw24854365/"
       },
       {
-        "rank": 160,
+        "rank": 162,
         "name": "JacksonC",
         "player_id": "tw04457744",
         "region": "新北市",
@@ -1295,7 +1311,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw04457744/"
       },
       {
-        "rank": 160,
+        "rank": 162,
         "name": "N1-Bear",
         "player_id": "tw02367054",
         "region": "屏東縣",
@@ -1303,7 +1319,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw02367054/"
       },
       {
-        "rank": 160,
+        "rank": 162,
         "name": "Tym",
         "player_id": "tw83751916",
         "region": "新北市",
@@ -1311,7 +1327,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw83751916/"
       },
       {
-        "rank": 160,
+        "rank": 162,
         "name": "XJH_Fengshen",
         "player_id": "tw15026318",
         "region": "新北市",
@@ -1319,7 +1335,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw15026318/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "BenT",
         "player_id": "tw76470686",
         "region": "臺南市",
@@ -1327,7 +1343,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw76470686/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "Biaoz",
         "player_id": "tw00357547",
         "region": "新北市",
@@ -1335,7 +1351,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw00357547/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "Camus",
         "player_id": "tw66520026",
         "region": "新竹縣",
@@ -1343,7 +1359,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw66520026/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "Chang,I-Hsiang",
         "player_id": "tw89343025",
         "region": "臺中市",
@@ -1351,7 +1367,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw89343025/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "Daniel1221",
         "player_id": "tw18276049",
         "region": "新北市",
@@ -1359,7 +1375,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw18276049/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "David",
         "player_id": "tw42979297",
         "region": "新北市",
@@ -1367,7 +1383,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw42979297/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "GUAN-LUN-CHEN",
         "player_id": "tw01012666",
         "region": "新北市",
@@ -1375,7 +1391,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw01012666/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "HornyBat",
         "player_id": "tw81886933",
         "region": "臺北市",
@@ -1383,7 +1399,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw81886933/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "Jeremysunn",
         "player_id": "tw46030050",
         "region": "高雄市",
@@ -1391,7 +1407,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw46030050/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "Jerry",
         "player_id": "tw09468385",
         "region": "臺北市",
@@ -1399,7 +1415,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw09468385/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "Kai",
         "player_id": "tw16621728",
         "region": "臺北市",
@@ -1407,7 +1423,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw16621728/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "Lora",
         "player_id": "tw21820105",
         "region": "桃園市",
@@ -1415,7 +1431,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw21820105/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "Shanks",
         "player_id": "tw28750216",
         "region": "新北市",
@@ -1423,7 +1439,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw28750216/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "Stan",
         "player_id": "tw99958274",
         "region": "新北市",
@@ -1431,7 +1447,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw99958274/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "Vrttw",
         "player_id": "tw40722297",
         "region": "臺北市",
@@ -1439,7 +1455,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw40722297/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "Wen",
         "player_id": "tw08814300",
         "region": "新北市",
@@ -1447,7 +1463,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw08814300/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "Xin",
         "player_id": "tw97666473",
         "region": "新北市",
@@ -1455,7 +1471,15 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw97666473/"
       },
       {
-        "rank": 165,
+        "rank": 167,
+        "name": "ZhangXuan",
+        "player_id": "tw99229780",
+        "region": "南投縣",
+        "points": 24,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw99229780/"
+      },
+      {
+        "rank": 167,
         "name": "hhh17653",
         "player_id": "tw69804633",
         "region": "宜蘭縣",
@@ -1463,7 +1487,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw69804633/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "house",
         "player_id": "tw75352342",
         "region": "新北市",
@@ -1471,7 +1495,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw75352342/"
       },
       {
-        "rank": 165,
+        "rank": 167,
         "name": "哈力栗",
         "player_id": "tw44344603",
         "region": "高雄市",
@@ -1479,7 +1503,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw44344603/"
       },
       {
-        "rank": 185,
+        "rank": 188,
         "name": "Beef",
         "player_id": "tw79411276",
         "region": "新北市",
@@ -1487,7 +1511,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw79411276/"
       },
       {
-        "rank": 185,
+        "rank": 188,
         "name": "LuckyJ1234",
         "player_id": "tw96887599",
         "region": "新北市",
@@ -1495,7 +1519,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw96887599/"
       },
       {
-        "rank": 185,
+        "rank": 188,
         "name": "PPT_Salmon",
         "player_id": "tw49159270",
         "region": "臺中市",
@@ -1503,7 +1527,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw49159270/"
       },
       {
-        "rank": 185,
+        "rank": 188,
         "name": "Rjjiang",
         "player_id": "tw59882595",
         "region": "臺中市",
@@ -1511,7 +1535,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw59882595/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "AhShen",
         "player_id": "tw98688020",
         "region": "宜蘭縣",
@@ -1519,7 +1543,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw98688020/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "BossTang",
         "player_id": "tw48793078",
         "region": "基隆市",
@@ -1527,7 +1551,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw48793078/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "ChenLi_Kibana",
         "player_id": "tw69538820",
         "region": "高雄市",
@@ -1535,7 +1559,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw69538820/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "DCG_Bear",
         "player_id": "tw96137948",
         "region": "屏東縣",
@@ -1543,7 +1567,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw96137948/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "Giles",
         "player_id": "tw52127289",
         "region": "新北市",
@@ -1551,7 +1575,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw52127289/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "LOONG",
         "player_id": "tw44468313",
         "region": "新北市",
@@ -1559,7 +1583,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw44468313/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "Okra",
         "player_id": "tw50328610",
         "region": "新北市",
@@ -1567,7 +1591,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw50328610/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "Panda",
         "player_id": "tw79476009",
         "region": "臺北市",
@@ -1575,7 +1599,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw79476009/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "PoYangHsu",
         "player_id": "tw10141695",
         "region": "高雄市",
@@ -1583,7 +1607,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw10141695/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "RichardWu",
         "player_id": "tw61583819",
         "region": "新北市",
@@ -1591,7 +1615,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw61583819/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "Shin",
         "player_id": "tw14788730",
         "region": "臺北市",
@@ -1599,7 +1623,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw14788730/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "Siang",
         "player_id": "tw25684532",
         "region": "臺中市",
@@ -1607,7 +1631,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw25684532/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "Tzuyi",
         "player_id": "tw09261132",
         "region": "高雄市",
@@ -1615,7 +1639,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw09261132/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "YANG",
         "player_id": "tw77679011",
         "region": "桃園市",
@@ -1623,7 +1647,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw77679011/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "Yujie",
         "player_id": "tw04061481",
         "region": "桃園市",
@@ -1631,7 +1655,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw04061481/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "Yuki0221",
         "player_id": "tw57767899",
         "region": "桃園市",
@@ -1639,7 +1663,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw57767899/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "broday",
         "player_id": "tw73917548",
         "region": "臺北市",
@@ -1647,7 +1671,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw73917548/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "kingkinglin",
         "player_id": "tw09490592",
         "region": "新北市",
@@ -1655,7 +1679,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw09490592/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "sinpo",
         "player_id": "tw91823318",
         "region": "新北市",
@@ -1663,7 +1687,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw91823318/"
       },
       {
-        "rank": 189,
+        "rank": 192,
         "name": "太陽",
         "player_id": "tw41563340",
         "region": "臺中市",
@@ -1671,7 +1695,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw41563340/"
       },
       {
-        "rank": 209,
+        "rank": 212,
         "name": "Sean666",
         "player_id": "tw46437830",
         "region": "臺中市",
@@ -1679,7 +1703,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw46437830/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "13",
         "player_id": "tw39174853",
         "region": "臺南市",
@@ -1687,7 +1711,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw39174853/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "7Hao",
         "player_id": "tw72829984",
         "region": "臺北市",
@@ -1695,7 +1719,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw72829984/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "BBQ",
         "player_id": "tw38962597",
         "region": "高雄市",
@@ -1703,7 +1727,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw38962597/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "BestDogeEver",
         "player_id": "tw84828731",
         "region": "新北市",
@@ -1711,7 +1735,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw84828731/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "CH",
         "player_id": "tw44874553",
         "region": "高雄市",
@@ -1719,15 +1743,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw44874553/"
       },
       {
-        "rank": 210,
-        "name": "Charlie",
-        "player_id": "tw64567116",
-        "region": "臺中市",
-        "points": 20,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw64567116/"
-      },
-      {
-        "rank": 210,
+        "rank": 213,
         "name": "D",
         "player_id": "tw49045992",
         "region": "新北市",
@@ -1735,7 +1751,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw49045992/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "Daniel",
         "player_id": "tw29377361",
         "region": "臺北市",
@@ -1743,7 +1759,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw29377361/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "Durant",
         "player_id": "tw56468849",
         "region": "高雄市",
@@ -1751,7 +1767,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw56468849/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "HONG",
         "player_id": "tw93754264",
         "region": "新北市",
@@ -1759,7 +1775,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw93754264/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "HSUHSIOUHAO",
         "player_id": "tw75922385",
         "region": "高雄市",
@@ -1767,7 +1783,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw75922385/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "Jazpig",
         "player_id": "tw33433069",
         "region": "新竹縣",
@@ -1775,7 +1791,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw33433069/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "Jiao",
         "player_id": "tw78403870",
         "region": "新北市",
@@ -1783,7 +1799,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw78403870/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "LAI-BO-KAI",
         "player_id": "tw23930741",
         "region": "宜蘭縣",
@@ -1791,7 +1807,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw23930741/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "LT",
         "player_id": "tw51144227",
         "region": "高雄市",
@@ -1799,7 +1815,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw51144227/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "LeeKai",
         "player_id": "tw26670105",
         "region": "臺北市",
@@ -1807,7 +1823,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw26670105/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "Lucas",
         "player_id": "tw95547681",
         "region": "宜蘭縣",
@@ -1815,7 +1831,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw95547681/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "OceanTsoi",
         "player_id": "tw49113528",
         "region": "新竹縣",
@@ -1823,7 +1839,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw49113528/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "R1n90",
         "player_id": "tw23226571",
         "region": "新北市",
@@ -1831,7 +1847,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw23226571/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "Raysun",
         "player_id": "tw70273656",
         "region": "臺北市",
@@ -1839,7 +1855,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw70273656/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "Sam879879",
         "player_id": "tw38520904",
         "region": "新北市",
@@ -1847,7 +1863,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw38520904/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "Sharky",
         "player_id": "tw58450010",
         "region": "桃園市",
@@ -1855,7 +1871,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw58450010/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "Siang",
         "player_id": "tw75380665",
         "region": "臺中市",
@@ -1863,7 +1879,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw75380665/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "Tim",
         "player_id": "tw51489284",
         "region": "新北市",
@@ -1871,7 +1887,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw51489284/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "TsaiHsiangAn",
         "player_id": "tw42920911",
         "region": "新北市",
@@ -1879,7 +1895,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw42920911/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "Ubry",
         "player_id": "tw56240698",
         "region": "新北市",
@@ -1887,7 +1903,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw56240698/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "Wang",
         "player_id": "tw72699030",
         "region": "臺中市",
@@ -1895,7 +1911,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw72699030/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "Wangtinglun",
         "player_id": "tw22611326",
         "region": "桃園市",
@@ -1903,7 +1919,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw22611326/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "XJH_HANGO",
         "player_id": "tw67199394",
         "region": "新北市",
@@ -1911,7 +1927,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw67199394/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "a1phaki",
         "player_id": "tw70378594",
         "region": "桃園市",
@@ -1919,7 +1935,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw70378594/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "andreee",
         "player_id": "tw85823053",
         "region": "新北市",
@@ -1927,7 +1943,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw85823053/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "cat0924",
         "player_id": "tw50239297",
         "region": "臺南市",
@@ -1935,7 +1951,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw50239297/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "llin",
         "player_id": "tw67984683",
         "region": "臺南市",
@@ -1943,7 +1959,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw67984683/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "享玩_帆帆帆帆",
         "player_id": "tw69069593",
         "region": "桃園市",
@@ -1951,7 +1967,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw69069593/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "島主",
         "player_id": "tw75863784",
         "region": "高雄市",
@@ -1959,7 +1975,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw75863784/"
       },
       {
-        "rank": 210,
+        "rank": 213,
         "name": "應威德",
         "player_id": "tw89449964",
         "region": "新北市",
@@ -1967,7 +1983,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw89449964/"
       },
       {
-        "rank": 246,
+        "rank": 248,
         "name": "Bilitherubin",
         "player_id": "tw38743212",
         "region": "新北市",
@@ -1975,7 +1991,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw38743212/"
       },
       {
-        "rank": 246,
+        "rank": 248,
         "name": "Bulu8827",
         "player_id": "tw95198982",
         "region": "臺中市",
@@ -1983,7 +1999,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw95198982/"
       },
       {
-        "rank": 246,
+        "rank": 248,
         "name": "Cy",
         "player_id": "tw45233917",
         "region": "新北市",
@@ -1991,7 +2007,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw45233917/"
       },
       {
-        "rank": 246,
+        "rank": 248,
         "name": "Han",
         "player_id": "tw87263527",
         "region": "高雄市",
@@ -1999,7 +2015,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw87263527/"
       },
       {
-        "rank": 246,
+        "rank": 248,
         "name": "Lorenzo",
         "player_id": "tw90601321",
         "region": "高雄市",
@@ -2007,7 +2023,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw90601321/"
       },
       {
-        "rank": 246,
+        "rank": 248,
         "name": "Semaj54",
         "player_id": "tw76132946",
         "region": "新北市",
@@ -2015,7 +2031,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw76132946/"
       },
       {
-        "rank": 246,
+        "rank": 248,
         "name": "ThatWenYen",
         "player_id": "tw33742727",
         "region": "高雄市",
@@ -2023,7 +2039,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw33742727/"
       },
       {
-        "rank": 246,
+        "rank": 248,
         "name": "YP.JE",
         "player_id": "tw52663760",
         "region": "基隆市",
@@ -2031,7 +2047,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw52663760/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Arzi",
         "player_id": "tw87316906",
         "region": "桃園市",
@@ -2039,7 +2055,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw87316906/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Blueyoda",
         "player_id": "tw50702110",
         "region": "桃園市",
@@ -2047,7 +2063,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw50702110/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Bryant",
         "player_id": "tw76309421",
         "region": "新北市",
@@ -2055,7 +2071,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw76309421/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "ChienTingYu",
         "player_id": "tw93020902",
         "region": "新北市",
@@ -2063,7 +2079,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw93020902/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Cindy",
         "player_id": "tw38507572",
         "region": "高雄市",
@@ -2071,7 +2087,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw38507572/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "DOGE",
         "player_id": "tw65741542",
         "region": "新北市",
@@ -2079,7 +2095,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw65741542/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "DaZhong",
         "player_id": "tw45609612",
         "region": "高雄市",
@@ -2087,7 +2103,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw45609612/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Eugenie",
         "player_id": "tw58781969",
         "region": "臺北市",
@@ -2095,7 +2111,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw58781969/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Foxfool2527",
         "player_id": "tw62197981",
         "region": "屏東縣",
@@ -2103,7 +2119,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw62197981/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "GHG_Faye",
         "player_id": "tw38086655",
         "region": "臺北市",
@@ -2111,7 +2127,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw38086655/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Kevin",
         "player_id": "tw70406948",
         "region": "臺中市",
@@ -2119,7 +2135,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw70406948/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Mazu",
         "player_id": "tw37918429",
         "region": "桃園市",
@@ -2127,7 +2143,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw37918429/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Nkrs",
         "player_id": "tw29121960",
         "region": "新北市",
@@ -2135,7 +2151,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw29121960/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "OP.Darren",
         "player_id": "tw01856787",
         "region": "臺中市",
@@ -2143,7 +2159,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw01856787/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Pact",
         "player_id": "tw46738666",
         "region": "臺北市",
@@ -2151,7 +2167,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw46738666/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "PeiTzu",
         "player_id": "tw97351630",
         "region": "臺南市",
@@ -2159,7 +2175,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw97351630/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Ptcg_Ray_520",
         "player_id": "tw72908156",
         "region": "花蓮縣",
@@ -2167,7 +2183,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw72908156/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Raptor",
         "player_id": "tw62315993",
         "region": "桃園市",
@@ -2175,7 +2191,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw62315993/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "SeaUwUeed",
         "player_id": "tw11498239",
         "region": "新北市",
@@ -2183,7 +2199,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw11498239/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Sugar",
         "player_id": "tw70942920",
         "region": "臺北市",
@@ -2191,7 +2207,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw70942920/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "WUJIAAN",
         "player_id": "tw94009574",
         "region": "彰化縣",
@@ -2199,7 +2215,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw94009574/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "WunHao",
         "player_id": "tw89644458",
         "region": "臺北市",
@@ -2207,7 +2223,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw89644458/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "YU",
         "player_id": "tw48828788",
         "region": "臺北市",
@@ -2215,7 +2231,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw48828788/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Yang-Qi-Jun",
         "player_id": "tw93858918",
         "region": "新北市",
@@ -2223,7 +2239,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw93858918/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "Zhe",
         "player_id": "tw37257975",
         "region": "新北市",
@@ -2231,7 +2247,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw37257975/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "callyshih",
         "player_id": "tw54739989",
         "region": "新北市",
@@ -2239,7 +2255,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw54739989/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "leaf",
         "player_id": "tw77206748",
         "region": "臺北市",
@@ -2247,7 +2263,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw77206748/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "soraPanic",
         "player_id": "tw46423373",
         "region": "臺北市",
@@ -2255,7 +2271,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw46423373/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "umeya",
         "player_id": "tw45713741",
         "region": "新竹市",
@@ -2263,7 +2279,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw45713741/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "vincent",
         "player_id": "tw16728082",
         "region": "新北市",
@@ -2271,7 +2287,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw16728082/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "大安卡比獸",
         "player_id": "tw32980664",
         "region": "臺北市",
@@ -2279,7 +2295,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw32980664/"
       },
       {
-        "rank": 254,
+        "rank": 256,
         "name": "雨勢隔絕",
         "player_id": "tw71060818",
         "region": "桃園市",
@@ -2287,7 +2303,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw71060818/"
       },
       {
-        "rank": 286,
+        "rank": 288,
         "name": "AhXin",
         "player_id": "tw79270381",
         "region": "臺北市",
@@ -2295,7 +2311,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw79270381/"
       },
       {
-        "rank": 286,
+        "rank": 288,
         "name": "Skylar",
         "player_id": "tw59548820",
         "region": "臺北市",
@@ -2303,7 +2319,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw59548820/"
       },
       {
-        "rank": 286,
+        "rank": 288,
         "name": "hyc419",
         "player_id": "tw74945392",
         "region": "臺中市",
@@ -2311,7 +2327,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw74945392/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "7b",
         "player_id": "tw69372013",
         "region": "臺中市",
@@ -2319,7 +2335,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw69372013/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Aizen",
         "player_id": "tw69293104",
         "region": "臺南市",
@@ -2327,7 +2343,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw69293104/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "CHORD",
         "player_id": "tw68209544",
         "region": "臺北市",
@@ -2335,7 +2351,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw68209544/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "DKA_PIGRIGHT0",
         "player_id": "tw93433450",
         "region": "宜蘭縣",
@@ -2343,7 +2359,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw93433450/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Dennis",
         "player_id": "tw75820315",
         "region": "臺北市",
@@ -2351,7 +2367,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw75820315/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Dto",
         "player_id": "tw62020476",
         "region": "彰化縣",
@@ -2359,7 +2375,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw62020476/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Geto1119",
         "player_id": "tw94482727",
         "region": "基隆市",
@@ -2367,7 +2383,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw94482727/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "HUNG",
         "player_id": "tw96648029",
         "region": "臺南市",
@@ -2375,7 +2391,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw96648029/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Hsien",
         "player_id": "tw97072641",
         "region": "臺南市",
@@ -2383,7 +2399,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw97072641/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "JH",
         "player_id": "tw25974925",
         "region": "彰化縣",
@@ -2391,7 +2407,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw25974925/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "James",
         "player_id": "tw87713934",
         "region": "臺北市",
@@ -2399,7 +2415,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw87713934/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Jerry",
         "player_id": "tw45498080",
         "region": "臺中市",
@@ -2407,7 +2423,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw45498080/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Jonathan",
         "player_id": "tw24928885",
         "region": "臺北市",
@@ -2415,7 +2431,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw24928885/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "KuangChanHo",
         "player_id": "tw93405316",
         "region": "臺北市",
@@ -2423,7 +2439,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw93405316/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Leon",
         "player_id": "tw27395288",
         "region": "新北市",
@@ -2431,7 +2447,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw27395288/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Minyou",
         "player_id": "tw64203769",
         "region": "新竹縣",
@@ -2439,7 +2455,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw64203769/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Mora",
         "player_id": "tw12229939",
         "region": "嘉義市",
@@ -2447,7 +2463,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw12229939/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "NiGHT",
         "player_id": "tw35717087",
         "region": "臺南市",
@@ -2455,7 +2471,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw35717087/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Rohto",
         "player_id": "tw02018335",
         "region": "臺南市",
@@ -2463,7 +2479,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw02018335/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Ruby",
         "player_id": "tw47551870",
         "region": "臺中市",
@@ -2471,7 +2487,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw47551870/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Sam",
         "player_id": "tw87970697",
         "region": "桃園市",
@@ -2479,7 +2495,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw87970697/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Summer",
         "player_id": "tw64139040",
         "region": "臺中市",
@@ -2487,7 +2503,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw64139040/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "TAKOTIM",
         "player_id": "tw64656626",
         "region": "基隆市",
@@ -2495,7 +2511,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw64656626/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Turtle",
         "player_id": "tw32509631",
         "region": "屏東縣",
@@ -2503,7 +2519,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw32509631/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "YO",
         "player_id": "tw11978505",
         "region": "彰化縣",
@@ -2511,7 +2527,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw11978505/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Yeeting",
         "player_id": "tw75037148",
         "region": "高雄市",
@@ -2519,7 +2535,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw75037148/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "YoyoYang",
         "player_id": "tw57062134",
         "region": "新北市",
@@ -2527,7 +2543,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw57062134/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Yu",
         "player_id": "tw35729420",
         "region": "新北市",
@@ -2535,7 +2551,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw35729420/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Yuhuang",
         "player_id": "tw93517915",
         "region": "桃園市",
@@ -2543,7 +2559,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw93517915/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Z",
         "player_id": "tw49198811",
         "region": "臺南市",
@@ -2551,7 +2567,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw49198811/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Zakie0422",
         "player_id": "tw38746147",
         "region": "高雄市",
@@ -2559,7 +2575,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw38746147/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "Zonghan",
         "player_id": "tw48178410",
         "region": "臺中市",
@@ -2567,7 +2583,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw48178410/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "bacon",
         "player_id": "tw29518941",
         "region": "桃園市",
@@ -2575,7 +2591,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw29518941/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "j199302",
         "player_id": "tw93786634",
         "region": "新北市",
@@ -2583,7 +2599,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw93786634/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "kazma",
         "player_id": "tw04461037",
         "region": "臺北市",
@@ -2591,7 +2607,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw04461037/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "xian",
         "player_id": "tw18028837",
         "region": "臺中市",
@@ -2599,7 +2615,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw18028837/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "南呱",
         "player_id": "tw32214798",
         "region": "雲林縣",
@@ -2607,7 +2623,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw32214798/"
       },
       {
-        "rank": 289,
+        "rank": 291,
         "name": "張子杰",
         "player_id": "tw36782228",
         "region": "臺東縣",
@@ -2615,7 +2631,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw36782228/"
       },
       {
-        "rank": 327,
+        "rank": 329,
         "name": "Bobibonk",
         "player_id": "tw43492313",
         "region": "新北市",
@@ -2623,7 +2639,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw43492313/"
       },
       {
-        "rank": 327,
+        "rank": 329,
         "name": "Hsin",
         "player_id": "tw08560123",
         "region": "臺北市",
@@ -2631,7 +2647,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw08560123/"
       },
       {
-        "rank": 327,
+        "rank": 329,
         "name": "Jack",
         "player_id": "tw74568091",
         "region": "新北市",
@@ -2639,7 +2655,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw74568091/"
       },
       {
-        "rank": 327,
+        "rank": 329,
         "name": "Osborn",
         "player_id": "tw07020662",
         "region": "臺北市",
@@ -2647,7 +2663,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw07020662/"
       },
       {
-        "rank": 327,
+        "rank": 329,
         "name": "Warrior5454",
         "player_id": "tw54988993",
         "region": "桃園市",
@@ -2655,7 +2671,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw54988993/"
       },
       {
-        "rank": 327,
+        "rank": 329,
         "name": "murphy0827",
         "player_id": "tw58776465",
         "region": "新北市",
@@ -2663,7 +2679,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw58776465/"
       },
       {
-        "rank": 327,
+        "rank": 329,
         "name": "ohReal",
         "player_id": "tw63334587",
         "region": "臺北市",
@@ -2671,7 +2687,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw63334587/"
       },
       {
-        "rank": 327,
+        "rank": 329,
         "name": "sasashark",
         "player_id": "tw19522331",
         "region": "新北市",
@@ -2679,7 +2695,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw19522331/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "1x",
         "player_id": "tw95656910",
         "region": "苗栗縣",
@@ -2687,7 +2703,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw95656910/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Blue2Mo",
         "player_id": "tw90564971",
         "region": "臺北市",
@@ -2695,7 +2711,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw90564971/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Bruce_Chen",
         "player_id": "tw23712439",
         "region": "新北市",
@@ -2703,7 +2719,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw23712439/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "CHENIWEI",
         "player_id": "tw42246097",
         "region": "桃園市",
@@ -2711,7 +2727,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw42246097/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "CLZ",
         "player_id": "tw60311204",
         "region": "臺北市",
@@ -2719,7 +2735,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw60311204/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "ChiMing",
         "player_id": "tw36747145",
         "region": "桃園市",
@@ -2727,7 +2743,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw36747145/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Chunmander",
         "player_id": "tw03389371",
         "region": "臺北市",
@@ -2735,7 +2751,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw03389371/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "DGene",
         "player_id": "tw48509542",
         "region": "嘉義市",
@@ -2743,7 +2759,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw48509542/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "EddyChang",
         "player_id": "tw77550830",
         "region": "新北市",
@@ -2751,7 +2767,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw77550830/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Eileen",
         "player_id": "tw48890271",
         "region": "新北市",
@@ -2759,7 +2775,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw48890271/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "HEJIAYING",
         "player_id": "tw49698910",
         "region": "新北市",
@@ -2767,7 +2783,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw49698910/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Hsiang",
         "player_id": "tw49877892",
         "region": "桃園市",
@@ -2775,7 +2791,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw49877892/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "JOKE",
         "player_id": "tw68209178",
         "region": "新北市",
@@ -2783,7 +2799,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw68209178/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Jayce",
         "player_id": "tw69576075",
         "region": "臺北市",
@@ -2791,7 +2807,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw69576075/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Jeremy",
         "player_id": "tw08615728",
         "region": "臺北市",
@@ -2799,7 +2815,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw08615728/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Jerry",
         "player_id": "tw84382822",
         "region": "高雄市",
@@ -2807,7 +2823,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw84382822/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Jie0115",
         "player_id": "tw75091640",
         "region": "臺北市",
@@ -2815,7 +2831,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw75091640/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "KPIachu",
         "player_id": "tw89811739",
         "region": "宜蘭縣",
@@ -2823,7 +2839,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw89811739/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "KR",
         "player_id": "tw27563265",
         "region": "彰化縣",
@@ -2831,7 +2847,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw27563265/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "KT",
         "player_id": "tw64220350",
         "region": "嘉義市",
@@ -2839,7 +2855,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw64220350/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "LDW",
         "player_id": "tw04156058",
         "region": "新北市",
@@ -2847,7 +2863,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw04156058/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "LINCHEHSUAN",
         "player_id": "tw95954871",
         "region": "臺北市",
@@ -2855,7 +2871,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw95954871/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Larry",
         "player_id": "tw62525194",
         "region": "新北市",
@@ -2863,7 +2879,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw62525194/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Louis",
         "player_id": "tw47415187",
         "region": "桃園市",
@@ -2871,7 +2887,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw47415187/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Nobi",
         "player_id": "tw50758839",
         "region": "臺中市",
@@ -2879,7 +2895,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw50758839/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Renny",
         "player_id": "tw09066488",
         "region": "高雄市",
@@ -2887,7 +2903,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw09066488/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "SD",
         "player_id": "tw05197795",
         "region": "新北市",
@@ -2895,7 +2911,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw05197795/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "SmallOK",
         "player_id": "tw63054410",
         "region": "臺南市",
@@ -2903,7 +2919,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw63054410/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Superhugbear",
         "player_id": "tw18243923",
         "region": "桃園市",
@@ -2911,7 +2927,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw18243923/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Tree",
         "player_id": "tw47117803",
         "region": "臺北市",
@@ -2919,7 +2935,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw47117803/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Yu",
         "player_id": "tw94518932",
         "region": "彰化縣",
@@ -2927,7 +2943,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw94518932/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "ZhangYouChen",
         "player_id": "tw00787146",
         "region": "苗栗縣",
@@ -2935,7 +2951,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw00787146/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "Zhaorui",
         "player_id": "tw88780324",
         "region": "臺中市",
@@ -2943,7 +2959,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw88780324/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "fox",
         "player_id": "tw05399034",
         "region": "新北市",
@@ -2951,7 +2967,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw05399034/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "fred60216",
         "player_id": "tw14942902",
         "region": "臺中市",
@@ -2959,7 +2975,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw14942902/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "kojiloo",
         "player_id": "tw38671111",
         "region": "新北市",
@@ -2967,7 +2983,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw38671111/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "mushzho",
         "player_id": "tw43633449",
         "region": "新北市",
@@ -2975,7 +2991,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw43633449/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "shijie0326",
         "player_id": "tw19896357",
         "region": "臺北市",
@@ -2983,7 +2999,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw19896357/"
       },
       {
-        "rank": 335,
+        "rank": 337,
         "name": "tienyuch",
         "player_id": "tw14152067",
         "region": "新北市",
@@ -2991,7 +3007,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw14152067/"
       },
       {
-        "rank": 374,
+        "rank": 376,
         "name": "Lisalu",
         "player_id": "tw43007249",
         "region": "臺中市",
@@ -2999,15 +3015,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw43007249/"
       },
       {
-        "rank": 374,
-        "name": "Ming",
-        "player_id": "tw02106832",
-        "region": "臺中市",
-        "points": 13,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw02106832/"
-      },
-      {
-        "rank": 374,
+        "rank": 376,
         "name": "RickrollM3",
         "player_id": "tw95570205",
         "region": "新北市",
@@ -3015,7 +3023,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw95570205/"
       },
       {
-        "rank": 374,
+        "rank": 376,
         "name": "Rookie",
         "player_id": "tw04564553",
         "region": "臺中市",
@@ -3023,7 +3031,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw04564553/"
       },
       {
-        "rank": 374,
+        "rank": 376,
         "name": "gonsakon",
         "player_id": "tw22513278",
         "region": "高雄市",
@@ -3031,7 +3039,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw22513278/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "0501",
         "player_id": "tw83055994",
         "region": "高雄市",
@@ -3039,7 +3047,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw83055994/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Allen",
         "player_id": "tw73187416",
         "region": "臺中市",
@@ -3047,7 +3055,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw73187416/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Andy",
         "player_id": "tw62960654",
         "region": "臺北市",
@@ -3055,7 +3063,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw62960654/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "BNC-翔寶",
         "player_id": "tw09704151",
         "region": "高雄市",
@@ -3063,7 +3071,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw09704151/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "BST-NonSama",
         "player_id": "tw97857197",
         "region": "臺中市",
@@ -3071,7 +3079,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw97857197/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Bear'sParty",
         "player_id": "tw96922965",
         "region": "屏東縣",
@@ -3079,7 +3087,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw96922965/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "CYL",
         "player_id": "tw53806573",
         "region": "臺北市",
@@ -3087,7 +3095,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw53806573/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Caelus",
         "player_id": "tw63238788",
         "region": "臺北市",
@@ -3095,7 +3103,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw63238788/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Cliff",
         "player_id": "tw27632184",
         "region": "苗栗縣",
@@ -3103,7 +3111,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw27632184/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Danny",
         "player_id": "tw78866457",
         "region": "新北市",
@@ -3111,7 +3119,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw78866457/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Der",
         "player_id": "tw99241716",
         "region": "新北市",
@@ -3119,7 +3127,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw99241716/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "GinoYang",
         "player_id": "tw88525560",
         "region": "新北市",
@@ -3127,7 +3135,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw88525560/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Guaga",
         "player_id": "tw99086788",
         "region": "臺北市",
@@ -3135,7 +3143,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw99086788/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "HaoJun",
         "player_id": "tw11795582",
         "region": "高雄市",
@@ -3143,7 +3151,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw11795582/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Hey_Carryonwithu",
         "player_id": "tw11481352",
         "region": "彰化縣",
@@ -3151,7 +3159,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw11481352/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Jeffrey",
         "player_id": "tw01992921",
         "region": "新竹市",
@@ -3159,7 +3167,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw01992921/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Jesper",
         "player_id": "tw13420511",
         "region": "高雄市",
@@ -3167,7 +3175,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw13420511/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "JinHao",
         "player_id": "tw77123317",
         "region": "臺中市",
@@ -3175,7 +3183,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw77123317/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Jun",
         "player_id": "tw71003592",
         "region": "高雄市",
@@ -3183,7 +3191,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw71003592/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Keegan",
         "player_id": "tw24609089",
         "region": "高雄市",
@@ -3191,7 +3199,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw24609089/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Leegohome",
         "player_id": "tw13454619",
         "region": "新竹縣",
@@ -3199,7 +3207,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw13454619/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Leo",
         "player_id": "tw53090983",
         "region": "新北市",
@@ -3207,7 +3215,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw53090983/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Li",
         "player_id": "tw70028105",
         "region": "臺中市",
@@ -3215,7 +3223,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw70028105/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Louis",
         "player_id": "tw79504132",
         "region": "新竹縣",
@@ -3223,7 +3231,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw79504132/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Luson",
         "player_id": "tw37870020",
         "region": "桃園市",
@@ -3231,7 +3239,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw37870020/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "MW-pang",
         "player_id": "tw45178021",
         "region": "高雄市",
@@ -3239,7 +3247,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw45178021/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "MotoG",
         "player_id": "tw49886566",
         "region": "臺北市",
@@ -3247,7 +3255,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw49886566/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Mr.Gu",
         "player_id": "tw13462937",
         "region": "臺北市",
@@ -3255,7 +3263,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw13462937/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Schwi",
         "player_id": "tw70892972",
         "region": "臺北市",
@@ -3263,7 +3271,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw70892972/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Shen",
         "player_id": "tw01478107",
         "region": "臺南市",
@@ -3271,7 +3279,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw01478107/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Sky",
         "player_id": "tw26529339",
         "region": "彰化縣",
@@ -3279,7 +3287,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw26529339/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Somebo",
         "player_id": "tw32141014",
         "region": "新竹市",
@@ -3287,7 +3295,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw32141014/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Stanley.LAI",
         "player_id": "tw29404493",
         "region": "臺中市",
@@ -3295,7 +3303,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw29404493/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Towasamalike",
         "player_id": "tw23205294",
         "region": "臺南市",
@@ -3303,7 +3311,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw23205294/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Unknown",
         "player_id": "tw87192218",
         "region": "臺北市",
@@ -3311,7 +3319,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw87192218/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Winni",
         "player_id": "tw56416986",
         "region": "桃園市",
@@ -3319,7 +3327,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw56416986/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "WoXianGong",
         "player_id": "tw87500073",
         "region": "新北市",
@@ -3327,7 +3335,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw87500073/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "XJH_SIAO",
         "player_id": "tw13830995",
         "region": "新北市",
@@ -3335,7 +3343,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw13830995/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Yeh",
         "player_id": "tw56972035",
         "region": "新竹市",
@@ -3343,7 +3351,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw56972035/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "Young517",
         "player_id": "tw95299182",
         "region": "南投縣",
@@ -3351,15 +3359,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw95299182/"
       },
       {
-        "rank": 379,
-        "name": "ZhangXuan",
-        "player_id": "tw99229780",
-        "region": "南投縣",
-        "points": 12,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw99229780/"
-      },
-      {
-        "rank": 379,
+        "rank": 380,
         "name": "barrywang",
         "player_id": "tw60180669",
         "region": "臺北市",
@@ -3367,7 +3367,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw60180669/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "kang",
         "player_id": "tw92544749",
         "region": "新北市",
@@ -3375,7 +3375,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw92544749/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "kay",
         "player_id": "tw48927744",
         "region": "基隆市",
@@ -3383,7 +3383,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw48927744/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "linhoching",
         "player_id": "tw02856732",
         "region": "臺南市",
@@ -3391,7 +3391,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw02856732/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "ninja._.wa",
         "player_id": "tw89548879",
         "region": "南投縣",
@@ -3399,7 +3399,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw89548879/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "pieooo",
         "player_id": "tw86683243",
         "region": "新北市",
@@ -3407,7 +3407,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw86683243/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "ray",
         "player_id": "tw54128847",
         "region": "彰化縣",
@@ -3415,7 +3415,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw54128847/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "yc14359",
         "player_id": "tw06393443",
         "region": "新北市",
@@ -3423,7 +3423,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw06393443/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "ziiiiiiyu",
         "player_id": "tw03463518",
         "region": "臺中市",
@@ -3431,7 +3431,7 @@
         "player_url": "https://asia.pokemon-card.com/tw/users/tw03463518/"
       },
       {
-        "rank": 379,
+        "rank": 380,
         "name": "陽月爸",
         "player_id": "tw32240000",
         "region": "新北市",
@@ -7992,6 +7992,14 @@
       },
       {
         "rank": 990,
+        "name": "123",
+        "player_id": "tw34837231",
+        "region": "新北市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw34837231/"
+      },
+      {
+        "rank": 990,
         "name": "1236h",
         "player_id": "tw25428429",
         "region": "臺南市",
@@ -8037,14 +8045,6 @@
         "region": "雲林縣",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw40188987/"
-      },
-      {
-        "rank": 990,
-        "name": "123",
-        "player_id": "tw34837231",
-        "region": "新北市",
-        "points": 0,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw34837231/"
       },
       {
         "rank": 990,
@@ -8384,6 +8384,14 @@
       },
       {
         "rank": 990,
+        "name": "Amuro",
+        "player_id": "tw86609927",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw86609927/"
+      },
+      {
+        "rank": 990,
         "name": "Amy",
         "player_id": "tw52990027",
         "region": "彰化縣",
@@ -8493,6 +8501,14 @@
         "region": "新北市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw52997756/"
+      },
+      {
+        "rank": 990,
+        "name": "Angel",
+        "player_id": "tw64637342",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw64637342/"
       },
       {
         "rank": 990,
@@ -9168,6 +9184,14 @@
       },
       {
         "rank": 990,
+        "name": "CHU0830",
+        "player_id": "tw29121826",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw29121826/"
+      },
+      {
+        "rank": 990,
         "name": "CL",
         "player_id": "tw03821579",
         "region": "新北市",
@@ -9789,6 +9813,14 @@
         "region": "臺北市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw62153942/"
+      },
+      {
+        "rank": 990,
+        "name": "Daimon",
+        "player_id": "tw37378064",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw37378064/"
       },
       {
         "rank": 990,
@@ -12056,6 +12088,14 @@
       },
       {
         "rank": 990,
+        "name": "KAI",
+        "player_id": "tw63716643",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw63716643/"
+      },
+      {
+        "rank": 990,
         "name": "KC",
         "player_id": "tw87015354",
         "region": "新北市",
@@ -12413,6 +12453,14 @@
         "region": "臺中市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw93144488/"
+      },
+      {
+        "rank": 990,
+        "name": "Kodeee",
+        "player_id": "tw02835939",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw02835939/"
       },
       {
         "rank": 990,
@@ -15917,6 +15965,14 @@
         "region": "臺中市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw13452682/"
+      },
+      {
+        "rank": 990,
+        "name": "Tony",
+        "player_id": "tw06947530",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw06947530/"
       },
       {
         "rank": 990,
@@ -20979,6 +21035,14 @@
       {
         "rank": 178,
         "name": "Ben",
+        "player_id": "tw99895809",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw99895809/"
+      },
+      {
+        "rank": 178,
+        "name": "Ben",
         "player_id": "tw67016854",
         "region": "苗栗縣",
         "points": 0,
@@ -21463,6 +21527,14 @@
         "region": "基隆市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw77153350/"
+      },
+      {
+        "rank": 178,
+        "name": "Henry",
+        "player_id": "tw17178863",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw17178863/"
       },
       {
         "rank": 178,
@@ -22119,6 +22191,14 @@
         "region": "臺中市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw78986695/"
+      },
+      {
+        "rank": 178,
+        "name": "Morgan",
+        "player_id": "tw37538761",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw37538761/"
       },
       {
         "rank": 178,
@@ -23342,7 +23422,7 @@
         "rank": 40,
         "name": "Musk",
         "player_id": "tw03623052",
-        "region": "新北市",
+        "region": "臺北市",
         "points": 18,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw03623052/"
       },
@@ -24620,6 +24700,14 @@
       },
       {
         "rank": 82,
+        "name": "Mookie",
+        "player_id": "tw28372159",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw28372159/"
+      },
+      {
+        "rank": 82,
         "name": "Nemo",
         "player_id": "tw27928464",
         "region": "臺南市",
@@ -25169,6 +25257,14 @@
         "region": "高雄市",
         "points": 0,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw29045262/"
+      },
+      {
+        "rank": 82,
+        "name": "Zander",
+        "player_id": "tw08835795",
+        "region": "臺中市",
+        "points": 0,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw08835795/"
       },
       {
         "rank": 82,
