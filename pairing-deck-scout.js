@@ -281,7 +281,7 @@
 
     box.className = 'pairing-scout-result is-found';
     box.innerHTML = `
-      <div class="pairing-scout-result-head"><strong>第 ${esc(match.table || table)} 桌</strong><span>Round ${esc(data.round || '—')}</span></div>
+      <div class="pairing-scout-result-head"><strong>第 ${esc(match.table || table)} 桌</strong><span>Round ${esc(data.round || '—')} · TID ${esc(data.tid || '—')}</span></div>
       <label class="pairing-scout-unknown-toggle">
         <input id="pairingScoutUnknownToggle" type="checkbox" ${pairSaved ? 'checked' : ''}>
         <span><strong>不知道哪位是哪副牌</strong><small>只記這桌看到的兩副牌，不必先認出玩家。</small></span>
