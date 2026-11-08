@@ -58,6 +58,8 @@ jobs:
           node --check ranking-projection.js
           node tests/preliminary-ui.test.cjs
           node tests/ranking-projection.test.cjs
+          node --check pairing-deck-scout.js
+          node tests/pairing-scout-safety.test.cjs
 
       - name: Build public site artifact
         run: |

@@ -10,6 +10,7 @@
   let initializedForUser = '';
   let queryMode = 'table';
   let queryBusy = false;
+  let scoutRevision = 0;
 
   const $ = id => document.getElementById(id);
 
@@ -44,6 +45,53 @@
     document.querySelectorAll('[data-pairing-scout-mode]').forEach(button => { button.disabled = busy; });
   }
 
+  function scoutSourceKey() {
+    try {
+      const parsed = normalizeRoundUrl(sourceInput()?.value, Number(roundInput()?.value || 1));
+      return `${parsed.tid}:${parsed.round}`;
+    } catch {
+      return '';
+    }
+  }
+
+  function isCurrentScout(data) {
+    if (!data || currentContext?.data !== data) return false;
+    const tid = String(data.tid || '');
+    const round = Number(data.round);
+    return Boolean(tid && Number.isInteger(round) &&
+      String(currentContext.parsed?.tid) === tid &&
+      Number(currentContext.parsed?.round) === round &&
+      scoutSourceKey() === `${tid}:${round}`);
+  }
+
+  function invalidateScoutContext() {
+    scoutRevision++;
+    if (!currentContext && !queryBusy) return;
+    currentContext = null;
+    const box = $('pairingScoutResult');
+    if (box) {
+      box.className = 'pairing-scout-result is-idle';
+      box.innerHTML = '<strong>活動或輪次已變更</strong><span>舊配對已清除，請重新查詢這一輪，避免把牌組記到上一輪。</span>';
+    }
+    setStatus('已切換賽事或 Round，請重新查詢後再記錄牌組。');
+    setBusy(queryBusy);
+  }
+
+  function samePairIds(record, ids) {
+    const stored = [record?.player_a_id, record?.player_b_id].map(normalizePlayerId).filter(Boolean).sort();
+    const current = (ids || []).map(normalizePlayerId).filter(Boolean).sort();
+    return stored.length === 2 && current.length === 2 && stored.every((id, i) => id === current[i]);
+  }
+
+  function pairDeckConsistent(record, confirmed) {
+    const decks = [String(record.deck_a || ''), String(record.deck_b || '')];
+    const knownA = confirmed.get(normalizePlayerId(record.player_a_id)) || '';
+    const knownB = confirmed.get(normalizePlayerId(record.player_b_id)) || '';
+    if ((knownA && !decks.includes(knownA)) || (knownB && !decks.includes(knownB))) return false;
+    if (knownA && knownB) return [knownA, knownB].sort().join('||') === decks.sort().join('||');
+    return true;
+  }
+
   function normalizeQueryPlayerId(value) {
     let id = String(value || '').trim().toLowerCase().replace(/\s+/g, '');
     if (/^\d{6,}$/.test(id)) id = `tw${id}`;
@@ -51,6 +99,7 @@
   }
 
   function setQueryMode(mode, value = '') {
+    scoutRevision++;
     queryMode = mode === 'player' ? 'player' : 'table';
     currentContext = null;
     document.querySelectorAll('[data-pairing-scout-mode]').forEach(button => {
@@ -208,6 +257,7 @@
 
     const possible = new Set();
     for (const row of pairRows) {
+      if (!pairDeckConsistent(row, exact)) continue; // Ignore conflicting historical guesses.
       const a = normalizePlayerId(row.player_a_id);
       const b = normalizePlayerId(row.player_b_id);
       if (a !== id && b !== id) continue;
@@ -258,10 +308,18 @@
       scoutRows(data.tid),
       pairObservationRows(data.tid)
     ]);
-    const pairSaved = allPairs.find(row =>
+    if (!isCurrentScout(data)) return;
+    const savedAtTable = allPairs.find(row =>
       Number(row.round_no) === Number(data.round) &&
       String(row.table_no) === String(match.table || table)
     ) || null;
+    const pairSaved = savedAtTable && samePairIds(savedAtTable, ids) ? savedAtTable : null;
+    if (savedAtTable && !pairSaved) {
+      box.className = 'pairing-scout-result is-error';
+      box.innerHTML = '<strong>這桌先前記錄的玩家 ID 與官方配對不同</strong><span>已暫停這桌的牌組編輯，原紀錄保留。請先人工核對，避免覆寫其他玩家的牌組。</span>';
+      setStatus('偵測到不同玩家 ID 的舊紀錄：請先人工複核，未變更任何原有資料。', 'error');
+      return;
+    }
     const savedMap = Object.fromEntries(saved.map(row => [normalizePlayerId(row.player_id), row.deck_name]));
     const cards = ids.map((id, index) => {
       const display = playerLabel(id, index, names, match);
@@ -308,28 +366,22 @@
     const toggle = $('pairingScoutUnknownToggle');
     const exactMode = $('pairingScoutExactMode');
     const pairMode = $('pairingScoutPairMode');
-    toggle?.addEventListener('change', async () => {
+    toggle?.addEventListener('change', () => {
+      if (!isCurrentScout(data)) return setStatus('活動或輪次已變更，請先重新查詢。', 'error');
       if (exactMode) exactMode.hidden = toggle.checked;
       if (pairMode) pairMode.hidden = !toggle.checked;
-      if (!toggle.checked && pairSaved) {
-        try {
-          await deletePairObservation(data.tid, data.round, match.table || table);
-          setStatus('已切回「知道玩家對應」模式。', 'success');
-          await refreshStats(data.tid);
-        } catch (error) {
-          setStatus(`模式切換失敗：${error?.message || error}`, 'error');
-        }
-      }
+      // Mode switching must not remove existing pair-deck observations.
+      if (!toggle.checked && pairSaved) setStatus('已切換成玩家辨識模式，原雙牌組紀錄仍保留。', 'success');
     });
 
     box.querySelectorAll('[data-scout-player]').forEach(select => {
       select.addEventListener('change', async () => {
+        if (!isCurrentScout(data)) return setStatus('活動或 Round 已變更，請重新查詢配對後再存檔。', 'error');
         const deckName = select.value;
         if (!deckName) return;
         select.disabled = true;
         try {
           await saveScout(data.tid, data.round, match.table || table, select.dataset.scoutPlayer, deckName);
-          await deletePairObservation(data.tid, data.round, match.table || table).catch(() => {});
           setStatus(`已確認：${deckName}`, 'success');
           await refreshStats(data.tid);
         } catch (error) {
@@ -341,6 +393,7 @@
     });
 
     async function saveUnknownPairIfReady() {
+      if (!isCurrentScout(data)) return setStatus('活動或 Round 已變更，請重新查詢配對後再存檔。', 'error');
       const deckA = $('pairingScoutPairDeckA')?.value || '';
       const deckB = $('pairingScoutPairDeckB')?.value || '';
       if (!deckA || !deckB) {
@@ -377,16 +430,21 @@
     const selected = byPlayer ? normalizeQueryPlayerId(raw) : Number(raw);
     if (byPlayer && !/^tw\d+$/.test(selected)) return setStatus('請輸入有效的 PTCG ID，例如 tw39371632。', 'error');
     if (!byPlayer && (!/^\d+$/.test(raw) || !Number.isSafeInteger(selected) || selected < 1)) return setStatus('桌號請輸入 1 以上的整數。', 'error');
+    const requestRevision = ++scoutRevision;
     setBusy(true);
     setStatus('正在讀取配對與牌組紀錄…');
     try {
       const { data, parsed } = await fetchLookup(selected, mode);
+      if (requestRevision !== scoutRevision) return;
+      if (String(data.tid) !== parsed.tid || Number(data.round) !== parsed.round) throw new Error('後端配對的賽事或 Round 與查詢條件不一致，請重新查詢。');
       const matchedTable = Number(data.match?.table);
       currentContext = { data, parsed, table: Number.isSafeInteger(matchedTable) && matchedTable > 0 ? matchedTable : (byPlayer ? null : selected), target: byPlayer ? selected : '' };
       const input = $('pairingScoutTable');
       if (input) input.value = String(selected);
       await renderScoutMatch(data, currentContext.table, currentContext.target);
+      if (requestRevision !== scoutRevision) return;
       await refreshStats(parsed.tid);
+      if (requestRevision !== scoutRevision) return;
       if (data.match && !$('pairingScoutUnknownToggle')?.checked) {
         setStatus('查詢完成。認得玩家就直接選牌組，不認得就勾「不知道哪位是哪副牌」。', 'success');
       } else if (!data.match) {
@@ -420,7 +478,9 @@
     const [exactRows, pairRows] = await Promise.all([scoutRows(tid), pairObservationRows(tid)]);
     const counts = new Map();
     const countedPlayers = new Set();
+    const exactMap = new Map(exactRows.map(row => [normalizePlayerId(row.player_id), row.deck_name]));
     let ambiguousPairs = 0;
+    let conflictingPairs = 0;
 
     const add = deck => counts.set(deck, (counts.get(deck) || 0) + 1);
     for (const row of exactRows) {
@@ -431,6 +491,7 @@
     }
 
     for (const row of pairRows) {
+      if (!pairDeckConsistent(row, exactMap)) { conflictingPairs++; continue; }
       const a = normalizePlayerId(row.player_a_id);
       const b = normalizePlayerId(row.player_b_id);
       if (!a || !b) continue;
@@ -487,7 +548,10 @@
       const pct = Math.round(count / total * 100);
       return `<div><i style="--dot:hsl(${(index * 67 + 210) % 360} 65% 56%)"></i><span>${esc(name)}</span><b>${count} · ${pct}%</b></div>`;
     }).join('');
-    const note = ambiguousPairs ? `（含 ${ambiguousPairs} 桌未辨識）` : '';
+    const notes = [];
+    if (ambiguousPairs) notes.push(`含 ${ambiguousPairs} 桌未辨識`);
+    if (conflictingPairs) notes.push(`${conflictingPairs} 桌牌組紀錄有衝突，已排除推估`);
+    const note = notes.length ? `（${notes.join('；')}）` : '';
     box.innerHTML = `
       <div class="pairing-scout-stats-head"><strong>牌組分布</strong><span>已記錄 ${total} 位玩家${note}</span></div>
       <div class="pairing-scout-chart-wrap">
@@ -532,6 +596,10 @@
     $('pairingScoutLoad')?.addEventListener('click', () => loadSelection($('pairingScoutTable')?.value));
     $('pairingScoutPrev')?.addEventListener('click', () => navigateTable(-1));
     $('pairingScoutNext')?.addEventListener('click', () => navigateTable(1));
+    [sourceInput(), roundInput()].filter(Boolean).forEach(input => {
+      input.addEventListener('input', invalidateScoutContext);
+      input.addEventListener('change', invalidateScoutContext);
+    });
     $('pairingScoutTable')?.addEventListener('input', () => setBusy(queryBusy));
     $('pairingScoutTable')?.addEventListener('keydown', event => {
       if (event.key !== 'Enter') return;
@@ -560,6 +628,9 @@
     }
   });
   document.addEventListener('pairing:match-rendered', event => decorateMainPairing(event.detail));
+  document.addEventListener('pairing:tracking-started', () => {
+    if (currentContext && !isCurrentScout(currentContext.data)) invalidateScoutContext();
+  });
   document.addEventListener('DOMContentLoaded', () => {
     inject();
     setTimeout(onAuthorized, 500);
