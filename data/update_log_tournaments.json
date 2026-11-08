@@ -2,6 +2,16 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-11-08T17:05:46+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-11-08T17:05:46+08:00",
+      "summary": "例行檢查完成；賽事可見內容無變動",
+      "details": [],
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "tournaments-2026-11-08T12:06:06+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -43,16 +53,6 @@
         "新增｜#72178｜2026-11-08｜The Pokémon Company｜臺北市｜紀念球｜256 人"
       ],
       "notified": true,
-      "trigger_source": "GitHub 備援排程"
-    },
-    {
-      "id": "tournaments-2026-11-07T19:04:28+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-11-07T19:04:28+08:00",
-      "summary": "例行檢查完成；賽事可見內容無變動",
-      "details": [],
-      "notified": false,
       "trigger_source": "GitHub 備援排程"
     }
   ]
