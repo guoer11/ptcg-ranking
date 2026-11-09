@@ -2,7 +2,7 @@
   "season": "2026-27",
   "season_start": "2026-09-01",
   "tracking_end": "2027-07-31",
-  "updated_at": "2026-11-08T00:05:20+08:00",
+  "updated_at": "2026-11-10T00:05:25+08:00",
   "source": "https://asia.pokemon-card.com/tw/mypage/ranking/",
   "groups": {
     "Master": [
@@ -2432,6 +2432,14 @@
       },
       {
         "rank": 291,
+        "name": "KaoKao",
+        "player_id": "tw93786634",
+        "region": "新北市",
+        "points": 16,
+        "player_url": "https://asia.pokemon-card.com/tw/users/tw93786634/"
+      },
+      {
+        "rank": 291,
         "name": "KuangChanHo",
         "player_id": "tw93405316",
         "region": "臺北市",
@@ -2589,14 +2597,6 @@
         "region": "桃園市",
         "points": 16,
         "player_url": "https://asia.pokemon-card.com/tw/users/tw29518941/"
-      },
-      {
-        "rank": 291,
-        "name": "j199302",
-        "player_id": "tw93786634",
-        "region": "新北市",
-        "points": 16,
-        "player_url": "https://asia.pokemon-card.com/tw/users/tw93786634/"
       },
       {
         "rank": 291,
