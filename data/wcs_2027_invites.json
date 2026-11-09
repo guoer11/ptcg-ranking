@@ -1,0 +1,103 @@
+{
+  "season": "2026-27",
+  "worlds_year": 2027,
+  "source": "2026–27 紀念球聯盟賽（使用者提供的四強與冠亞軍對戰表）",
+  "players": {
+    "tw35477925": {
+      "name": "李育帆",
+      "group": "Master",
+      "rank": 1,
+      "place": "冠軍",
+      "event": "2026–27 紀念球聯盟賽",
+      "status": "invited"
+    },
+    "tw18638755": {
+      "name": "劉仕晟",
+      "group": "Master",
+      "rank": 2,
+      "place": "亞軍",
+      "event": "2026–27 紀念球聯盟賽",
+      "status": "invited"
+    },
+    "tw59096586": {
+      "name": "吳明峰",
+      "group": "Master",
+      "rank": 4,
+      "place": "四強",
+      "event": "2026–27 紀念球聯盟賽",
+      "status": "invited"
+    },
+    "tw42912360": {
+      "name": "謝秉辰",
+      "group": "Master",
+      "rank": 4,
+      "place": "四強",
+      "event": "2026–27 紀念球聯盟賽",
+      "status": "invited"
+    },
+    "tw65322738": {
+      "name": "許雲翔",
+      "group": "Senior",
+      "rank": 1,
+      "place": "冠軍",
+      "event": "2026–27 紀念球聯盟賽",
+      "status": "invited"
+    },
+    "tw03103631": {
+      "name": "顏紹同",
+      "group": "Senior",
+      "rank": 2,
+      "place": "亞軍",
+      "event": "2026–27 紀念球聯盟賽",
+      "status": "invited"
+    },
+    "tw81124094": {
+      "name": "李有緯",
+      "group": "Senior",
+      "rank": 4,
+      "place": "四強",
+      "event": "2026–27 紀念球聯盟賽",
+      "status": "invited"
+    },
+    "tw13175197": {
+      "name": "陳永恩",
+      "group": "Senior",
+      "rank": 4,
+      "place": "四強",
+      "event": "2026–27 紀念球聯盟賽",
+      "status": "invited"
+    },
+    "tw46877625": {
+      "name": "陳鉑岳",
+      "group": "Junior",
+      "rank": 1,
+      "place": "冠軍",
+      "event": "2026–27 紀念球聯盟賽",
+      "status": "invited"
+    },
+    "tw25007020": {
+      "name": "許辰毅",
+      "group": "Junior",
+      "rank": 2,
+      "place": "亞軍",
+      "event": "2026–27 紀念球聯盟賽",
+      "status": "invited"
+    },
+    "tw75543412": {
+      "name": "吳季東",
+      "group": "Junior",
+      "rank": 4,
+      "place": "四強",
+      "event": "2026–27 紀念球聯盟賽",
+      "status": "invited"
+    },
+    "tw63041398": {
+      "name": "楊子達",
+      "group": "Junior",
+      "rank": 4,
+      "place": "四強",
+      "event": "2026–27 紀念球聯盟賽",
+      "status": "invited"
+    }
+  }
+}
