@@ -1,10 +1,12 @@
 (() => {
   const DATA_URL = 'data/player_badges.json?v=2.2.0-r2';
   const WCS_SOURCE_URL = 'ranking-season-ui.js?v=2.1.0-r3';
+  const WCS_2027_URL = 'data/wcs_2027_invites.json?v=2.8.0-r1';
   const FAMILY_BADGE_STORAGE_KEY = 'ptcgFamilyBadgeContextV1';
   const FAMILY_BADGE_TTL_MS = 24 * 60 * 60 * 1000;
 
   let badgeData = { season: '2026-27', great_window_days: 60, players: {} };
+  let wcs2027 = { players: {} };
   let attentionSet = new Set();
   let attentionUserId = '';
   let wcsIconSrc = '';
@@ -62,6 +64,28 @@
     return `<span class="player-badge-wcs player-badge-wcs-fallback" title="${label}" aria-label="${label}">WCS</span>`;
   }
 
+  function wcs2027Info(playerId) {
+    return wcs2027?.players?.[normalizeId(playerId)] || null;
+  }
+
+  function wcs2027BadgeHtml(playerId) {
+    const info = wcs2027Info(playerId);
+    if (!info) return '';
+    const label = `WCS 2027 邀請資格｜${info.event}｜${info.place}`;
+    return `<span class="player-badge-wcs-2027" title="${esc(label)}" aria-label="${esc(label)}">WCS 2027</span>`;
+  }
+
+  async function loadWcs2027() {
+    try {
+      const response = await fetch(WCS_2027_URL, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`WCS 2027 HTTP ${response.status}`);
+      const data = await response.json();
+      if (data?.players && typeof data.players === 'object') wcs2027 = data;
+    } catch (error) {
+      console.warn('WCS 2027 資格名單讀取失敗', error);
+    }
+  }
+
   function attentionHtml(active, interactive = false, playerId = '') {
     if (interactive) {
       const label = active ? '取消注意標記' : '標記為注意選手';
@@ -81,6 +105,7 @@
     const parts = [];
 
     if (!skipWcs && info.wcs_2026) parts.push(wcsBadgeHtml());
+    if (!skipWcs && wcs2027Info(id)) parts.push(wcs2027BadgeHtml(id));
     if (attention || interactiveAttention) parts.push(attentionHtml(attention, interactiveAttention, id));
     if (info.premier) parts.push(ballBadgeHtml('premier', info.premier.best_rank));
     if (info.ultra) parts.push(ballBadgeHtml('ultra', info.ultra.best_rank));
@@ -96,6 +121,7 @@
     return [
       id,
       info.wcs_2026 ? 1 : 0,
+      wcs2027Info(id)?.place || '',
       Number(info.premier?.best_rank || 0),
       Number(info.ultra?.best_rank || 0),
       Number(info.great?.best_rank || 0),
@@ -108,7 +134,7 @@
   function legendHtml() {
     return `<div class="player-badge-legend">
       <strong>標記說明</strong>
-      <span class="player-badge-legend-line">WCS Logo＝世界賽選手　<span class="player-attention-star is-active" aria-hidden="true">★</span>＝注意名單</span>
+      <span class="player-badge-legend-line">WCS Logo＝2026 世界賽選手　WCS 2027＝2027 世界賽邀請資格　<span class="player-attention-star is-active" aria-hidden="true">★</span>＝注意名單</span>
       <span class="player-badge-legend-line"><b>¹</b>＝冠軍　<b>²</b>＝亞軍；超級球自該次冠／亞軍日起保留60天，高級球／紀念球看本賽季</span>
     </div>`;
   }
@@ -385,7 +411,9 @@
       if (anchor) anchor.insertAdjacentElement('beforebegin', box);
       else body.prepend(box);
     }
-    const modalHtml = `<div class="player-badge-row">${infoHtml}</div>${auth ? `<button class="player-attention-modal-control${attentionSet.has(id) ? ' is-active' : ''}" type="button" data-player-attention-toggle="${esc(id)}">${attentionSet.has(id) ? '★ 已加入注意名單' : '☆ 加入注意名單'}</button>` : ''}`;
+    const invite = wcs2027Info(id);
+    const inviteHtml = invite ? `<div class="player-wcs-2027-detail"><strong>WCS 2027 邀請資格</strong><span>${esc(invite.event)} · ${esc(invite.place)}</span></div>` : '';
+    const modalHtml = `<div class="player-badge-row">${infoHtml}</div>${inviteHtml}${auth ? `<button class="player-attention-modal-control${attentionSet.has(id) ? ' is-active' : ''}" type="button" data-player-attention-toggle="${esc(id)}">${attentionSet.has(id) ? '★ 已加入注意名單' : '☆ 加入注意名單'}</button>` : ''}`;
     const modalSignature = `${badgeSignature(id)}|${auth ? 1 : 0}`;
     if (box.dataset.badgeSignature !== modalSignature) {
       box.innerHTML = modalHtml;
@@ -436,7 +464,7 @@
 
   async function init() {
     installObservers();
-    await Promise.all([loadPublicBadges(), loadWcsIcon()]);
+    await Promise.all([loadPublicBadges(), loadWcsIcon(), loadWcs2027()]);
     startAuthRetry();
     scheduleDecorate();
   }
@@ -445,6 +473,7 @@
     get data() { return badgeData; },
     get ready() { return publicReady; },
     html: badgesHtml,
+    wcs2027: wcs2027Info,
     legendHtml,
     isAttention: playerId => attentionSet.has(normalizeId(playerId)),
     refreshAttention: refreshAttentionMarks,
