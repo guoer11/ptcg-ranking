@@ -1,5 +1,5 @@
 (() => {
-  const SITE_VERSION = 'v2.7.0';
+  const SITE_VERSION = 'v2.8.0';
   window.PTCG_SITE_VERSION = SITE_VERSION;
 
   // 官方 Ultra 賽事的「會場」欄位是主辦單位；地點與地址在 address。
@@ -32,13 +32,13 @@
       const link = document.createElement('link');
       link.id = 'ptcgPlayerBadgesCss';
       link.rel = 'stylesheet';
-      link.href = 'player-badges.css?v=2.3.0-r2';
+      link.href = 'player-badges.css?v=2.8.0-r1';
       document.head.appendChild(link);
     }
     if (!document.getElementById('ptcgPlayerBadgesJs')) {
       const script = document.createElement('script');
       script.id = 'ptcgPlayerBadgesJs';
-      script.src = 'player-badges.js?v=2.2.0-r4';
+      script.src = 'player-badges.js?v=2.8.0-r1';
       script.defer = true;
       document.head.appendChild(script);
     }
