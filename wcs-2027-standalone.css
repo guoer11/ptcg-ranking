@@ -1,0 +1,8 @@
+/* Isolated WCS 2027 badges. No selector for legacy badge elements. */
+.wcs2027-independent-icon{display:inline-flex;align-items:center;vertical-align:middle;flex:0 0 auto;margin:3px 0 0 4px;line-height:1;font-size:11px;font-weight:800;color:#0d6070}
+.wcs2027-independent-icon img{display:block;width:28px;height:28px;object-fit:contain}
+.wcs2027-independent-detail{display:grid;gap:6px;padding:12px;margin:0 0 13px;background:#f0faf8;border:1px solid #b7dbd6;border-radius:12px;font-size:13px;color:#193947}
+.wcs2027-independent-detail-heading{display:flex;align-items:center;gap:8px}
+.wcs2027-independent-detail-heading .wcs2027-independent-icon{margin:0}
+.wcs2027-independent-detail small{color:#526575;font-size:11px}
+@media(max-width:620px){.wcs2027-independent-icon img{width:24px;height:24px}.wcs2027-independent-detail{padding:10px;font-size:12px}}
