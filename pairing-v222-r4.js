@@ -8,6 +8,8 @@
   let scoreTimer = 0;
   let scoreRequestKey = '';
   let scoreRequestSerial = 0;
+  let opponentScoreRequestKey = '';
+  let opponentScoreRequestSerial = 0;
 
   function normalizePlayerId(value) {
     const match = String(value || '').match(/tw\d+/i);
@@ -47,13 +49,17 @@
         grid-column: 1;
         grid-row: 3;
       }
-      #pairingResult .pairing-match-grid > .pairing-deck-card {
+      #pairingResult .pairing-match-grid > .pairing-opponent-score-card {
         grid-column: 2;
         grid-row: 3;
       }
-      #pairingResult .pairing-match-grid > .pairing-source-card {
+      #pairingResult .pairing-match-grid > .pairing-deck-card {
         grid-column: 1 / -1;
         grid-row: 4;
+      }
+      #pairingResult .pairing-match-grid > .pairing-source-card {
+        grid-column: 1 / -1;
+        grid-row: 5;
       }
       #pairingResult .pairing-deck-card strong {
         font-size: 15px;
@@ -126,6 +132,10 @@
         cards.score = article;
         continue;
       }
+      if (article.classList.contains('pairing-opponent-score-card')) {
+        cards.opponentScore = article;
+        continue;
+      }
       if (article.classList.contains('pairing-deck-card')) {
         cards.deck = article;
         continue;
@@ -150,6 +160,10 @@
 
   function scoreCard() {
     return resultGrid()?.querySelector('.pairing-ttl-score-card') || null;
+  }
+
+  function opponentScoreCard() {
+    return resultGrid()?.querySelector('.pairing-opponent-score-card') || null;
   }
 
   function deckCard() {
@@ -236,6 +250,67 @@
     return card;
   }
 
+  function ensureOpponentScoreCard(value = '讀取中…', note = '正在讀取對手官方 TtlScore') {
+    const grid = resultGrid();
+    if (!grid) return null;
+    installScoreLayoutStyle();
+    const cards = classifyGridCards();
+    if (!cards.opponent) return null;
+    let card = opponentScoreCard();
+    if (!card) {
+      card = document.createElement('article');
+      card.className = 'pairing-opponent-score-card';
+      cards.opponent.insertAdjacentElement('afterend', card);
+    }
+    card.innerHTML = `<span>對手 TtlScore</span><strong>${esc(value)}</strong><small>${esc(note)}</small>`;
+    return card;
+  }
+
+  function currentOpponentScoreContext() {
+    const context = currentScoreContext();
+    const opponent = normalizePlayerId(resultGrid()?.querySelector('.pairing-opponent-card small')?.textContent || '');
+    if (!context || !opponent || opponent === context.player) return null;
+    return { ...context, opponent, key: `${context.key}|${opponent}` };
+  }
+
+  async function loadOpponentTtlScore(force = false) {
+    const context = currentOpponentScoreContext();
+    if (!context) return false;
+    if (!force && opponentScoreRequestKey === context.key && opponentScoreCard()?.dataset.scoreLoaded === '1') return true;
+    const serial = ++opponentScoreRequestSerial;
+    opponentScoreRequestKey = context.key;
+    const card = ensureOpponentScoreCard();
+    if (card) card.dataset.scoreLoaded = '0';
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      try {
+        if (typeof pairingSession !== 'undefined' && pairingSession?.access_token) {
+          headers.Authorization = `Bearer ${pairingSession.access_token}`;
+        }
+      } catch (_) {}
+      const response = await fetch(SCORE_URL, {
+        method: 'POST',
+        headers,
+        cache: 'no-store',
+        body: JSON.stringify({ url: context.url, player: context.opponent })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (serial !== opponentScoreRequestSerial || currentOpponentScoreContext()?.key !== context.key) return false;
+      if (!response.ok || !data?.ok) throw new Error(data?.error || '對手 TtlScore 讀取失敗');
+      const value = data?.ttl_score;
+      const available = value !== null && value !== undefined && String(value).trim() !== '';
+      const finalCard = ensureOpponentScoreCard(available ? String(value).trim() : '—',
+        available ? '官方目前累計分數' : '官方頁目前未取得 TtlScore');
+      if (finalCard) finalCard.dataset.scoreLoaded = '1';
+      return available;
+    } catch (error) {
+      if (serial !== opponentScoreRequestSerial || currentOpponentScoreContext()?.key !== context.key) return false;
+      const finalCard = ensureOpponentScoreCard('—', error?.message || '對手 TtlScore 讀取失敗');
+      if (finalCard) finalCard.dataset.scoreLoaded = '1';
+      return false;
+    }
+  }
+
   function currentScoreContext() {
     const grid = resultGrid();
     if (!grid) return null;
@@ -319,12 +394,14 @@
       ensureDeckCard();
       syncOpponentDeckCard();
       scheduleScore(false);
+      loadOpponentTtlScore(false);
     }
   }
 
   document.addEventListener('pairing:match-rendered', () => {
     ensureDeckCard();
     scheduleScore(true);
+    loadOpponentTtlScore(true);
     window.setTimeout(syncOpponentDeckCard, 120);
   });
   document.addEventListener('pairing:auth-ready', () => {
@@ -332,6 +409,7 @@
     window.setTimeout(decorateScoutBadges, 60);
     window.setTimeout(syncOpponentDeckCard, 120);
     scheduleScore(false);
+    loadOpponentTtlScore(false);
   });
   document.addEventListener('ptcg:attention-changed', () => window.setTimeout(decorateScoutBadges, 0));
 
@@ -342,6 +420,7 @@
       syncOpponentDeckCard();
     }, 0);
     if (resultGrid() && !scoreCard()) scheduleScore(false);
+    if (resultGrid() && !opponentScoreCard()) loadOpponentTtlScore(false);
   });
 
   function start() {
