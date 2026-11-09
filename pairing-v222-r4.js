@@ -50,11 +50,11 @@
         grid-column: 1;
         grid-row: 3;
       }
-      #pairingResult .pairing-match-grid > .pairing-opponent-score-card {
+      #pairingResult .pairing-match-grid > .pairing-deck-card {
         grid-column: 2;
         grid-row: 3;
       }
-      #pairingResult .pairing-match-grid > .pairing-deck-card {
+      #pairingResult .pairing-match-grid > .pairing-opponent-score-card {
         grid-column: 1 / -1;
         grid-row: 4;
       }
