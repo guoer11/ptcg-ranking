@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 ROOT = Path(__file__).resolve().parent
 TOURNAMENTS_PATH = ROOT / "data" / "tournaments.json"
 PRIOR_SEASON_PATH = ROOT / "data" / "season_2025_26.json"
+WCS_2027_INVITES_PATH = ROOT / "data" / "wcs_2027_invites.json"
 OUTPUT_PATH = ROOT / "data" / "player_badges.json"
 CURRENT_SEASON = "2026-27"
 GREAT_WINDOW_DAYS = 60
@@ -104,6 +105,35 @@ def main() -> None:
             if not rank or not pid.startswith("tw"):
                 continue
             add_finish(players, pid, league_key, rank, event)
+
+    # 紀念球 2026/11/8 淘汰賽已由對戰表確認的冠亞軍。
+    # 官方 tournaments.json 尚未公布 results 時先以邀請資格資料補足；
+    # 官方實績匯入後以同日期、同組別的正式賽事結果為準，避免重複計算。
+    if WCS_2027_INVITES_PATH.exists():
+        invites = load_json(WCS_2027_INVITES_PATH)
+        for player_id, info in (invites.get("players") or {}).items():
+            if not isinstance(info, dict):
+                continue
+            pid = normalize_player_id(player_id)
+            rank = normalize_rank(info.get("rank"))
+            group = str(info.get("group") or "")
+            if not pid.startswith("tw") or rank is None or not group:
+                continue
+            finalized = any(
+                str(event.get("date") or "") == "2026-11-08"
+                and event.get("league") == "Premier"
+                and event.get("group") == group
+                and any(
+                    normalize_player_id(result.get("player_id")) == pid
+                    and normalize_rank(result.get("rank")) == rank
+                    for result in (event.get("results") or [])
+                    if isinstance(result, dict)
+                )
+                for event in (tournaments.get("events") or [])
+                if isinstance(event, dict)
+            )
+            if not finalized:
+                add_finish(players, pid, "premier", rank, {"date": "2026-11-08"})
 
     output = {
         "season": CURRENT_SEASON,
