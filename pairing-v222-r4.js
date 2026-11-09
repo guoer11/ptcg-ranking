@@ -10,6 +10,7 @@
   let scoreRequestSerial = 0;
   let opponentScoreRequestKey = '';
   let opponentScoreRequestSerial = 0;
+  let currentOpponentId = '';
 
   function normalizePlayerId(value) {
     const match = String(value || '').match(/tw\d+/i);
@@ -268,7 +269,7 @@
 
   function currentOpponentScoreContext() {
     const context = currentScoreContext();
-    const opponent = normalizePlayerId(resultGrid()?.querySelector('.pairing-opponent-card small')?.textContent || '');
+    const opponent = currentOpponentId || normalizePlayerId(resultGrid()?.querySelector('.pairing-opponent-card small')?.textContent || '');
     if (!context || !opponent || opponent === context.player) return null;
     return { ...context, opponent, key: `${context.key}|${opponent}` };
   }
@@ -398,7 +399,8 @@
     }
   }
 
-  document.addEventListener('pairing:match-rendered', () => {
+  document.addEventListener('pairing:match-rendered', event => {
+    currentOpponentId = normalizePlayerId(event.detail?.opponentId || event.detail?.data?.match?.opponent);
     ensureDeckCard();
     scheduleScore(true);
     loadOpponentTtlScore(true);
