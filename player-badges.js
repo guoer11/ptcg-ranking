@@ -72,7 +72,7 @@
     const info = wcs2027Info(playerId);
     if (!info) return '';
     const label = `WCS 2027 邀請資格｜${info.event}｜${info.place}`;
-    return `<span class="player-badge-wcs-2027" title="${esc(label)}" aria-label="${esc(label)}">WCS 2027</span>`;
+    return `<span class="player-badge-wcs-2027" title="${esc(label)}" aria-label="${esc(label)}" role="img"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3h8v3h4v3a5 5 0 0 1-5 5h-.5a5 5 0 0 1-1.5 1.5V19h4v2H7v-2h4v-3.5A5 5 0 0 1 9.5 14H9a5 5 0 0 1-5-5V6h4V3Zm0 5H6v1a3 3 0 0 0 2 2.8V8Zm8 0v3.8A3 3 0 0 0 18 9V8h-2Z" fill="currentColor"/></svg><span>27</span></span>`;
   }
 
   async function loadWcs2027() {
@@ -412,7 +412,7 @@
       else body.prepend(box);
     }
     const invite = wcs2027Info(id);
-    const inviteHtml = invite ? `<div class="player-wcs-2027-detail"><strong>WCS 2027 邀請資格</strong><span>${esc(invite.event)} · ${esc(invite.place)}</span></div>` : '';
+    const inviteHtml = invite ? `<div class="player-wcs-2027-detail"><strong>🏆 WCS 2027 邀請資格</strong><span>${esc(invite.event)} · ${esc(invite.place)}</span><span>PTCG ID：${esc(id)}　｜　取得邀請資格，不代表已確認參賽</span></div>` : '';
     const modalHtml = `<div class="player-badge-row">${infoHtml}</div>${inviteHtml}${auth ? `<button class="player-attention-modal-control${attentionSet.has(id) ? ' is-active' : ''}" type="button" data-player-attention-toggle="${esc(id)}">${attentionSet.has(id) ? '★ 已加入注意名單' : '☆ 加入注意名單'}</button>` : ''}`;
     const modalSignature = `${badgeSignature(id)}|${auth ? 1 : 0}`;
     if (box.dataset.badgeSignature !== modalSignature) {
