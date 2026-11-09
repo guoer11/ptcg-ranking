@@ -43,6 +43,11 @@
     return parts ? `${Number(parts.month)}/${Number(parts.day)}` : '';
   }
 
+  function formatFullDate(value) {
+    const parts = dateParts(value);
+    return parts ? `${parts.year}/${parts.month}/${parts.day}` : '未知';
+  }
+
   function formatCompactDate(value) {
     const parts = dateParts(value);
     return parts ? `${parts.month}/${parts.day}` : '';
@@ -128,10 +133,38 @@
       if (!previous?.deck_name) return;
       const badge = document.createElement('div');
       badge.className = 'pairing-scout-history';
-      badge.innerHTML = `<span>歷史牌組情報</span><strong>${esc(formatShortDate(previous.created_at))}：${esc(previous.deck_name)}</strong><small>舊資料／僅供參考</small>`;
+      badge.innerHTML = `<span>歷史牌組情報</span><strong>${esc(previous.deck_name)}</strong><small>紀錄日 ${esc(formatFullDate(previous.created_at))}／僅供參考</small>`;
       article.appendChild(badge);
     } catch (error) {
       console.warn('歷史牌組情報讀取失敗', error);
+    }
+  }
+
+  // 歷史情報只提示，不會自動填入本場牌組，也不列入本場統計。
+  // 現有資料沒有賽事日期欄位，故清楚標成「紀錄日」避免誤認。
+  async function decorateScoutHistory(root = $('pairingScoutResult')) {
+    if (!root || !pairingAuthorized || !currentUserId()) return;
+    const head = root.querySelector('.pairing-scout-result-head > span');
+    const tid = head?.textContent?.match(/TID\\s*(\\d+)/i)?.[1];
+    if (!tid) return;
+    const cards = [...root.querySelectorAll('.pairing-scout-player')];
+    for (const card of cards) {
+      const select = card.querySelector('select[data-scout-player]');
+      const id = normalizePlayerId(select?.dataset.scoutPlayer);
+      if (!id || select.value || card.dataset.historyLookup === tid + ':' + id) continue;
+      card.dataset.historyLookup = tid + ':' + id;
+      try {
+        const previous = await latestPreviousDeck(id, tid);
+        if (!card.isConnected || !root.contains(card) || select.value || !previous?.deck_name) continue;
+        const info = document.createElement('div');
+        info.className = 'pairing-scout-previous-deck';
+        info.textContent = `歷史牌組：${previous.deck_name}（紀錄日 ${formatFullDate(previous.created_at)}）`;
+        info.title = '不同賽事的最近一筆已確認牌組，僅供參考，並非本場確認牌組';
+        card.querySelector('div')?.appendChild(info);
+      } catch (error) {
+        card.dataset.historyLookup = '';
+        console.warn('偵察歷史牌組讀取失敗', error);
+      }
     }
   }
 
@@ -411,8 +444,12 @@
     const scoutResult = $('pairingScoutResult');
     if (!scoutResult) return;
     enhanceDeckSearches(scoutResult);
+    decorateScoutHistory(scoutResult);
     deckSearchObserver?.disconnect();
-    deckSearchObserver = new MutationObserver(() => enhanceDeckSearches(scoutResult));
+    deckSearchObserver = new MutationObserver(() => {
+      enhanceDeckSearches(scoutResult);
+      decorateScoutHistory(scoutResult);
+    });
     deckSearchObserver.observe(scoutResult, { childList: true, subtree: true });
     document.addEventListener('pointerdown', event => {
       if (!event.target.closest('.pairing-deck-search')) closeDeckSearches();
