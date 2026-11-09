@@ -72,7 +72,7 @@
     const info = wcs2027Info(playerId);
     if (!info) return '';
     const label = `WCS 2027 邀請資格｜${info.event}｜${info.place}`;
-    return `<span class="player-badge-wcs-2027" title="${esc(label)}" aria-label="${esc(label)}" role="img"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3h8v3h4v3a5 5 0 0 1-5 5h-.5a5 5 0 0 1-1.5 1.5V19h4v2H7v-2h4v-3.5A5 5 0 0 1 9.5 14H9a5 5 0 0 1-5-5V6h4V3Zm0 5H6v1a3 3 0 0 0 2 2.8V8Zm8 0v3.8A3 3 0 0 0 18 9V8h-2Z" fill="currentColor"/></svg><span>27</span></span>`;
+    return `<span class="player-badge-wcs-2027" title="${esc(label)}" aria-label="${esc(label)}" role="img"><img src="assets/wcs-2027-badge.svg?v=2.8.0-r2" width="30" height="30" alt="" loading="lazy" /></span>`;
   }
 
   async function loadWcs2027() {
