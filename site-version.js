@@ -32,13 +32,13 @@
       const link = document.createElement('link');
       link.id = 'ptcgPlayerBadgesCss';
       link.rel = 'stylesheet';
-      link.href = 'player-badges.css?v=2.8.0-r2';
+      link.href = 'player-badges.css?v=2.8.0-r5';
       document.head.appendChild(link);
     }
     if (!document.getElementById('ptcgPlayerBadgesJs')) {
       const script = document.createElement('script');
       script.id = 'ptcgPlayerBadgesJs';
-      script.src = 'player-badges.js?v=2.8.0-r4';
+      script.src = 'player-badges.js?v=2.8.0-r5';
       script.defer = true;
       document.head.appendChild(script);
     }
