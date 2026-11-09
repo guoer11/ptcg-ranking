@@ -16,6 +16,20 @@
   <link rel="stylesheet" href="ranking-season-ui.css?v=2.1.0-r2" />
   <link rel="stylesheet" href="site-nav.css?v=0.11.0-r2" />
   <link rel="stylesheet" href="push-ui.css?v=0.13.1-r1" />
+  <style>
+    .wcs2027-panel{margin:16px 0;padding:16px;border:1px solid #cce5d4;border-radius:16px;background:#f5fbf7}
+    .wcs2027-panel summary{cursor:pointer;font-size:16px;font-weight:800;color:#166747;list-style-position:inside}
+    .wcs2027-subtitle{margin:8px 0 14px;color:#526575;font-size:12px}
+    .wcs2027-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .wcs2027-group{padding:12px;border:1px solid #dae9df;border-radius:12px;background:#fff}
+    .wcs2027-group h3{margin:0 0 8px;font-size:14px}
+    .wcs2027-group ul{padding:0;margin:0;list-style:none}
+    .wcs2027-group li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #eef1f3;font-size:12px}
+    .wcs2027-group li span{min-width:0;overflow-wrap:anywhere;font-weight:700}
+    .wcs2027-group li small{flex:0 0 auto;color:#667085;font-size:11px}
+    .wcs2027-group li strong{color:#147250}
+    @media(max-width:760px){.wcs2027-groups{grid-template-columns:1fr}.wcs2027-panel{padding:12px}.wcs2027-group li{font-size:13px}}
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -38,6 +52,15 @@
 
   <main class="wrap main-content">
     <section class="summary-card group-summary" aria-label="目前組別摘要"><div class="group-summary-head"><div><span>目前查看</span><strong id="summaryGroupLabel">孩童組</strong></div><small>切換下方組別後會同步更新</small></div><div class="summary-metrics"><div class="summary-metric"><strong id="summaryPlayerCount">0</strong><span>位玩家</span></div><div class="summary-metric"><strong id="summaryTopPoints">—</strong><span>目前最高積分</span></div><div class="summary-metric"><strong id="summaryWorldSlots" class="summary-world-slots">16 名</strong><span id="summaryWorldSlotsLabel">世界賽名額（暫依上季）</span></div></div></section>
+    <details class="wcs2027-panel" open aria-label="WCS 2027 已獲邀選手">
+      <summary>🏆 WCS 2027 已獲邀選手（12 位）</summary>
+      <p class="wcs2027-subtitle">2026–27 紀念球聯盟賽｜三組別前四強取得世界賽邀請資格（不代表已確認出席）</p>
+      <div class="wcs2027-groups">
+        <section class="wcs2027-group"><h3>孩童組 · 4 位</h3><ul><li><span>陳鉑岳</span><small>冠軍</small></li><li><span>許辰毅</span><small>亞軍</small></li><li><span>吳季東</span><small>四強</small></li><li><span>楊子達</span><small>四強</small></li></ul></section>
+        <section class="wcs2027-group"><h3>少年組 · 4 位</h3><ul><li><span>許雲翔</span><small>冠軍</small></li><li><span>顏紹同</span><small>亞軍</small></li><li><span>李有緯</span><small>四強</small></li><li><span>陳永恩</span><small>四強</small></li></ul></section>
+        <section class="wcs2027-group"><h3>大師組 · 4 位</h3><ul><li><span>李育帆</span><small>冠軍</small></li><li><span>劉仕晟</span><small>亞軍</small></li><li><span>吳明峰</span><small>四強</small></li><li><span>謝秉辰</span><small>四強</small></li></ul></section>
+      </div>
+    </details>
     <section class="panel"><div class="panel-head"><div><h2>玩家排行榜</h2><p>資料來源：Pokémon Asia 官方訓練家網站</p></div><div class="unified-player-search"><input id="rankingSearch" class="search-input" type="search" placeholder="搜尋玩家名稱 / PTCG ID / 地區" autocomplete="off" /><button id="advancedLookupToggle" class="lookup-toggle" type="button" aria-expanded="false" aria-controls="advancedPlayerLookup">進階查詢⌄</button></div></div><div id="advancedPlayerLookup" class="advanced-player-lookup" hidden><div class="lookup-group-tabs" role="tablist" aria-label="玩家查詢組別"><button class="lookup-group-tab active" type="button" data-lookup-group="all" role="tab" aria-selected="true">全部</button><button class="lookup-group-tab" type="button" data-lookup-group="Junior" role="tab" aria-selected="false">孩童組</button><button class="lookup-group-tab" type="button" data-lookup-group="Senior" role="tab" aria-selected="false">少年組</button><button class="lookup-group-tab" type="button" data-lookup-group="Master" role="tab" aria-selected="false">大師組</button></div><form id="playerLookupForm" class="lookup-form"><input id="playerIdInput" class="search-input" type="text" placeholder="姓名 / 暱稱 / PTCG ID" autocomplete="off" /><button class="primary-btn" type="submit">查詢</button></form><p id="playerLookupHint" class="hint">可跨排行榜查詢玩家資料；姓名查詢需登入授權帳號。</p></div><div class="tabs" role="tablist" aria-label="選擇組別"><button class="tab active" data-group="Junior" role="tab">孩童組</button><button class="tab" data-group="Senior" role="tab">少年組</button><button class="tab" data-group="Master" role="tab">大師組</button></div><div id="rankingModeSwitch" class="ranking-mode-toolbar" aria-label="孩童組排名模式"><div class="ranking-mode-switch" role="group" aria-label="排名模式"><button type="button" class="ranking-mode-button active" data-ranking-mode="official" aria-pressed="true">官方排名</button><button type="button" class="ranking-mode-button" data-ranking-mode="trial" aria-pressed="false">本站試算排名</button></div><p id="rankingProjectionNotice" class="ranking-projection-note" hidden></p></div><div class="update-toolbar" style="justify-content:flex-end;"><div class="update-actions"><button id="reloadDataButton" class="secondary-btn" type="button">重新讀取資料</button></div></div><div id="rankingContainer" class="ranking-container"></div></section>
     <section class="notice"><strong>資料說明</strong><span id="versionNoticeText">排名、積分、暱稱與 PTCG ID 維持公開。</span></section>
   </main>
