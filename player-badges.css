@@ -231,9 +231,3 @@
   .player-attention-toggle { width: 19px; height: 19px; flex-basis: 19px; font-size: 19px; }
   .player-badge-modal-box { align-items: flex-start; flex-direction: column; }
 }
-
-/* WCS 2027 邀請資格：獨立於既有 WCS 2026 參賽徽章 */
-.player-badge-wcs-2027{display:inline-flex;align-items:center;justify-content:center;flex:0 0 30px;width:30px;height:30px;line-height:1}.player-badge-wcs-2027 img{display:block;width:30px;height:30px;object-fit:contain}
-.player-wcs-2027-detail{display:flex;flex-direction:column;gap:4px;flex:1 1 100%;width:100%;padding-top:8px;border-top:1px solid #d8e9df;font-size:12px;color:#176b4d}
-.player-wcs-2027-detail span{color:#475467;font-weight:500}
-@media(max-width:620px){.player-badge-wcs-2027{width:25px;height:25px;flex-basis:25px}.player-badge-wcs-2027 img{width:25px;height:25px}}
