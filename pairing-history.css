@@ -99,3 +99,6 @@
   .pairing-history-actions .secondary-btn{min-width:116px}
   .pairing-deck-search-results{max-height:250px}
 }
+
+/* 牌組偵察：最近一次已確認的跨賽事牌組，僅顯示不自動選取 */
+.pairing-scout-previous-deck{margin-top:5px;color:#926000;font-size:11px;font-weight:700;line-height:1.4;overflow-wrap:anywhere}
