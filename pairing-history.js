@@ -151,6 +151,16 @@
     for (const card of cards) {
       const select = card.querySelector('select[data-scout-player]');
       const id = normalizePlayerId(select?.dataset.scoutPlayer);
+      if (select && !select.dataset.previousDeckWatcher) {
+        select.dataset.previousDeckWatcher = '1';
+        select.addEventListener('change', () => {
+          if (select.value) card.querySelector('.pairing-scout-previous-deck')?.remove();
+          else {
+            card.dataset.historyLookup = '';
+            decorateScoutHistory(root);
+          }
+        });
+      }
       if (!id || select.value || card.dataset.historyLookup === tid + ':' + id) continue;
       card.dataset.historyLookup = tid + ':' + id;
       try {
