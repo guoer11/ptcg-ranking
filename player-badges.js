@@ -6,7 +6,111 @@
   const FAMILY_BADGE_TTL_MS = 24 * 60 * 60 * 1000;
 
   let badgeData = { season: '2026-27', great_window_days: 60, players: {} };
-  let wcs2027 = { players: {} };
+  // 內建已核對資格名單，避免獨立 JSON 暫時讀不到時，排行榜與詳細資料標記一起消失。
+  // 外部 JSON 成功載入後仍以 JSON 為準，後續可追加其他賽事資格。
+  let wcs2027 = {
+    "season": "2026-27",
+    "worlds_year": 2027,
+    "source": "2026–27 紀念球聯盟賽（使用者提供的四強與冠亞軍對戰表）",
+    "players": {
+      "tw35477925": {
+        "name": "李育帆",
+        "group": "Master",
+        "rank": 1,
+        "place": "冠軍",
+        "event": "2026–27 紀念球聯盟賽",
+        "status": "invited"
+      },
+      "tw18638755": {
+        "name": "劉仕晟",
+        "group": "Master",
+        "rank": 2,
+        "place": "亞軍",
+        "event": "2026–27 紀念球聯盟賽",
+        "status": "invited"
+      },
+      "tw59096586": {
+        "name": "吳明峰",
+        "group": "Master",
+        "rank": 4,
+        "place": "四強",
+        "event": "2026–27 紀念球聯盟賽",
+        "status": "invited"
+      },
+      "tw42912360": {
+        "name": "謝秉辰",
+        "group": "Master",
+        "rank": 4,
+        "place": "四強",
+        "event": "2026–27 紀念球聯盟賽",
+        "status": "invited"
+      },
+      "tw65322738": {
+        "name": "許雲翔",
+        "group": "Senior",
+        "rank": 1,
+        "place": "冠軍",
+        "event": "2026–27 紀念球聯盟賽",
+        "status": "invited"
+      },
+      "tw03103631": {
+        "name": "顏紹同",
+        "group": "Senior",
+        "rank": 2,
+        "place": "亞軍",
+        "event": "2026–27 紀念球聯盟賽",
+        "status": "invited"
+      },
+      "tw81124094": {
+        "name": "李宥緯",
+        "group": "Senior",
+        "rank": 4,
+        "place": "四強",
+        "event": "2026–27 紀念球聯盟賽",
+        "status": "invited"
+      },
+      "tw13175197": {
+        "name": "陳永恩",
+        "group": "Senior",
+        "rank": 4,
+        "place": "四強",
+        "event": "2026–27 紀念球聯盟賽",
+        "status": "invited"
+      },
+      "tw46877625": {
+        "name": "陳鉑岳",
+        "group": "Junior",
+        "rank": 1,
+        "place": "冠軍",
+        "event": "2026–27 紀念球聯盟賽",
+        "status": "invited"
+      },
+      "tw25007020": {
+        "name": "許辰銨",
+        "group": "Junior",
+        "rank": 2,
+        "place": "亞軍",
+        "event": "2026–27 紀念球聯盟賽",
+        "status": "invited"
+      },
+      "tw75543412": {
+        "name": "吳季東",
+        "group": "Junior",
+        "rank": 4,
+        "place": "四強",
+        "event": "2026–27 紀念球聯盟賽",
+        "status": "invited"
+      },
+      "tw63041398": {
+        "name": "楊子霆",
+        "group": "Junior",
+        "rank": 4,
+        "place": "四強",
+        "event": "2026–27 紀念球聯盟賽",
+        "status": "invited"
+      }
+    }
+  };
   let attentionSet = new Set();
   let attentionUserId = '';
   let wcsIconSrc = '';
@@ -464,6 +568,8 @@
 
   async function init() {
     installObservers();
+    // 不必等其他外部資料載入完成，即先顯示已確認的 2027 資格。
+    scheduleDecorate();
     await Promise.all([loadPublicBadges(), loadWcsIcon(), loadWcs2027()]);
     startAuthRetry();
     scheduleDecorate();
