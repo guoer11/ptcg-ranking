@@ -145,7 +145,7 @@
   async function decorateScoutHistory(root = $('pairingScoutResult')) {
     if (!root || !pairingAuthorized || !currentUserId()) return;
     const head = root.querySelector('.pairing-scout-result-head > span');
-    const tid = head?.textContent?.match(/TID\\s*(\\d+)/i)?.[1];
+    const tid = head?.textContent?.match(/TID\s*(\d+)/i)?.[1];
     if (!tid) return;
     const cards = [...root.querySelectorAll('.pairing-scout-player')];
     for (const card of cards) {
