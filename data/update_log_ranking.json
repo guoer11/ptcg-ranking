@@ -2,6 +2,16 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-11-10T08:13:00+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-11-10T08:13:00+08:00",
+      "summary": "例行檢查完成；官方排名無變動",
+      "details": [],
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
+    },
+    {
       "id": "ranking-2026-11-10T00:05:25+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -43,21 +53,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "GitHub 備援排程"
-    },
-    {
-      "id": "ranking-2026-11-08T00:05:20+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-11-08T00:05:20+08:00",
-      "summary": "無排名／積分變動；暱稱 0、地區 3 筆異動",
-      "details": [
-        "Master：地區 3",
-        "Master｜tw87970697｜地區 桃園市 → 彰化縣",
-        "Master｜tw08260040｜地區 雲林縣 → 基隆市",
-        "Master｜tw50841430｜地區 新北市 → 苗栗縣"
-      ],
-      "notified": false,
-      "trigger_source": "主排程（Supabase）"
     }
   ]
 }
