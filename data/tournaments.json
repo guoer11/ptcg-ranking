@@ -1,6 +1,6 @@
 {
   "season": "2026-27",
-  "updated_at": "2026-11-10T20:36:59+08:00",
+  "updated_at": "2026-11-11T00:05:52+08:00",
   "source": "https://asia.pokemon-card.com/tw/event-search/list/",
   "authority_note": "本資料供賽事整理與積分核算輔助；正式積分與排名以 Pokémon Asia 官方排行榜為準。",
   "schedule": [
@@ -250,7 +250,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T15:01:03+08:00",
-      "checked_at": "2026-11-10T20:36:40+08:00"
+      "checked_at": "2026-11-11T00:05:34+08:00"
     },
     {
       "event_id": "66339",
@@ -493,7 +493,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T15:01:04+08:00",
-      "checked_at": "2026-11-10T20:36:42+08:00"
+      "checked_at": "2026-11-11T00:05:36+08:00"
     },
     {
       "event_id": "66340",
@@ -568,7 +568,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T15:01:04+08:00",
-      "checked_at": "2026-11-10T20:36:43+08:00"
+      "checked_at": "2026-11-11T00:05:37+08:00"
     },
     {
       "event_id": "66341",
@@ -811,7 +811,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T15:01:05+08:00",
-      "checked_at": "2026-11-10T20:36:45+08:00"
+      "checked_at": "2026-11-11T00:05:39+08:00"
     },
     {
       "event_id": "66342",
@@ -942,7 +942,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T15:01:05+08:00",
-      "checked_at": "2026-11-10T20:36:47+08:00"
+      "checked_at": "2026-11-11T00:05:40+08:00"
     },
     {
       "event_id": "66343",
@@ -1185,7 +1185,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T15:01:06+08:00",
-      "checked_at": "2026-11-10T20:36:49+08:00"
+      "checked_at": "2026-11-11T00:05:43+08:00"
     },
     {
       "event_id": "66344",
@@ -1428,7 +1428,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T15:01:06+08:00",
-      "checked_at": "2026-11-10T20:36:51+08:00"
+      "checked_at": "2026-11-11T00:05:45+08:00"
     },
     {
       "event_id": "66345",
@@ -1559,7 +1559,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T15:01:06+08:00",
-      "checked_at": "2026-11-10T20:36:52+08:00"
+      "checked_at": "2026-11-11T00:05:46+08:00"
     },
     {
       "event_id": "66346",
@@ -1802,7 +1802,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T15:01:07+08:00",
-      "checked_at": "2026-11-10T20:36:54+08:00"
+      "checked_at": "2026-11-11T00:05:48+08:00"
     },
     {
       "event_id": "66347",
@@ -1877,7 +1877,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T15:01:07+08:00",
-      "checked_at": "2026-11-10T20:36:55+08:00"
+      "checked_at": "2026-11-11T00:05:49+08:00"
     },
     {
       "event_id": "66348",
@@ -2120,7 +2120,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T15:01:08+08:00",
-      "checked_at": "2026-11-10T20:36:57+08:00"
+      "checked_at": "2026-11-11T00:05:51+08:00"
     },
     {
       "event_id": "66349",
@@ -2251,7 +2251,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T15:01:08+08:00",
-      "checked_at": "2026-11-10T20:36:59+08:00"
+      "checked_at": "2026-11-11T00:05:52+08:00"
     },
     {
       "event_id": "66951",
@@ -2494,7 +2494,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:38:34+08:00",
-      "checked_at": "2026-11-10T20:33:18+08:00",
+      "checked_at": "2026-11-11T00:02:34+08:00",
       "official_status": "active"
     },
     {
@@ -4306,7 +4306,7 @@
       ],
       "result_count": 256,
       "discovered_at": "2026-09-09T10:38:33+08:00",
-      "checked_at": "2026-11-10T20:33:13+08:00",
+      "checked_at": "2026-11-11T00:02:29+08:00",
       "official_status": "active"
     },
     {
@@ -4550,7 +4550,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:38:34+08:00",
-      "checked_at": "2026-11-10T20:33:15+08:00",
+      "checked_at": "2026-11-11T00:02:32+08:00",
       "official_status": "active"
     },
     {
@@ -4626,7 +4626,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T10:20:46+08:00",
-      "checked_at": "2026-11-10T20:32:31+08:00",
+      "checked_at": "2026-11-11T00:01:49+08:00",
       "official_status": "active"
     },
     {
@@ -4758,7 +4758,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:20:46+08:00",
-      "checked_at": "2026-11-10T20:32:33+08:00",
+      "checked_at": "2026-11-11T00:01:50+08:00",
       "official_status": "active"
     },
     {
@@ -4890,7 +4890,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:20:47+08:00",
-      "checked_at": "2026-11-10T20:32:34+08:00",
+      "checked_at": "2026-11-11T00:01:52+08:00",
       "official_status": "active"
     },
     {
@@ -5022,7 +5022,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:20:48+08:00",
-      "checked_at": "2026-11-10T20:32:36+08:00",
+      "checked_at": "2026-11-11T00:01:53+08:00",
       "official_status": "active"
     },
     {
@@ -5266,7 +5266,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:20:48+08:00",
-      "checked_at": "2026-11-10T20:32:38+08:00",
+      "checked_at": "2026-11-11T00:01:56+08:00",
       "official_status": "active"
     },
     {
@@ -5510,7 +5510,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:20:49+08:00",
-      "checked_at": "2026-11-10T20:32:41+08:00",
+      "checked_at": "2026-11-11T00:01:58+08:00",
       "official_status": "active"
     },
     {
@@ -5978,7 +5978,7 @@
       ],
       "result_count": 64,
       "discovered_at": "2026-09-09T10:20:59+08:00",
-      "checked_at": "2026-11-10T20:33:47+08:00",
+      "checked_at": "2026-11-11T00:03:03+08:00",
       "official_status": "active"
     },
     {
@@ -6222,7 +6222,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:20:50+08:00",
-      "checked_at": "2026-11-10T20:32:43+08:00",
+      "checked_at": "2026-11-11T00:02:00+08:00",
       "official_status": "active"
     },
     {
@@ -6466,7 +6466,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:20:51+08:00",
-      "checked_at": "2026-11-10T20:32:45+08:00",
+      "checked_at": "2026-11-11T00:02:02+08:00",
       "official_status": "active"
     },
     {
@@ -6710,7 +6710,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:20:51+08:00",
-      "checked_at": "2026-11-10T20:32:47+08:00",
+      "checked_at": "2026-11-11T00:02:04+08:00",
       "official_status": "active"
     },
     {
@@ -6786,7 +6786,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T10:20:52+08:00",
-      "checked_at": "2026-11-10T20:32:49+08:00",
+      "checked_at": "2026-11-11T00:02:05+08:00",
       "official_status": "active"
     },
     {
@@ -6918,7 +6918,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:20:53+08:00",
-      "checked_at": "2026-11-10T20:32:50+08:00",
+      "checked_at": "2026-11-11T00:02:07+08:00",
       "official_status": "active"
     },
     {
@@ -7162,7 +7162,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:20:53+08:00",
-      "checked_at": "2026-11-10T20:32:52+08:00",
+      "checked_at": "2026-11-11T00:02:09+08:00",
       "official_status": "active"
     },
     {
@@ -7238,7 +7238,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T10:20:54+08:00",
-      "checked_at": "2026-11-10T20:32:54+08:00",
+      "checked_at": "2026-11-11T00:02:11+08:00",
       "official_status": "active"
     },
     {
@@ -7482,7 +7482,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:20:54+08:00",
-      "checked_at": "2026-11-10T20:32:56+08:00",
+      "checked_at": "2026-11-11T00:02:13+08:00",
       "official_status": "active"
     },
     {
@@ -7614,7 +7614,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:20:55+08:00",
-      "checked_at": "2026-11-10T20:32:57+08:00",
+      "checked_at": "2026-11-11T00:02:14+08:00",
       "official_status": "active"
     },
     {
@@ -7746,7 +7746,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:20:55+08:00",
-      "checked_at": "2026-11-10T20:32:59+08:00",
+      "checked_at": "2026-11-11T00:02:16+08:00",
       "official_status": "active"
     },
     {
@@ -7990,7 +7990,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:20:56+08:00",
-      "checked_at": "2026-11-10T20:33:01+08:00",
+      "checked_at": "2026-11-11T00:02:18+08:00",
       "official_status": "active"
     },
     {
@@ -8009,7 +8009,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:57+08:00",
-      "checked_at": "2026-11-10T20:33:02+08:00",
+      "checked_at": "2026-11-11T00:02:19+08:00",
       "official_status": "active"
     },
     {
@@ -8253,7 +8253,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:03+08:00",
-      "checked_at": "2026-11-10T20:34:02+08:00",
+      "checked_at": "2026-11-11T00:03:17+08:00",
       "official_status": "active"
     },
     {
@@ -8497,7 +8497,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:05+08:00",
-      "checked_at": "2026-11-10T20:34:14+08:00",
+      "checked_at": "2026-11-11T00:03:28+08:00",
       "official_status": "active"
     },
     {
@@ -8629,7 +8629,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:05+08:00",
-      "checked_at": "2026-11-10T20:34:18+08:00",
+      "checked_at": "2026-11-11T00:03:32+08:00",
       "official_status": "active"
     },
     {
@@ -8873,7 +8873,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:16+08:00",
-      "checked_at": "2026-11-10T20:35:16+08:00",
+      "checked_at": "2026-11-11T00:04:20+08:00",
       "official_status": "active"
     },
     {
@@ -8949,7 +8949,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T10:21:00+08:00",
-      "checked_at": "2026-11-10T20:33:49+08:00",
+      "checked_at": "2026-11-11T00:03:05+08:00",
       "official_status": "active"
     },
     {
@@ -9081,7 +9081,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:01+08:00",
-      "checked_at": "2026-11-10T20:33:51+08:00",
+      "checked_at": "2026-11-11T00:03:06+08:00",
       "official_status": "active"
     },
     {
@@ -9325,7 +9325,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:11+08:00",
-      "checked_at": "2026-11-10T20:34:46+08:00",
+      "checked_at": "2026-11-11T00:03:56+08:00",
       "official_status": "active"
     },
     {
@@ -9457,7 +9457,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:11+08:00",
-      "checked_at": "2026-11-10T20:34:52+08:00",
+      "checked_at": "2026-11-11T00:04:00+08:00",
       "official_status": "active"
     },
     {
@@ -9533,7 +9533,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T10:21:15+08:00",
-      "checked_at": "2026-11-10T20:35:11+08:00",
+      "checked_at": "2026-11-11T00:04:16+08:00",
       "official_status": "active"
     },
     {
@@ -9552,7 +9552,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:59+08:00",
-      "checked_at": "2026-11-10T20:32:04+08:00",
+      "checked_at": "2026-11-11T00:01:23+08:00",
       "official_status": "active"
     },
     {
@@ -9684,7 +9684,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:08+08:00",
-      "checked_at": "2026-11-10T20:34:29+08:00",
+      "checked_at": "2026-11-11T00:03:41+08:00",
       "official_status": "active"
     },
     {
@@ -9816,7 +9816,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:13+08:00",
-      "checked_at": "2026-11-10T20:34:56+08:00",
+      "checked_at": "2026-11-11T00:04:04+08:00",
       "official_status": "active"
     },
     {
@@ -9948,7 +9948,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:18+08:00",
-      "checked_at": "2026-11-10T20:35:25+08:00",
+      "checked_at": "2026-11-11T00:04:29+08:00",
       "official_status": "active"
     },
     {
@@ -10192,7 +10192,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:02+08:00",
-      "checked_at": "2026-11-10T20:33:53+08:00",
+      "checked_at": "2026-11-11T00:03:09+08:00",
       "official_status": "active"
     },
     {
@@ -10324,7 +10324,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:04+08:00",
-      "checked_at": "2026-11-10T20:34:11+08:00",
+      "checked_at": "2026-11-11T00:03:26+08:00",
       "official_status": "active"
     },
     {
@@ -10568,7 +10568,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:06+08:00",
-      "checked_at": "2026-11-10T20:34:22+08:00",
+      "checked_at": "2026-11-11T00:03:35+08:00",
       "official_status": "active"
     },
     {
@@ -10700,7 +10700,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:21+08:00",
-      "checked_at": "2026-11-10T20:35:40+08:00",
+      "checked_at": "2026-11-11T00:04:43+08:00",
       "official_status": "active"
     },
     {
@@ -10944,7 +10944,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:38:36+08:00",
-      "checked_at": "2026-11-10T20:33:34+08:00",
+      "checked_at": "2026-11-11T00:02:49+08:00",
       "official_status": "active"
     },
     {
@@ -12756,7 +12756,7 @@
       ],
       "result_count": 256,
       "discovered_at": "2026-09-09T10:38:35+08:00",
-      "checked_at": "2026-11-10T20:33:29+08:00",
+      "checked_at": "2026-11-11T00:02:44+08:00",
       "official_status": "active"
     },
     {
@@ -13000,7 +13000,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:38:36+08:00",
-      "checked_at": "2026-11-10T20:33:32+08:00",
+      "checked_at": "2026-11-11T00:02:47+08:00",
       "official_status": "active"
     },
     {
@@ -13468,7 +13468,7 @@
       ],
       "result_count": 64,
       "discovered_at": "2026-09-09T10:20:58+08:00",
-      "checked_at": "2026-11-10T20:33:44+08:00",
+      "checked_at": "2026-11-11T00:03:00+08:00",
       "official_status": "active"
     },
     {
@@ -13712,7 +13712,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:09+08:00",
-      "checked_at": "2026-11-10T20:34:36+08:00",
+      "checked_at": "2026-11-11T00:03:48+08:00",
       "official_status": "active"
     },
     {
@@ -13956,7 +13956,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:09+08:00",
-      "checked_at": "2026-11-10T20:34:41+08:00",
+      "checked_at": "2026-11-11T00:03:51+08:00",
       "official_status": "active"
     },
     {
@@ -14088,7 +14088,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:12+08:00",
-      "checked_at": "2026-11-10T20:34:55+08:00",
+      "checked_at": "2026-11-11T00:04:03+08:00",
       "official_status": "active"
     },
     {
@@ -14220,7 +14220,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:20+08:00",
-      "checked_at": "2026-11-10T20:35:34+08:00",
+      "checked_at": "2026-11-11T00:04:37+08:00",
       "official_status": "active"
     },
     {
@@ -14296,7 +14296,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T10:21:22+08:00",
-      "checked_at": "2026-11-10T20:35:46+08:00",
+      "checked_at": "2026-11-11T00:04:48+08:00",
       "official_status": "active"
     },
     {
@@ -14372,7 +14372,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T10:21:07+08:00",
-      "checked_at": "2026-11-10T20:34:26+08:00",
+      "checked_at": "2026-11-11T00:03:38+08:00",
       "official_status": "active"
     },
     {
@@ -14448,7 +14448,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T10:21:08+08:00",
-      "checked_at": "2026-11-10T20:34:33+08:00",
+      "checked_at": "2026-11-11T00:03:45+08:00",
       "official_status": "active"
     },
     {
@@ -14692,7 +14692,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:16+08:00",
-      "checked_at": "2026-11-10T20:35:13+08:00",
+      "checked_at": "2026-11-11T00:04:18+08:00",
       "official_status": "active"
     },
     {
@@ -14936,7 +14936,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:13+08:00",
-      "checked_at": "2026-11-10T20:35:01+08:00",
+      "checked_at": "2026-11-11T00:04:08+08:00",
       "official_status": "active"
     },
     {
@@ -15068,7 +15068,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:17+08:00",
-      "checked_at": "2026-11-10T20:35:20+08:00",
+      "checked_at": "2026-11-11T00:04:24+08:00",
       "official_status": "active"
     },
     {
@@ -15312,7 +15312,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:18+08:00",
-      "checked_at": "2026-11-10T20:35:28+08:00",
+      "checked_at": "2026-11-11T00:04:31+08:00",
       "official_status": "active"
     },
     {
@@ -15388,7 +15388,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T10:21:19+08:00",
-      "checked_at": "2026-11-10T20:35:33+08:00",
+      "checked_at": "2026-11-11T00:04:36+08:00",
       "official_status": "active"
     },
     {
@@ -15520,7 +15520,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:21+08:00",
-      "checked_at": "2026-11-10T20:35:37+08:00",
+      "checked_at": "2026-11-11T00:04:40+08:00",
       "official_status": "active"
     },
     {
@@ -15764,7 +15764,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:22+08:00",
-      "checked_at": "2026-11-10T20:35:44+08:00",
+      "checked_at": "2026-11-11T00:04:46+08:00",
       "official_status": "active"
     },
     {
@@ -15896,7 +15896,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:04+08:00",
-      "checked_at": "2026-11-10T20:34:06+08:00",
+      "checked_at": "2026-11-11T00:03:22+08:00",
       "official_status": "active"
     },
     {
@@ -16140,7 +16140,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:10+08:00",
-      "checked_at": "2026-11-10T20:34:44+08:00",
+      "checked_at": "2026-11-11T00:03:54+08:00",
       "official_status": "active"
     },
     {
@@ -16272,7 +16272,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-09T10:21:19+08:00",
-      "checked_at": "2026-11-10T20:35:30+08:00",
+      "checked_at": "2026-11-11T00:04:33+08:00",
       "official_status": "active"
     },
     {
@@ -16516,7 +16516,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:23+08:00",
-      "checked_at": "2026-11-10T20:35:49+08:00",
+      "checked_at": "2026-11-11T00:04:51+08:00",
       "official_status": "active"
     },
     {
@@ -16535,7 +16535,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:39+08:00",
-      "checked_at": "2026-11-10T20:33:36+08:00",
+      "checked_at": "2026-11-11T00:02:51+08:00",
       "official_status": "active"
     },
     {
@@ -16554,7 +16554,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:37+08:00",
-      "checked_at": "2026-11-10T20:33:34+08:00",
+      "checked_at": "2026-11-11T00:02:50+08:00",
       "official_status": "active"
     },
     {
@@ -16573,7 +16573,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:38+08:00",
-      "checked_at": "2026-11-10T20:33:35+08:00",
+      "checked_at": "2026-11-11T00:02:50+08:00",
       "official_status": "active"
     },
     {
@@ -17041,7 +17041,7 @@
       ],
       "result_count": 64,
       "discovered_at": "2026-09-09T10:20:58+08:00",
-      "checked_at": "2026-11-10T20:33:41+08:00",
+      "checked_at": "2026-11-11T00:02:56+08:00",
       "official_status": "active"
     },
     {
@@ -17285,7 +17285,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:02+08:00",
-      "checked_at": "2026-11-10T20:33:55+08:00",
+      "checked_at": "2026-11-11T00:03:11+08:00",
       "official_status": "active"
     },
     {
@@ -17361,7 +17361,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-09T10:21:07+08:00",
-      "checked_at": "2026-11-10T20:34:27+08:00",
+      "checked_at": "2026-11-11T00:03:39+08:00",
       "official_status": "active"
     },
     {
@@ -17605,7 +17605,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-09T10:21:14+08:00",
-      "checked_at": "2026-11-10T20:35:05+08:00",
+      "checked_at": "2026-11-11T00:04:12+08:00",
       "official_status": "active"
     },
     {
@@ -17624,7 +17624,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:21:17+08:00",
-      "checked_at": "2026-11-10T20:35:23+08:00",
+      "checked_at": "2026-11-11T00:04:27+08:00",
       "official_status": "active"
     },
     {
@@ -17643,7 +17643,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:28+08:00",
-      "checked_at": "2026-11-10T20:34:05+08:00",
+      "checked_at": "2026-11-11T00:03:20+08:00",
       "official_status": "active"
     },
     {
@@ -17887,7 +17887,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-23T17:12:32+08:00",
-      "checked_at": "2026-11-10T20:34:16+08:00",
+      "checked_at": "2026-11-11T00:03:30+08:00",
       "official_status": "active"
     },
     {
@@ -17963,7 +17963,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-23T17:12:45+08:00",
-      "checked_at": "2026-11-10T20:34:53+08:00",
+      "checked_at": "2026-11-11T00:04:01+08:00",
       "official_status": "active"
     },
     {
@@ -18095,7 +18095,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-23T17:12:46+08:00",
-      "checked_at": "2026-11-10T20:34:58+08:00",
+      "checked_at": "2026-11-11T00:04:06+08:00",
       "official_status": "active"
     },
     {
@@ -18339,7 +18339,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-23T17:12:52+08:00",
-      "checked_at": "2026-11-10T20:35:23+08:00",
+      "checked_at": "2026-11-11T00:04:27+08:00",
       "official_status": "active"
     },
     {
@@ -18358,7 +18358,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-28T12:03:01+08:00",
-      "checked_at": "2026-11-10T20:35:55+08:00",
+      "checked_at": "2026-11-11T00:04:57+08:00",
       "official_status": "active"
     },
     {
@@ -18602,7 +18602,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-23T17:12:28+08:00",
-      "checked_at": "2026-11-10T20:34:04+08:00",
+      "checked_at": "2026-11-11T00:03:20+08:00",
       "official_status": "active"
     },
     {
@@ -18846,7 +18846,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-23T17:12:30+08:00",
-      "checked_at": "2026-11-10T20:34:10+08:00",
+      "checked_at": "2026-11-11T00:03:24+08:00",
       "official_status": "active"
     },
     {
@@ -18978,7 +18978,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-23T17:12:37+08:00",
-      "checked_at": "2026-11-10T20:34:32+08:00",
+      "checked_at": "2026-11-11T00:03:44+08:00",
       "official_status": "active"
     },
     {
@@ -19054,7 +19054,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-23T17:13:03+08:00",
-      "checked_at": "2026-11-10T20:35:50+08:00",
+      "checked_at": "2026-11-11T00:04:52+08:00",
       "official_status": "active"
     },
     {
@@ -19298,7 +19298,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-23T17:12:26+08:00",
-      "checked_at": "2026-11-10T20:33:58+08:00",
+      "checked_at": "2026-11-11T00:03:13+08:00",
       "official_status": "active"
     },
     {
@@ -19542,7 +19542,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-23T17:12:47+08:00",
-      "checked_at": "2026-11-10T20:35:03+08:00",
+      "checked_at": "2026-11-11T00:04:10+08:00",
       "official_status": "active"
     },
     {
@@ -19674,7 +19674,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-23T17:12:49+08:00",
-      "checked_at": "2026-11-10T20:35:09+08:00",
+      "checked_at": "2026-11-11T00:04:15+08:00",
       "official_status": "active"
     },
     {
@@ -19918,7 +19918,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-23T17:12:51+08:00",
-      "checked_at": "2026-11-10T20:35:18+08:00",
+      "checked_at": "2026-11-11T00:04:23+08:00",
       "official_status": "active"
     },
     {
@@ -20050,7 +20050,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-23T17:13:00+08:00",
-      "checked_at": "2026-11-10T20:35:42+08:00",
+      "checked_at": "2026-11-11T00:04:44+08:00",
       "official_status": "active"
     },
     {
@@ -20182,7 +20182,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-23T17:13:04+08:00",
-      "checked_at": "2026-11-10T20:35:51+08:00",
+      "checked_at": "2026-11-11T00:04:54+08:00",
       "official_status": "active"
     },
     {
@@ -20426,7 +20426,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-23T17:12:27+08:00",
-      "checked_at": "2026-11-10T20:34:00+08:00",
+      "checked_at": "2026-11-11T00:03:15+08:00",
       "official_status": "active"
     },
     {
@@ -20558,7 +20558,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-23T17:12:33+08:00",
-      "checked_at": "2026-11-10T20:34:20+08:00",
+      "checked_at": "2026-11-11T00:03:33+08:00",
       "official_status": "active"
     },
     {
@@ -20802,7 +20802,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-23T17:12:34+08:00",
-      "checked_at": "2026-11-10T20:34:24+08:00",
+      "checked_at": "2026-11-11T00:03:37+08:00",
       "official_status": "active"
     },
     {
@@ -20878,7 +20878,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-23T17:12:40+08:00",
-      "checked_at": "2026-11-10T20:34:38+08:00",
+      "checked_at": "2026-11-11T00:03:50+08:00",
       "official_status": "active"
     },
     {
@@ -20897,7 +20897,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:05+08:00",
-      "checked_at": "2026-11-10T20:35:53+08:00",
+      "checked_at": "2026-11-11T00:04:55+08:00",
       "official_status": "active"
     },
     {
@@ -20916,7 +20916,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-21T12:03:02+08:00",
-      "checked_at": "2026-11-10T20:34:16+08:00",
+      "checked_at": "2026-11-11T00:03:30+08:00",
       "official_status": "active"
     },
     {
@@ -21048,7 +21048,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-23T17:12:36+08:00",
-      "checked_at": "2026-11-10T20:34:30+08:00",
+      "checked_at": "2026-11-11T00:03:42+08:00",
       "official_status": "active"
     },
     {
@@ -21180,7 +21180,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-23T17:12:43+08:00",
-      "checked_at": "2026-11-10T20:34:49+08:00",
+      "checked_at": "2026-11-11T00:03:58+08:00",
       "official_status": "active"
     },
     {
@@ -21424,7 +21424,7 @@
       ],
       "result_count": 32,
       "discovered_at": "2026-09-23T17:12:48+08:00",
-      "checked_at": "2026-11-10T20:35:08+08:00",
+      "checked_at": "2026-11-11T00:04:14+08:00",
       "official_status": "active"
     },
     {
@@ -21556,7 +21556,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-23T17:12:56+08:00",
-      "checked_at": "2026-11-10T20:35:32+08:00",
+      "checked_at": "2026-11-11T00:04:35+08:00",
       "official_status": "active"
     },
     {
@@ -21688,7 +21688,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-23T17:12:57+08:00",
-      "checked_at": "2026-11-10T20:35:36+08:00",
+      "checked_at": "2026-11-11T00:04:39+08:00",
       "official_status": "active"
     },
     {
@@ -21820,7 +21820,7 @@
       ],
       "result_count": 16,
       "discovered_at": "2026-09-28T12:03:02+08:00",
-      "checked_at": "2026-11-10T20:35:57+08:00",
+      "checked_at": "2026-11-11T00:04:58+08:00",
       "official_status": "active"
     },
     {
@@ -21896,7 +21896,7 @@
       ],
       "result_count": 8,
       "discovered_at": "2026-09-28T12:03:03+08:00",
-      "checked_at": "2026-11-10T20:35:59+08:00",
+      "checked_at": "2026-11-11T00:05:00+08:00",
       "official_status": "active"
     },
     {
@@ -21915,7 +21915,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:43+08:00",
-      "checked_at": "2026-11-10T20:32:05+08:00",
+      "checked_at": "2026-11-11T00:01:23+08:00",
       "official_status": "active"
     },
     {
@@ -21934,7 +21934,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-08T00:03:21+08:00",
-      "checked_at": "2026-11-10T20:35:53+08:00",
+      "checked_at": "2026-11-11T00:04:55+08:00",
       "official_status": "active"
     },
     {
@@ -21953,7 +21953,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:45+08:00",
-      "checked_at": "2026-11-10T20:32:06+08:00",
+      "checked_at": "2026-11-11T00:01:25+08:00",
       "official_status": "active"
     },
     {
@@ -21972,7 +21972,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-08T00:03:22+08:00",
-      "checked_at": "2026-11-10T20:35:55+08:00",
+      "checked_at": "2026-11-11T00:04:56+08:00",
       "official_status": "active"
     },
     {
@@ -21991,7 +21991,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:20:44+08:00",
-      "checked_at": "2026-11-10T20:32:05+08:00",
+      "checked_at": "2026-11-11T00:01:24+08:00",
       "official_status": "active"
     },
     {
@@ -22010,7 +22010,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-08T00:03:21+08:00",
-      "checked_at": "2026-11-10T20:35:54+08:00",
+      "checked_at": "2026-11-11T00:04:56+08:00",
       "official_status": "active"
     },
     {
@@ -22029,7 +22029,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-07T23:41:52+08:00",
-      "checked_at": "2026-11-10T20:36:38+08:00",
+      "checked_at": "2026-11-11T00:05:31+08:00",
       "official_status": "active"
     },
     {
@@ -22048,7 +22048,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-07T23:41:52+08:00",
-      "checked_at": "2026-11-10T20:36:37+08:00",
+      "checked_at": "2026-11-11T00:05:31+08:00",
       "official_status": "active"
     },
     {
@@ -22067,7 +22067,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-07T23:41:51+08:00",
-      "checked_at": "2026-11-10T20:36:36+08:00",
+      "checked_at": "2026-11-11T00:05:30+08:00",
       "official_status": "active"
     },
     {
@@ -22086,7 +22086,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:42+08:00",
-      "checked_at": "2026-11-10T20:34:47+08:00",
+      "checked_at": "2026-11-11T00:03:57+08:00",
       "official_status": "active"
     },
     {
@@ -22105,7 +22105,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:55+08:00",
-      "checked_at": "2026-11-10T20:35:28+08:00",
+      "checked_at": "2026-11-11T00:04:32+08:00",
       "official_status": "active"
     },
     {
@@ -22124,7 +22124,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:59+08:00",
-      "checked_at": "2026-11-10T20:35:38+08:00",
+      "checked_at": "2026-11-11T00:04:41+08:00",
       "official_status": "active"
     },
     {
@@ -22143,7 +22143,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:59+08:00",
-      "checked_at": "2026-11-10T20:35:39+08:00",
+      "checked_at": "2026-11-11T00:04:41+08:00",
       "official_status": "active"
     },
     {
@@ -22162,7 +22162,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:01+08:00",
-      "checked_at": "2026-11-10T20:35:45+08:00",
+      "checked_at": "2026-11-11T00:04:47+08:00",
       "official_status": "active"
     },
     {
@@ -22181,7 +22181,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:02+08:00",
-      "checked_at": "2026-11-10T20:35:47+08:00",
+      "checked_at": "2026-11-11T00:04:49+08:00",
       "official_status": "active"
     },
     {
@@ -22200,7 +22200,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:29+08:00",
-      "checked_at": "2026-11-10T20:34:07+08:00",
+      "checked_at": "2026-11-11T00:03:22+08:00",
       "official_status": "active"
     },
     {
@@ -22219,7 +22219,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:38+08:00",
-      "checked_at": "2026-11-10T20:34:34+08:00",
+      "checked_at": "2026-11-11T00:03:46+08:00",
       "official_status": "active"
     },
     {
@@ -22238,7 +22238,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:39+08:00",
-      "checked_at": "2026-11-10T20:34:37+08:00",
+      "checked_at": "2026-11-11T00:03:48+08:00",
       "official_status": "active"
     },
     {
@@ -22257,7 +22257,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:41+08:00",
-      "checked_at": "2026-11-10T20:34:42+08:00",
+      "checked_at": "2026-11-11T00:03:52+08:00",
       "official_status": "active"
     },
     {
@@ -22276,7 +22276,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:43+08:00",
-      "checked_at": "2026-11-10T20:34:50+08:00",
+      "checked_at": "2026-11-11T00:03:59+08:00",
       "official_status": "active"
     },
     {
@@ -22295,7 +22295,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:12:53+08:00",
-      "checked_at": "2026-11-10T20:35:24+08:00",
+      "checked_at": "2026-11-11T00:04:28+08:00",
       "official_status": "active"
     },
     {
@@ -22314,7 +22314,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-23T17:13:05+08:00",
-      "checked_at": "2026-11-10T20:35:52+08:00",
+      "checked_at": "2026-11-11T00:04:54+08:00",
       "official_status": "active"
     },
     {
@@ -22333,7 +22333,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:41+08:00",
-      "checked_at": "2026-11-10T20:33:38+08:00",
+      "checked_at": "2026-11-11T00:02:53+08:00",
       "official_status": "active"
     },
     {
@@ -22352,7 +22352,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:39+08:00",
-      "checked_at": "2026-11-10T20:33:37+08:00",
+      "checked_at": "2026-11-11T00:02:52+08:00",
       "official_status": "active"
     },
     {
@@ -22371,7 +22371,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-09-09T10:38:40+08:00",
-      "checked_at": "2026-11-10T20:33:37+08:00",
+      "checked_at": "2026-11-11T00:02:52+08:00",
       "official_status": "active"
     },
     {
@@ -22390,7 +22390,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:51+08:00",
-      "checked_at": "2026-11-10T20:36:22+08:00",
+      "checked_at": "2026-11-11T00:05:18+08:00",
       "official_status": "active"
     },
     {
@@ -22409,7 +22409,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:53+08:00",
-      "checked_at": "2026-11-10T20:36:24+08:00",
+      "checked_at": "2026-11-11T00:05:20+08:00",
       "official_status": "active"
     },
     {
@@ -22428,7 +22428,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:58+08:00",
-      "checked_at": "2026-11-10T20:36:28+08:00",
+      "checked_at": "2026-11-11T00:05:24+08:00",
       "official_status": "active"
     },
     {
@@ -22447,7 +22447,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:58+08:00",
-      "checked_at": "2026-11-10T20:36:29+08:00",
+      "checked_at": "2026-11-11T00:05:25+08:00",
       "official_status": "active"
     },
     {
@@ -22466,7 +22466,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:59+08:00",
-      "checked_at": "2026-11-10T20:36:31+08:00",
+      "checked_at": "2026-11-11T00:05:26+08:00",
       "official_status": "active"
     },
     {
@@ -22485,7 +22485,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:06:01+08:00",
-      "checked_at": "2026-11-10T20:36:33+08:00",
+      "checked_at": "2026-11-11T00:05:27+08:00",
       "official_status": "active"
     },
     {
@@ -22504,7 +22504,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:06:02+08:00",
-      "checked_at": "2026-11-10T20:36:33+08:00",
+      "checked_at": "2026-11-11T00:05:28+08:00",
       "official_status": "active"
     },
     {
@@ -22523,7 +22523,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:40+08:00",
-      "checked_at": "2026-11-10T20:36:12+08:00",
+      "checked_at": "2026-11-11T00:05:10+08:00",
       "official_status": "active"
     },
     {
@@ -22542,7 +22542,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:56+08:00",
-      "checked_at": "2026-11-10T20:36:26+08:00",
+      "checked_at": "2026-11-11T00:05:22+08:00",
       "official_status": "active"
     },
     {
@@ -22561,7 +22561,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:36+08:00",
-      "checked_at": "2026-11-10T20:36:07+08:00",
+      "checked_at": "2026-11-11T00:05:07+08:00",
       "official_status": "active"
     },
     {
@@ -22580,7 +22580,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:37+08:00",
-      "checked_at": "2026-11-10T20:36:08+08:00",
+      "checked_at": "2026-11-11T00:05:07+08:00",
       "official_status": "active"
     },
     {
@@ -22599,7 +22599,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:45+08:00",
-      "checked_at": "2026-11-10T20:36:16+08:00",
+      "checked_at": "2026-11-11T00:05:13+08:00",
       "official_status": "active"
     },
     {
@@ -22618,7 +22618,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:46+08:00",
-      "checked_at": "2026-11-10T20:36:17+08:00",
+      "checked_at": "2026-11-11T00:05:14+08:00",
       "official_status": "active"
     },
     {
@@ -22637,7 +22637,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:46+08:00",
-      "checked_at": "2026-11-10T20:36:17+08:00",
+      "checked_at": "2026-11-11T00:05:14+08:00",
       "official_status": "active"
     },
     {
@@ -22656,7 +22656,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:49+08:00",
-      "checked_at": "2026-11-10T20:36:20+08:00",
+      "checked_at": "2026-11-11T00:05:17+08:00",
       "official_status": "active"
     },
     {
@@ -22675,7 +22675,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:52+08:00",
-      "checked_at": "2026-11-10T20:36:23+08:00",
+      "checked_at": "2026-11-11T00:05:19+08:00",
       "official_status": "active"
     },
     {
@@ -22694,7 +22694,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:06:02+08:00",
-      "checked_at": "2026-11-10T20:36:34+08:00",
+      "checked_at": "2026-11-11T00:05:28+08:00",
       "official_status": "active"
     },
     {
@@ -22713,7 +22713,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:41+08:00",
-      "checked_at": "2026-11-10T20:36:13+08:00",
+      "checked_at": "2026-11-11T00:05:11+08:00",
       "official_status": "active"
     },
     {
@@ -22732,7 +22732,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:42+08:00",
-      "checked_at": "2026-11-10T20:36:14+08:00",
+      "checked_at": "2026-11-11T00:05:12+08:00",
       "official_status": "active"
     },
     {
@@ -22751,7 +22751,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:47+08:00",
-      "checked_at": "2026-11-10T20:36:18+08:00",
+      "checked_at": "2026-11-11T00:05:15+08:00",
       "official_status": "active"
     },
     {
@@ -22770,7 +22770,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:48+08:00",
-      "checked_at": "2026-11-10T20:36:19+08:00",
+      "checked_at": "2026-11-11T00:05:16+08:00",
       "official_status": "active"
     },
     {
@@ -22789,7 +22789,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:53+08:00",
-      "checked_at": "2026-11-10T20:36:23+08:00",
+      "checked_at": "2026-11-11T00:05:19+08:00",
       "official_status": "active"
     },
     {
@@ -22808,7 +22808,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:54+08:00",
-      "checked_at": "2026-11-10T20:36:25+08:00",
+      "checked_at": "2026-11-11T00:05:20+08:00",
       "official_status": "active"
     },
     {
@@ -22827,7 +22827,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:55+08:00",
-      "checked_at": "2026-11-10T20:36:26+08:00",
+      "checked_at": "2026-11-11T00:05:22+08:00",
       "official_status": "active"
     },
     {
@@ -22846,7 +22846,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:56+08:00",
-      "checked_at": "2026-11-10T20:36:27+08:00",
+      "checked_at": "2026-11-11T00:05:23+08:00",
       "official_status": "active"
     },
     {
@@ -22865,7 +22865,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:37+08:00",
-      "checked_at": "2026-11-10T20:36:09+08:00",
+      "checked_at": "2026-11-11T00:05:08+08:00",
       "official_status": "active"
     },
     {
@@ -22884,7 +22884,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:40+08:00",
-      "checked_at": "2026-11-10T20:36:11+08:00",
+      "checked_at": "2026-11-11T00:05:09+08:00",
       "official_status": "active"
     },
     {
@@ -22903,7 +22903,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:44+08:00",
-      "checked_at": "2026-11-10T20:36:15+08:00",
+      "checked_at": "2026-11-11T00:05:13+08:00",
       "official_status": "active"
     },
     {
@@ -22922,7 +22922,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:54+08:00",
-      "checked_at": "2026-11-10T20:36:25+08:00",
+      "checked_at": "2026-11-11T00:05:21+08:00",
       "official_status": "active"
     },
     {
@@ -22941,7 +22941,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:59+08:00",
-      "checked_at": "2026-11-10T20:36:30+08:00",
+      "checked_at": "2026-11-11T00:05:25+08:00",
       "official_status": "active"
     },
     {
@@ -22960,7 +22960,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:06:00+08:00",
-      "checked_at": "2026-11-10T20:36:32+08:00",
+      "checked_at": "2026-11-11T00:05:26+08:00",
       "official_status": "active"
     },
     {
@@ -22979,7 +22979,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:06:03+08:00",
-      "checked_at": "2026-11-10T20:36:35+08:00",
+      "checked_at": "2026-11-11T00:05:29+08:00",
       "official_status": "active"
     },
     {
@@ -22998,7 +22998,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:06:04+08:00",
-      "checked_at": "2026-11-10T20:36:35+08:00",
+      "checked_at": "2026-11-11T00:05:29+08:00",
       "official_status": "active"
     },
     {
@@ -23017,7 +23017,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:38+08:00",
-      "checked_at": "2026-11-10T20:36:09+08:00",
+      "checked_at": "2026-11-11T00:05:08+08:00",
       "official_status": "active"
     },
     {
@@ -23036,7 +23036,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:39+08:00",
-      "checked_at": "2026-11-10T20:36:10+08:00",
+      "checked_at": "2026-11-11T00:05:09+08:00",
       "official_status": "active"
     },
     {
@@ -23055,7 +23055,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:41+08:00",
-      "checked_at": "2026-11-10T20:36:12+08:00",
+      "checked_at": "2026-11-11T00:05:11+08:00",
       "official_status": "active"
     },
     {
@@ -23074,7 +23074,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:43+08:00",
-      "checked_at": "2026-11-10T20:36:14+08:00",
+      "checked_at": "2026-11-11T00:05:12+08:00",
       "official_status": "active"
     },
     {
@@ -23093,7 +23093,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:49+08:00",
-      "checked_at": "2026-11-10T20:36:20+08:00",
+      "checked_at": "2026-11-11T00:05:17+08:00",
       "official_status": "active"
     },
     {
@@ -23112,7 +23112,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:57+08:00",
-      "checked_at": "2026-11-10T20:36:28+08:00",
+      "checked_at": "2026-11-11T00:05:24+08:00",
       "official_status": "active"
     },
     {
@@ -23131,7 +23131,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-22T21:02:32+08:00",
-      "checked_at": "2026-11-10T20:36:00+08:00",
+      "checked_at": "2026-11-11T00:05:01+08:00",
       "official_status": "active"
     },
     {
@@ -23150,7 +23150,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-22T21:02:31+08:00",
-      "checked_at": "2026-11-10T20:35:59+08:00",
+      "checked_at": "2026-11-11T00:05:00+08:00",
       "official_status": "active"
     },
     {
@@ -23169,7 +23169,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-22T21:02:31+08:00",
-      "checked_at": "2026-11-10T20:36:00+08:00",
+      "checked_at": "2026-11-11T00:05:01+08:00",
       "official_status": "active"
     },
     {
@@ -23188,7 +23188,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:05:50+08:00",
-      "checked_at": "2026-11-10T20:36:21+08:00",
+      "checked_at": "2026-11-11T00:05:18+08:00",
       "official_status": "active"
     },
     {
@@ -23207,10 +23207,10 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-11-05T12:06:05+08:00",
-      "checked_at": "2026-11-10T20:32:04+08:00",
+      "checked_at": "2026-11-11T00:01:23+08:00",
       "official_status": "removed",
       "official_missing_since": "2026-11-06T01:20:18+08:00",
-      "official_missing_checks": 29
+      "official_missing_checks": 30
     },
     {
       "event_id": "69896",
@@ -23228,7 +23228,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-22T21:02:33+08:00",
-      "checked_at": "2026-11-10T20:36:02+08:00",
+      "checked_at": "2026-11-11T00:05:03+08:00",
       "official_status": "active"
     },
     {
@@ -23247,7 +23247,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-22T21:02:32+08:00",
-      "checked_at": "2026-11-10T20:36:01+08:00",
+      "checked_at": "2026-11-11T00:05:02+08:00",
       "official_status": "active"
     },
     {
@@ -23266,7 +23266,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-22T21:02:33+08:00",
-      "checked_at": "2026-11-10T20:36:02+08:00",
+      "checked_at": "2026-11-11T00:05:02+08:00",
       "official_status": "active"
     },
     {
@@ -23285,7 +23285,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-22T21:02:35+08:00",
-      "checked_at": "2026-11-10T20:36:05+08:00",
+      "checked_at": "2026-11-11T00:05:05+08:00",
       "official_status": "active"
     },
     {
@@ -23304,7 +23304,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-22T21:02:34+08:00",
-      "checked_at": "2026-11-10T20:36:03+08:00",
+      "checked_at": "2026-11-11T00:05:03+08:00",
       "official_status": "active"
     },
     {
@@ -23323,7 +23323,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-22T21:02:34+08:00",
-      "checked_at": "2026-11-10T20:36:04+08:00",
+      "checked_at": "2026-11-11T00:05:04+08:00",
       "official_status": "active"
     },
     {
@@ -23342,7 +23342,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-22T21:02:36+08:00",
-      "checked_at": "2026-11-10T20:36:06+08:00",
+      "checked_at": "2026-11-11T00:05:06+08:00",
       "official_status": "active"
     },
     {
@@ -23361,7 +23361,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-22T21:02:35+08:00",
-      "checked_at": "2026-11-10T20:36:05+08:00",
+      "checked_at": "2026-11-11T00:05:05+08:00",
       "official_status": "active"
     },
     {
@@ -23380,7 +23380,7 @@
       "results": [],
       "result_count": 0,
       "discovered_at": "2026-10-22T21:02:36+08:00",
-      "checked_at": "2026-11-10T20:36:06+08:00",
+      "checked_at": "2026-11-11T00:05:06+08:00",
       "official_status": "active"
     }
   ]
