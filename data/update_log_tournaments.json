@@ -2,6 +2,18 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-11-10T17:06:04+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-11-10T17:06:04+08:00",
+      "summary": "新增成績 1 場",
+      "details": [
+        "新增官方成績｜#68937｜2026-10-25｜卡市牌場｜臺中市｜8 筆"
+      ],
+      "notified": true,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "tournaments-2026-11-10T12:06:12+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -40,16 +52,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "tournaments-2026-11-09T20:51:09+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-11-09T20:51:09+08:00",
-      "summary": "例行檢查完成；賽事可見內容無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }
