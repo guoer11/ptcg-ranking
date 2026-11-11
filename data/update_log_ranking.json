@@ -2,6 +2,16 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "ranking-2026-11-12T06:39:23+08:00",
+      "type": "ranking",
+      "title": "排行榜資料更新",
+      "updated_at": "2026-11-12T06:39:23+08:00",
+      "summary": "例行檢查完成；官方排名無變動",
+      "details": [],
+      "notified": false,
+      "trigger_source": "GitHub 備援排程"
+    },
+    {
       "id": "ranking-2026-11-12T00:05:21+08:00",
       "type": "ranking",
       "title": "排行榜資料更新",
@@ -62,19 +72,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "GitHub 備援排程"
-    },
-    {
-      "id": "ranking-2026-11-10T00:05:25+08:00",
-      "type": "ranking",
-      "title": "排行榜資料更新",
-      "updated_at": "2026-11-10T00:05:25+08:00",
-      "summary": "無排名／積分變動；暱稱 1、地區 0 筆異動",
-      "details": [
-        "Master：暱稱 1",
-        "Master｜tw93786634｜暱稱 j199302 → KaoKao"
-      ],
-      "notified": false,
-      "trigger_source": "主排程（Supabase）"
     }
   ]
 }
