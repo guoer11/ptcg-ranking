@@ -1,8 +1,8 @@
 {
   "season": "2026-27",
-  "generated_at": "2026-11-11T19:54:59+08:00",
+  "generated_at": "2026-11-12T00:06:46+08:00",
   "great_window_days": 60,
-  "great_cutoff": "2026-09-13",
+  "great_cutoff": "2026-09-14",
   "players": {
     "tw00057543": {
       "wcs_2026": true
@@ -19,7 +19,7 @@
       "great": {
         "best_rank": 2,
         "champion_count": 0,
-        "runner_up_count": 2,
+        "runner_up_count": 1,
         "latest_date": "2026-10-04"
       }
     },
@@ -37,14 +37,6 @@
         "champion_count": 1,
         "runner_up_count": 0,
         "latest_date": "2026-10-04"
-      }
-    },
-    "tw01856787": {
-      "great": {
-        "best_rank": 2,
-        "champion_count": 0,
-        "runner_up_count": 1,
-        "latest_date": "2026-09-13"
       }
     },
     "tw01909140": {
@@ -95,22 +87,6 @@
         "champion_count": 0,
         "runner_up_count": 1,
         "latest_date": "2026-09-12"
-      }
-    },
-    "tw04057117": {
-      "great": {
-        "best_rank": 2,
-        "champion_count": 0,
-        "runner_up_count": 1,
-        "latest_date": "2026-09-13"
-      }
-    },
-    "tw05602573": {
-      "great": {
-        "best_rank": 2,
-        "champion_count": 0,
-        "runner_up_count": 1,
-        "latest_date": "2026-09-13"
       }
     },
     "tw05925639": {
@@ -179,14 +155,6 @@
         "latest_date": "2026-09-25"
       }
     },
-    "tw09472918": {
-      "great": {
-        "best_rank": 1,
-        "champion_count": 1,
-        "runner_up_count": 0,
-        "latest_date": "2026-09-13"
-      }
-    },
     "tw10141695": {
       "great": {
         "best_rank": 2,
@@ -209,14 +177,6 @@
         "champion_count": 0,
         "runner_up_count": 1,
         "latest_date": "2026-09-26"
-      }
-    },
-    "tw11612248": {
-      "great": {
-        "best_rank": 2,
-        "champion_count": 0,
-        "runner_up_count": 1,
-        "latest_date": "2026-09-13"
       }
     },
     "tw12134806": {
@@ -295,14 +255,6 @@
         "champion_count": 1,
         "runner_up_count": 0,
         "latest_date": "2026-09-20"
-      }
-    },
-    "tw22756831": {
-      "great": {
-        "best_rank": 1,
-        "champion_count": 1,
-        "runner_up_count": 0,
-        "latest_date": "2026-09-13"
       }
     },
     "tw23205294": {
@@ -454,14 +406,6 @@
         "latest_date": "2026-11-08"
       }
     },
-    "tw35707148": {
-      "great": {
-        "best_rank": 1,
-        "champion_count": 1,
-        "runner_up_count": 0,
-        "latest_date": "2026-09-13"
-      }
-    },
     "tw35717087": {
       "great": {
         "best_rank": 2,
@@ -562,14 +506,6 @@
         "champion_count": 0,
         "runner_up_count": 1,
         "latest_date": "2026-09-26"
-      }
-    },
-    "tw41523616": {
-      "great": {
-        "best_rank": 1,
-        "champion_count": 1,
-        "runner_up_count": 0,
-        "latest_date": "2026-09-13"
       }
     },
     "tw42309306": {
@@ -723,14 +659,6 @@
         "champion_count": 1,
         "runner_up_count": 1,
         "latest_date": "2026-10-10"
-      }
-    },
-    "tw51144227": {
-      "great": {
-        "best_rank": 1,
-        "champion_count": 1,
-        "runner_up_count": 0,
-        "latest_date": "2026-09-13"
       }
     },
     "tw51147332": {
@@ -937,14 +865,6 @@
         "latest_date": "2026-10-18"
       }
     },
-    "tw69293104": {
-      "great": {
-        "best_rank": 2,
-        "champion_count": 0,
-        "runner_up_count": 1,
-        "latest_date": "2026-09-13"
-      }
-    },
     "tw69848864": {
       "wcs_2026": true,
       "great": {
@@ -1048,7 +968,7 @@
       "great": {
         "best_rank": 2,
         "champion_count": 0,
-        "runner_up_count": 2,
+        "runner_up_count": 1,
         "latest_date": "2026-09-28"
       }
     },
@@ -1086,7 +1006,7 @@
     "tw81419386": {
       "great": {
         "best_rank": 1,
-        "champion_count": 2,
+        "champion_count": 1,
         "runner_up_count": 0,
         "latest_date": "2026-10-31"
       }
@@ -1193,7 +1113,7 @@
       "wcs_2026": true,
       "great": {
         "best_rank": 1,
-        "champion_count": 3,
+        "champion_count": 2,
         "runner_up_count": 0,
         "latest_date": "2026-11-01"
       }
