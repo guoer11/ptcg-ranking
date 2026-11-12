@@ -77,7 +77,7 @@ vm.runInContext(fs.readFileSync('lookup-ui.js', 'utf8'), context);
   assert.equal(filter(people, 'TW25007020', 'all')[0].name, '許辰銨');
 
   render();
-  assert.equal((rankingContainer.innerHTML.match(/<tr>/g) || []).length, 4, 'Junior should have four table rows');
+  assert.equal((rankingContainer.innerHTML.match(/<tr>\s*<td>/g) || []).length, 4, 'Junior should have four table rows');
   assert.match(rankingContainer.innerHTML, /tw46877625/);
   assert.match(rankingContainer.innerHTML, /tw25007020/);
   assert.match(rankingContainer.innerHTML, /<span class="rank-badge">91<\/span>/);
@@ -87,24 +87,24 @@ vm.runInContext(fs.readFileSync('lookup-ui.js', 'utf8'), context);
 
   context.activeGroup = 'Senior';
   render();
-  assert.equal((rankingContainer.innerHTML.match(/<tr>/g) || []).length, 4, 'Senior should have four table rows');
+  assert.equal((rankingContainer.innerHTML.match(/<tr>\s*<td>/g) || []).length, 4, 'Senior should have four table rows');
   assert.match(rankingContainer.innerHTML, /tw81124094/);
   assert.doesNotMatch(rankingContainer.innerHTML, /tw46877625/);
 
   context.activeGroup = 'Master';
   render();
-  assert.equal((rankingContainer.innerHTML.match(/<tr>/g) || []).length, 4, 'Master should have four table rows');
+  assert.equal((rankingContainer.innerHTML.match(/<tr>\s*<td>/g) || []).length, 4, 'Master should have four table rows');
   assert.match(rankingContainer.innerHTML, /tw35477925/);
 
   context.activeGroup = 'Junior';
   advancedSearch.value = '許辰銨';
   render();
-  assert.equal((rankingContainer.innerHTML.match(/<tr>/g) || []).length, 1);
+  assert.equal((rankingContainer.innerHTML.match(/<tr>\s*<td>/g) || []).length, 1);
   assert.match(rankingContainer.innerHTML, /tw25007020/);
   advancedSearch.value = '';
   search.value = 'tw46877625';
   render();
-  assert.equal((rankingContainer.innerHTML.match(/<tr>/g) || []).length, 1);
+  assert.equal((rankingContainer.innerHTML.match(/<tr>\s*<td>/g) || []).length, 1);
   assert.match(rankingContainer.innerHTML, /tw46877625/);
 
   console.log('WCS 2027 ranking filter: 12 invitees, three groups, details, name and ID filters OK');
