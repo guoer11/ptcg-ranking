@@ -61,6 +61,8 @@ jobs:
           node --check pairing-deck-scout.js
           node --check player-badges.js
           node --check wcs-2027-standalone.js
+          node --check lookup-ui.js
+          node tests/wcs-2027-lookup.test.cjs
           node tests/pairing-scout-safety.test.cjs
 
       - name: Build public site artifact
