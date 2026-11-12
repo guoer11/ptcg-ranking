@@ -87,11 +87,11 @@ function findLookupCandidates(raw) {
     .slice(0, 50);
 }
 
-// WCS 2027 filter reads the separately maintained, public invitation list.
-// Do not limit results to the official points ranking: some invitees are unranked.
+// WCS 2027 is a filter of the EXISTING ranking table, not a separate list.
+// Invitation records are independent of current official ranking membership.
 let wcs2027LookupRows = null;
 let wcs2027LookupPending = null;
-let wcs2027LookupRequest = 0;
+let wcs2027LookupError = null;
 
 function wcs2027LookupEnabled() {
   return Boolean(document.getElementById('wcs2027OnlyFilter')?.checked);
@@ -100,7 +100,8 @@ function wcs2027LookupEnabled() {
 function loadWcs2027LookupRows() {
   if (wcs2027LookupRows) return Promise.resolve(wcs2027LookupRows);
   if (!wcs2027LookupPending) {
-    wcs2027LookupPending = fetch('data/wcs_2027_invites.json?v=2.9.0-r1', { cache: 'no-store' })
+    wcs2027LookupError = null;
+    wcs2027LookupPending = fetch('data/wcs_2027_invites.json?v=2.9.0-r2', { cache: 'no-store' })
       .then(response => {
         if (!response.ok) throw new Error('資格名單 HTTP ' + response.status);
         return response.json();
@@ -123,7 +124,8 @@ function loadWcs2027LookupRows() {
         return wcs2027LookupRows;
       })
       .catch(error => {
-        wcs2027LookupPending = null; // Allow retry after a temporary network error.
+        wcs2027LookupError = error;
+        wcs2027LookupPending = null;
         throw error;
       });
   }
@@ -139,45 +141,74 @@ function filterWcs2027LookupRows(rows, query = '', group = lookupGroup) {
   );
 }
 
-async function renderWcs2027Lookup() {
-  const panel = document.getElementById('wcs2027LookupResults');
-  const count = document.getElementById('wcs2027LookupCount');
-  const list = document.getElementById('wcs2027LookupList');
-  if (!panel || !count || !list) return;
-  panel.hidden = !wcs2027LookupEnabled();
-  const request = ++wcs2027LookupRequest;
-  if (panel.hidden) return;
+// Called only by ranking-season-ui.js when the checkbox is selected.
+// Reuses ranking-table markup, playerNameHtml, detailButton, and legacy badge observers.
+function renderWcs2027RankingTable() {
+  const root = document.getElementById('rankingContainer');
+  if (!root) return;
+  const mode = document.getElementById('rankingModeSwitch');
+  if (mode) mode.hidden = true;
+  const projectionNotice = document.getElementById('rankingProjectionNotice');
+  if (projectionNotice) projectionNotice.hidden = true;
 
   if (!wcs2027LookupRows) {
-    count.textContent = '讀取名單中…';
-    list.innerHTML = '<div class="wcs2027-lookup-empty">正在載入資格選手…</div>';
+    root.innerHTML = `<div class="empty-state"><strong>${wcs2027LookupError ? '無法載入 WCS 2027 資格資料' : '正在讀取 WCS 2027 資格資料…'}</strong><span>${wcs2027LookupError ? '請取消勾選後重新勾選，再試一次。' : '資料會顯示在原本排行榜。'}</span></div>`;
+    return;
   }
 
-  try {
-    const rows = await loadWcs2027LookupRows();
-    if (request !== wcs2027LookupRequest || !wcs2027LookupEnabled()) return;
-    const query = document.getElementById('playerIdInput')?.value || '';
-    const matched = filterWcs2027LookupRows(rows, query);
-    count.textContent = '找到 ' + matched.length + ' 位';
-    list.innerHTML = matched.length
-      ? matched.map(candidate => `
-        <button class="wcs2027-lookup-person" type="button" data-wcs2027-player-id="${esc(candidate.player_id)}">
-          <span class="wcs2027-lookup-person-main">
-            <strong>${esc(candidate.name)}</strong>
-            <small>${esc(candidate.player_id)}</small>
-          </span>
-          <span class="wcs2027-lookup-person-meta">
-            <span>${esc(LOOKUP_GROUP_LABELS[candidate.group] || candidate.group)}</span>
-            <strong>${esc(candidate.place)}</strong>
-          </span>
-        </button>`).join('')
-      : '<div class="wcs2027-lookup-empty">沒有符合條件的 WCS 2027 資格選手，請換個組別、姓名或 PTCG ID。</div>';
-  } catch (error) {
-    if (request !== wcs2027LookupRequest || !wcs2027LookupEnabled()) return;
-    console.warn('WCS 2027 資格查詢失敗', error);
-    count.textContent = '無法載入';
-    list.innerHTML = '<div class="wcs2027-lookup-empty">資格名單載入失敗，請重新勾選再試一次。</div>';
+  const officialRows = rankingData?.groups?.[activeGroup] || [];
+  const byId = new Map(officialRows.map(row => [normalizeLookupValue(row.player_id), row]));
+  const searchTerms = [
+    document.getElementById('rankingSearch')?.value,
+    document.getElementById('playerIdInput')?.value
+  ].map(normalizeLookupValue).filter(Boolean);
+
+  const entries = filterWcs2027LookupRows(wcs2027LookupRows, '', activeGroup)
+    .map(person => {
+      const ranking = byId.get(normalizeLookupValue(person.player_id)) || null;
+      const names = [person.name, person.player_id, ranking?.name, ranking?.region, identityFor(person.player_id)?.real_name];
+      const text = names.map(normalizeLookupValue).join(' ');
+      return { person, ranking, matches: searchTerms.every(term => text.includes(term)) };
+    })
+    .filter(entry => entry.matches)
+    .sort((a, b) => {
+      const numericRank = entry => {
+        const value = Number(entry.ranking?.rank);
+        return Number.isFinite(value) && value > 0 ? value : Number.POSITIVE_INFINITY;
+      };
+      return numericRank(a) - numericRank(b)
+        || a.person.rank - b.person.rank
+        || a.person.name.localeCompare(b.person.name, 'zh-Hant');
+    });
+
+  if (!entries.length) {
+    root.innerHTML = `<div class="empty-state"><strong>${esc(GROUP_LABELS[activeGroup])}沒有符合搜尋條件的 WCS 2027 資格選手</strong><span>請更換搜尋條件或切換組別。</span></div>`;
+    return;
   }
+
+  const rows = entries.map(({ person, ranking }) => {
+    // Invitee name is known even when the user has no current ranking entry.
+    const row = { ...(ranking || {}), player_id: person.player_id, name: person.name };
+    const rank = ranking?.rank ?? '—';
+    const points = ranking?.points ?? '—';
+    return `<tr>
+      <td><span class="rank-badge">${esc(rank)}</span></td>
+      <td>${playerNameHtml(row)}</td>
+      <td>${esc(points)}${points === '—' ? '' : ' pt'}</td>
+      <td>${esc(GROUP_LABELS[activeGroup])}</td>
+      <td>${esc(ranking?.region || '—')}</td>
+      <td class="detail-col">${detailButton(person.player_id)}</td>
+    </tr>`;
+  }).join('');
+
+  root.innerHTML = `<p class="wcs2027-ranking-note">WCS 2027 已獲邀選手｜${esc(GROUP_LABELS[activeGroup])} ${entries.length} 位 <small>未列入官方排名者以「—」顯示</small></p>
+    <div class="table-scroll">
+      <table class="ranking-table">
+        <thead><tr><th>排名</th><th>玩家</th><th>得分</th><th>組別</th><th>地區</th><th aria-label="詳細資料"></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  bindDetailButtons();
 }
 
 function showLookupMessage(title, message) {
@@ -225,7 +256,7 @@ function showLookupCandidates(query, candidates) {
 async function handlePlayerLookup(event) {
   event.preventDefault();
   if (wcs2027LookupEnabled()) {
-    await renderWcs2027Lookup();
+    renderRanking();
     return;
   }
   const input = document.getElementById('playerIdInput');
@@ -296,7 +327,7 @@ async function handlePlayerLookup(event) {
         item.classList.toggle('active', active);
         item.setAttribute('aria-selected', active ? 'true' : 'false');
       });
-      if (wcs2027LookupEnabled()) void renderWcs2027Lookup();
+      // In qualification mode, the original ranking tabs select Junior/Senior/Master.
     });
   });
 
@@ -310,17 +341,29 @@ async function handlePlayerLookup(event) {
   const filter = document.getElementById('wcs2027OnlyFilter');
   const input = form.querySelector('#playerIdInput');
   const hint = document.getElementById('playerLookupHint');
+  const wcsHint = document.getElementById('wcs2027LookupHint');
+  const groupTabs = document.querySelector('.lookup-group-tabs');
   filter?.addEventListener('change', () => {
-    if (hint) hint.hidden = filter.checked;
-    if (input) input.placeholder = filter.checked ? '搜尋 WCS 2027 姓名 / PTCG ID' : '姓名 / 暱稱 / PTCG ID';
-    void renderWcs2027Lookup();
+    const checked = filter.checked;
+    if (hint) hint.hidden = checked;
+    if (wcsHint) wcsHint.hidden = !checked;
+    if (groupTabs) groupTabs.hidden = checked;
+    if (input) input.placeholder = checked ? '搜尋 WCS 2027 姓名 / PTCG ID' : '姓名 / 暱稱 / PTCG ID';
+    if (!checked) {
+      updateRankingModeButtons();
+      renderRanking();
+      return;
+    }
+    renderRanking();
+    void loadWcs2027LookupRows()
+      .then(() => { if (wcs2027LookupEnabled()) renderRanking(); })
+      .catch(error => {
+        console.warn('WCS 2027 資格查詢失敗', error);
+        if (wcs2027LookupEnabled()) renderRanking();
+      });
   });
   input?.addEventListener('input', () => {
-    if (wcs2027LookupEnabled()) void renderWcs2027Lookup();
-  });
-  document.getElementById('wcs2027LookupList')?.addEventListener('click', event => {
-    const button = event.target.closest?.('[data-wcs2027-player-id]');
-    if (button) void openPlayerModal(button.dataset.wcs2027PlayerId);
+    if (wcs2027LookupEnabled()) renderRanking();
   });
 })();
 
