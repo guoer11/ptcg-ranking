@@ -55,6 +55,11 @@ function worldCutLineRow(row, nextRow) {
 }
 
 renderRanking = function renderRankingV04() {
+  // In WCS 2027 qualification mode, reuse the same ranking table instead of a second list.
+  if (typeof wcs2027LookupEnabled === 'function' && wcs2027LookupEnabled()) {
+    renderWcs2027RankingTable();
+    return;
+  }
   const allRows = rankingData.groups[activeGroup] || [];
   const rows = filteredRows();
 
