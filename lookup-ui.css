@@ -96,7 +96,7 @@
   }
 }
 
-/* v2.9.0: WCS 2027 qualification search, isolated from the existing player badges. */
+/* v2.9.0: Filter the original ranking table, without a separate player list. */
 .wcs2027-lookup-filter {
   display: flex;
   align-items: center;
@@ -119,67 +119,34 @@
   flex: 0 0 17px;
   accent-color: #17765f;
 }
-.wcs2027-lookup-panel {
-  margin-top: 11px;
-  padding: 11px;
-  border: 1px solid #dae5e2;
-  border-radius: 12px;
-  background: #fff;
+.lookup-group-tabs[hidden],
+.wcs2027-lookup-hint[hidden],
+.ranking-mode-toolbar[hidden] { display: none !important; }
+.wcs2027-lookup-hint {
+  margin: 9px 1px 0;
+  font-size: 12px;
+  color: #526575;
+  line-height: 1.5;
 }
-.wcs2027-lookup-panel[hidden] { display: none !important; }
-.wcs2027-lookup-head {
+.wcs2027-ranking-note {
   display: flex;
+  align-items: baseline;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
   gap: 6px;
-  font-size: 13px;
-}
-.wcs2027-lookup-head span { color: #56746c; font-size: 12px; }
-.wcs2027-lookup-note { margin: 7px 0 10px; color: #667085; font-size: 11px; }
-.wcs2027-lookup-list {
-  display: grid;
-  gap: 6px;
-  max-height: 310px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-}
-.wcs2027-lookup-person {
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  gap: 12px;
-  min-height: 55px;
-  padding: 9px 11px;
-  border: 1px solid #e5e9ee;
+  margin: 0 0 10px;
+  padding: 8px 10px;
   border-radius: 9px;
-  background: #fcfdfd;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
+  background: #f2faf8;
+  color: #1b6757;
+  font-size: 12px;
+  font-weight: 750;
 }
-.wcs2027-lookup-person:hover,
-.wcs2027-lookup-person:focus-visible { border-color: #6fb6a5; background: #f5fbf8; }
-.wcs2027-lookup-person-main { display: grid; gap: 3px; min-width: 0; }
-.wcs2027-lookup-person-main strong { font-size: 14px; color: #162033; }
-.wcs2027-lookup-person-main small { font-size: 11px; color: #667085; }
-.wcs2027-lookup-person-meta {
-  display: grid;
-  gap: 3px;
-  flex: 0 0 auto;
-  color: #475467;
-  text-align: right;
+.wcs2027-ranking-note small {
+  color: #667085;
   font-size: 11px;
+  font-weight: 400;
 }
-.wcs2027-lookup-person-meta strong { color: #197259; }
-.wcs2027-lookup-empty { padding: 12px 5px; color: #667085; font-size: 12px; }
 @media (max-width: 640px) {
-  .wcs2027-lookup-filter { font-size: 12px; padding: 9px; }
-  .wcs2027-lookup-list { max-height: 265px; }
-  .wcs2027-lookup-person { gap: 8px; padding: 9px; }
-  .wcs2027-lookup-person-main strong { font-size: 13px; }
-  .wcs2027-lookup-person-meta { font-size: 10px; }
+  .wcs2027-lookup-filter { padding: 9px; font-size: 12px; }
+  .wcs2027-ranking-note { align-items: flex-start; font-size: 11px; }
 }
