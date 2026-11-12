@@ -87,6 +87,99 @@ function findLookupCandidates(raw) {
     .slice(0, 50);
 }
 
+// WCS 2027 filter reads the separately maintained, public invitation list.
+// Do not limit results to the official points ranking: some invitees are unranked.
+let wcs2027LookupRows = null;
+let wcs2027LookupPending = null;
+let wcs2027LookupRequest = 0;
+
+function wcs2027LookupEnabled() {
+  return Boolean(document.getElementById('wcs2027OnlyFilter')?.checked);
+}
+
+function loadWcs2027LookupRows() {
+  if (wcs2027LookupRows) return Promise.resolve(wcs2027LookupRows);
+  if (!wcs2027LookupPending) {
+    wcs2027LookupPending = fetch('data/wcs_2027_invites.json?v=2.9.0-r1', { cache: 'no-store' })
+      .then(response => {
+        if (!response.ok) throw new Error('資格名單 HTTP ' + response.status);
+        return response.json();
+      })
+      .then(payload => {
+        if (!payload?.players || typeof payload.players !== 'object') throw new Error('資格名單格式錯誤');
+        const groupOrder = { Junior: 0, Senior: 1, Master: 2 };
+        wcs2027LookupRows = Object.entries(payload.players)
+          .filter(([id, info]) => /^tw\d+$/i.test(id) && info && typeof info === 'object' && info.status === 'invited')
+          .map(([id, info]) => ({
+            player_id: id.toLowerCase(),
+            name: String(info.name || id),
+            group: String(info.group || ''),
+            place: String(info.place || '已獲邀'),
+            rank: Number(info.rank || 999)
+          }))
+          .sort((a, b) => (groupOrder[a.group] ?? 9) - (groupOrder[b.group] ?? 9)
+            || a.rank - b.rank
+            || a.name.localeCompare(b.name, 'zh-Hant'));
+        return wcs2027LookupRows;
+      })
+      .catch(error => {
+        wcs2027LookupPending = null; // Allow retry after a temporary network error.
+        throw error;
+      });
+  }
+  return wcs2027LookupPending;
+}
+
+function filterWcs2027LookupRows(rows, query = '', group = lookupGroup) {
+  const key = normalizeLookupValue(query);
+  return (rows || []).filter(candidate =>
+    (group === 'all' || candidate.group === group)
+    && (!key || normalizeLookupValue(candidate.name).includes(key)
+      || normalizeLookupValue(candidate.player_id).includes(key))
+  );
+}
+
+async function renderWcs2027Lookup() {
+  const panel = document.getElementById('wcs2027LookupResults');
+  const count = document.getElementById('wcs2027LookupCount');
+  const list = document.getElementById('wcs2027LookupList');
+  if (!panel || !count || !list) return;
+  panel.hidden = !wcs2027LookupEnabled();
+  const request = ++wcs2027LookupRequest;
+  if (panel.hidden) return;
+
+  if (!wcs2027LookupRows) {
+    count.textContent = '讀取名單中…';
+    list.innerHTML = '<div class="wcs2027-lookup-empty">正在載入資格選手…</div>';
+  }
+
+  try {
+    const rows = await loadWcs2027LookupRows();
+    if (request !== wcs2027LookupRequest || !wcs2027LookupEnabled()) return;
+    const query = document.getElementById('playerIdInput')?.value || '';
+    const matched = filterWcs2027LookupRows(rows, query);
+    count.textContent = '找到 ' + matched.length + ' 位';
+    list.innerHTML = matched.length
+      ? matched.map(candidate => `
+        <button class="wcs2027-lookup-person" type="button" data-wcs2027-player-id="${esc(candidate.player_id)}">
+          <span class="wcs2027-lookup-person-main">
+            <strong>${esc(candidate.name)}</strong>
+            <small>${esc(candidate.player_id)}</small>
+          </span>
+          <span class="wcs2027-lookup-person-meta">
+            <span>${esc(LOOKUP_GROUP_LABELS[candidate.group] || candidate.group)}</span>
+            <strong>${esc(candidate.place)}</strong>
+          </span>
+        </button>`).join('')
+      : '<div class="wcs2027-lookup-empty">沒有符合條件的 WCS 2027 資格選手，請換個組別、姓名或 PTCG ID。</div>';
+  } catch (error) {
+    if (request !== wcs2027LookupRequest || !wcs2027LookupEnabled()) return;
+    console.warn('WCS 2027 資格查詢失敗', error);
+    count.textContent = '無法載入';
+    list.innerHTML = '<div class="wcs2027-lookup-empty">資格名單載入失敗，請重新勾選再試一次。</div>';
+  }
+}
+
 function showLookupMessage(title, message) {
   openModalShell();
   modalTitle.textContent = title;
@@ -131,6 +224,10 @@ function showLookupCandidates(query, candidates) {
 
 async function handlePlayerLookup(event) {
   event.preventDefault();
+  if (wcs2027LookupEnabled()) {
+    await renderWcs2027Lookup();
+    return;
+  }
   const input = document.getElementById('playerIdInput');
   const raw = input?.value.trim() || '';
   if (!raw) return;
@@ -199,6 +296,7 @@ async function handlePlayerLookup(event) {
         item.classList.toggle('active', active);
         item.setAttribute('aria-selected', active ? 'true' : 'false');
       });
+      if (wcs2027LookupEnabled()) void renderWcs2027Lookup();
     });
   });
 
@@ -208,6 +306,22 @@ async function handlePlayerLookup(event) {
   const form = oldForm.cloneNode(true);
   oldForm.replaceWith(form);
   form.addEventListener('submit', handlePlayerLookup);
+
+  const filter = document.getElementById('wcs2027OnlyFilter');
+  const input = form.querySelector('#playerIdInput');
+  const hint = document.getElementById('playerLookupHint');
+  filter?.addEventListener('change', () => {
+    if (hint) hint.hidden = filter.checked;
+    if (input) input.placeholder = filter.checked ? '搜尋 WCS 2027 姓名 / PTCG ID' : '姓名 / 暱稱 / PTCG ID';
+    void renderWcs2027Lookup();
+  });
+  input?.addEventListener('input', () => {
+    if (wcs2027LookupEnabled()) void renderWcs2027Lookup();
+  });
+  document.getElementById('wcs2027LookupList')?.addEventListener('click', event => {
+    const button = event.target.closest?.('[data-wcs2027-player-id]');
+    if (button) void openPlayerModal(button.dataset.wcs2027PlayerId);
+  });
 })();
 
 (function setupPairingNav() {
