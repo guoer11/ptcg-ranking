@@ -30,9 +30,16 @@ def main() -> None:
     if not isinstance(players, dict) or not players:
         raise RuntimeError("Plain-text identity payload is empty; refusing to sync")
 
-    # Apply encrypted manual corrections after scraping, before syncing and encryption.
-    overrides_path = Path("data/player_identity_overrides.enc.json")
-    if overrides_path.exists():
+    # Apply encrypted manual corrections after scraping, before syncing.
+    # Keep additions in a separate encrypted file so older overrides remain unchanged.
+    override_paths = [
+        Path("data/player_identity_overrides.enc.json"),
+        Path("data/player_identity_20261114_additions.enc.json"),
+    ]
+    applied = False
+    for overrides_path in override_paths:
+        if not overrides_path.exists():
+            continue
         with TemporaryDirectory() as directory:
             plain_path = Path(directory) / "overrides.json"
             decrypt_for_deploy(overrides_path, plain_path)
@@ -41,6 +48,8 @@ def main() -> None:
             current = dict(players.get(player_id) or {})
             current.update(correction)
             players[player_id] = current
+        applied = True
+    if applied:
         payload["count"] = len(players)
         source.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
