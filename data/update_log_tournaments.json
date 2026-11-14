@@ -2,6 +2,20 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-11-15T00:06:11+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-11-15T00:06:11+08:00",
+      "summary": "新增 1 場；狀態變更 1 場；報名期間更新 1 場",
+      "details": [
+        "新增｜#72095｜2026-11-22｜拉比卡牌｜臺北市｜超級球｜52 人",
+        "狀態｜#71977｜2026-12-05｜卡卡邦尼樂遊館｜新北市｜active → unavailable",
+        "報名期間｜#72095｜2026-11-22｜拉比卡牌｜臺北市｜— → 10.19.2026 - 11.11.2026 12:00"
+      ],
+      "notified": true,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "tournaments-2026-11-14T23:49:40+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -40,16 +54,6 @@
       "details": [],
       "notified": false,
       "trigger_source": "主排程（Supabase）"
-    },
-    {
-      "id": "tournaments-2026-11-14T06:01:36+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-11-14T06:01:36+08:00",
-      "summary": "例行檢查完成；賽事可見內容無變動",
-      "details": [],
-      "notified": false,
-      "trigger_source": "GitHub 備援排程"
     }
   ]
 }
