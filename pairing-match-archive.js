@@ -20,22 +20,57 @@
   const message=(text,error=false)=>{if($("matchArchiveStatus")){$("matchArchiveStatus").textContent=text;$("matchArchiveStatus").dataset.error=error?"1":"0";}};
   const archiveTitle=a=>(a.title||"TCG Meister")+" · TID "+a.tid+
     (a.parent_tid?" (Day 2)":"")+" · "+(a.final_seen_at?"最終排名已封存":a.last_round?"Round "+a.last_round:"等待官方資料");
+  const normalizedId=p=>String(p?.id||"").toLowerCase();
+  const realName=p=>view?.context?.real_names?.[normalizedId(p)]||"";
+  const deckInfo=p=>view?.context?.decks?.[normalizedId(p)]||{};
+  const deckTerm=p=>[deckInfo(p)?.current?.deck,deckInfo(p)?.previous?.deck].filter(Boolean).join(" ");
   function currentMatchRows() {
     if(!view?.selected?.matches)return [];
     const term=$("matchArchiveSearch")?.value.trim().toLowerCase()||"";
-    return view.selected.matches.filter(row=>[row.table,row.a?.name,row.a?.id,row.b?.name,row.b?.id]
+    return view.selected.matches.filter(row=>[row.table,
+      row.a?.name,row.a?.id,realName(row.a),deckTerm(row.a),
+      row.b?.name,row.b?.id,realName(row.b),deckTerm(row.b)]
       .some(t=>String(t||"").toLowerCase().includes(term)));
   }
   function standingRows() {
     const term=$("matchArchiveSearch")?.value.trim().toLowerCase()||"";
-    return (view?.final?.standings||[]).filter(row=>[row.rank,row.name,row.id]
-      .some(t=>String(t||"").toLowerCase().includes(term)));
+    return (view?.final?.standings||[]).filter(row=>[
+      row.rank,row.name,row.id,realName(row),deckTerm(row)
+    ].some(t=>String(t||"").toLowerCase().includes(term)));
   }
-  const playerHTML=p=>!p?"<span>輪空／未公布</span>":
-    `<strong>${escape(p.name||p.id)}</strong>${p.name?`<small>${escape(p.id)}</small>`:""}`;
+  const shortDate=iso=>{
+    const d=new Date(String(iso||""));
+    return Number.isNaN(d.valueOf())?"":d.toLocaleDateString("zh-TW",{timeZone:"Asia/Taipei"});
+  };
+  const deckHTML=p=>{
+    const deck=deckInfo(p);
+    if(deck.current?.deck)return `<span class="archive-deck archive-deck-current"><b>本場已記錄牌組</b>${escape(deck.current.deck)}${deck.current.round?`<small>記錄於 Round ${escape(deck.current.round)}；不代表每輪都使用相同牌組</small>`:""}</span>`;
+    if(deck.previous?.deck)return `<span class="archive-deck archive-deck-history"><b>其他場歷史參考</b>${escape(deck.previous.deck)}
+      <small>${escape(shortDate(deck.previous.date))} · TID ${escape(deck.previous.tid)}（非本場確認）</small></span>`;
+    return "";
+  };
+  const playerHTML=p=>{
+    if(!p)return "<span>輪空／未公布</span>";
+    const id=normalizedId(p),real=realName(p),official=String(p.name||"");
+    const primary=real||official||id;
+    return `<strong>${escape(primary)}</strong>
+      ${primary!==id?`<small>${escape(id)}</small>`:""}
+      ${real&&official&&real!==official?`<small>官方名稱：${escape(official)}</small>`:""}
+      ${deckHTML(p)}`;
+  };
   const score=p=>{
     const r=p?.record;
-    return r?`${escape(r.wins)}/${escape(r.losses)}/${escape(r.ties)} · ${escape(r.points)}pt`:"—";
+    if(!r)return "—";
+    if(r.points!==null&&r.points!==undefined&&Number.isFinite(Number(r.points)))
+      return `${escape(r.points)} pt`;
+    if([r.wins,r.losses,r.ties].every(v=>Number.isFinite(Number(v))))
+      return `${escape(r.wins)}/${escape(r.losses)}/${escape(r.ties)}`;
+    return "—";
+  };
+  const observationHTML=row=>{
+    const item=view?.context?.observations?.[`${selectedRound}:${row.table}`];
+    if(!item?.deck_a&&!item?.deck_b)return "";
+    return `<div class="archive-pair-observation">該桌曾記錄：${escape([item.deck_a,item.deck_b].filter(Boolean).join(" ／ "))}<small>只知道這桌的牌組，尚未確認各牌組分別屬於哪位玩家</small></div>`;
   };
   function renderRows() {
     const root=$("matchArchiveRows");
@@ -45,7 +80,7 @@
       const rows=standingRows();
       if(!view.final){root.innerHTML='<p class="archive-empty">尚未成功封存最終排名。</p>';return;}
       root.innerHTML=`<p class="archive-subtitle">最終排名 · ${rows.length} 位${term?"（篩選結果）":""} · ${escape(view.final.captured_at||"")}</p>
-        <div class="archive-scroll"><table><thead><tr><th>名次</th><th>選手</th><th>積分</th></tr></thead><tbody>
+        <div class="archive-scroll"><table><thead><tr><th>名次</th><th>選手／歷史牌組</th><th>積分</th></tr></thead><tbody>
         ${rows.map(p=>`<tr><td>${escape(p.rank)}</td><td>${playerHTML(p)}</td><td>${p.points==null?"—":escape(p.points)}</td></tr>`).join("")}
         </tbody></table></div>`;
       return;
@@ -53,8 +88,9 @@
     if(!view.selected){root.innerHTML='<p class="archive-empty">該輪尚無封存資料。</p>';return;}
     const rows=currentMatchRows();
     root.innerHTML=`<p class="archive-subtitle">Round ${escape(selectedRound)} · ${rows.length} 桌${term?"（篩選結果）":""} · ${escape(view.selected.captured_at||"")}</p>
-      <div class="archive-scroll"><table><thead><tr><th>桌號</th><th>選手 A</th><th>選手 B</th><th>對戰前戰績</th></tr></thead><tbody>
-      ${rows.map(r=>`<tr><td>${escape(r.table)}</td><td>${playerHTML(r.a)}</td><td>${playerHTML(r.b)}</td><td><small>${score(r.a)}</small><small>${score(r.b)}</small></td></tr>`).join("")}
+      <div class="archive-scroll"><table><thead><tr><th>桌號</th><th>選手 A／歷史牌組</th><th>選手 B／歷史牌組</th><th>對戰前積分（TtlScore）</th></tr></thead><tbody>
+      ${rows.map(r=>`<tr><td>${escape(r.table)}</td><td>${playerHTML(r.a)}</td><td>${playerHTML(r.b)}</td>
+        <td><small>A：${score(r.a)}</small><small>B：${score(r.b)}</small>${observationHTML(r)}</td></tr>`).join("")}
       </tbody></table></div>`;
   }
   async function loadSelected() {
