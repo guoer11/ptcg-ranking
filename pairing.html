@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="pairing-deck-scout.css?v=1.10.1-r1" />
   <link rel="stylesheet" href="pairing-odds.css?v=1.11.0-r1" />
   <link rel="stylesheet" href="pairing-history.css?v=2.6.0-r1" />
+  <link rel="stylesheet" href="pairing-match-archive.css?v=2.10.0-r1" />
   <link id="ptcgPlayerBadgesCss" rel="stylesheet" href="player-badges.css?v=2.8.0-r5" />
 </head>
 <body>
@@ -62,6 +63,26 @@
             <div id="pairingHistoryList" class="pairing-history-list"><div class="pairing-history-empty">展開後讀取歷史賽事。</div></div>
             <div id="pairingHistoryDetail" class="pairing-history-detail"></div>
           </details>
+          <details id="matchArchive" class="pairing-history-panel">
+            <summary>官方對戰與排名封存</summary>
+            <p class="archive-note">開始追蹤時自動登記整場賽事，後端每 5 分鐘保存已公布的各輪配對與最終排名。官方網站關閉後，仍可讀取已成功封存的資料；尚未擷取到的輪次無法事後補回。</p>
+            <div class="archive-controls">
+              <label>歷史賽事<select id="matchArchiveEvent" class="search-input" aria-label="歷史賽事"></select></label>
+              <label>對戰輪次<select id="matchArchiveRound" class="search-input" aria-label="封存輪次"></select></label>
+              <button id="matchArchiveRefresh" class="secondary-btn" type="button">更新封存清單</button>
+            </div>
+            <label style="display:block;margin-top:10px;font-size:12px;">搜尋桌號／玩家姓名／PTCG ID
+              <input id="matchArchiveSearch" class="search-input" type="search" placeholder="輸入桌號、玩家姓名或 ID" autocomplete="off" style="width:100%;box-sizing:border-box;margin-top:5px;" />
+            </label>
+            <div id="matchArchiveStatus" role="status" aria-live="polite">展開後讀取封存紀錄。</div>
+            <div id="matchArchiveRows"><p class="archive-empty">目前尚未載入封存賽事。</p></div>
+            <div class="archive-linking">
+              <label>大師球 Day 2 關聯 Day 1 賽事
+                <select id="matchArchiveLinkDay1" class="search-input"><option value="">Day 1（不設定）</option></select>
+              </label>
+              <button type="button" class="secondary-btn" id="matchArchiveLinkButton">關聯 Day 1</button>
+            </div>
+          </details>
         </section>
       </section>
       <aside><section class="pairing-watch-card"><div class="pairing-watch-head"><strong>通知與姓名</strong></div><div id="pairingAuthCopy" class="pairing-watch-copy">正在確認登入狀態…</div><div class="pairing-watch-copy" style="margin-top:8px;">配對頁本身只提供 PTCG ID。登入你目前網站的授權帳號後，系統會用現有私人資料補上玩家真實姓名。</div></section></aside>
@@ -97,6 +118,7 @@
   <script src="pairing-deck-scout.js?v=1.14.2-r5" defer></script>
   <script id="ptcgPairingV222R4" src="pairing-v222-r4.js?v=2.7.0-r2" defer></script>
   <script src="pairing-history.js?v=2.6.0-r1" defer></script>
+  <script src="pairing-match-archive.js?v=2.10.0-r1" defer></script>
   <script src="site-account-ui.js?v=1.9.2-r1" defer></script>
   <script>
     document.addEventListener('click', async event => {
