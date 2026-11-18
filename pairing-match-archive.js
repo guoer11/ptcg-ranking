@@ -60,7 +60,7 @@
   };
   const score=p=>{
     const r=p?.record;
-    if(!r)return "—";
+    if(!r)return selectedRound==="1"?"首輪（無前輪積分）":"—";
     if(r.points!==null&&r.points!==undefined&&Number.isFinite(Number(r.points)))
       return `${escape(r.points)} pt`;
     if([r.wins,r.losses,r.ties].every(v=>Number.isFinite(Number(v))))
