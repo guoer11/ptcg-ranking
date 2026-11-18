@@ -8,7 +8,7 @@ const fn=fs.readFileSync('supabase/functions/ptcg-pairing-archive/index.ts','utf
 const ui=fs.readFileSync('pairing-match-archive.js','utf8');
 assert.match(page,/id="matchArchive"/);
 assert.match(page,/pairing-match-archive\.js\?v=2\.10\.0-r[12]/);
-assert.match(page,/pairing-match-archive\.css\?v=2\.10\.0-r1/);
+assert.match(page,/pairing-match-archive\.css\?v=2\.10\.0-r[12]/);
 assert.match(deploy,/pairing-match-archive\.js/);
 assert.match(deploy,/node --check pairing-match-archive\.js/);
 assert.match(fn,/requireMember\(req\)/,'archive reads require auth');
