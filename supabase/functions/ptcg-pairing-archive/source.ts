@@ -5,9 +5,17 @@ const LIMIT_PAGES = 80;
 const ID = /\btw\d{6,12}\b/i;
 const clean = (value:unknown) => String(value ?? "").replace(/\u00a0/g," ").replace(/\s+/g," ").trim();
 const idOf = (text:unknown) => ID.exec(clean(text))?.[0].toLowerCase() || "";
-const scoreOf = (text:unknown) => {
-  const m = clean(text).match(/\b(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)\s*\((\d+)\)/);
-  return m ? { wins:Number(m[1]), losses:Number(m[2]), ties:Number(m[3]), points:Number(m[4]) } : null;
+// Meister's TtlScore is a numeric value in the cell following each player's ID.
+// It is *not* a wins/losses/ties record. Never infer match results from this value.
+const ttlScoreAfterId = (cells:string[],id:string):number|null => {
+  const at=cells.findIndex(c=>idOf(c)===id);
+  if(at<0)return null;
+  for(let i=at+1;i<cells.length;i++) {
+    if(idOf(cells[i]))break;
+    const raw=clean(cells[i]);
+    if(/^-?\d+(?:\.\d+)?$/.test(raw))return Number(raw);
+  }
+  return null;
 };
 const nameOf = (cell:string,id:string) =>
   clean(cell.replace(new RegExp(id,"ig"),"")
@@ -85,7 +93,7 @@ async function allPages(tid:string,round:number) {
   return {rows:pages.flatMap(p=>p!.rows),title:first.title,page_count:max};
 }
 function parseRows(rows:string[][]) {
-  const tables=new Map<string,Map<string,{id:string;name:string;record:ReturnType<typeof scoreOf>;opponent:string}>>();
+  const tables=new Map<string,Map<string,{id:string;name:string;record:{points:number}|null;opponent:string;opponentRecord:{points:number}|null}>>();
   const seenAcross=new Map<string,string>();
   let bye=0;
   for(const cells of rows) {
@@ -96,12 +104,17 @@ function parseRows(rows:string[][]) {
     const id=idOf(idCell);
     const ids=[...new Set(cells.slice(1).flatMap(c=>[...c.matchAll(/\btw\d{6,12}\b/ig)].map(m=>m[0].toLowerCase())))];
     const other=ids.find(x=>x!==id)||"";
-    const score=cells.map(scoreOf).find(Boolean)||null;
+    const score=ttlScoreAfterId(cells,id);
+    const opponentScore=other?ttlScoreAfterId(cells,other):null;
     const group=tables.get(table)||new Map();
-    const row={id,name:nameOf(idCell,id),record:score,opponent:other};
+    const row={id,name:nameOf(idCell,id),
+      record:score===null?null:{points:score},
+      opponent:other,opponentRecord:opponentScore===null?null:{points:opponentScore}};
     if(group.has(id)) {
       const old=group.get(id)!;
       if(old.opponent && other && old.opponent!==other)throw new Error("配對內容正在變動");
+      if(!old.record&&row.record)old.record=row.record;
+      if(!old.opponentRecord&&row.opponentRecord)old.opponentRecord=row.opponentRecord;
     } else {
       if(seenAcross.has(id)&&seenAcross.get(id)!==table)throw new Error("同一玩家出現於不同桌");
       seenAcross.set(id,table);group.set(id,row);
@@ -121,7 +134,7 @@ function parseRows(rows:string[][]) {
     const a=playerRows[0];
     if(!a)continue;
     const b=playerRows[1] || (a.opponent
-      ? {id:a.opponent,name:"",record:null,opponent:a.id} : null);
+      ? {id:a.opponent,name:"",record:a.opponentRecord,opponent:a.id,opponentRecord:a.record} : null);
     matches.push({table:Number(table),a:{id:a.id,name:a.name,record:a.record},
       b:b?{id:b.id,name:b.name,record:b.record}:null,
       kind:b?"match":"unpaired"});
@@ -140,10 +153,6 @@ export async function publishedRounds(tid:string) {
   const rounds=[...new Set([...event.raw.matchAll(/\bkno=(\d+)/gi)]
     .map(m=>Number(m[1])).filter(n=>Number.isInteger(n)&&n>=1&&n<=40))].sort((a,b)=>a-b);
   return {rounds,title:event.title};
-}
-export async function sampleRound(tid:string,round:number) {
-  const page=await allPages(tid,round);
-  return page.rows.slice(0,15);
 }
 export async function captureRound(tid:string,round:number) {
   const page=await allPages(tid,round);
