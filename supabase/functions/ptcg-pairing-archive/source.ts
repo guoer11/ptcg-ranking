@@ -141,6 +141,10 @@ export async function publishedRounds(tid:string) {
     .map(m=>Number(m[1])).filter(n=>Number.isInteger(n)&&n>=1&&n<=40))].sort((a,b)=>a-b);
   return {rounds,title:event.title};
 }
+export async function sampleRound(tid:string,round:number) {
+  const page=await allPages(tid,round);
+  return page.rows.filter(c=>/^\\d+$/.test(clean(c[0]))).slice(0,3);
+}
 export async function captureRound(tid:string,round:number) {
   const page=await allPages(tid,round);
   const parsed=parseRows(page.rows);
