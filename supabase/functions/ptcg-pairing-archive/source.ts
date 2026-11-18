@@ -143,7 +143,7 @@ export async function publishedRounds(tid:string) {
 }
 export async function sampleRound(tid:string,round:number) {
   const page=await allPages(tid,round);
-  return page.rows.filter(c=>/^\\d+$/.test(clean(c[0]))).slice(0,3);
+  return page.rows.slice(0,15);
 }
 export async function captureRound(tid:string,round:number) {
   const page=await allPages(tid,round);
