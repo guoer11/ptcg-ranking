@@ -1,8 +1,8 @@
 {
   "season": "2026-27",
-  "generated_at": "2026-11-18T21:03:38+08:00",
+  "generated_at": "2026-11-19T00:07:39+08:00",
   "great_window_days": 60,
-  "great_cutoff": "2026-09-20",
+  "great_cutoff": "2026-09-21",
   "players": {
     "tw00057543": {
       "wcs_2026": true,
@@ -185,14 +185,6 @@
         "latest_date": "2026-09-26"
       }
     },
-    "tw12134806": {
-      "great": {
-        "best_rank": 2,
-        "champion_count": 0,
-        "runner_up_count": 1,
-        "latest_date": "2026-09-20"
-      }
-    },
     "tw12360786": {
       "wcs_2026": true
     },
@@ -265,8 +257,8 @@
     "tw22529091": {
       "wcs_2026": true,
       "great": {
-        "best_rank": 1,
-        "champion_count": 1,
+        "best_rank": 2,
+        "champion_count": 0,
         "runner_up_count": 1,
         "latest_date": "2026-11-14"
       }
@@ -420,14 +412,6 @@
         "latest_date": "2026-11-08"
       }
     },
-    "tw35717087": {
-      "great": {
-        "best_rank": 2,
-        "champion_count": 0,
-        "runner_up_count": 1,
-        "latest_date": "2026-09-20"
-      }
-    },
     "tw36271539": {
       "great": {
         "best_rank": 2,
@@ -455,14 +439,6 @@
     },
     "tw37208259": {
       "wcs_2026": true
-    },
-    "tw37286261": {
-      "great": {
-        "best_rank": 2,
-        "champion_count": 0,
-        "runner_up_count": 1,
-        "latest_date": "2026-09-20"
-      }
     },
     "tw37556303": {
       "wcs_2026": true
@@ -701,18 +677,10 @@
     },
     "tw53723254": {
       "great": {
-        "best_rank": 1,
-        "champion_count": 1,
+        "best_rank": 2,
+        "champion_count": 0,
         "runner_up_count": 1,
         "latest_date": "2026-10-24"
-      }
-    },
-    "tw53917462": {
-      "great": {
-        "best_rank": 1,
-        "champion_count": 1,
-        "runner_up_count": 0,
-        "latest_date": "2026-09-20"
       }
     },
     "tw54152249": {
@@ -795,8 +763,8 @@
     },
     "tw58176881": {
       "great": {
-        "best_rank": 1,
-        "champion_count": 1,
+        "best_rank": 2,
+        "champion_count": 0,
         "runner_up_count": 1,
         "latest_date": "2026-10-11"
       }
@@ -947,14 +915,6 @@
     "tw74390718": {
       "wcs_2026": true
     },
-    "tw74697953": {
-      "great": {
-        "best_rank": 2,
-        "champion_count": 0,
-        "runner_up_count": 1,
-        "latest_date": "2026-09-20"
-      }
-    },
     "tw75551324": {
       "wcs_2026": true,
       "great": {
@@ -1069,14 +1029,6 @@
         "latest_date": "2026-09-25"
       }
     },
-    "tw82119121": {
-      "great": {
-        "best_rank": 1,
-        "champion_count": 1,
-        "runner_up_count": 0,
-        "latest_date": "2026-09-20"
-      }
-    },
     "tw82272345": {
       "wcs_2026": true
     },
@@ -1119,7 +1071,7 @@
       "great": {
         "best_rank": 1,
         "champion_count": 1,
-        "runner_up_count": 2,
+        "runner_up_count": 1,
         "latest_date": "2026-11-01"
       }
     },
@@ -1171,7 +1123,7 @@
       "wcs_2026": true,
       "great": {
         "best_rank": 1,
-        "champion_count": 2,
+        "champion_count": 1,
         "runner_up_count": 0,
         "latest_date": "2026-11-01"
       }
@@ -1266,7 +1218,7 @@
       "great": {
         "best_rank": 1,
         "champion_count": 1,
-        "runner_up_count": 1,
+        "runner_up_count": 0,
         "latest_date": "2026-09-28"
       }
     },
