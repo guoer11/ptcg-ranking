@@ -20,3 +20,15 @@
 .archive-linking label{display:grid;gap:5px;font-size:12px;color:#475467;flex:1;min-width:180px}
 .archive-linking .search-input{min-width:0}
 @media(max-width:620px){.archive-controls{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.archive-controls label:first-child{grid-column:1/-1}.archive-controls>button{grid-column:1/-1}.archive-scroll{max-height:340px}}
+
+/* Scoped private overlays, preserving all legacy scout/history styles. */
+#matchArchive .archive-deck{display:block;margin-top:7px;padding:5px 7px;border-radius:6px;font-size:11px;line-height:1.55;overflow-wrap:anywhere}
+#matchArchive .archive-deck b{display:block;font-size:10px;margin-bottom:2px}
+#matchArchive .archive-deck small{display:block;font-size:10px;margin-top:3px}
+#matchArchive .archive-deck-current{color:#126451;background:#eaf7f0}
+#matchArchive .archive-deck-history{color:#825b14;background:#fff6df}
+#matchArchive .archive-pair-observation{margin-top:8px;padding:5px 6px;border-radius:6px;background:#f3f6fb;color:#44566d;font-size:10px;line-height:1.5;max-width:200px;overflow-wrap:anywhere}
+#matchArchive .archive-pair-observation small{color:#687789;margin-top:2px}
+#matchArchive .archive-scroll table{min-width:630px}
+#matchArchive .archive-scroll td:nth-child(2),#matchArchive .archive-scroll td:nth-child(3){min-width:155px}
+#matchArchive .archive-scroll td:last-child{min-width:95px}
