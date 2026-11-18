@@ -106,16 +106,19 @@ async function pollEvent(event:any) {
     const published=await publishedRounds(tid);
     title=published.title||title;
     const existingRound=Number(event.last_round||0);
-    const newRounds=published.rounds.filter(r=>r>existingRound).slice(0,3);
-    // Re-read the most recent already saved round once to catch late corrections.
-    const targetRounds=[...new Set([...newRounds,
-      newRounds.length===0 && existingRound>0?existingRound:0].filter(Boolean))];
-    // The original watch URL helps when the event page does not list Round links.
-    if(!targetRounds.length&&!existingRound) {
-      const start=Number(new URL(event.source_url).searchParams.get("kno")||1);
-      if(Number.isInteger(start)&&start>=1&&start<=40)
-        targetRounds.push(...Array.from({length:Math.min(start,3)},(_,i)=>i+1));
-    }
+    const saved=await db.from("ptcg_match_archive_rounds").select("round_no").eq("tid",tid);
+    if(saved.error)throw saved.error;
+    const savedRounds=new Set((saved.data||[]).map(r=>Number(r.round_no)));
+    const sourceStart=Number(new URL(event.source_url).searchParams.get("kno")||1);
+    // Revisit missing rounds on later polls: a temporarily unavailable Round 1
+    // must not be lost forever just because Round 2/3 was already saved.
+    const highest=Math.min(40,Math.max(0,existingRound,...published.rounds,
+      Number.isInteger(sourceStart)&&sourceStart>=1&&sourceStart<=40?sourceStart:1));
+    const candidates=Array.from({length:highest},(_,i)=>i+1)
+      .filter(round=>!savedRounds.has(round));
+    const newRounds=candidates.slice(0,3);
+    const targetRounds=[...newRounds];
+    if(!targetRounds.length&&existingRound>0)targetRounds.push(existingRound);
     let savedRound=existingRound;
     for(const r of targetRounds) {
       try {
