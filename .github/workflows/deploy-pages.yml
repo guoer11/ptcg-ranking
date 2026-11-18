@@ -62,6 +62,8 @@ jobs:
           node --check player-badges.js
           node --check wcs-2027-standalone.js
           node --check lookup-ui.js
+          node --check app.js
+          node tests/player-current-points.test.cjs
           node tests/wcs-2027-lookup.test.cjs
           node tests/pairing-scout-safety.test.cjs
 
