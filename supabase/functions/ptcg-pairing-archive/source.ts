@@ -10,7 +10,9 @@ const scoreOf = (text:unknown) => {
   return m ? { wins:Number(m[1]), losses:Number(m[2]), ties:Number(m[3]), points:Number(m[4]) } : null;
 };
 const nameOf = (cell:string,id:string) =>
-  clean(cell.replace(new RegExp(id,"ig"),"").replace(/\d+\s*\/\s*\d+\s*\/\s*\d+\s*\(\d+\)/g,""));
+  clean(cell.replace(new RegExp(id,"ig"),"")
+    .replace(/\(?\s*\d+\s*\/\s*\d+\s*\/\s*\d+\s*\(\d+\)\s*\)?/g,"")
+    .replace(/\(\s*\)/g,""));
 
 export const validTid = (s:string) => /^\d{1,12}$/.test(s) && s !== "3000442";
 export function sourceTid(raw:string) {
@@ -109,7 +111,12 @@ function parseRows(rows:string[][]) {
   const matches:any[]=[];
   for(const [table,group] of tables) {
     const playerRows=[...group.values()];
-    if(/^bye/i.test(table)) {bye+=playerRows.length;continue;}
+    if(/^(?:bye|輪空)$/i.test(table)) {
+      for(const player of playerRows)matches.push({table:"Bye",
+        a:{id:player.id,name:player.name,record:player.record},b:null,kind:"bye"});
+      bye+=playerRows.length;
+      continue;
+    }
     if(playerRows.length>2)throw new Error("單桌多於兩位選手，需重新擷取");
     const a=playerRows[0];
     if(!a)continue;
@@ -119,7 +126,7 @@ function parseRows(rows:string[][]) {
       b:b?{id:b.id,name:b.name,record:b.record}:null,
       kind:b?"match":"unpaired"});
   }
-  matches.sort((a,b)=>a.table-b.table);
+  matches.sort((a,b)=>(Number(a.table)||999999)-(Number(b.table)||999999));
   if(!matches.length) return {matches:[],player_count:0,table_count:0};
   // Most tournaments expose one row for each opponent. Do not treat a partly
   // published/partly paginated table as a complete permanent snapshot.
