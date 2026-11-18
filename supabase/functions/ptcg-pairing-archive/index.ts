@@ -264,13 +264,23 @@ Deno.serve(async(req:Request)=>{
         ["34","tw54152249 Yuhung (0/0/0 (0))","vs.","tw02559687 王品澤 (0/0/0 (0))"],
         ["Bye","tw94609089 tw94609089 (1/0/0 (3))"]
       ];
+      const ttlParsed=parseMatchRows([
+        ["Table","No.","Your name","TtlScore","Opponent","TtlScore"],
+        ["601","901","tw11111111","6","tw22222222","3"],
+        ["602","902","tw33333333","0","tw44444444","0"]
+      ]);
+      if(ttlParsed.matches[0]?.a?.record?.points!==6
+        || ttlParsed.matches[0]?.b?.record?.points!==3
+        || ttlParsed.matches[1]?.a?.record?.points!==0
+        || ttlParsed.matches[1]?.b?.record?.points!==0)
+        throw new Error("TtlScore parser selftest failed");
       const parsed=parseMatchRows(example);
       if(parsed.table_count!==2 || parsed.player_count!==3
         || parsed.matches[0]?.a?.name!=="王品澤"
         || parsed.matches.at(-1)?.kind!=="bye")
         throw new Error("archive parser selftest failed");
       return json({ok:true,tables:parsed.table_count,players:parsed.player_count,
-        bye:parsed.matches.at(-1)?.kind==="bye"});
+        bye:parsed.matches.at(-1)?.kind==="bye",ttl_score_test:true});
     }
     if(action==="repair-scores") {
       await requireCron(req);
