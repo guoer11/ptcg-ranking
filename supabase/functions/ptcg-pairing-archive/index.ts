@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
-import { sourceTid, validTid, officialUrl, publishedRounds, captureRound, captureFinal, fingerprint } from "./source.ts";
+import { sourceTid, validTid, officialUrl, publishedRounds, captureRound, captureFinal, fingerprint, parseMatchRows } from "./source.ts";
 
 const URL_BASE=Deno.env.get("SUPABASE_URL")!;
 const KEY=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -196,6 +196,22 @@ Deno.serve(async(req:Request)=>{
   try {
     const body=await req.json().catch(()=>({}));
     const action=String(body?.action||"");
+    if(action==="selftest") {
+      await requireCron(req);
+      const example=[
+        ["Table","Name","Opponent"],
+        ["34","tw02559687 王品澤 (0/0/0 (0))","vs.","tw54152249 Yuhung (0/0/0 (0))"],
+        ["34","tw54152249 Yuhung (0/0/0 (0))","vs.","tw02559687 王品澤 (0/0/0 (0))"],
+        ["Bye","tw94609089 tw94609089 (1/0/0 (3))"]
+      ];
+      const parsed=parseMatchRows(example);
+      if(parsed.table_count!==2 || parsed.player_count!==3
+        || parsed.matches[0]?.a?.name!=="王品澤"
+        || parsed.matches.at(-1)?.kind!=="bye")
+        throw new Error("archive parser selftest failed");
+      return json({ok:true,tables:parsed.table_count,players:parsed.player_count,
+        bye:parsed.matches.at(-1)?.kind==="bye"});
+    }
     if(action==="poll") {
       await requireCron(req);
       return json({ok:true,...await pollAll()});
