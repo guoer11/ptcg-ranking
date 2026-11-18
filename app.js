@@ -493,6 +493,37 @@ function eventsHtml(data) {
     <div class="event-mobile-list">${cards}</div>`;
 }
 
+// The legacy data/players/<id>.json files are snapshots; the official ranking
+// is refreshed daily. Always prefer current-season ranking values in player details.
+function mergePlayerDetailWithLatestRanking(data) {
+  if (!data || data.demo || !data.player_id) return data;
+  const id = String(data.player_id).trim().toLowerCase();
+  let official = null;
+  let group = '';
+  for (const [key, rows] of Object.entries(rankingData?.groups || {})) {
+    const found = (rows || []).find(row => String(row?.player_id || '').trim().toLowerCase() === id);
+    if (found) {
+      official = found;
+      group = key;
+      break;
+    }
+  }
+  // If a player is absent from the current ranking, never display old
+  // per-player snapshot points as if they were this season's official points.
+  if (!official) return { ...data, official_points: null };
+
+  const points = official.points === '' || official.points == null ? null : Number(official.points);
+  return {
+    ...data,
+    name: official.name || data.name,
+    official_points: points != null && Number.isFinite(points) ? points : null,
+    group,
+    group_label: GROUP_LABELS[group] || data.group_label,
+    region: official.region || data.region,
+    updated_at: rankingData.updated_at || data.updated_at
+  };
+}
+
 function renderPlayerDetail(data, calculatedEvents = null) {
   // 正式玩家一律以目前賽季的 tournaments.json 計算結果顯示賽事；
   // 避免早期 data/players 示範檔中的 2025-26 靜態資料混入新賽季。
@@ -585,7 +616,7 @@ async function openPlayerModal(playerId) {
     } catch (tournamentError) {
       console.warn('無法載入本站賽事積分試算：', tournamentError);
     }
-    renderPlayerDetail(data, calculatedEvents);
+    renderPlayerDetail(mergePlayerDetailWithLatestRanking(data), calculatedEvents);
   } catch (error) {
     console.warn('本站尚無玩家詳細資料：', playerId, error);
     const identity = identityFor(playerId);
