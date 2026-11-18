@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
-import { sourceTid, validTid, officialUrl, publishedRounds, captureRound, captureFinal, fingerprint, parseMatchRows } from "./source.ts";
+import { sourceTid, validTid, officialUrl, publishedRounds, captureRound, captureFinal, fingerprint, parseMatchRows, sampleRound } from "./source.ts";
 
 const URL_BASE=Deno.env.get("SUPABASE_URL")!;
 const KEY=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -196,6 +196,13 @@ Deno.serve(async(req:Request)=>{
   try {
     const body=await req.json().catch(()=>({}));
     const action=String(body?.action||"");
+    if(action==="diagnose-score") {
+      await requireCron(req);
+      const tid=String(body.tid||"");
+      if(!["937076","8123029"].includes(tid))throw new Error("diagnostic TID not allowed");
+      const rows=await sampleRound(tid,3);
+      return json({ok:true,tid,rows});
+    }
     if(action==="selftest") {
       await requireCron(req);
       const example=[
