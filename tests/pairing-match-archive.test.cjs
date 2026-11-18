@@ -14,7 +14,7 @@ assert.match(deploy,/node --check pairing-match-archive\.js/);
 assert.match(fn,/requireMember\(req\)/,'archive reads require auth');
 assert.match(fn,/requireCron\(req\)/,'cron polling requires secret');
 assert.match(fn,/is_pairing_authorized/,'existing pairing permissions must be preserved');
-assert.match(fn,/status:"completed"/,'final records end polling without deletion');
+assert.match(fn,/completed\?"completed"/,'final records end polling without deletion');
 assert.match(source,/tourround\.asp/);
 assert.match(source,/pageCount/);
 assert.match(source,/captureFinal/);
