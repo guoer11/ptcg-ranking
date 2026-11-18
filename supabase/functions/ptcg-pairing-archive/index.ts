@@ -32,8 +32,8 @@ async function requireCron(req:Request) {
 async function insertArchive(tid:string,url:string,title="") {
   if(!validTid(tid))throw new Error("TID 不正確");
   const {error}=await db.from("ptcg_match_archives").insert({
-    tid,title:title.slice(0,200),source_url:officialUrl(tid),
-    poll_until:addMinutes(7*24*60)
+    tid,title:title.slice(0,200),source_url:url,
+    poll_until:addMinutes(3*24*60)
   });
   if(error && error.code!=="23505")throw error;
   return tid;
@@ -113,7 +113,8 @@ async function pollEvent(event:any) {
     // The original watch URL helps when the event page does not list Round links.
     if(!targetRounds.length&&!existingRound) {
       const start=Number(new URL(event.source_url).searchParams.get("kno")||1);
-      if(Number.isInteger(start)&&start>=1&&start<=40)targetRounds.push(start);
+      if(Number.isInteger(start)&&start>=1&&start<=40)
+        targetRounds.push(...Array.from({length:Math.min(start,3)},(_,i)=>i+1));
     }
     let savedRound=existingRound;
     for(const r of targetRounds) {
