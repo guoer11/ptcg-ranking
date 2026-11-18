@@ -1,0 +1,11 @@
+{
+  "imports": {},
+  "compilerOptions": {
+    "lib": [
+      "deno.window",
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ]
+  }
+}
