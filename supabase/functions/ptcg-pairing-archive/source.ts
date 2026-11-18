@@ -134,6 +134,7 @@ function parseRows(rows:string[][]) {
   if(distinct.size<seenAcross.size-bye)throw new Error("配對頁疑似不完整");
   return {matches,player_count:distinct.size,table_count:matches.length};
 }
+export const parseMatchRows = parseRows;
 export async function publishedRounds(tid:string) {
   const event=await load(officialUrl(tid));
   const rounds=[...new Set([...event.raw.matchAll(/\bkno=(\d+)/gi)]
