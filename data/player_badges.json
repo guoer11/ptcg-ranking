@@ -1,6 +1,6 @@
 {
   "season": "2026-27",
-  "generated_at": "2026-11-18T07:34:39+08:00",
+  "generated_at": "2026-11-18T12:07:20+08:00",
   "great_window_days": 60,
   "great_cutoff": "2026-09-20",
   "players": {
@@ -87,7 +87,7 @@
       "premier": {
         "best_rank": 2,
         "champion_count": 0,
-        "runner_up_count": 1,
+        "runner_up_count": 2,
         "latest_date": "2026-11-08"
       }
     },
@@ -252,7 +252,7 @@
       "premier": {
         "best_rank": 2,
         "champion_count": 0,
-        "runner_up_count": 1,
+        "runner_up_count": 2,
         "latest_date": "2026-11-08"
       }
     },
@@ -306,7 +306,7 @@
       "premier": {
         "best_rank": 2,
         "champion_count": 0,
-        "runner_up_count": 1,
+        "runner_up_count": 2,
         "latest_date": "2026-11-08"
       }
     },
@@ -415,7 +415,7 @@
     "tw35477925": {
       "premier": {
         "best_rank": 1,
-        "champion_count": 1,
+        "champion_count": 2,
         "runner_up_count": 0,
         "latest_date": "2026-11-08"
       }
@@ -621,7 +621,7 @@
       "wcs_2026": true,
       "premier": {
         "best_rank": 1,
-        "champion_count": 1,
+        "champion_count": 2,
         "runner_up_count": 0,
         "latest_date": "2026-11-08"
       }
@@ -871,7 +871,7 @@
       },
       "premier": {
         "best_rank": 1,
-        "champion_count": 1,
+        "champion_count": 2,
         "runner_up_count": 0,
         "latest_date": "2026-11-08"
       }
