@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
-import { sourceTid, validTid, officialUrl, publishedRounds, captureRound, captureFinal, fingerprint, parseMatchRows, sampleRound } from "./source.ts";
+import { sourceTid, validTid, officialUrl, publishedRounds, captureRound, captureFinal, fingerprint, parseMatchRows } from "./source.ts";
 
 const URL_BASE=Deno.env.get("SUPABASE_URL")!;
 const KEY=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -169,7 +169,66 @@ async function listArchives() {
   if(error)throw error;
   return data||[];
 }
-async function readArchive(tid:string,round?:number) {
+// Private overlays are resolved only after the same pairing authorization as the
+// existing scout page; the original scout/history tables are read-only here.
+async function archivePlayerContext(tid:string,eventTitle:string,roundRows:any,finalRows:any,userId:string) {
+  const ids=new Set<string>();
+  for(const m of roundRows?.matches||[])for(const p of [m.a,m.b])
+    if(/^tw\d+$/i.test(String(p?.id||"")))ids.add(String(p.id).toLowerCase());
+  for(const p of finalRows?.standings||[])if(/^tw\d+$/i.test(String(p?.id||"")))ids.add(String(p.id).toLowerCase());
+  const participants=[...ids];
+  const realNames:Record<string,string>={};
+  const decks:Record<string,{current?:any;previous?:any}>={};
+  const observations:Record<string,{deck_a:string;deck_b:string}>={};
+  if(!participants.length)return {real_names:realNames,decks,observations};
+  const chunks:string[][]=[];
+  for(let i=0;i<participants.length;i+=150)chunks.push(participants.slice(i,i+150));
+  for(const chunk of chunks) {
+    const {data,error}=await db.from("player_identities")
+      .select("player_id,real_name").in("player_id",chunk);
+    if(error)throw error;
+    for(const row of data||[])if(row.real_name)realNames[String(row.player_id).toLowerCase()]=String(row.real_name);
+  }
+  // Only records owned by this logged-in account, not records from any other
+  // account. Never write to either of the two pre-existing scout tables.
+  const current=await db.from("pairing_deck_scouts")
+    .select("player_id,deck_name,observed_round,tid,created_at")
+    .eq("user_id",userId).eq("tid",tid).limit(5000);
+  if(current.error)throw current.error;
+  for(const row of current.data||[]) {
+    const id=String(row.player_id||"").toLowerCase();
+    if(ids.has(id)&&row.deck_name)
+      decks[id]={...decks[id],current:{deck:String(row.deck_name),round:row.observed_round,tid}};
+  }
+  // Historical reference must precede the *event date*, never a subsequent
+  // tournament: a newer deck is not evidence for an older match.
+  const dateMatch=String(eventTitle||"").match(/(20\d{2})\/(\d{1,2})\/(\d{1,2})/);
+  const cutoff=dateMatch
+    ? new Date(`${dateMatch[1]}-${dateMatch[2].padStart(2,"0")}-${dateMatch[3].padStart(2,"0")}T23:59:59+08:00`).toISOString()
+    : "";
+  for(const chunk of chunks) {
+    let query=db.from("pairing_deck_scouts")
+      .select("player_id,deck_name,tid,created_at")
+      .eq("user_id",userId).neq("tid",tid).in("player_id",chunk)
+      .order("created_at",{ascending:false}).limit(500);
+    if(cutoff)query=query.lte("created_at",cutoff);
+    const {data,error}=await query;
+    if(error)throw error;
+    for(const row of data||[]) {
+      const id=String(row.player_id||"").toLowerCase();
+      if(!ids.has(id)||decks[id]?.previous||!row.deck_name)continue;
+      decks[id]={...decks[id],previous:{deck:String(row.deck_name),tid:String(row.tid),date:row.created_at}};
+    }
+  }
+  const observationsResult=await db.from("pairing_deck_pair_observations")
+    .select("round_no,table_no,deck_a,deck_b")
+    .eq("user_id",userId).eq("tid",tid).limit(5000);
+  if(observationsResult.error)throw observationsResult.error;
+  for(const row of observationsResult.data||[])if(row.deck_a||row.deck_b)
+    observations[`${row.round_no}:${row.table_no}`]={deck_a:String(row.deck_a||""),deck_b:String(row.deck_b||"")};
+  return {real_names:realNames,decks,observations};
+}
+async function readArchive(tid:string,round:number|undefined,userId:string) {
   if(!validTid(tid))throw new Error("TID 無效");
   const ev=await db.from("ptcg_match_archives").select("*").eq("tid",tid).maybeSingle();
   if(ev.error)throw ev.error;
@@ -188,7 +247,8 @@ async function readArchive(tid:string,round?:number) {
   const final=await db.from("ptcg_match_archive_finals")
     .select("captured_at,player_count,source_url,standings").eq("tid",tid).maybeSingle();
   if(final.error)throw final.error;
-  return {event:ev,rounds:list.data||[],selected:details,final:final.data};
+  const context=await archivePlayerContext(tid,String(ev.data.title||""),details,final.data,userId);
+  return {event:ev.data,rounds:list.data||[],selected:details,final:final.data,context};
 }
 Deno.serve(async(req:Request)=>{
   if(req.method==="OPTIONS")return new Response("ok",{headers:cors});
@@ -196,13 +256,6 @@ Deno.serve(async(req:Request)=>{
   try {
     const body=await req.json().catch(()=>({}));
     const action=String(body?.action||"");
-    if(action==="diagnose-score") {
-      await requireCron(req);
-      const tid=String(body.tid||"");
-      if(!["937076","8123029"].includes(tid))throw new Error("diagnostic TID not allowed");
-      const rows=await sampleRound(tid,3);
-      return json({ok:true,tid,rows});
-    }
     if(action==="selftest") {
       await requireCron(req);
       const example=[
@@ -223,14 +276,14 @@ Deno.serve(async(req:Request)=>{
       await requireCron(req);
       return json({ok:true,...await pollAll()});
     }
-    await requireMember(req);
+    const member=await requireMember(req);
     if(action==="register") {
       const tid=sourceTid(String(body?.url||""));
       await insertArchive(tid,String(body?.url||""));
       return json({ok:true,tid});
     }
     if(action==="list")return json({ok:true,archives:await listArchives()});
-    if(action==="get")return json({ok:true,archive:await readArchive(String(body?.tid||""),body?.round==null?undefined:Number(body.round))});
+    if(action==="get")return json({ok:true,archive:await readArchive(String(body?.tid||""),body?.round==null?undefined:Number(body.round),member.id)});
     if(action==="link") {
       const tid=String(body?.tid||""),parent=String(body?.day1_tid||"");
       if(!validTid(tid)||!validTid(parent)||tid===parent)throw new Error("Day 1 / Day 2 TID 不正確");
