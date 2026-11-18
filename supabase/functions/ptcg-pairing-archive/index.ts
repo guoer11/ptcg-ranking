@@ -272,6 +272,14 @@ Deno.serve(async(req:Request)=>{
       return json({ok:true,tables:parsed.table_count,players:parsed.player_count,
         bye:parsed.matches.at(-1)?.kind==="bye"});
     }
+    if(action==="repair-scores") {
+      await requireCron(req);
+      const tid=String(body.tid||"");
+      const round=Number(body.round);
+      if(!["937076","8123029"].includes(tid)||!Number.isInteger(round)||round<1||round>7)
+        throw new Error("僅允許已封存的 10/3、10/17 比賽補抓 Round 1-7");
+      return json({ok:true,tid,...await saveRound(tid,round)});
+    }
     if(action==="poll") {
       await requireCron(req);
       return json({ok:true,...await pollAll()});
