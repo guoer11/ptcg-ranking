@@ -282,32 +282,6 @@ Deno.serve(async(req:Request)=>{
       return json({ok:true,tables:parsed.table_count,players:parsed.player_count,
         bye:parsed.matches.at(-1)?.kind==="bye",ttl_score_test:true});
     }
-    if(action==="selftest-context") {
-      await requireCron(req);
-      const testOwner=await db.from("pairing_deck_scouts")
-        .select("user_id").eq("tid","8123029").limit(1).maybeSingle();
-      if(testOwner.error)throw testOwner.error;
-      if(!testOwner.data?.user_id)throw new Error("no historical deck fixture");
-      const archive=await readArchive("8123029",3,String(testOwner.data.user_id));
-      if(!archive?.selected?.matches?.length)throw new Error("missing saved round");
-      const context=archive.context;
-      const cards=Object.values(context.decks) as {current?:unknown;previous?:unknown}[];
-      return json({ok:true,round_tables:archive.selected.matches.length,
-        named_players:Object.keys(context.real_names).length,
-        current_decks:cards.filter(c=>c.current).length,
-        previous_decks:cards.filter(c=>c.previous).length,
-        pair_observations:Object.keys(context.observations).length,
-        score_available:archive.selected.matches.some((m:any)=>m.a?.record?.points!==null
-          && m.a?.record?.points!==undefined)});
-    }
-    if(action==="repair-scores") {
-      await requireCron(req);
-      const tid=String(body.tid||"");
-      const round=Number(body.round);
-      if(!["937076","8123029"].includes(tid)||!Number.isInteger(round)||round<1||round>7)
-        throw new Error("僅允許已封存的 10/3、10/17 比賽補抓 Round 1-7");
-      return json({ok:true,tid,...await saveRound(tid,round)});
-    }
     if(action==="poll") {
       await requireCron(req);
       return json({ok:true,...await pollAll()});
