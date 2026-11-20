@@ -2,6 +2,16 @@
   "max_entries": 5,
   "entries": [
     {
+      "id": "tournaments-2026-11-20T12:06:52+08:00",
+      "type": "tournaments",
+      "title": "賽事資訊更新",
+      "updated_at": "2026-11-20T12:06:52+08:00",
+      "summary": "例行檢查完成；賽事可見內容無變動",
+      "details": [],
+      "notified": false,
+      "trigger_source": "主排程（Supabase）"
+    },
+    {
       "id": "tournaments-2026-11-20T07:06:46+08:00",
       "type": "tournaments",
       "title": "賽事資訊更新",
@@ -42,19 +52,6 @@
       ],
       "notified": true,
       "trigger_source": "GitHub 備援排程"
-    },
-    {
-      "id": "tournaments-2026-11-19T17:06:31+08:00",
-      "type": "tournaments",
-      "title": "賽事資訊更新",
-      "updated_at": "2026-11-19T17:06:31+08:00",
-      "summary": "新增成績 2 場",
-      "details": [
-        "新增官方成績｜#69264｜2026-10-31｜桌遊帝國咖啡廳｜高雄市｜8 筆",
-        "新增官方成績｜#68017｜2026-11-15｜Magic Star卡牌店｜臺北市｜32 筆"
-      ],
-      "notified": true,
-      "trigger_source": "主排程（Supabase）"
     }
   ]
 }
