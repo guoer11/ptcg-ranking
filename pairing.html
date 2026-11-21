@@ -136,7 +136,7 @@
 
         const finalState = await authorizedWatchRequest('final', { url: parsed.url, player_id: playerId });
         const standing = finalState?.ranking?.standing_match;
-        if (standing) {
+        if (standing && !finalState?.ranking?.is_interim) {
           const status = watchStatus();
           const copy = watchCopy();
           const stopRow = stopActions();
@@ -171,7 +171,12 @@
         const currentRoundText = pairingData?.match
           ? `Round ${parsed.round} 配對已找到`
           : (pairingData?.available ? `Round ${parsed.round} 配對表已公布` : `Round ${parsed.round} 尚未公布，已開始等待`);
-        setPairingMessage(`${currentRoundText}；系統會自動追蹤後續配對與最終排名。牌組偵察已套用同一場賽事與 Round，可直接使用。`, 'success');
+        if (finalState?.ranking?.is_interim) {
+          await renderFinalRank(finalState.ranking);
+          setPairingMessage(`已讀取 Round ${finalState.ranking.round || parsed.round} 暫定排名；此名次尚非官方最終成績。系統保留原本的即時追蹤，等待正式排名公布。`, 'success');
+        } else {
+          setPairingMessage(`${currentRoundText}；系統會自動追蹤後續配對與最終排名。牌組偵察已套用同一場賽事與 Round，可直接使用。`, 'success');
+        }
       } catch (error) {
         setPairingMessage(error?.message || String(error), 'error');
       } finally {
