@@ -51,14 +51,14 @@ export function createReader(fetcher:typeof fetch=fetch) {
       return {raw,rows,title,checkedAt:new Date().toISOString()};
     });
   }
-  const roundUrl=(tid:string,round:number,page=1)=>`https://${HOST}/tourround.asp?tid=${tid}&kno=${round}&Page=${page}&Sort=Number&Order=&znt=${round===9999999?1:0}`;
-  async function allPages(tid:string,round:number,first:any) {
+  const roundUrl=(tid:string,round:number,page=1,standings=false)=>`https://${HOST}/tourround.asp?tid=${tid}&kno=${round}&Page=${page}&Sort=Number&Order=&znt=${standings||round===9999999?1:0}`;
+  async function allPages(tid:string,round:number,first:any,standings=false) {
     const pages=[...first.raw.matchAll(/\bPage=(\d+)/gi)].map(m=>Number(m[1]));
     const max=Math.max(1,...pages);
     if(max>MAX_PAGES)throw new Error("活動超過 100 頁，暫時無法完整讀取。");
     const results:any[]=new Array(max);results[0]=first;let next=2;
     await Promise.all(Array.from({length:Math.min(4,max-1)},async()=>{
-      while(next<=max){const page=next++;results[page-1]=await html(roundUrl(tid,round,page));}
+      while(next<=max){const page=next++;results[page-1]=await html(roundUrl(tid,round,page,standings));}
     }));
     if(max>1) {
       const seen=new Set<string>();
@@ -75,9 +75,39 @@ export function createReader(fetcher:typeof fetch=fetch) {
   async function final(tid:string,playerId:string) {
     const first=await html(roundUrl(tid,9999999));
     const hasHeader=first.rows.some((row:string[])=>row.some(cell=>/^rank$/i.test(clean(cell))));
-    if(!hasHeader)return {ok:true,type:"final",available:false,tid,source_url:roundUrl(tid,9999999),checked_at:first.checkedAt};
-    const standings=parseStandings(await allPages(tid,9999999,first));
-    return {ok:true,type:"final",available:standings.length>0,tid,title:first.title,standing_count:standings.length,standing:standings.find((p:any)=>p.id===playerId)||null,source_url:roundUrl(tid,9999999),checked_at:first.checkedAt};
+    if(hasHeader) {
+      const standings=parseStandings(await allPages(tid,9999999,first,true));
+      return {ok:true,type:"final",rank_status:"final",is_interim:false,available:standings.length>0,
+        tid,title:first.title,standing_count:standings.length,
+        standing:standings.find((p:any)=>p.id===playerId)||null,
+        source_url:roundUrl(tid,9999999),checked_at:first.checkedAt};
+    }
+    // As of 2026-11-21, Meister publishes "End of Round N interim result"
+    // at kno=N&znt=1 while the old kno=9999999 final URL remains empty.
+    // Display provisional standings, never claim they are the confirmed final.
+    const event=await html(`https://${HOST}/tour.asp?tid=${tid}`);
+    const interimRounds=[...new Set([...event.raw.matchAll(/href=["']([^"']*tourround\\.asp\\?[^"']+)["']/gi)]
+      .map(m=>m[1].replace(/&amp;/gi,"&"))
+      .map(link=>{try {const u=new URL(link,`https://${HOST}/`);
+        return u.hostname===HOST && u.searchParams.get("tid")===tid
+          && u.searchParams.get("znt")==="1" ? Number(u.searchParams.get("kno")) : 0;
+      }catch{return 0;}})
+      .filter(n=>Number.isInteger(n)&&n>=1&&n<=40))].sort((a,b)=>b-a);
+    for(const round of interimRounds.slice(0,2)) {
+      const url=roundUrl(tid,round,1,true);
+      const sample=await html(url);
+      const interim=sample.rows.some((row:string[])=>row.some(cell=>
+        /end\\s+of\\s+round\\s*\\d+\\s+interim\\s+result/i.test(clean(cell))));
+      const header=sample.rows.some((row:string[])=>row.some(cell=>/^rank$/i.test(clean(cell))));
+      if(!interim||!header)continue;
+      const standings=parseStandings(await allPages(tid,round,sample,true));
+      if(standings.length)return {ok:true,type:"final",rank_status:"interim",is_interim:true,
+        available:true,round,tid,title:sample.title,standing_count:standings.length,
+        standing:standings.find((p:any)=>p.id===playerId)||null,
+        source_url:url,checked_at:sample.checkedAt};
+    }
+    return {ok:true,type:"final",rank_status:"unavailable",is_interim:false,
+      available:false,tid,source_url:roundUrl(tid,9999999),checked_at:first.checkedAt};
   }
   async function snapshot(tid:string,selection:string|number,total:number) {
     const main=await html(`https://${HOST}/tour.asp?tid=${tid}`);
