@@ -136,7 +136,7 @@
 
         const finalState = await authorizedWatchRequest('final', { url: parsed.url, player_id: playerId });
         const standing = finalState?.ranking?.standing_match;
-        if (standing && !finalState?.ranking?.is_interim) {
+        if (standing && finalState?.ranking?.is_final === true) {
           const status = watchStatus();
           const copy = watchCopy();
           const stopRow = stopActions();
@@ -160,6 +160,19 @@
           return;
         }
 
+        // Do not restart an already-running Round watch just to view a
+        // provisional standings table (restarting could resend old Rounds).
+        if (finalState?.ranking?.is_interim) {
+          const existing = (await authorizedWatchRequest('status')).watch;
+          if (existing?.active && existing.tid === parsed.tid
+              && existing.player_id === playerId) {
+            syncPairingWatchForm(existing);
+            renderWatchStatus(existing);
+            await renderFinalRank(finalState.ranking);
+            setPairingMessage(`已顯示 Round ${finalState.ranking.round || parsed.round} 暫定排名。原本每 10 秒追蹤繼續運作，不會重發之前 Round 的通知；正式成績仍待官方公布。`, 'success');
+            return;
+          }
+        }
         const started = await authorizedWatchRequest('start', { url: parsed.url, player_id: playerId });
         clearSavedPairingWatchForm();
         pairingFormEdited = false;
