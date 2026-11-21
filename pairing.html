@@ -65,7 +65,7 @@
           </details>
           <details id="matchArchive" class="pairing-history-panel">
             <summary>官方對戰與排名封存</summary>
-            <p class="archive-note">開始追蹤時自動登記整場賽事，後端每 5 分鐘保存已公布的各輪配對與最終排名。官方網站關閉後，仍可讀取已成功封存的資料；尚未擷取到的輪次無法事後補回。</p>
+            <p class="archive-note">開始追蹤時自動登記整場賽事，後端每 5 分鐘保存已公布的各輪配對；官方暫定排名與正式最終排名分開封存，避免誤認為賽事已完成。官方網站關閉後，仍可讀取已成功封存的資料；尚未擷取到的輪次無法事後補回。</p>
             <div class="archive-controls">
               <label>歷史賽事<select id="matchArchiveEvent" class="search-input" aria-label="歷史賽事"></select></label>
               <label>對戰輪次<select id="matchArchiveRound" class="search-input" aria-label="封存輪次"></select></label>
@@ -109,16 +109,16 @@
 
   <footer class="footer"><div class="wrap">非官方網站。本頁僅協助整理公開配對資訊，Pokémon 相關商標屬原權利人所有。</div></footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="site-version.js?v=2.10.0-r1" defer></script>
+  <script src="site-version.js?v=2.10.1-r1" defer></script>
   <script src="pairing-auth-stability.js?v=1.11.2-r1" defer></script>
-  <script src="pairing.js?v=1.14.2-r1" defer></script>
+  <script src="pairing.js?v=2.10.1-r1" defer></script>
   <script src="pairing-odds-engine.js?v=1.11.0-r1" defer></script>
-  <script src="pairing-odds.js?v=1.11.0-r1" defer></script>
+  <script src="pairing-odds.js?v=2.10.1-r1" defer></script>
   <script id="ptcgPlayerBadgesJs" src="player-badges.js?v=2.8.0-r5" defer></script>
   <script src="pairing-deck-scout.js?v=1.14.2-r5" defer></script>
   <script id="ptcgPairingV222R4" src="pairing-v222-r4.js?v=2.7.0-r2" defer></script>
   <script src="pairing-history.js?v=2.6.0-r1" defer></script>
-  <script src="pairing-match-archive.js?v=2.10.0-r2" defer></script>
+  <script src="pairing-match-archive.js?v=2.10.1-r1" defer></script>
   <script src="site-account-ui.js?v=1.9.2-r1" defer></script>
   <script>
     document.addEventListener('click', async event => {
