@@ -91,8 +91,8 @@ async function saveInterim(tid:string,round:number) {
   return {available:true,round,players:result.player_count,
     changed:existing.data?.fingerprint!==checksum};
 }
-async function saveFinal(tid:string) {
-  const result=await captureFinal(tid);
+async function saveFinal(tid:string,expectedRounds:number|null=null) {
+  const result=await captureFinal(tid,expectedRounds);
   if(!result)return {available:false};
   const checksum=await fingerprint(result.standings);
   const existing=await db.from("ptcg_match_archive_finals").select("fingerprint")
@@ -102,7 +102,7 @@ async function saveFinal(tid:string) {
     const {error}=await db.from("ptcg_match_archive_finals").upsert({
       tid,source_url:result.source_url,
       player_count:result.player_count,standings:result.standings,
-      fingerprint:checksum,
+      source_status:result.source_status,fingerprint:checksum,
       ...(existing.data?{}:{captured_at:now()})
     },{onConflict:"tid"});
     if(error)throw error;
@@ -153,7 +153,7 @@ async function pollEvent(event:any) {
       catch(e){detail.interim_error=String((e as Error).message||e).slice(0,180);}
     }
     let final:any={available:false};
-    try {final=await saveFinal(tid);}catch(e){detail.final_error=String((e as Error).message||e).slice(0,180);}
+    try {final=await saveFinal(tid,event.expected_rounds==null?null:Number(event.expected_rounds));}catch(e){detail.final_error=String((e as Error).message||e).slice(0,180);}
     detail.final=final.available;
     const finalized=Boolean(event.final_seen_at||final.available);
     const firstFinal=final.available && !event.final_seen_at;
@@ -276,7 +276,7 @@ async function readArchive(tid:string,round:number|undefined,userId:string) {
     details=r.data;
   }
   const final=await db.from("ptcg_match_archive_finals")
-    .select("captured_at,player_count,source_url,standings").eq("tid",tid).maybeSingle();
+     .select("captured_at,player_count,source_url,source_status,standings").eq("tid",tid).maybeSingle();
   if(final.error)throw final.error;
   const interim=await db.from("ptcg_match_archive_interims")
     .select("captured_at,round_no,player_count,source_url,standings")
