@@ -81,12 +81,15 @@
       const source=provisional?view.interim:view.final;
       if(!source){root.innerHTML=`<p class="archive-empty">${provisional?"尚未封存暫定排名":"尚未封存正式最終排名"}。</p>`;return;}
       const rows=standingRows(source);
-      const title=provisional?`Round ${source.round_no} 暫定排名（非最終成績）`:"官方最終排名";
+      const fromLastRound=source?.source_status==="completed_last_round";
+      const title=provisional?`Round ${source.round_no} 暫定排名（非最終成績）`:
+        fromLastRound?`第 ${view.event.expected_rounds||"最後"} 輪結束排名（本場最終）`:"官方最終排名";
       root.innerHTML=`<p class="archive-subtitle">${escape(title)} · ${rows.length} 位${term?"（篩選結果）":""} · ${escape(source.captured_at||"")}</p>
         <div class="archive-scroll"><table><thead><tr><th>名次</th><th>選手／歷史牌組</th><th>TtlScore</th></tr></thead><tbody>
         ${rows.map(p=>`<tr><td>${escape(p.rank)}</td><td>${playerHTML(p)}</td><td>${p.points==null?"—":escape(p.points)}</td></tr>`).join("")}
         </tbody></table></div>
-        ${provisional?'<p class="archive-empty">這是官方各輪結束後的暫定排名，仍等待正式最終榜；不可當作已確認成績。</p>':""}`;
+        ${provisional?'<p class="archive-empty">這是官方各輪結束後的暫定排名，尚未確認已打完全部輪次。</p>':
+      fromLastRound?'<p class="archive-empty">這場賽事的總輪數已確認完成。來源頁雖標示 interim result，本站依最後輪結果保存本場最終名次。</p>':""}`;
       return;
     }
     if(!view.selected){root.innerHTML='<p class="archive-empty">該輪尚無封存資料。</p>';return;}
@@ -115,6 +118,12 @@
     const result=await api("get",{tid:activeTid});
     view=result.archive;
     if(!view){message("目前查不到封存紀錄",true);return;}
+    const expected=$("matchArchiveExpectedRounds"),button=$("matchArchiveSetRounds");
+    if(expected) {
+      expected.value=view.event.expected_rounds==null?"":String(view.event.expected_rounds);
+      expected.disabled=Boolean(view.event.final_seen_at)||view.event.status==="completed";
+    }
+    if(button)button.disabled=Boolean(expected?.disabled);
     const options=(view.rounds||[]).map(r=>`<option value="${escape(r.round_no)}">Round ${escape(r.round_no)}（${escape(r.table_count)} 桌）</option>`);
     if(view.interim)options.push(`<option value="interim">Round ${escape(view.interim.round_no)} 暫定排名</option>`);
     if(view.final)options.push('<option value="final">最終排名</option>');
@@ -148,6 +157,18 @@
       await refresh();
     }catch(e){message("追蹤通知已啟動，但封存登記失敗："+String(e.message||e),true);}
   }
+  async function configureRounds() {
+    const input=$("matchArchiveExpectedRounds");
+    const number=Number(input?.value);
+    if(!activeTid||!Number.isInteger(number)||number<1||number>40) {
+      message("請先選擇賽事並輸入現場確認的總輪數（1～40）。",true);return;
+    }
+    try {
+      await api("configure-rounds",{tid:activeTid,expected_rounds:number});
+      message("已確認本場總共 "+number+" 輪；官方最後一輪的 End of Round 排名將自動判定為本場最終成績。");
+      await refresh();
+    }catch(e){message(String(e.message||e),true);}
+  }
   async function linkDay1() {
     const parent=$("matchArchiveLinkDay1").value;
     if(!activeTid||!parent)return;
@@ -161,6 +182,7 @@
     $("matchArchiveSearch")?.addEventListener("input",renderRows);
     $("matchArchiveRefresh")?.addEventListener("click",()=>{void refresh();});
     $("matchArchiveLinkButton")?.addEventListener("click",()=>{void linkDay1();});
+    $("matchArchiveSetRounds")?.addEventListener("click",()=>{void configureRounds();});
     $("matchArchive")?.addEventListener("toggle",e=>{if(e.target.open)void refresh();});
     document.addEventListener("pairing:auth-ready",ev=>{if(ev.detail?.allowed&&$("matchArchive")?.open)void refresh();});
     document.addEventListener("pairing:tracking-started",registerFromTracking);
