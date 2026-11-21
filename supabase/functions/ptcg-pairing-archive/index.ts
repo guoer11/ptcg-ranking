@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
-import { sourceTid, validTid, officialUrl, publishedRounds, captureRound, captureFinal, fingerprint, parseMatchRows } from "./source.ts";
+import { sourceTid, validTid, officialUrl, publishedRounds, captureRound, captureFinal, captureInterim, fingerprint, parseMatchRows } from "./source.ts";
 
 const URL_BASE=Deno.env.get("SUPABASE_URL")!;
 const KEY=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -72,6 +72,25 @@ async function saveRound(tid:string,round:number) {
   if(error)throw error;
   return {round,available:true,changed:true,players:result.player_count};
 }
+async function saveInterim(tid:string,round:number) {
+  const result=await captureInterim(tid,round);
+  if(!result)return {available:false,round};
+  const checksum=await fingerprint(result.standings);
+  const existing=await db.from("ptcg_match_archive_interims")
+    .select("fingerprint").eq("tid",tid).eq("round_no",round).maybeSingle();
+  if(existing.error)throw existing.error;
+  if(existing.data?.fingerprint!==checksum) {
+    const {error}=await db.from("ptcg_match_archive_interims").upsert({
+      tid,round_no:round,source_url:result.source_url,
+      player_count:result.player_count,standings:result.standings,
+      fingerprint:checksum,checked_at:now(),
+      ...(existing.data?{}:{captured_at:now()})
+    },{onConflict:"tid,round_no"});
+    if(error)throw error;
+  }
+  return {available:true,round,players:result.player_count,
+    changed:existing.data?.fingerprint!==checksum};
+}
 async function saveFinal(tid:string) {
   const result=await captureFinal(tid);
   if(!result)return {available:false};
@@ -127,6 +146,12 @@ async function pollEvent(event:any) {
         if(state.available)savedRound=Math.max(savedRound,r);
       } catch(e){detail.rounds.push({round:r,error:String((e as Error).message||e).slice(0,180)});}
     }
+    // Preserve interim rankings separately until official final standings exist.
+    if(published.interimRounds?.length) {
+      const interimRound=published.interimRounds.at(-1)!;
+      try {detail.interim=await saveInterim(tid,interimRound);}
+      catch(e){detail.interim_error=String((e as Error).message||e).slice(0,180);}
+    }
     let final:any={available:false};
     try {final=await saveFinal(tid);}catch(e){detail.final_error=String((e as Error).message||e).slice(0,180);}
     detail.final=final.available;
@@ -167,7 +192,13 @@ async function listArchives() {
     .select("tid,title,status,parent_tid,first_seen_at,last_checked_at,last_round,final_seen_at,last_error")
     .order("first_seen_at",{ascending:false}).limit(100);
   if(error)throw error;
-  return data||[];
+  const tids=(data||[]).map(row=>row.tid);
+  if(!tids.length)return [];
+  const interim=await db.from("ptcg_match_archive_interims").select("tid,round_no").in("tid",tids);
+  if(interim.error)throw interim.error;
+  const rounds=new Map<string,number>();
+  for(const row of interim.data||[])rounds.set(row.tid,Math.max(rounds.get(row.tid)||0,Number(row.round_no)));
+  return (data||[]).map(row=>({...row,interim_round:rounds.get(row.tid)||null}));
 }
 // Private overlays are resolved only after the same pairing authorization as the
 // existing scout page; the original scout/history tables are read-only here.
@@ -247,8 +278,13 @@ async function readArchive(tid:string,round:number|undefined,userId:string) {
   const final=await db.from("ptcg_match_archive_finals")
     .select("captured_at,player_count,source_url,standings").eq("tid",tid).maybeSingle();
   if(final.error)throw final.error;
-  const context=await archivePlayerContext(tid,String(ev.data.title||""),details,final.data,userId);
-  return {event:ev.data,rounds:list.data||[],selected:details,final:final.data,context};
+  const interim=await db.from("ptcg_match_archive_interims")
+    .select("captured_at,round_no,player_count,source_url,standings")
+    .eq("tid",tid).order("round_no",{ascending:false}).limit(1).maybeSingle();
+  if(interim.error)throw interim.error;
+  const context=await archivePlayerContext(tid,String(ev.data.title||""),details,final.data||interim.data,userId);
+  return {event:ev.data,rounds:list.data||[],selected:details,
+    final:final.data,interim:interim.data,context};
 }
 Deno.serve(async(req:Request)=>{
   if(req.method==="OPTIONS")return new Response("ok",{headers:cors});
