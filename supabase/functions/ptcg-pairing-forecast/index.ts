@@ -8,6 +8,7 @@ export function createHandler(authService:any,dataReader:any=reader) {
   return async(req:Request)=>{
     if(req.method==="OPTIONS")return new Response("ok",{headers});
     if(req.method!=="POST")return json({ok:false,error:"method not allowed"},405);
+    try {
       const token=(req.headers.get("Authorization")||"").replace(/^Bearer\s+/i,"").trim();
       if(!token)return json({ok:false,error:"請先登入授權帳號。"},401);
       const {data,error}=await authService.auth.getUser(token);
