@@ -31,8 +31,8 @@ export function sourceTid(raw:string) {
   if (!validTid(tid)) throw new Error("TID 無效或為測試賽事");
   return tid;
 }
-const pageUrl=(tid:string,round:number,page=1)=>
-  `https://${HOST}/tourround.asp?tid=${tid}&kno=${round}&Page=${page}&Sort=Number&Order=&znt=${round===9999999?1:0}`;
+const pageUrl=(tid:string,round:number,page=1,standings=false)=>
+  `https://${HOST}/tourround.asp?tid=${tid}&kno=${round}&Page=${page}&Sort=Number&Order=&znt=${standings||round===9999999?1:0}`;
 export const officialUrl=(tid:string)=>`https://${HOST}/tour.asp?tid=${tid}`;
 
 async function load(url:string) {
@@ -74,8 +74,8 @@ function pageCount(raw:string,tid:string,round:number) {
   if(max>LIMIT_PAGES)throw new Error("頁數超過備份上限，拒絕不完整備份");
   return max;
 }
-async function allPages(tid:string,round:number) {
-  const first=await load(pageUrl(tid,round));
+async function allPages(tid:string,round:number,standings=false) {
+  const first=await load(pageUrl(tid,round,1,standings));
   const max=pageCount(first.raw,tid,round);
   const pages=Array.from({length:max},()=>null as Awaited<ReturnType<typeof load>>|null);
   pages[0]=first;
@@ -83,7 +83,7 @@ async function allPages(tid:string,round:number) {
   await Promise.all(Array.from({length:Math.min(3,max-1)},async()=>{
     while(next<=max) {
       const page=next++;
-      pages[page-1]=await load(pageUrl(tid,round,page));
+      pages[page-1]=await load(pageUrl(tid,round,page,standings));
     }
   }));
   if(pages.some(p=>!p))throw new Error("官方分頁無法完整讀取");
@@ -152,7 +152,14 @@ export async function publishedRounds(tid:string) {
   const event=await load(officialUrl(tid));
   const rounds=[...new Set([...event.raw.matchAll(/\bkno=(\d+)/gi)]
     .map(m=>Number(m[1])).filter(n=>Number.isInteger(n)&&n>=1&&n<=40))].sort((a,b)=>a-b);
-  return {rounds,title:event.title};
+  const interimRounds=[...new Set([...event.raw.matchAll(/href=["']([^"']*tourround\.asp\?[^"']+)["']/gi)]
+    .map(m=>m[1].replace(/&amp;/gi,"&"))
+    .map(ref=>{try {const u=new URL(ref,"https://"+HOST+"/");
+      return u.hostname===HOST && u.searchParams.get("tid")===tid
+        && u.searchParams.get("znt")==="1" ? Number(u.searchParams.get("kno")) : 0;
+    } catch {return 0;}})
+    .filter(n=>Number.isInteger(n)&&n>=1&&n<=40))].sort((a,b)=>a-b);
+  return {rounds,interimRounds,title:event.title};
 }
 export async function captureRound(tid:string,round:number) {
   const page=await allPages(tid,round);
@@ -161,26 +168,39 @@ export async function captureRound(tid:string,round:number) {
   return {tid,round_no:round,source_url:pageUrl(tid,round),
     page_count:page.page_count,...parsed};
 }
-export async function captureFinal(tid:string) {
-  const page=await allPages(tid,9999999);
-  const header=page.rows.some(c=>c.some(t=>/^(rank|排名|順位|名次)$/i.test(clean(t))));
-  if(!header)return null;
+function standingsFromRows(rows:string[][]) {
+  const header=rows.some(c=>c.some(t=>/^(rank|排名|順位|名次)$/i.test(clean(t))));
+  if(!header)return [];
   const standings:any[]=[];const seen=new Set<string>();
-  for(const cells of page.rows) {
+  for(const cells of rows) {
     const rank=Number(clean(cells[0]));
     if(!Number.isInteger(rank)||rank<1||rank>100000)continue;
     const idCell=cells.slice(1).find(c=>idOf(c));
     if(!idCell)continue;
     const id=idOf(idCell);
-    if(seen.has(id))throw new Error("最終排名有重複玩家");
+    if(seen.has(id))throw new Error("排名資料有重複玩家，請稍後重試");
     seen.add(id);
     const after=cells.slice(cells.indexOf(idCell)+1);
-    const points=after.map(t=>/^\d+$/.test(clean(t))?Number(clean(t)):null).find(v=>v!==null);
+    const points=after.map(t=>/^\\d+$/.test(clean(t))?Number(clean(t)):null).find(v=>v!==null);
     standings.push({rank,id,name:nameOf(idCell,id),points:points??null});
   }
+  return standings.sort((a,b)=>a.rank-b.rank);
+}
+export async function captureInterim(tid:string,round:number) {
+  if(!Number.isInteger(round)||round<1||round>40)throw new Error("暫定排名輪次不合法");
+  const page=await allPages(tid,round,true);
+  const isInterim=page.rows.some(row=>row.some(cell=>/end\\s+of\\s+round\\s*\\d+\\s+interim\\s+result|interim\\s+(?:results?|standings?)/i.test(cell)));
+  if(!isInterim)return null;
+  const standings=standingsFromRows(page.rows);
   if(!standings.length)return null;
-  standings.sort((a,b)=>a.rank-b.rank);
-  return {tid,source_url:pageUrl(tid,9999999),player_count:standings.length,
+  return {tid,round_no:round,source_url:pageUrl(tid,round,1,true),
+    page_count:page.page_count,player_count:standings.length,standings};
+}
+export async function captureFinal(tid:string) {
+  const page=await allPages(tid,9999999,true);
+  const standings=standingsFromRows(page.rows);
+  if(!standings.length)return null;
+  return {tid,source_url:pageUrl(tid,9999999,1,true),player_count:standings.length,
     page_count:page.page_count,standings};
 }
 export async function fingerprint(data:unknown) {
