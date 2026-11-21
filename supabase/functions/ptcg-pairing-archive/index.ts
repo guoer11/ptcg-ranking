@@ -328,6 +328,23 @@ Deno.serve(async(req:Request)=>{
       await insertArchive(tid,String(body?.url||""));
       return json({ok:true,tid});
     }
+    if(action==="configure-rounds") {
+      const tid=String(body?.tid||"");
+      const expected=Number(body?.expected_rounds);
+      if(!validTid(tid)||!Number.isInteger(expected)||expected<1||expected>40)
+        throw new Error("請確認賽事 TID 與正確總輪數（1–40）");
+      const event=await db.from("ptcg_match_archives")
+        .select("tid,status,final_seen_at,expected_rounds").eq("tid",tid).maybeSingle();
+      if(event.error)throw event.error;
+      if(!event.data)throw new Error("請先啟動這場賽事的封存");
+      if(event.data.final_seen_at || event.data.status==="completed")
+        throw new Error("這場賽事已完成封存，總輪數不能再更動");
+      const upd=await db.from("ptcg_match_archives").update({
+        expected_rounds:expected,updated_at:now(),poll_until:addMinutes(3*24*60)
+      }).eq("tid",tid).select("tid,expected_rounds").single();
+      if(upd.error)throw upd.error;
+      return json({ok:true,...upd.data});
+    }
     if(action==="list")return json({ok:true,archives:await listArchives()});
     if(action==="get")return json({ok:true,archive:await readArchive(String(body?.tid||""),body?.round==null?undefined:Number(body.round),member.id)});
     if(action==="link") {
