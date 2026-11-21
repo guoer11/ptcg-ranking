@@ -1,0 +1,39 @@
+'use strict';
+const fs=require('node:fs');
+const assert=require('node:assert/strict');
+const read=p=>fs.readFileSync(p,'utf8');
+const page=read('pairing.html');
+const archive=read('supabase/functions/ptcg-pairing-archive/source.ts');
+const backend=read('supabase/functions/ptcg-pairing-archive/index.ts');
+const scoutUi=read('pairing-match-archive.js');
+const forecast=read('supabase/functions/ptcg-pairing-forecast/source.ts');
+const forecastApi=read('supabase/functions/ptcg-pairing-forecast/index.ts');
+const odds=read('pairing-odds.js');
+const pairing=read('pairing.js');
+
+// Per-TID expected_rounds is explicitly confirmed, NOT inferred from a
+// currently published intermediate Round (could misclassify in-progress events).
+assert.match(archive,/captureFinal\(tid:string,expectedRounds:number\|null=null\)/);
+assert.match(archive,/captureInterim\(tid,expectedRounds\)/);
+assert.match(archive,/if\(!Number\.isInteger\(expectedRounds\)/);
+assert.match(archive,/source_status:"completed_last_round"/);
+assert.match(backend,/saveFinal\(tid,event\.expected_rounds/);
+assert.match(backend,/source_status:result\.source_status/);
+assert.match(backend,/action==="configure-rounds"/);
+assert.match(backend,/event\.data\.final_seen_at \|\| event\.data\.status==="completed"/);
+assert.match(backend,/expected_rounds:expected/);
+assert.match(forecast,/complete=Number\.isInteger\(expectedRounds\) && round===expectedRounds/);
+assert.match(forecast,/rank_status:complete\?"final":"interim"/);
+assert.match(forecastApi,/expectedRounds=Number\(config\?\.expected_rounds\)\|\|null/);
+assert.match(forecastApi,/dataReader\.final\(tid,player,expectedRounds\)/);
+assert.match(page,/id="matchArchiveExpectedRounds"/);
+assert.match(page,/id="matchArchiveSetRounds"/);
+assert.match(page,/standing && finalState\?\.ranking\?\.is_final === true/);
+assert.match(page,/viewingRanking\) await renderFinalRank/);
+assert.match(scoutUi,/configure-rounds/);
+assert.match(scoutUi,/source_status==="completed_last_round"/);
+assert.match(pairing,/const isInterim = Boolean\(ranking\?\.is_interim\)/);
+assert.match(odds,/const p=data\.standing,interim=Boolean\(data\.is_interim\)/);
+assert.match(page,/id="pairingHistory"/);
+assert.match(page,/id="pairingDeckScout"/);
+console.log('PASS: confirmed last-round final results, provisional fallback and preserved scout history.');
