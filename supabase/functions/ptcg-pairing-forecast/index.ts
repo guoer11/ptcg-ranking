@@ -8,18 +8,6 @@ export function createHandler(authService:any,dataReader:any=reader) {
   return async(req:Request)=>{
     if(req.method==="OPTIONS")return new Response("ok",{headers});
     if(req.method!=="POST")return json({ok:false,error:"method not allowed"},405);
-    // Temporary cron-protected end-to-end fixture; removed after verification.
-    if(req.headers.get("x-ptcg-cron-secret")) {
-      const secret=String(req.headers.get("x-ptcg-cron-secret")||"");
-      const {data:config,error:configError}=await authService.rpc("get_ptcg_github_trigger_config_for_service");
-      if(!configError && secret && secret===String(config?.cron_secret||"")) {
-        const command=await req.clone().json().catch(()=>({}));
-        if(command.action==="selftest-interim") {
-          return json(await dataReader.final("5865462","tw82928313"));
-        }
-      }
-    }
-    try {
       const token=(req.headers.get("Authorization")||"").replace(/^Bearer\s+/i,"").trim();
       if(!token)return json({ok:false,error:"請先登入授權帳號。"},401);
       const {data,error}=await authService.auth.getUser(token);
