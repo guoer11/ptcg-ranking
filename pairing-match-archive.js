@@ -19,7 +19,7 @@
   }
   const message=(text,error=false)=>{if($("matchArchiveStatus")){$("matchArchiveStatus").textContent=text;$("matchArchiveStatus").dataset.error=error?"1":"0";}};
   const archiveTitle=a=>(a.title||"TCG Meister")+" · TID "+a.tid+
-    (a.parent_tid?" (Day 2)":"")+" · "+(a.final_seen_at?"最終排名已封存":a.last_round?"Round "+a.last_round:"等待官方資料");
+    (a.parent_tid?" (Day 2)":"")+" · "+(a.final_seen_at?"最終排名已封存":a.interim_round?"Round "+a.interim_round+" 暫定排名已封存":a.last_round?"Round "+a.last_round:"等待官方資料");
   const normalizedId=p=>String(p?.id||"").toLowerCase();
   const realName=p=>view?.context?.real_names?.[normalizedId(p)]||"";
   const deckInfo=p=>view?.context?.decks?.[normalizedId(p)]||{};
@@ -32,9 +32,9 @@
       row.b?.name,row.b?.id,realName(row.b),deckTerm(row.b)]
       .some(t=>String(t||"").toLowerCase().includes(term)));
   }
-  function standingRows() {
+  function standingRows(source=view?.final) {
     const term=$("matchArchiveSearch")?.value.trim().toLowerCase()||"";
-    return (view?.final?.standings||[]).filter(row=>[
+    return (source?.standings||[]).filter(row=>[
       row.rank,row.name,row.id,realName(row),deckTerm(row)
     ].some(t=>String(t||"").toLowerCase().includes(term)));
   }
@@ -76,13 +76,17 @@
     const root=$("matchArchiveRows");
     if(!root||!view)return;
     const term=$("matchArchiveSearch")?.value.trim()||"";
-    if(selectedRound==="final") {
-      const rows=standingRows();
-      if(!view.final){root.innerHTML='<p class="archive-empty">尚未成功封存最終排名。</p>';return;}
-      root.innerHTML=`<p class="archive-subtitle">最終排名 · ${rows.length} 位${term?"（篩選結果）":""} · ${escape(view.final.captured_at||"")}</p>
-        <div class="archive-scroll"><table><thead><tr><th>名次</th><th>選手／歷史牌組</th><th>積分</th></tr></thead><tbody>
+    if(selectedRound==="final"||selectedRound==="interim") {
+      const provisional=selectedRound==="interim";
+      const source=provisional?view.interim:view.final;
+      if(!source){root.innerHTML=`<p class="archive-empty">${provisional?"尚未封存暫定排名":"尚未封存正式最終排名"}。</p>`;return;}
+      const rows=standingRows(source);
+      const title=provisional?`Round ${source.round_no} 暫定排名（非最終成績）`:"官方最終排名";
+      root.innerHTML=`<p class="archive-subtitle">${escape(title)} · ${rows.length} 位${term?"（篩選結果）":""} · ${escape(source.captured_at||"")}</p>
+        <div class="archive-scroll"><table><thead><tr><th>名次</th><th>選手／歷史牌組</th><th>TtlScore</th></tr></thead><tbody>
         ${rows.map(p=>`<tr><td>${escape(p.rank)}</td><td>${playerHTML(p)}</td><td>${p.points==null?"—":escape(p.points)}</td></tr>`).join("")}
-        </tbody></table></div>`;
+        </tbody></table></div>
+        ${provisional?'<p class="archive-empty">這是官方各輪結束後的暫定排名，仍等待正式最終榜；不可當作已確認成績。</p>':""}`;
       return;
     }
     if(!view.selected){root.innerHTML='<p class="archive-empty">該輪尚無封存資料。</p>';return;}
@@ -98,7 +102,7 @@
     selectedRound=value;
     try {
       message("正在讀取已保存的比賽資料…");
-      const result=await api("get",{tid:activeTid,round:value==="final"?null:Number(value)});
+      const result=await api("get",{tid:activeTid,round:value==="final"||value==="interim"?null:Number(value)});
       view=result.archive;
       if(!view)throw new Error("找不到這場賽事的封存");
       renderRows();
@@ -112,10 +116,11 @@
     view=result.archive;
     if(!view){message("目前查不到封存紀錄",true);return;}
     const options=(view.rounds||[]).map(r=>`<option value="${escape(r.round_no)}">Round ${escape(r.round_no)}（${escape(r.table_count)} 桌）</option>`);
+    if(view.interim)options.push(`<option value="interim">Round ${escape(view.interim.round_no)} 暫定排名</option>`);
     if(view.final)options.push('<option value="final">最終排名</option>');
     const select=$("matchArchiveRound");
     select.innerHTML=options.join("");
-    selectedRound=view.final?"final":String(view.rounds?.at(-1)?.round_no||"");
+    selectedRound=view.final?"final":view.interim?"interim":String(view.rounds?.at(-1)?.round_no||"");
     select.value=selectedRound;
     if(!selectedRound){$("matchArchiveRows").innerHTML='<p class="archive-empty">已建立封存，正在等待首輪配對公布。</p>';return;}
     await loadSelected();
