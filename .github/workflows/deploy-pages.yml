@@ -58,8 +58,12 @@ jobs:
           node --check ranking-projection.js
           node tests/preliminary-ui.test.cjs
           node tests/ranking-projection.test.cjs
+          node --check pairing.js
+          node --check pairing-odds.js
           node --check pairing-match-archive.js
           node tests/pairing-match-archive.test.cjs
+          node tests/pairing-interim-ranking.test.cjs
+          node tests/pairing-last-round-final.test.cjs
           node --check pairing-deck-scout.js
           node --check player-badges.js
           node --check wcs-2027-standalone.js
