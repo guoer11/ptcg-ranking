@@ -59,9 +59,17 @@
     });
   }
   function renderFinal(data,o){
-    const p=data.standing;
+    const p=data.standing,interim=Boolean(data.is_interim);
+    const title=interim?`Round ${data.round||"—"} 暫定排名`:"官方最終結果";
     $('oddsPending').hidden=true;$('oddsActual').hidden=true;
-    $('oddsResult').innerHTML=`<div class="odds-result-heading"><h3>官方最終結果</h3><span class="odds-badge">已公布</span></div><p>${esc(data.title||'此活動')} · ${esc(o.playerId)}</p>${p?`<div class="odds-table-wrap"><table class="odds-record-table"><thead><tr><th>名次門檻</th><th>實際結果</th></tr></thead><tbody>${[...new Set(o.cuts)].sort((a,b)=>a-b).map(c=>`<tr><td>前 ${c} 名</td><td>${p.rank<=c?'已進入':'未進入'}</td></tr>`).join('')}</tbody></table></div>`:'<p>最終榜未列出這個玩家 ID，請至官方頁面確認。</p>'}<p><a href="${esc(data.source_url)}" target="_blank" rel="noopener">查看官方最終排名 ↗</a></p>`;
+    $('oddsResult').innerHTML=`<div class="odds-result-heading"><h3>${esc(title)}</h3><span class="odds-badge">${interim?"非正式":"已公布"}</span></div>
+      <p>${esc(data.title||'此活動')} · ${esc(o.playerId)}</p>
+      ${p?`<p>目前${interim?"暫居":"排名"}第 <strong>${esc(p.rank)}</strong> 名（${esc(p.score)} pt）</p>
+      <div class="odds-table-wrap"><table class="odds-record-table"><thead><tr><th>名次門檻</th><th>${interim?"暫定結果":"實際結果"}</th></tr></thead><tbody>
+        ${[...new Set(o.cuts)].sort((a,b)=>a-b).map(c=>`<tr><td>前 ${c} 名</td><td>${interim?(p.rank<=c?'暫居前 '+c+' 名':'目前未進前 '+c+' 名'):(p.rank<=c?'已進入':'未進入')}</td></tr>`).join('')}
+      </tbody></table></div>`:'<p>目前榜單未列出這個玩家 ID，請至官方頁面確認。</p>'}
+      ${interim?'<p>官方顯示 End of Round interim result，屬暫定名次，等待正式最終排名確認；系統不會把它當作最終成績。</p>':''}
+      <p><a href="${esc(data.source_url)}" target="_blank" rel="noopener">查看官方${interim?"暫定":"最終"}排名 ↗</a></p>`;
   }
   function renderTable(output,data,o,view=o.cut){
     const snapshot=data.snapshot,me=snapshot.players.find(p=>p.id===o.playerId),i=output.cuts.indexOf(view),remaining=o.totalRounds-snapshot.completed;
@@ -129,7 +137,7 @@
       if(live())result=await request({action:'final',url:$('pairingSourceUrl').value,player_id:o.playerId});
       else{const response=await fetch('data/pairing-odds-3000442-final.json?v=1.11.0');if(!response.ok)throw new Error('最終成績讀取失敗。');const payload=await response.json();result={available:true,standing:payload.standings.find(p=>p.id===o.playerId)};}
       if(token!==revision||!allowed)return;
-      $('oddsActualResult').textContent=!result.available?'官方最終排名尚未公布。':result.standing?`官方實際第 ${result.standing.rank} 名，${result.standing.score} 分。`: '官方最終榜未列出這個玩家 ID。';
+      $('oddsActualResult').textContent=!result.available?'官方正式排名尚未公布。':result.standing?`${result.is_interim?'官方暫定':'官方正式'}第 ${result.standing.rank} 名，${result.standing.score} 分。${result.is_interim?'（非正式最終成績）':''}`: '目前榜單未列出這個玩家 ID。';
     }catch(error){if(token===revision&&allowed)$('oddsActualResult').textContent=error.message;}
   }
   document.addEventListener('pairing:auth-ready',event=>{allowed=Boolean(event.detail?.allowed);$('oddsRun').disabled=!allowed;if(!allowed){dirty();decisions.clear();}else restoreSettings();});
