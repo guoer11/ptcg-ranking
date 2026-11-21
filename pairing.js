@@ -340,7 +340,7 @@ async function renderFinalRank(ranking, notification = null) {
         ${playerName ? `<small>${escPairing(playerId)}</small>` : ''}
       </article>
       <article>
-        <span>${isInterim ? '第 7 輪後暫定名次'.replace('7', String(ranking.round || '7')) : '最終排名'}</span>
+        <span>${isInterim ? `第 ${ranking.round || '—'} 輪後暫定名次` : '最終排名'}</span>
         <strong>第 ${escPairing(standing.rank)} 名</strong>
         <small>${isInterim ? '暫定名次，尚非官方最終排名' : '不顯示總分'}</small>
       </article>
