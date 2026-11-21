@@ -196,12 +196,23 @@ export async function captureInterim(tid:string,round:number) {
   return {tid,round_no:round,source_url:pageUrl(tid,round,1,true),
     page_count:page.page_count,player_count:standings.length,standings};
 }
-export async function captureFinal(tid:string) {
+export async function captureFinal(tid:string,expectedRounds:number|null=null) {
+  // Formal final URL takes precedence whenever Meister publishes it.
   const page=await allPages(tid,9999999,true);
   const standings=standingsFromRows(page.rows);
-  if(!standings.length)return null;
-  return {tid,source_url:pageUrl(tid,9999999,1,true),player_count:standings.length,
-    page_count:page.page_count,standings};
+  if(standings.length)
+    return {tid,source_url:pageUrl(tid,9999999,1,true),player_count:standings.length,
+      page_count:page.page_count,standings,source_status:"official_final"};
+  // Some 7-round UBL tournaments leave the URL above empty. When the
+  // actual Swiss round count has been explicitly confirmed for THIS TID,
+  // the standings after that last round are its completed tournament result.
+  // Never assume that every interim result (e.g. Round 3) is final.
+  if(!Number.isInteger(expectedRounds)||!expectedRounds||expectedRounds<1||expectedRounds>40)return null;
+  const lastRound=await captureInterim(tid,expectedRounds);
+  if(!lastRound)return null;
+  return {tid,source_url:lastRound.source_url,player_count:lastRound.player_count,
+    page_count:lastRound.page_count,standings:lastRound.standings,
+    source_status:"completed_last_round"};
 }
 export async function fingerprint(data:unknown) {
   const bytes=new TextEncoder().encode(JSON.stringify(data));
