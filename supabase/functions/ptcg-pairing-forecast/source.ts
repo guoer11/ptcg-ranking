@@ -72,12 +72,12 @@ export function createReader(fetcher:typeof fetch=fetch) {
     for(const page of results){const links=[...page.raw.matchAll(/\bPage=(\d+)/gi)].map(m=>Number(m[1]));if(links.some(n=>n>max))throw new Error("官方配對頁正在更新頁數，請重新讀取。");}
     return results.flatMap(page=>page.rows);
   }
-  async function final(tid:string,playerId:string) {
+  async function final(tid:string,playerId:string,expectedRounds:number|null=null) {
     const first=await html(roundUrl(tid,9999999));
     const hasHeader=first.rows.some((row:string[])=>row.some(cell=>/^rank$/i.test(clean(cell))));
     if(hasHeader) {
       const standings=parseStandings(await allPages(tid,9999999,first,true));
-      return {ok:true,type:"final",rank_status:"final",is_interim:false,available:standings.length>0,
+      return {ok:true,type:"final",rank_status:"final",is_interim:false,is_final:true,source_status:"official_final",available:standings.length>0,
         tid,title:first.title,standing_count:standings.length,
         standing:standings.find((p:any)=>p.id===playerId)||null,
         source_url:roundUrl(tid,9999999),checked_at:first.checkedAt};
@@ -101,10 +101,15 @@ export function createReader(fetcher:typeof fetch=fetch) {
       const header=sample.rows.some((row:string[])=>row.some(cell=>/^rank$/i.test(clean(cell))));
       if(!interim||!header)continue;
       const standings=parseStandings(await allPages(tid,round,sample,true));
-      if(standings.length)return {ok:true,type:"final",rank_status:"interim",is_interim:true,
-        available:true,round,tid,title:sample.title,standing_count:standings.length,
-        standing:standings.find((p:any)=>p.id===playerId)||null,
-        source_url:url,checked_at:sample.checkedAt};
+      if(standings.length) {
+        const complete=Number.isInteger(expectedRounds) && round===expectedRounds;
+        return {ok:true,type:"final",rank_status:complete?"final":"interim",
+          is_interim:!complete,is_final:complete,
+          source_status:complete?"completed_last_round":"interim",
+          available:true,round,tid,title:sample.title,standing_count:standings.length,
+          standing:standings.find((p:any)=>p.id===playerId)||null,
+          source_url:url,checked_at:sample.checkedAt};
+      }
     }
     return {ok:true,type:"final",rank_status:"unavailable",is_interim:false,
       available:false,tid,source_url:roundUrl(tid,9999999),checked_at:first.checkedAt};
