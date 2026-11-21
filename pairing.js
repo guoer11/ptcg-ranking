@@ -311,14 +311,16 @@ async function renderFinalRank(ranking, notification = null) {
   const box = resultBox();
   if (!box) return;
   const standing = ranking?.standing_match;
+  const isInterim = Boolean(ranking?.is_interim);
+  const rankTitle = isInterim ? `Round ${ranking.round || '—'} 暫定排名` : '最終排名';
   if (!standing) {
     box.className = 'pairing-result is-waiting';
     box.innerHTML = `
       <div class="pairing-result-title">
-        <strong>最終排名尚未公布</strong>
-        <span class="pairing-round-badge">Final rank</span>
+        <strong>${isInterim ? '暫定排名已公布，但找不到這位玩家' : '最終排名尚未公布'}</strong>
+        <span class="pairing-round-badge">${isInterim ? 'Interim' : 'Final rank'}</span>
       </div>
-      <div class="pairing-watch-copy">目前還找不到這位玩家的最終排名。</div>`;
+      <div class="pairing-watch-copy">${isInterim ? '目前尚未查到指定玩家的暫定名次，請稍後更新。' : '目前還找不到這位玩家的最終排名。'}</div>`;
     return;
   }
 
@@ -328,8 +330,8 @@ async function renderFinalRank(ranking, notification = null) {
   box.className = 'pairing-result is-found';
   box.innerHTML = `
     <div class="pairing-result-title">
-      <strong>最終排名</strong>
-      <span class="pairing-round-badge">Final rank</span>
+      <strong>${escPairing(rankTitle)}</strong>
+      <span class="pairing-round-badge">${isInterim ? 'Interim' : 'Final rank'}</span>
     </div>
     <div class="pairing-match-grid">
       <article>
@@ -338,9 +340,9 @@ async function renderFinalRank(ranking, notification = null) {
         ${playerName ? `<small>${escPairing(playerId)}</small>` : ''}
       </article>
       <article>
-        <span>最終排名</span>
+        <span>${isInterim ? '第 7 輪後暫定名次'.replace('7', String(ranking.round || '7')) : '最終排名'}</span>
         <strong>第 ${escPairing(standing.rank)} 名</strong>
-        <small>不顯示總分</small>
+        <small>${isInterim ? '暫定名次，尚非官方最終排名' : '不顯示總分'}</small>
       </article>
     </div>`;
 }
