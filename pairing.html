@@ -77,6 +77,13 @@
             <div id="matchArchiveStatus" role="status" aria-live="polite">展開後讀取封存紀錄。</div>
             <div id="matchArchiveRows"><p class="archive-empty">目前尚未載入封存賽事。</p></div>
             <div class="archive-linking">
+              <label>本場總輪數（依現場公告確認）
+                <input type="number" min="1" max="40" step="1" id="matchArchiveExpectedRounds" class="search-input" placeholder="例如 7；未確認請留空" />
+              </label>
+              <button type="button" class="secondary-btn" id="matchArchiveSetRounds">確認總輪數</button>
+            </div>
+            <p class="archive-note">官方若使用「End of Round N interim result」，只在 N 等於此處已確認的總輪數時，才會視為本場最終排名；未確認前仍以暫定榜保存。這個設定不影響原本每 10 秒的配對通知。</p>
+            <div class="archive-linking">
               <label>大師球 Day 2 關聯 Day 1 賽事
                 <select id="matchArchiveLinkDay1" class="search-input"><option value="">Day 1（不設定）</option></select>
               </label>
