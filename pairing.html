@@ -160,9 +160,13 @@
           document.dispatchEvent(new CustomEvent('pairing:history-mode', {
             detail: { parsed, playerId, pairing: pairingData, ranking: finalState.ranking }
           }));
-          const resultText = pairingData?.match
-            ? `Round ${parsed.round} 配對已找到`
-            : (pairingData?.available ? `Round ${parsed.round} 配對表已公布` : `Round ${parsed.round} 尚未公布`);
+          const viewingRanking = new URL(parsed.url).searchParams.get('znt') === '1';
+          if (viewingRanking) await renderFinalRank(finalState.ranking);
+          const resultText = viewingRanking
+            ? `已讀取第 ${standing.rank} 名（全 ${finalState.ranking.round || '最後'} 輪結束排名）`
+            : pairingData?.match
+              ? `Round ${parsed.round} 配對已找到`
+              : (pairingData?.available ? `Round ${parsed.round} 配對表已公布` : `Round ${parsed.round} 尚未公布`);
           setPairingMessage(`${resultText}；此賽事已結束，僅進行歷史查詢，不會發送追蹤通知。`, 'success');
           return;
         }
