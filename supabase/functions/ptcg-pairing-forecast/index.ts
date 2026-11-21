@@ -20,13 +20,19 @@ export function createHandler(authService:any,dataReader:any=reader) {
       const tid=sourceTid(String(body.url||""));
       const player=String(body.player_id||"").trim().toLowerCase();
       if(!/^tw\d{6,12}$/.test(player))throw new Error("請確認追蹤玩家的 PTCG ID。");
-      if(body.action==="final")return json(await dataReader.final(tid,player));
+      // Confirmed event round count is recorded per TID, never inferred from an
+      // arbitrary mid-event "interim" page.
+      const {data:config,error:configError}=await authService.from("ptcg_match_archives")
+        .select("expected_rounds").eq("tid",tid).maybeSingle();
+      if(configError)throw configError;
+      const expectedRounds=Number(config?.expected_rounds)||null;
+      if(body.action==="final")return json(await dataReader.final(tid,player,expectedRounds));
       if(body.action && body.action!=="snapshot")throw new Error("invalid action");
       const total=Number(body.total_rounds),round=body.round==="auto"?"auto":Number(body.round);
       if(!Number.isInteger(total)||total<1||total>20)throw new Error("總輪數請填 1–20，並以現場公告為準。");
       if(round!=="auto" && (!Number.isInteger(round)||round<1||round>total))throw new Error("Round 必須在總輪數範圍內。");
       if(round==="auto") {
-        const completed=await dataReader.final(tid,player);
+        const completed=await dataReader.final(tid,player,expectedRounds);
         if(completed.available)return json(completed);
       }
       return json(await dataReader.snapshot(tid,round,total));
