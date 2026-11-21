@@ -189,7 +189,7 @@ function standingsFromRows(rows:string[][]) {
 export async function captureInterim(tid:string,round:number) {
   if(!Number.isInteger(round)||round<1||round>40)throw new Error("暫定排名輪次不合法");
   const page=await allPages(tid,round,true);
-  const isInterim=page.rows.some(row=>row.some(cell=>/end\\s+of\\s+round\\s*\\d+\\s+interim\\s+result|interim\\s+(?:results?|standings?)/i.test(cell)));
+  const isInterim=page.rows.some(row=>row.some(cell=>/end\s+of\s+round\s*\d+\s+interim\s+result|interim\s+(?:results?|standings?)/i.test(cell)));
   if(!isInterim)return null;
   const standings=standingsFromRows(page.rows);
   if(!standings.length)return null;
