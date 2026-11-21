@@ -86,7 +86,7 @@ export function createReader(fetcher:typeof fetch=fetch) {
     // at kno=N&znt=1 while the old kno=9999999 final URL remains empty.
     // Display provisional standings, never claim they are the confirmed final.
     const event=await html(`https://${HOST}/tour.asp?tid=${tid}`);
-    const interimRounds=[...new Set([...event.raw.matchAll(/href=["']([^"']*tourround\\.asp\\?[^"']+)["']/gi)]
+    const interimRounds=[...new Set([...event.raw.matchAll(/href=["']([^"']*tourround\.asp\?[^"']+)["']/gi)]
       .map(m=>m[1].replace(/&amp;/gi,"&"))
       .map(link=>{try {const u=new URL(link,`https://${HOST}/`);
         return u.hostname===HOST && u.searchParams.get("tid")===tid
@@ -97,7 +97,7 @@ export function createReader(fetcher:typeof fetch=fetch) {
       const url=roundUrl(tid,round,1,true);
       const sample=await html(url);
       const interim=sample.rows.some((row:string[])=>row.some(cell=>
-        /end\\s+of\\s+round\\s*\\d+\\s+interim\\s+result/i.test(clean(cell))));
+        /end\s+of\s+round\s*\d+\s+interim\s+result/i.test(clean(cell))));
       const header=sample.rows.some((row:string[])=>row.some(cell=>/^rank$/i.test(clean(cell))));
       if(!interim||!header)continue;
       const standings=parseStandings(await allPages(tid,round,sample,true));
