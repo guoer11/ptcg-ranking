@@ -22,7 +22,7 @@ for(const r of bracket.results){
  const [rank,pts,finish]=podium[r.player_id]||[5,25,'八強'];
  assert.equal(r.final_rank,rank);assert.equal(r.points,pts);assert.equal(r.finish,finish);
 }
-for(const [rank,points] of [[9,20],[16,20],[17,15],[32,15],[33,10],[64,10],[65,0],[77,0]])
+for(const [rank,points] of [[9,20],[16,20],[17,15],[32,15],[33,0],[64,0],[65,0],[77,0]])
  assert.equal(result.standings[rank-1].points,points);
 (async()=>{
  const source=fs.readFileSync('preliminary-ui.js','utf8');
@@ -45,11 +45,12 @@ for(const [rank,points] of [[9,20],[16,20],[17,15],[32,15],[33,10],[64,10],[65,0
    assert.equal(match.resultStatus,'knockout-estimated');
    assert.equal(match.preliminaryRank,r.preliminary_rank);
  }
- for(const rank of [9,17,33]){
+ for(const rank of [9,17]){
    const match=(await win.openPlayerModal(result.standings[rank-1].player_id)).find(x=>x.eventId==='66990');
    assert(match);assert.equal(match.points,result.standings[rank-1].points);
    assert.equal(match.resultStatus,'estimated');
  }
+ assert.equal((await win.openPlayerModal(result.standings[32].player_id)).length,0,'77 entrants: 33rd place has 0 LP');
  assert.equal((await win.openPlayerModal(result.standings[64].player_id)).length,0,'0 LP should stay unlisted');
  const existing=knockout.events['66987'];
  assert(existing&&existing.results.length===8,'past event records untouched');

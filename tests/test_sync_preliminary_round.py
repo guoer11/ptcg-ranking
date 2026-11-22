@@ -51,7 +51,7 @@ class RankingFallbackTests(unittest.TestCase):
             sync.ranking_url("5865462",round_no=41)
     def test_lp_bands_for_77(self):
         self.assertEqual([(r,sync.lp_score("Ultra",77,r)) for r in [9,17,33,65]],
-                         [(9,20),(17,15),(33,10),(65,0)])
+                         [(9,20),(17,15),(33,0),(65,0)])
 
 if __name__=="__main__":
     unittest.main()
