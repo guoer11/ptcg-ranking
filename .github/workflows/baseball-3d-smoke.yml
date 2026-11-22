@@ -63,9 +63,16 @@ jobs:
                 const game=document.getElementById('gameApp');
                 const scene=document.getElementById('scene');
                 game.classList.remove('v202-mode-bat');
-                game.classList.add('v202-mode-pitch','pitch-ui-top');
-                scene.classList.remove('v202-cinematic-bat');
-                scene.classList.add('user-pitching','v202-cinematic-pitch');
+                // Reproduce the reported bug: pitching half without cinematic camera.
+                game.classList.remove('v202-mode-bat','v202-mode-pitch');
+                game.classList.add('pitch-ui-top');
+                scene.classList.remove('v202-cinematic-bat','v202-cinematic-pitch');
+                scene.classList.add('user-pitching');
+                const pitchButton=document.getElementById('userPitchBtn');
+                pitchButton.classList.remove('hidden');
+                pitchButton.disabled=false;
+                window.__pitchClickCount=0;
+                pitchButton.addEventListener('click',()=>window.__pitchClickCount++);
                 const panel=document.getElementById('pitchModePanel');
                 scene.appendChild(panel);
                 panel.classList.remove('hidden');
@@ -84,6 +91,35 @@ jobs:
                   ready:document.getElementById('gameApp').classList.contains('baseball-3d-ready')};
               });
               if(!pitchView.ready)throw Error('Pitching WebGL mode failed');
+              const action=await page.evaluate(()=>{
+                const btn=document.getElementById('userPitchBtn');
+                const rect=btn.getBoundingClientRect();
+                const style=getComputedStyle(btn);
+                const x=rect.left+rect.width/2,y=rect.top+rect.height/2;
+                const hit=document.elementFromPoint(x,y);
+                return {x,y,w:rect.width,h:rect.height,display:style.display,
+                  disabled:btn.disabled,hit:hit?.id||hit?.className,
+                  within:x>=0&&x<innerWidth&&y>=0&&y<innerHeight};
+              });
+              if(action.display==='none'||action.w<70||action.h<70
+                  ||action.hit!=='userPitchBtn'||!action.within)
+                  throw Error('Landscape pitch button not tappable: '+JSON.stringify(action));
+              await page.mouse.click(action.x,action.y);
+              const clickCount=await page.evaluate(()=>window.__pitchClickCount);
+              if(clickCount!==1)throw Error('Pitch action click did not fire: '+clickCount);
+              await page.setViewportSize({width:844,height:390});
+              await page.waitForTimeout(250);
+              const small=await page.evaluate(()=>{
+                const btn=document.getElementById('userPitchBtn');
+                const r=btn.getBoundingClientRect();
+                const el=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+                return {hit:el?.id,x:r.x,y:r.y,right:r.right,bottom:r.bottom,
+                  width:innerWidth,height:innerHeight};
+              });
+              if(small.hit!=='userPitchBtn'||small.right>small.width||small.bottom>small.height)
+                throw Error('iPhone landscape pitch button is blocked: '+JSON.stringify(small));
+              await page.screenshot({path:'baseball-3d-iphone-pitch.png'});
+              console.log('PITCH ACTION PASS',JSON.stringify({action,clickCount,small}));
               console.log('3D PITCH VIEW PASS',JSON.stringify(pitchView));
               console.log('3D SMOKE PASS',JSON.stringify(value));
               if(errors.length)console.log('Browser errors:',errors.join(' | ').slice(0,1500));
@@ -101,4 +137,5 @@ jobs:
           path: |
             baseball-3d-smoke.png
             baseball-3d-pitch.png
+            baseball-3d-iphone-pitch.png
           if-no-files-found: ignore
