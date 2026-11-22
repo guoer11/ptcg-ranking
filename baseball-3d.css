@@ -98,3 +98,58 @@
     bottom:43%!important;
   }
 }
+
+
+/* ===== V301 LANDSCAPE PITCH BUTTON =====
+   Pitch controls are game-state driven, never camera-mode driven.
+   Before this fix the 82px button existed only under .v202-mode-pitch.
+   Non-cinematic 3D pitching had pitch types but no tappable throw action.
+*/
+@media (orientation:landscape) {
+  #gameApp.pitch-ui-top > .controls {
+    position:fixed!important;
+    inset:0!important;
+    z-index:180!important;
+    display:block!important;
+    background:none!important;
+    border:0!important;
+    pointer-events:none!important;
+  }
+  #gameApp.pitch-ui-top > .controls #userPitchBtn {
+    display:flex!important;
+    visibility:visible!important;
+    position:absolute!important;
+    align-items:center!important;
+    justify-content:center!important;
+    top:auto!important;
+    left:auto!important;
+    right:calc(14px + env(safe-area-inset-right))!important;
+    bottom:calc(20px + env(safe-area-inset-bottom))!important;
+    width:96px!important;
+    height:96px!important;
+    min-height:96px!important;
+    margin:0!important;
+    padding:4px!important;
+    border-radius:50%!important;
+    border:2px solid rgba(196,255,221,.75)!important;
+    background:linear-gradient(160deg,rgba(54,194,124,.96),rgba(15,110,77,.98))!important;
+    color:#fff!important;
+    font-size:21px!important;
+    line-height:1.12!important;
+    font-weight:950!important;
+    text-align:center!important;
+    white-space:normal!important;
+    box-shadow:0 4px 0 rgba(1,39,28,.9),0 9px 24px rgba(0,0,0,.42)!important;
+    text-shadow:0 2px 4px rgba(0,0,0,.45)!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+    user-select:none!important;
+    -webkit-user-select:none!important;
+    z-index:250!important;
+  }
+  #gameApp.pitch-ui-top > .controls #userPitchBtn:disabled {
+    opacity:.48!important;
+    filter:saturate(.55)!important;
+  }
+}
