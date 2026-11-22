@@ -601,7 +601,62 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
 
 </style>
 <link rel="stylesheet" href="baseball-reference-ui.css?v=300">
-<link rel="stylesheet" href="baseball-3d.css?v=303">
+<link rel="stylesheet" href="baseball-3d.css?v=304">
+<!-- V304: critical batting action rules live in the HTML to avoid stale iOS CSS. -->
+<style id="baseball-action-recovery-v304">
+@media (orientation:landscape) {
+  #gameApp:not(.pitch-ui-top) > .controls {
+    position:fixed!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    padding:0!important;
+    z-index:220!important;
+    overflow:visible!important;
+    pointer-events:none!important;
+    background:transparent!important;
+    border:0!important;
+    display:block!important;
+  }
+  /* Don't rely on the old v202 camera or the previous hidden flag. */
+  #gameApp:not(.pitch-ui-top) > .controls #swingBtn {
+    display:flex!important;
+    visibility:visible!important;
+    position:fixed!important;
+    top:auto!important;
+    left:auto!important;
+    right:calc(14px + env(safe-area-inset-right))!important;
+    bottom:calc(20px + env(safe-area-inset-bottom))!important;
+    width:96px!important;
+    height:96px!important;
+    min-width:96px!important;
+    min-height:96px!important;
+    margin:0!important;
+    padding:6px!important;
+    align-items:center!important;
+    justify-content:center!important;
+    text-align:center!important;
+    border-radius:50%!important;
+    border:2px solid #ffe0a2!important;
+    background:linear-gradient(160deg,#ffe075,#d99020)!important;
+    color:#392600!important;
+    font-size:21px!important;
+    font-weight:950!important;
+    line-height:1.12!important;
+    box-shadow:0 5px 0 #66400e,0 7px 26px #0008!important;
+    opacity:1!important;
+    filter:none!important;
+    z-index:260!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
+  /* Inning switches must disable action but must not make the button disappear. */
+  #gameApp:not(.pitch-ui-top) > .controls #swingBtn:disabled {
+    opacity:.78!important;
+    filter:saturate(.82)!important;
+  }
+}
+</style>
 </head>
 <body>
 <div id="setupApp" class="app">
