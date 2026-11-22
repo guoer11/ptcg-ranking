@@ -153,3 +153,137 @@
     filter:saturate(.55)!important;
   }
 }
+
+
+/* ===== V302 COMPACT LOWER-LEFT PITCH MENU =====
+   The game-state class is stable across 2D and 3D camera preferences.
+   Preserve full pitch list, active pitch grades, pickoffs and chart access.
+*/
+@media (orientation:landscape) {
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel {
+    position:absolute!important;
+    top:auto!important;
+    bottom:calc(10px + env(safe-area-inset-bottom))!important;
+    left:calc(10px + env(safe-area-inset-left))!important;
+    right:auto!important;
+    width:min(270px, 41vw)!important;
+    min-width:0!important;
+    max-width:calc(100vw - 160px)!important;
+    max-height:min(70dvh, 290px)!important;
+    height:auto!important;
+    margin:0!important;
+    padding:6px 7px 7px!important;
+    border:1px solid rgba(185,225,217,.38)!important;
+    border-radius:14px!important;
+    background:rgba(6,23,24,.89)!important;
+    backdrop-filter:blur(7px)!important;
+    box-shadow:0 4px 15px #0008!important;
+    z-index:112!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    pointer-events:auto!important;
+  }
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-mode-top {
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-end!important;
+    position:relative!important;
+    min-height:27px!important;
+    height:27px!important;
+    padding:0!important;
+    margin:0 0 4px!important;
+    gap:0!important;
+  }
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-mode-top #userPitcherLabel,
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-mode-top #cpuBatterLabel {
+    display:none!important;
+  }
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-chart-btn {
+    position:relative!important;
+    top:auto!important;
+    right:auto!important;
+    min-width:33px!important;
+    width:33px!important;
+    min-height:26px!important;
+    height:26px!important;
+    padding:2px 4px!important;
+    font-size:12px!important;
+    border-radius:7px!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-defense-actions {
+    margin:0 0 4px!important;
+    padding:0!important;
+    display:flex!important;
+    flex-wrap:wrap!important;
+    gap:4px!important;
+  }
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-defense-actions:empty {
+    display:none!important;
+  }
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-mini-action {
+    min-height:29px!important;
+    font-size:11px!important;
+    padding:3px 8px!important;
+  }
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-types {
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:5px!important;
+    width:100%!important;
+    min-height:0!important;
+    max-height:205px!important;
+    margin:0!important;
+    padding:0!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    scrollbar-width:thin!important;
+    touch-action:pan-y!important;
+  }
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-type {
+    width:100%!important;
+    min-width:0!important;
+    min-height:39px!important;
+    height:auto!important;
+    margin:0!important;
+    padding:5px 4px!important;
+    border-radius:8px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:2px!important;
+    white-space:normal!important;
+    font-size:11px!important;
+    line-height:1.15!important;
+    text-align:left!important;
+    touch-action:manipulation!important;
+    pointer-events:auto!important;
+  }
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-type > span {
+    min-width:0!important;
+    overflow-wrap:anywhere!important;
+  }
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-grade {
+    flex:0 0 auto!important;
+  }
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-help {
+    display:none!important;
+  }
+}
+@media (orientation:landscape) and (max-height:370px) {
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel {
+    bottom:calc(7px + env(safe-area-inset-bottom))!important;
+    width:min(250px,41vw)!important;
+    padding:4px 6px 5px!important;
+  }
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-mode-top {
+    height:24px!important;
+    min-height:24px!important;
+    margin-bottom:3px!important;
+  }
+  #gameApp.pitch-ui-top #scene > .pitch-mode-panel .pitch-type {
+    min-height:35px!important;
+    padding:3px 4px!important;
+  }
+}
