@@ -40,6 +40,17 @@ jobs:
             const errors=[];
             page.on('pageerror',e=>errors.push('JS: '+e.message));
             page.on('console',m=>{if(m.type()==='error')errors.push('console: '+m.text())});
+            // Expose only two existing game-closure functions to test through
+            // a local HTML response rewrite. Never modify production source.
+            await page.route('**/baseball-game.html',async route=>{
+              const response=await route.fetch();
+              let body=await response.text();
+              body=body.replace('function setHalfMode(mode){',
+                'window.__qaSetHalfMode=mode=>setHalfMode(mode);\\nfunction setHalfMode(mode){');
+              body=body.replace('function v144BeginHalfBreak(onFinish){',
+                'window.__qaBeginHalfBreak=cb=>v144BeginHalfBreak(cb);\\nfunction v144BeginHalfBreak(onFinish){');
+              await route.fulfill({response,body});
+            });
             await page.goto('http://127.0.0.1:8999/baseball-game.html',{waitUntil:'domcontentloaded'});
             await page.evaluate(()=>{
               document.getElementById('setupApp').classList.add('hidden');
@@ -237,8 +248,8 @@ jobs:
               await page.evaluate(()=>{
                 const game=document.getElementById('gameApp');
                 game.classList.add('v202-cinematic-game','v202-mode-bat');
-                setHalfMode('bat');
-                v144BeginHalfBreak(()=>{});
+                window.__qaSetHalfMode('bat');
+                window.__qaBeginHalfBreak(()=>{});
                 // The old bug could leave "hidden" on an otherwise batting button.
                 // Check the CSS failsafe in exactly that case as well.
                 document.getElementById('swingBtn').classList.add('hidden');
