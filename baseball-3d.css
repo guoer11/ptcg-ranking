@@ -287,3 +287,49 @@
     padding:3px 4px!important;
   }
 }
+
+
+/* ===== V303 LANDSCAPE SWING ACTION =====
+   Mirror V301's always-tappable pitching action for the batting half.
+   Mode is determined from .pitch-ui-top (setHalfMode), not camera preferences.
+   The .hidden guard preserves visibility during pitching.
+*/
+@media (orientation:landscape) {
+  #gameApp:not(.pitch-ui-top) > .controls #swingBtn:not(.hidden) {
+    position:absolute!important;
+    display:flex!important;
+    visibility:visible!important;
+    align-items:center!important;
+    justify-content:center!important;
+    top:auto!important;
+    left:auto!important;
+    right:calc(14px + env(safe-area-inset-right))!important;
+    bottom:calc(20px + env(safe-area-inset-bottom))!important;
+    width:96px!important;
+    height:96px!important;
+    min-height:96px!important;
+    margin:0!important;
+    padding:5px!important;
+    border-radius:50%!important;
+    border:2px solid rgba(255,243,179,.80)!important;
+    background:linear-gradient(160deg,rgba(250,198,73,.96),rgba(204,128,24,.98))!important;
+    color:#342409!important;
+    font-size:21px!important;
+    font-weight:950!important;
+    line-height:1.12!important;
+    white-space:normal!important;
+    text-align:center!important;
+    text-shadow:0 1px 1px rgba(255,255,255,.2)!important;
+    box-shadow:0 4px 0 rgba(83,51,5,.85),0 9px 24px rgba(0,0,0,.42)!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+    user-select:none!important;
+    -webkit-user-select:none!important;
+    z-index:250!important;
+  }
+  #gameApp:not(.pitch-ui-top) > .controls #swingBtn:not(.hidden):disabled {
+    opacity:.55!important;
+    filter:saturate(.75)!important;
+  }
+}
