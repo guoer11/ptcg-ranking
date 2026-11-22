@@ -198,19 +198,29 @@
     pane.rotation.y = -a;
     scene.add(pane);
   }
+  // One instanced draw instead of 756 mobile GPU draw calls.
+  const seating = new T.InstancedMesh(
+    new T.BoxGeometry(3.25, .35, 2.18),
+    new T.MeshStandardMaterial({color:0xffffff,roughness:.9}), 12*63
+  );
+  const seatDummy = new T.Object3D();
+  let seatIndex = 0;
   for (let row = 0; row < 12; row++) {
     const R = 88 + row * 2.25;
-    const standMat = row % 2 ? mat(0x71858e) : mat(0x87939b);
     for (let j = 0; j < 63; j++) {
       const a = -1.26 + j * (2.52/62);
-      const x = Math.sin(a)*R, z = -Math.cos(a)*R;
-      const seat = cube(3.25, .35, 2.18, standMat);
-      seat.position.set(x, 3.6 + row*.49, z);
-      seat.rotation.y = -a;
-      seat.castShadow = false;
-      scene.add(seat);
+      seatDummy.position.set(Math.sin(a)*R,3.6+row*.49,-Math.cos(a)*R);
+      seatDummy.rotation.set(0,-a,0);
+      seatDummy.updateMatrix();
+      seating.setMatrixAt(seatIndex,seatDummy.matrix);
+      seating.setColorAt(seatIndex,c(row%2?0x71858e:0x87939b));
+      seatIndex++;
     }
   }
+  seating.instanceMatrix.needsUpdate=true;
+  if(seating.instanceColor)seating.instanceColor.needsUpdate=true;
+  seating.receiveShadow=true;
+  scene.add(seating);
   const spectators = new T.InstancedMesh(
     new T.SphereGeometry(.23, 6, 5),
     new T.MeshLambertMaterial({color:0xffffff}),
