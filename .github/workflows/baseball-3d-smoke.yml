@@ -59,6 +59,32 @@ jobs:
               });
               if(!value.canvas||value.width<200||value.height<100)throw Error('Invalid canvas: '+JSON.stringify(value));
               await page.screenshot({path:'baseball-3d-smoke.png'});
+              await page.evaluate(()=>{
+                const game=document.getElementById('gameApp');
+                const scene=document.getElementById('scene');
+                game.classList.remove('v202-mode-bat');
+                game.classList.add('v202-mode-pitch','pitch-ui-top');
+                scene.classList.remove('v202-cinematic-bat');
+                scene.classList.add('user-pitching','v202-cinematic-pitch');
+                const panel=document.getElementById('pitchModePanel');
+                scene.appendChild(panel);
+                panel.classList.remove('hidden');
+                document.getElementById('pitchTypeButtons').innerHTML=
+                  '<button class="pitch-type active">四縫線</button><button class="pitch-type">滑球</button><button class="pitch-type">指叉球</button>';
+                document.getElementById('message').innerHTML=
+                  '<strong>右外野飛球接殺</strong><span>上一打席結果測試</span>';
+              });
+              await page.waitForTimeout(650);
+              await page.screenshot({path:'baseball-3d-pitch.png'});
+              const pitchView=await page.evaluate(()=>{
+                const panel=document.getElementById('pitchModePanel');
+                const msg=document.getElementById('message');
+                return {panel:panel.getBoundingClientRect().toJSON(),
+                  result:msg.getBoundingClientRect().toJSON(),
+                  ready:document.getElementById('gameApp').classList.contains('baseball-3d-ready')};
+              });
+              if(!pitchView.ready)throw Error('Pitching WebGL mode failed');
+              console.log('3D PITCH VIEW PASS',JSON.stringify(pitchView));
               console.log('3D SMOKE PASS',JSON.stringify(value));
               if(errors.length)console.log('Browser errors:',errors.join(' | ').slice(0,1500));
             } catch(e){
@@ -72,5 +98,7 @@ jobs:
         if: always()
         with:
           name: baseball-3d-smoke-screenshot
-          path: baseball-3d-smoke.png
+          path: |
+            baseball-3d-smoke.png
+            baseball-3d-pitch.png
           if-no-files-found: ignore
