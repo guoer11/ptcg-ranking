@@ -232,6 +232,55 @@ jobs:
               });
               await page.screenshot({path:'baseball-3d-half-break.png'});
               console.log('BAT HALF BREAK DIAGNOSTIC',JSON.stringify(breakState));
+              // Drive the *real* setHalfMode and half-break code, not synthetic
+              // class removals (the v303 test had incorrectly removed hidden).
+              await page.evaluate(()=>{
+                const game=document.getElementById('gameApp');
+                game.classList.add('v202-cinematic-game','v202-mode-bat');
+                setHalfMode('bat');
+                v144BeginHalfBreak(()=>{});
+                // The old bug could leave "hidden" on an otherwise batting button.
+                // Check the CSS failsafe in exactly that case as well.
+                document.getElementById('swingBtn').classList.add('hidden');
+              });
+              await page.waitForTimeout(450);
+              const liveBreak=await page.evaluate(()=>{
+                const game=document.getElementById('gameApp');
+                const btn=document.getElementById('swingBtn');
+                const r=btn.getBoundingClientRect(),st=getComputedStyle(btn);
+                const x=r.left+r.width/2,y=r.top+r.height/2;
+                return {display:st.display,visibility:st.visibility,opacity:+st.opacity,
+                  disabled:btn.disabled,hidden:btn.classList.contains('hidden'),
+                  match:game.matches('#gameApp:not(.pitch-ui-top)'),
+                  hit:document.elementFromPoint(x,y)?.id,
+                  rect:r.toJSON(),viewport:[innerWidth,innerHeight],
+                  chip:document.getElementById('v144HalfBreakChip')?.textContent};
+              });
+              console.log('REAL BAT HALF BREAK',JSON.stringify(liveBreak));
+              if(!liveBreak.match||!liveBreak.disabled||
+                 liveBreak.display==='none'||liveBreak.visibility!=='visible'||
+                 liveBreak.opacity<.6||liveBreak.hit!=='swingBtn'||
+                 liveBreak.rect.width<80||liveBreak.rect.right>liveBreak.viewport[0])
+                throw Error('Actual batting half-break control missing: '+JSON.stringify(liveBreak));
+              await page.screenshot({path:'baseball-3d-real-half-break.png'});
+              // Then confirm it becomes active after the transition.
+              await page.evaluate(()=>{
+                const chip=document.getElementById('v144HalfBreakChip');
+                chip?.classList.add('hidden');
+                const btn=document.getElementById('swingBtn');
+                btn.classList.remove('hidden');
+                btn.disabled=false;
+              });
+              await page.waitForTimeout(80);
+              const active=await page.evaluate(()=>{
+                const b=document.getElementById('swingBtn'),r=b.getBoundingClientRect();
+                const x=r.x+r.width/2,y=r.y+r.height/2;
+                return {disabled:b.disabled,hit:document.elementFromPoint(x,y)?.id,
+                  display:getComputedStyle(b).display,x,y};
+              });
+              if(active.disabled||active.hit!=='swingBtn'||active.display==='none')
+                throw Error('Batting control did not resume after break: '+JSON.stringify(active));
+              console.log('BAT AFTER BREAK PASS',JSON.stringify(active));
               if(breakState.display==='none'||breakState.rect.width<70||breakState.opacity==='0')
                 throw Error('Half-break cinematic swing button hidden: '+JSON.stringify(breakState));
 
@@ -255,4 +304,5 @@ jobs:
             baseball-3d-iphone-pitch.png
             baseball-3d-iphone-batting.png
             baseball-3d-half-break.png
+            baseball-3d-real-half-break.png
           if-no-files-found: ignore
