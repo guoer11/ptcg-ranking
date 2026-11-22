@@ -166,6 +166,48 @@ jobs:
               await page.screenshot({path:'baseball-3d-iphone-pitch.png'});
               console.log('COMPACT IPHONE PITCH PANEL',JSON.stringify(selectorSmall));
               console.log('PITCH ACTION PASS',JSON.stringify({action,clickCount,small}));
+
+              // Switch to the actual non-cinematic 3D batting half: button must
+              // remain in view even with no v202-mode-bat camera class.
+              await page.evaluate(()=>{
+                const game=document.getElementById('gameApp');
+                const scene=document.getElementById('scene');
+                game.classList.remove('pitch-ui-top','v202-mode-pitch','v202-mode-bat');
+                scene.classList.remove('user-pitching','v202-cinematic-pitch');
+                const swing=document.getElementById('swingBtn');
+                swing.classList.remove('hidden');
+                swing.disabled=false;
+                swing.textContent='揮棒！';
+                document.getElementById('userPitchBtn').classList.add('hidden');
+                document.getElementById('pitchModePanel').classList.add('hidden');
+                window.__swingClickCount=0;
+                swing.addEventListener('click',()=>window.__swingClickCount++);
+              });
+              await page.waitForTimeout(250);
+              const batting=await page.evaluate(()=>{
+                const btn=document.getElementById('swingBtn');
+                const rect=btn.getBoundingClientRect();
+                const style=getComputedStyle(btn);
+                const px=rect.x+rect.width/2,py=rect.y+rect.height/2;
+                return {
+                  x:px,y:py,width:rect.width,height:rect.height,
+                  display:style.display,visible:style.visibility,
+                  coveredBy:document.elementFromPoint(px,py)?.id,
+                  disabled:btn.disabled,hidden:btn.classList.contains('hidden'),
+                  inView:px>0&&px<innerWidth&&py>0&&py<innerHeight,
+                  pitchButtonHidden:document.getElementById('userPitchBtn').classList.contains('hidden')
+                };
+              });
+              if(batting.display==='none'||batting.hidden||batting.disabled||
+                 batting.visible!=='visible'||batting.width<70||batting.height<70||
+                 batting.coveredBy!=='swingBtn'||!batting.inView||!batting.pitchButtonHidden)
+                throw Error('iPhone landscape swing button not tappable: '+JSON.stringify(batting));
+              await page.screenshot({path:'baseball-3d-iphone-batting.png'});
+              await page.mouse.click(batting.x,batting.y);
+              const swingClicks=await page.evaluate(()=>window.__swingClickCount);
+              if(swingClicks!==1)throw Error('Swing button click not delivered: '+swingClicks);
+              console.log('BAT ACTION PASS',JSON.stringify({batting,swingClicks}));
+
               console.log('3D PITCH VIEW PASS',JSON.stringify(pitchView));
               console.log('3D SMOKE PASS',JSON.stringify(value));
               if(errors.length)console.log('Browser errors:',errors.join(' | ').slice(0,1500));
@@ -184,4 +226,5 @@ jobs:
             baseball-3d-smoke.png
             baseball-3d-pitch.png
             baseball-3d-iphone-pitch.png
+            baseball-3d-iphone-batting.png
           if-no-files-found: ignore
