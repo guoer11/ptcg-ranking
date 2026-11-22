@@ -33,13 +33,15 @@ def save_json(path, payload):
     os.replace(tmp, path)
 
 
-def ranking_url(tid, page=1):
-    query = urlencode({"tid": tid, "kno": 9999999, "Page": page, "Sort": "Number", "Order": "", "znt": 1})
+def ranking_url(tid, page=1, round_no=9999999):
+    if not isinstance(round_no, int) or (round_no != 9999999 and not 1 <= round_no <= 40):
+        raise ValueError("Invalid standings round")
+    query = urlencode({"tid": tid, "kno": round_no, "Page": page, "Sort": "Number", "Order": "", "znt": 1})
     return f"{BASE}?{query}"
 
 
-def get_page(session, tid, page):
-    url = ranking_url(tid, page)
+def get_page(session, tid, page, round_no=9999999):
+    url = ranking_url(tid, page, round_no)
     response = session.get(url, timeout=(10, 25), allow_redirects=True)
     response.raise_for_status()
     if response.url.split("?")[0].lower() != BASE:
@@ -75,15 +77,21 @@ def parse_standings(raw):
     return rows, has_rank_header
 
 
-def fetch_standings(session, tid):
-    first = get_page(session, tid, 1)
+def fetch_standings(session, tid, round_no=9999999):
+    first = get_page(session, tid, 1, round_no)
+    if round_no != 9999999:
+        # Only trust a known, explicitly confirmed last Swiss round. A random
+        # interim table must never be treated as completed event standings.
+        heading = BeautifulSoup(first, "html.parser").get_text(" ", strip=True)
+        if not re.search(rf"End\s+of\s+Round\s+{round_no}\s+interim\s+result", heading, re.I):
+            raise ValueError("Configured last-round ranking heading was not found")
     raw_pages = [first]
     page_links = [int(m) for m in PAGE_RE.findall(first)]
     total_pages = max([1] + page_links)
     if total_pages > 100:
         raise ValueError("Official ranking has more than 100 pages")
     for page in range(2, total_pages + 1):
-        raw_pages.append(get_page(session, tid, page))
+        raw_pages.append(get_page(session, tid, page, round_no))
     rows = []
     for raw in raw_pages:
         entries, header = parse_standings(raw)
@@ -102,6 +110,18 @@ def fetch_standings(session, tid):
     if sorted(ranks) != list(range(1, len(rows) + 1)):
         raise ValueError("Ranking is not contiguous; participant count is unverified")
     return sorted(rows, key=lambda r: r["rank"])
+
+
+def fetch_configured_standings(session, tid, source):
+    """Prefer official final URL, fallback only if this TID's last Round was confirmed."""
+    try:
+        return fetch_standings(session, tid), ranking_url(tid)
+    except (requests.RequestException, ValueError):
+        last_round = source.get("confirmed_last_round")
+        if type(last_round) is not int or not 1 <= last_round <= 40:
+            raise
+        standings = fetch_standings(session, tid, last_round)
+        return standings, ranking_url(tid, round_no=last_round)
 
 
 def lp_score(league, participants, rank):
@@ -203,7 +223,7 @@ def sync():
             continue
         attempted += 1
         try:
-            standings = fetch_standings(session, tid)
+            standings, standings_url = fetch_configured_standings(session, tid, source)
         except (requests.RequestException, ValueError) as error:
             # An unavailable or incomplete official result must never wipe saved scores.
             print(f"Event {event_id}: official standings unavailable; retain previous data ({error})")
@@ -226,7 +246,7 @@ def sync():
         current = {"event_id": event_id, "tid": tid, "league": event["league"],
                    "group": event["group"], "date": event["date"],
                    "ranking_type": ranking_type, "participants": participants,
-                   "source_url": ranking_url(tid), "standings": standings}
+                   "source_url": standings_url, "standings": standings}
         if new_events.get(event_id) != current:
             new_events[event_id] = current
             changed = True
