@@ -207,6 +207,33 @@ jobs:
               const swingClicks=await page.evaluate(()=>window.__swingClickCount);
               if(swingClicks!==1)throw Error('Swing button click not delivered: '+swingClicks);
               console.log('BAT ACTION PASS',JSON.stringify({batting,swingClicks}));
+              // Reproduce the reported screenshot: cinematic 3D batting view
+              // while the 5-second half-inning transition has disabled actions.
+              await page.evaluate(()=>{
+                const game=document.getElementById('gameApp');
+                game.classList.add('v202-cinematic-game','v202-mode-bat');
+                const sw=document.getElementById('swingBtn');
+                sw.disabled=true;
+                document.getElementById('v144HalfBreakChip')?.classList.remove('hidden');
+              });
+              const breakState=await page.evaluate(()=>{
+                const btn=document.getElementById('swingBtn');
+                const r=btn.getBoundingClientRect();
+                const cs=getComputedStyle(btn);
+                const mid=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
+                const footer=document.querySelector('#gameApp > .controls');
+                const fc=getComputedStyle(footer);
+                return {parent:btn.parentElement?.className,hidden:btn.classList.contains('hidden'),
+                  rect:r.toJSON(),display:cs.display,opacity:cs.opacity,
+                  visibility:cs.visibility,position:cs.position,z:cs.zIndex,
+                  hit:mid?.id||mid?.className,
+                  footer:{position:fc.position,z:fc.zIndex,display:fc.display},
+                  game:document.getElementById('gameApp').className};
+              });
+              await page.screenshot({path:'baseball-3d-half-break.png'});
+              console.log('BAT HALF BREAK DIAGNOSTIC',JSON.stringify(breakState));
+              if(breakState.display==='none'||breakState.rect.width<70||breakState.opacity==='0')
+                throw Error('Half-break cinematic swing button hidden: '+JSON.stringify(breakState));
 
               console.log('3D PITCH VIEW PASS',JSON.stringify(pitchView));
               console.log('3D SMOKE PASS',JSON.stringify(value));
@@ -227,4 +254,5 @@ jobs:
             baseball-3d-pitch.png
             baseball-3d-iphone-pitch.png
             baseball-3d-iphone-batting.png
+            baseball-3d-half-break.png
           if-no-files-found: ignore
