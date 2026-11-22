@@ -400,6 +400,23 @@
     fielders.push(rig);
   });
 
+  // Real 3D baserunners respond to the existing safe/occupied base state.
+  const runnerSpots=[[19.4,-19.4],[0,-38.8],[-19.4,-19.4]];
+  const runners=runnerSpots.map(([x,z],i)=>{
+    const rig=makePlayer(0xf08024,11+i,'fielder');
+    rig.root.position.set(x,0,z);
+    rig.root.rotation.y=PI*.75;
+    rig.root.scale.setScalar(.91);
+    rig.root.visible=false;
+    scene.add(rig.root);
+    return rig;
+  });
+  const occupiedBaseElements=[
+    document.getElementById('base1'),
+    document.getElementById('base2'),
+    document.getElementById('base3')
+  ];
+
   // 3D ball, raised seams, and ball ground shadow.
   const baseball = sphere(.105, mat(0xfaf4e6,.38),20,14);
   scene.add(baseball);
@@ -589,6 +606,16 @@
       catcher.root.position.y=-.52;
       for (const [i,f] of fielders.entries()) {
         f.torso.rotation.y=Math.sin(simClock*1.1+i)*.055;
+      }
+      for(let i=0;i<runners.length;i++) {
+        const occupied=!!occupiedBaseElements[i]?.classList.contains('runner');
+        runners[i].root.visible=occupied;
+        if(occupied){
+          runners[i].jersey.color.setHex(pitchMode?
+            (teamColors[(document.getElementById('cpuShort')?.textContent||'').trim()]||0xf0c42f):
+            0xf08024);
+          runners[i].torso.rotation.y=Math.sin(simClock*2+i)*.065;
+        }
       }
       setCameraMode(pitchMode,hitMode);
       renderBall(pitchMode,hitMode);
