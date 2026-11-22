@@ -488,8 +488,30 @@
   ];
 
   // 3D ball, raised seams, and ball ground shadow.
-  const baseball = sphere(.105, mat(0xfaf4e6,.38),20,14);
+  // V305: readable pitch in 3D batting view (especially on iPhone).
+  // The distant .105m ball projected to only a few pixels and blended into
+  // the light sky/uniform. Keep the physical trajectory and swing timing intact.
+  const baseball = sphere(.105,
+    new T.MeshStandardMaterial({color:0xffffff,roughness:.33,
+      emissive:0xf6e9c8,emissiveIntensity:.48}),20,14);
   scene.add(baseball);
+  const pitchHalo = new T.Sprite(new T.SpriteMaterial({
+    map:(()=>{
+      const c=document.createElement('canvas');c.width=c.height=64;
+      const ctx=c.getContext('2d'),g=ctx.createRadialGradient(32,32,8,32,32,31);
+      g.addColorStop(0,'rgba(255,255,255,0)');
+      g.addColorStop(.36,'rgba(255,246,174,.18)');
+      g.addColorStop(.59,'rgba(255,206,79,.82)');
+      g.addColorStop(.78,'rgba(88,56,18,.65)');
+      g.addColorStop(1,'rgba(88,56,18,0)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,64,64);
+      return new T.CanvasTexture(c);
+    })(),
+    transparent:true,depthWrite:false,depthTest:false,opacity:.90
+  }));
+  pitchHalo.visible=false;
+  pitchHalo.renderOrder=80;
+  scene.add(pitchHalo);
   const redThread = new T.MeshBasicMaterial({color:0xb94b3d});
   for (let side of [-1,1]) {
     const pts=[];
@@ -611,13 +633,14 @@
           -19-(1-ny)*63);
         baseball.scale.setScalar(1.3);
         baseball.visible=true;
+        pitchHalo.visible=false;
         ballShadow.position.set(baseball.position.x,-.01,baseball.position.z);
         ballShadow.visible=true;
         return;
       }
     }
     if (!ballElement || ballElement.style.display==='none') {
-      baseball.visible=false; ballShadow.visible=false; return;
+      baseball.visible=false; pitchHalo.visible=false; ballShadow.visible=false; return;
     }
     const zScale=currentPitchScale();
     const progress=Number.isFinite(zScale) ?
@@ -632,8 +655,16 @@
       Math.sin(PI*progress)*.18,
       -18.4 + 18.4*progress);
     baseball.rotation.set(simClock*13,simClock*8,simClock*11);
-    baseball.scale.setScalar(1);
+    // The visual-only scale compensates for perspective: far pitches are
+    // readable without enlarging the hit zone or changing game physics.
+    const pitchVisualScale=pitchMode?1.12:(2.05-.58*progress);
+    baseball.scale.setScalar(pitchVisualScale);
     baseball.visible=true;
+    pitchHalo.visible=!pitchMode;
+    if(!pitchMode){
+      pitchHalo.position.copy(baseball.position);
+      pitchHalo.scale.setScalar(.54+.13*progress);
+    }
     ballShadow.position.set(baseball.position.x,-.012,baseball.position.z);
     ballShadow.visible=true;
   }
