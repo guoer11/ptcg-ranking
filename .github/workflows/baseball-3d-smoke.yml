@@ -46,9 +46,9 @@ jobs:
               const response=await route.fetch();
               let body=await response.text();
               body=body.replace('function setHalfMode(mode){',
-                'window.__qaSetHalfMode=mode=>setHalfMode(mode);\\nfunction setHalfMode(mode){');
+                'window.__qaSetHalfMode=mode=>setHalfMode(mode);function setHalfMode(mode){');
               body=body.replace('function v144BeginHalfBreak(onFinish){',
-                'window.__qaBeginHalfBreak=cb=>v144BeginHalfBreak(cb);\\nfunction v144BeginHalfBreak(onFinish){');
+                'window.__qaBeginHalfBreak=cb=>v144BeginHalfBreak(cb);function v144BeginHalfBreak(onFinish){');
               await route.fulfill({response,body});
             });
             await page.goto('http://127.0.0.1:8999/baseball-game.html',{waitUntil:'domcontentloaded'});
