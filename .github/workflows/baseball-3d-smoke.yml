@@ -1,0 +1,76 @@
+name: Smoke test baseball 3D renderer
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'baseball-3d.js'
+      - 'baseball-3d.css'
+      - 'baseball-game.html'
+      - '.github/workflows/baseball-3d-smoke.yml'
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate 3D script syntax
+        run: node --check baseball-3d.js
+      - name: Install headless browser controller
+        run: npm install --no-save --no-package-lock --ignore-scripts playwright-core@1.58.2
+      - name: Start local site
+        run: |
+          python3 -m http.server 8999 --bind 127.0.0.1 >/tmp/baseball-http.log 2>&1 &
+      - name: Render and verify the actual game in Chrome
+        run: |
+          node <<'JS'
+          const {chromium}=require('playwright-core');
+          (async()=>{
+            const browser=await chromium.launch({
+              executablePath:'/usr/bin/google-chrome',
+              headless:true,
+              args:['--no-sandbox','--enable-webgl','--enable-unsafe-swiftshader',
+                    '--use-angle=swiftshader','--disable-dev-shm-usage']
+            });
+            const page=await browser.newPage({viewport:{width:1108,height:512},deviceScaleFactor:1});
+            const errors=[];
+            page.on('pageerror',e=>errors.push('JS: '+e.message));
+            page.on('console',m=>{if(m.type()==='error')errors.push('console: '+m.text())});
+            await page.goto('http://127.0.0.1:8999/baseball-game.html',{waitUntil:'domcontentloaded'});
+            await page.evaluate(()=>{
+              document.getElementById('setupApp').classList.add('hidden');
+              const game=document.getElementById('gameApp');
+              game.classList.remove('hidden');
+              game.classList.add('v202-mode-bat','v202-cinematic-game');
+              document.getElementById('scene').classList.add('v202-cinematic-bat');
+            });
+            try {
+              await page.waitForFunction(()=>document.getElementById('gameApp')
+                .classList.contains('baseball-3d-ready'),null,{timeout:55000});
+              const value=await page.evaluate(()=>{
+                const canvas=document.querySelector('.baseball-3d-canvas');
+                return {canvas:!!canvas,
+                  width:canvas?.width,height:canvas?.height,
+                  webgl:!!canvas?.getContext('webgl2')};
+              });
+              if(!value.canvas||value.width<200||value.height<100)throw Error('Invalid canvas: '+JSON.stringify(value));
+              await page.screenshot({path:'baseball-3d-smoke.png'});
+              console.log('3D SMOKE PASS',JSON.stringify(value));
+              if(errors.length)console.log('Browser errors:',errors.join(' | ').slice(0,1500));
+            } catch(e){
+              await page.screenshot({path:'baseball-3d-smoke.png'}).catch(()=>{});
+              console.log('Browser errors:',errors.join(' | ').slice(0,3000));
+              throw e;
+            } finally {await browser.close()}
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: baseball-3d-smoke-screenshot
+          path: baseball-3d-smoke.png
+          if-no-files-found: ignore
