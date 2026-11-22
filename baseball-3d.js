@@ -279,57 +279,77 @@
     const face = mat(0xc68b65);
     const gloveMat = mat(0x61402b, .95);
     const shoes = mat(0x222b37, .72);
-    const torsoM = cyl(.40,.34,.82,jersey,20);
-    put(torso,torsoM,0,1.34,0);
-    const chest = sphere(.39,jersey,18,12);
-    chest.scale.set(1.05,.54,.8);
-    put(torso,chest,0,1.56,.01);
+    // Shaped mesh with shoulder/waist taper, rather than a rectangular tube.
+    const shirtProfile=[
+      [.28,0],[.31,.08],[.30,.23],[.34,.44],
+      [.38,.64],[.36,.75],[.27,.81],[.16,.85]
+    ].map(([x,y])=>new T.Vector2(x,y));
+    const torsoM=mesh(new T.LatheGeometry(shirtProfile,28),jersey);
+    put(torso,torsoM,0,.96,0);
+    const chest = sphere(.34,jersey,24,16);
+    chest.scale.set(1.08,.46,.84);
+    put(torso,chest,0,1.55,.005);
+    // Jersey back name and number remain readable in the batting camera.
+    const numberTexture=(()=>{
+      const cv=document.createElement('canvas');cv.width=256;cv.height=256;
+      const g=cv.getContext('2d');
+      g.clearRect(0,0,256,256);
+      g.textAlign='center';g.fillStyle='#f9f9e8';
+      g.font='bold 34px sans-serif';g.fillText('BASEBALL',128,62);
+      g.font='bold 160px sans-serif';g.fillText(String(number),128,213);
+      const t=new T.CanvasTexture(cv);t.colorSpace=T.SRGBColorSpace;return t;
+    })();
+    const jerseyBack=new T.Mesh(new T.PlaneGeometry(.55,.60),
+      new T.MeshBasicMaterial({map:numberTexture,transparent:true,side:T.DoubleSide,depthWrite:false}));
+    jerseyBack.position.set(0,1.43,-.347);
+    jerseyBack.rotation.y=PI;
+    torso.add(jerseyBack);
     put(torso,cyl(.28,.30,.22,trim),0,.93,0);
     const belt = put(torso,cyl(.34,.32,.10,mat(0x273344)),0,.97,0);
     const neckline=put(torso,cyl(.175,.165,.085,trim),0,1.79,0);
     // head + nose + ears + face features
-    const head=sphere(.245,face,18,16);
-    head.scale.set(.92,1.14,.94);
-    put(torso,head,0,2.04,0);
-    put(torso,sphere(.076,face),0,1.99,.231);
+    const head=sphere(.194,face,22,18);
+    head.scale.set(.96,1.08,1);
+    put(torso,head,0,2.01,0);
+    put(torso,sphere(.052,face),0,1.97,.188);
     for (const side of [-1,1]){
       const eye=sphere(.024,mat(0x212223),8,6);
-      put(torso,eye,side*.088,2.084,.209);
-      const ear=sphere(.075,face,10,8);
-      ear.scale.set(.55,1,.65);
-      put(torso,ear,side*.227,2.02,0);
+      put(torso,eye,side*.072,2.047,.174);
+      const ear=sphere(.052,face,10,8);
+      ear.scale.set(.60,1,.75);
+      put(torso,ear,side*.191,2.00,0);
     }
-    const hat=put(torso,cyl(.24,.26,.20,capMat,20),0,2.29,0);
-    hat.scale.set(1,.8,.97);
-    const brim=put(torso,sphere(.30,capMat,20,10),0,2.22,.20);
-    brim.scale.set(.92,.12,.68);
+    const hat=put(torso,cyl(.196,.205,.14,capMat,20),0,2.225,0);
+    hat.scale.set(1,.85,1);
+    const brim=put(torso,sphere(.26,capMat,20,10),0,2.178,.16);
+    brim.scale.set(.90,.12,.67);
     if (style==='batter') {
-      const helmet=put(torso,sphere(.266,capMat),0,2.29,-.005);
-      helmet.scale.set(1,.65,1.02);
-      const earGuard=put(torso,sphere(.13,capMat),-.22,2.08,.045);
-      earGuard.scale.set(.4,1,.8);
+      const helmet=put(torso,sphere(.207,capMat),0,2.235,-.005);
+      helmet.scale.set(1.05,.70,1.03);
+      const earGuard=put(torso,sphere(.105,capMat),-.192,2.04,.035);
+      earGuard.scale.set(.40,1,.85);
     }
     const rigs={root,torso,arms:[],legs:[],jersey,cap:capMat,glove:null,bat:null};
     const arms = [];
     for (const side of [-1,1]) {
       const shoulder = new T.Group();
-      shoulder.position.set(side*.46,1.62,0);
+      shoulder.position.set(side*.39,1.60,0);
       torso.add(shoulder);
-      const sleeve=cyl(.19,.175,.28,jersey);
+      const sleeve=cyl(.147,.14,.27,jersey);
       sleeve.rotation.z=side*.1; put(shoulder,sleeve,0,-.17,0);
-      const upper=cyl(.16,.13,.37,face);
+      const upper=cyl(.115,.105,.37,face);
       upper.rotation.z=side*.06; put(shoulder,upper,0,-.47,0);
-      const elbow=put(shoulder,sphere(.133,face),0,-.65,0);
-      const forearm=cyl(.13,.095,.38,face);
+      const elbow=put(shoulder,sphere(.106,face),0,-.65,0);
+      const forearm=cyl(.104,.087,.38,face);
       put(shoulder,forearm,0,-.84,0);
-      const hand=put(shoulder,sphere(.12,face),0,-1.05,0);
+      const hand=put(shoulder,sphere(.096,face),0,-1.05,0);
       shoulder.rotation.z=side*.28;
       arms.push(shoulder);
       if (side===-1 && style!=='umpire') {
-        const mitt=put(shoulder,sphere(.225,gloveMat,16,12),0,-1.03,.09);
-        mitt.scale.set(1.13,1.15,.58);
-        const pocket=put(shoulder,sphere(.15,leather),0,-1.05,.19);
-        pocket.scale.set(.92,1.05,.25);
+        const mitt=put(shoulder,sphere(.165,gloveMat,20,14),0,-1.03,.09);
+        mitt.scale.set(1.08,1.25,.55);
+        const pocket=put(shoulder,sphere(.13,leather),0,-1.05,.18);
+        pocket.scale.set(.9,1,.19);
         rigs.glove=mitt;
       }
     }
@@ -347,16 +367,16 @@
       rigs.legs.push(leg);
     }
     if (style==='batter') {
-      // 3D tapered wooden bat with wrapped grip.
+      // Bat pivots from the hands next to the back shoulder, above the helmet.
       const batRoot = new T.Group();
-      batRoot.position.set(.05,-.88,.11);
-      rigs.arms[1].add(batRoot);
-      const grip = cyl(.043,.038,.52,mat(0x222a32,.73),12);
-      put(batRoot,grip,0,.19,0);
-      const barrel = cyl(.07,.045,.84,mat(0xbb8444,.48),16);
-      put(batRoot,barrel,0,.87,0);
-      put(batRoot,sphere(.07,mat(0x976333)),0,1.32,0);
-      batRoot.rotation.set(.22,0,.40);
+      batRoot.position.set(.55,1.34,-.05);
+      torso.add(batRoot);
+      const grip = cyl(.044,.038,.53,mat(0x202c36,.73),14);
+      put(batRoot,grip,0,.24,0);
+      const barrel = cyl(.073,.046,.90,mat(0xb98143,.48),20);
+      put(batRoot,barrel,0,.93,0);
+      put(batRoot,sphere(.073,mat(0x976333)),0,1.40,0);
+      batRoot.rotation.set(.14,0,-.31);
       rigs.bat=batRoot;
     }
     root.add(torso);
@@ -373,7 +393,7 @@
   userPitcher.root.scale.setScalar(1.2);
   scene.add(userPitcher.root);
   const playerBatter = makePlayer(0xf08024,3,'batter');
-  playerBatter.root.position.set(2.35,.06,6.8);
+  playerBatter.root.position.set(2.35,.06,5.1);
   playerBatter.root.rotation.y=PI;
   playerBatter.root.scale.setScalar(1.1);
   scene.add(playerBatter.root);
@@ -524,6 +544,9 @@
       rig.arms[1].rotation.z=-.40*sw;
       rig.legs[0].rotation.y=.22*sw;
       rig.legs[1].rotation.y=-.22*sw;
+      if(rig.bat)rig.bat.rotation.set(.15,-.55*sw,-.31-1.85*sw);
+    } else if(rig.bat) {
+      rig.bat.rotation.set(.14,0,-.31);
     }
   }
   function renderBall(pitchMode, hitMode) {
