@@ -262,6 +262,56 @@
     put(scene,cube(.65,8,.65,concrete),i,3.2,-94);
   }
 
+  // Backstop grandstand behind home plate, visible from the pitching camera.
+  // The earlier scene only had outfield seating, leaving the pitch view empty.
+  const backWall=put(scene,cube(132,4.3,1.4,mat(0x1f3e46)),0,1.85,32);
+  const backSeating=new T.InstancedMesh(
+    new T.BoxGeometry(2,.30,1.92),
+    new T.MeshStandardMaterial({color:0xffffff,roughness:.88}),
+    12*70
+  );
+  const backSeatObj=new T.Object3D();
+  let backIndex=0;
+  for(let r=0;r<12;r++){
+    for(let j=0;j<70;j++){
+      const x=-69+j*2;
+      backSeatObj.position.set(x,4.2+r*.66,33.5+r*2.1);
+      backSeatObj.rotation.set(0,0,0);
+      backSeatObj.updateMatrix();
+      backSeating.setMatrixAt(backIndex,backSeatObj.matrix);
+      backSeating.setColorAt(backIndex,c(r%2?0x7b8d98:0xa7b0b7));
+      backIndex++;
+    }
+  }
+  backSeating.instanceMatrix.needsUpdate=true;
+  if(backSeating.instanceColor)backSeating.instanceColor.needsUpdate=true;
+  scene.add(backSeating);
+  const backSpectators=new T.InstancedMesh(
+    new T.SphereGeometry(.25,6,5),
+    new T.MeshLambertMaterial({color:0xffffff}),1750
+  );
+  const backHuman=new T.Object3D();
+  for(let i=0;i<1750;i++){
+    const col=Math.floor(rand()*70),row=Math.floor(rand()*12);
+    backHuman.position.set(-69+col*2+rand()*1.5,4.75+row*.66,33.5+row*2.1);
+    backHuman.scale.set(.7+rand()*.7,.85+rand()*.55,.7+rand()*.7);
+    backHuman.updateMatrix();
+    backSpectators.setMatrixAt(i,backHuman.matrix);
+    backSpectators.setColorAt(i,c(crowdColours[Math.floor(rand()*crowdColours.length)]));
+  }
+  backSpectators.instanceMatrix.needsUpdate=true;
+  if(backSpectators.instanceColor)backSpectators.instanceColor.needsUpdate=true;
+  scene.add(backSpectators);
+  const backBoard=mesh(new T.PlaneGeometry(24,8),
+    new T.MeshBasicMaterial({
+      map:signTexture('CPBL 3D LIVE', '#133341'),
+      side:T.DoubleSide
+    }),false);
+  backBoard.position.set(0,14.2,39);
+  backBoard.rotation.y=PI;
+  scene.add(backBoard);
+  put(scene,cube(25,8.8,.9,blue),0,14.2,39.6);
+
   // Fully volumetric uniformed baseball athlete: jersey, articulated arms,
   // 2-piece legs, hands, helmet, face, glove, bat and cleats (no 2D figures).
   const teamColors = {
@@ -490,8 +540,9 @@
       targetPos.set(0, isPortrait?45:34, isPortrait?40:29);
       targetLook.set(0, 0, -36);
     } else if (pitching) {
-      targetPos.set(pitchLeft?1:-1, isPortrait?3.3:2.65, isPortrait?-30:-29);
-      targetLook.set(0,1.3,-1.4);
+      targetPos.set(pitchLeft?.60:-.60, isPortrait?2.65:2.38,
+        isPortrait?-24.3:-23.5);
+      targetLook.set(0,1.35,1.7);
     } else {
       targetPos.set(left?.15:-.15, isPortrait?2.8:2.2, isPortrait?11:10);
       targetLook.set(0, 1.25, -18.4);
