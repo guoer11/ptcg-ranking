@@ -39,6 +39,8 @@
 .history-bracket-pick.is-eliminated{color:#7f8997;opacity:.75}
 .history-bracket-pick-main{display:grid;gap:2px;min-width:0;user-select:text;-webkit-user-select:text}
 .history-bracket-seed{font-size:11px;color:#667b94;font-weight:700}
+.history-bracket-player-line{display:flex;align-items:center;flex-wrap:wrap;gap:5px 7px;min-width:0}
+.history-bracket-deck{display:inline-block;max-width:100%;padding:3px 7px;border-radius:6px;background:#e9f0fb;color:#315d8a;font-size:11px;font-weight:750;line-height:1.35;white-space:normal;overflow-wrap:anywhere}
 .history-bracket-pick-main strong{overflow-wrap:anywhere;font-weight:800}
 .history-bracket-pick-main small{color:#748195;font-size:12px;overflow-wrap:anywhere}
 .history-bracket-copytext{user-select:text;-webkit-user-select:text;cursor:text}
