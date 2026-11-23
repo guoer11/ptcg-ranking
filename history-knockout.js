@@ -100,12 +100,20 @@
     const player=slot.id?bracketPlayer(slot.id):null;
     const selected=!!player&&bracketWinners[game.key]===slot.id;
     const eliminated=!!bracketWinners[game.key]&&!!player&&!selected;
-    const cls='history-bracket-pick'+(selected?' is-winner':'')+(eliminated?' is-eliminated':'');
-    return '<button type="button" class="'+cls+'" data-bracket-pick="'+game.key+'" data-player-id="'+escape(slot.id)+'"'+
-      (player?'':' disabled')+' aria-pressed="'+String(selected)+'">'+
-      '<span class="history-bracket-pick-main"><strong>'+escape(player?(slot.hint+' · '+player.name):slot.hint+'（待確認）')+'</strong>'+
-      (player?'<small>'+escape(player.id)+'</small>':'')+'</span>'+
-      '<span class="history-bracket-result">'+(selected?'✓ 晉級':(eliminated?'淘汰':(player?'選為勝者':'待確認')))+'</span></button>';
+    const cls='history-bracket-pick'+(selected?' is-winner':'')+(eliminated?' is-eliminated':'')+
+      (!player?' is-unavailable':'');
+    // Text stays outside buttons so Chrome and iOS can select just the name or PTCG ID.
+    const action=player
+      ?'<button type="button" class="history-bracket-result" data-bracket-pick="'+game.key+
+       '" data-player-id="'+escape(slot.id)+'" aria-pressed="'+String(selected)+'">'+
+       (selected?'✓ 晉級':(eliminated?'淘汰':'選為勝者'))+'</button>'
+      :'<span class="history-bracket-result is-pending">待確認</span>';
+    return '<div class="'+cls+'">'+
+      '<div class="history-bracket-pick-main">'+
+      '<span class="history-bracket-seed">'+escape(slot.hint)+'</span>'+
+      '<strong class="history-bracket-copytext">'+escape(player?player.name:'待確認')+'</strong>'+
+      (player?'<small class="history-bracket-copytext">'+escape(player.id)+'</small>':'')+
+      '</div>'+action+'</div>';
   }
   function bracketMatch(game){
     const slots=bracketSlots(game),selected=bracketWinners[game.key]||'';
@@ -124,7 +132,7 @@
     const count=bracketCount(),winner=bracketPlayer(bracketWinners.final||'');
     root.innerHTML=
       '<div class="history-bracket-head"><strong class="history-bracket-progress">已確認 '+count+' / 7 場</strong>'+
-      '<span class="history-bracket-notice">可點擊玩家選擇勝者，再點一次可取消；變更上一輪會清除後續不符合的結果。</span></div>'+
+      '<span class="history-bracket-notice">姓名與 PTCG ID 可直接選取複製；按「選為勝者」確認戰況，再按一次取消。變更上一輪會清除不符合的後續結果。</span></div>'+
       '<div class="history-bracket-tabs" aria-label="切換複賽輪次">'+stages.map(stage=>
         '<button type="button" class="history-bracket-tab'+(bracketStage===stage[0]?' active':'')+
         '" data-bracket-stage="'+stage[0]+'" aria-pressed="'+String(bracketStage===stage[0])+'">'+stage[1]+'</button>'
