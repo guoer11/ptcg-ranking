@@ -68,6 +68,7 @@ jobs:
           node --check history-center.js
           node --check history-knockout.js
           node tests/history-center.test.cjs
+          node tests/history-auth-stability.test.cjs
           node tests/history-bracket.test.cjs
           node tests/pairing-match-archive.test.cjs
           python -m unittest discover -s tests -p 'test_sync_knockout.py'
