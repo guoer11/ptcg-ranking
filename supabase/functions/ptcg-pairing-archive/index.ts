@@ -373,6 +373,113 @@ async function publicGitJson(file:string) {
   if(!response.ok)throw new Error("試算來源暫時無法驗證，請稍後再試");
   return await response.json();
 }
+// 手動 TOP8 對戰樹：僅記錄本人確認的勝者，未確認不可推斷晉級。
+// 使用既有 private knockout.podium JSONB，避免另建公開資料表。
+const BRACKET_KEYS=["qf1","qf2","qf3","qf4","sf1","sf2","final"] as const;
+async function saveKnockoutBracket(body:any) {
+  const tid=String(body?.tid||""),eventId=String(body?.event_id||"");
+  if(!validTid(tid)||!/^[0-9]{1,12}$/.test(eventId))
+    throw new Error("賽事識別碼不正確");
+  const raw=body?.winners;
+  if(!raw||typeof raw!=="object"||Array.isArray(raw)
+      ||Object.keys(raw).some(k=>!BRACKET_KEYS.includes(k as typeof BRACKET_KEYS[number])))
+    throw new Error("複賽勝負資料格式不正確");
+  const winners:Record<string,string>={};
+  for(const k of BRACKET_KEYS){
+    const id=String(raw[k]||"").trim().toLowerCase();
+    if(id&&!/^tw[0-9]{6,12}$/.test(id))throw new Error("勝者 ID 不符合格式");
+    winners[k]=id;
+  }
+  const archive=await db.from("ptcg_match_archives")
+    .select("tid,title,status,final_seen_at").eq("tid",tid).maybeSingle();
+  if(archive.error)throw archive.error;
+  if(!archive.data?.final_seen_at||archive.data.status!=="completed"
+      ||!/(UBL|高級球)/i.test(String(archive.data.title||""))
+      ||!/(孩童|Junior)/i.test(String(archive.data.title||"")))
+    throw new Error("這場尚未完成高級球孩童組的預賽排名封存");
+  const final=await db.from("ptcg_match_archive_finals")
+    .select("player_count,standings").eq("tid",tid).maybeSingle();
+  if(final.error)throw final.error;
+  const all=final.data?.standings;
+  if(!Array.isArray(all)||all.length<9||Number(final.data?.player_count)!==all.length)
+    throw new Error("完整的預賽最終排名尚未封存");
+  const top=all.filter((p:any)=>Number.isInteger(p.rank)&&p.rank>=1&&p.rank<=8);
+  const ranked=new Map<number,string>(top.map((p:any)=>[p.rank,String(p.id||"").toLowerCase()]));
+  if(top.length!==8||ranked.size!==8||new Set([...ranked.values()]).size!==8
+      ||[...ranked.values()].some(id=>!/^tw[0-9]{6,12}$/.test(id)))
+    throw new Error("無法確認完整且不重複的預賽前八名");
+  const [sources,tournaments]=await Promise.all([
+    publicGitJson("data/preliminary_sources.json"),publicGitJson("data/tournaments.json")
+  ]);
+  const linked=(sources.sources||[]).some((x:any)=>
+    String(x.event_id)===eventId&&String(x.tid)===tid
+    &&x.league==="Ultra"&&x.group==="Junior");
+  const official=(tournaments.events||[]).some((x:any)=>
+    String(x.event_id)===eventId&&x.league==="Ultra"&&x.group==="Junior");
+  if(!linked||!official)throw new Error("無法驗證本場與高級球賽事的對應關係");
+  // 固定種子：1-8 / 4-5 / 3-6 / 2-7，四強與決賽僅能選前一輪的勝者。
+  const participants:Record<string,string[]>={
+    qf1:[ranked.get(1)!,ranked.get(8)!],
+    qf2:[ranked.get(4)!,ranked.get(5)!],
+    qf3:[ranked.get(3)!,ranked.get(6)!],
+    qf4:[ranked.get(2)!,ranked.get(7)!]
+  };
+  participants.sf1=[winners.qf1,winners.qf2];
+  participants.sf2=[winners.qf3,winners.qf4];
+  participants.final=[winners.sf1,winners.sf2];
+  for(const k of BRACKET_KEYS) {
+    if(winners[k]&&(!participants[k][0]||!participants[k][1]
+      ||!participants[k].includes(winners[k])))
+      throw new Error(k+" 的勝者與前一輪對戰結果不相符");
+  }
+  const complete=BRACKET_KEYS.every(k=>Boolean(winners[k]));
+  const existing=await db.from("ptcg_match_archive_knockouts")
+    .select("event_id,podium").eq("tid",tid).maybeSingle();
+  if(existing.error)throw existing.error;
+  if(existing.data&&String(existing.data.event_id)!==eventId)
+    throw new Error("既有八強記錄的賽事識別碼不符");
+  const oldPodium=existing.data?.podium&&typeof existing.data.podium==="object"
+    ? existing.data.podium:{};
+  const podium:any={...oldPodium,bracket:{version:1,winners,updated_at:now()}};
+  if(complete){
+    const semiLosers=[...participants.sf1,...participants.sf2]
+      .filter(id=>id!==winners.sf1&&id!==winners.sf2);
+    const results=top.map((p:any)=>{
+      const id=String(p.id).toLowerCase();
+      const finalRank=id===winners.final?1
+        :participants.final.includes(id)?2
+        :semiLosers.includes(id)?3:5;
+      return {player_id:id,preliminary_rank:p.rank,final_rank:finalRank,
+        finish:({1:"冠軍",2:"亞軍",3:"四強",5:"八強"} as Record<number,string>)[finalRank],
+        points:({1:100,2:75,3:50,5:25} as Record<number,number>)[finalRank]};
+    });
+    if(results.reduce((sum:number,r:any)=>sum+r.points,0)!==375
+        ||results.filter((r:any)=>r.final_rank===3).length!==2
+        ||results.filter((r:any)=>r.final_rank===5).length!==4)
+      throw new Error("對戰結果與名次積分驗證失敗");
+    podium.results=results;
+  }
+  const saved=await db.from("ptcg_match_archive_knockouts").upsert({
+    tid,event_id:eventId,podium,updated_at:now()
+  },{onConflict:"tid"}).select("updated_at").single();
+  if(saved.error)throw saved.error;
+  let syncError="";
+  if(complete){
+    try{
+      const {data,error}=await db.rpc("get_ptcg_github_trigger_config_for_service");
+      if(error)throw error;
+      const secret=String(data?.cron_secret||"");
+      const response=await fetch(URL_BASE+"/functions/v1/ptcg-github-trigger",{
+        method:"POST",headers:{"Content-Type":"application/json","x-ptcg-cron-secret":secret},
+        body:JSON.stringify({workflow:"sync-knockout-results.yml",event_id:eventId}),
+        signal:AbortSignal.timeout(18000)});
+      if(!response.ok)throw new Error("同步啟動失敗 HTTP "+response.status);
+    }catch(e){syncError=String((e as Error).message||e).slice(0,140);}
+  }
+  return {ok:true,saved:true,tid,event_id:eventId,confirmed:BRACKET_KEYS.filter(k=>winners[k]).length,
+    complete,sync_triggered:complete&&!syncError,...(syncError?{sync_error:syncError}:{})};
+}
+
 async function saveKnockout(body:any) {
   const tid=String(body?.tid||""),eventId=String(body?.event_id||"");
   if(!validTid(tid)||!/^[0-9]{1,12}$/.test(eventId))throw new Error("賽事識別碼不正確");
@@ -416,8 +523,16 @@ async function saveKnockout(body:any) {
   });
   if(results.length!==8||results.reduce((sum:number,p:any)=>sum+p.points,0)!==375)
     throw new Error("名次與 LP 加總驗證失敗");
+  // 舊版「直接設定名次」不能覆蓋已記錄的逐場對戰樹。
+  const existing=await db.from("ptcg_match_archive_knockouts")
+    .select("podium").eq("tid",tid).maybeSingle();
+  if(existing.error)throw existing.error;
+  const oldPodium=existing.data?.podium&&typeof existing.data.podium==="object"
+    ? existing.data.podium:{};
+  if(Object.values(oldPodium?.bracket?.winners||{}).some(Boolean))
+    throw new Error("這場已使用對戰樹記錄勝負，請在 TOP8 對戰樹更新結果");
   const write=await db.from("ptcg_match_archive_knockouts").upsert({
-    tid,event_id:eventId,podium:{results},updated_at:now()
+    tid,event_id:eventId,podium:{...oldPodium,results},updated_at:now()
   },{onConflict:"tid"}).select("updated_at").single();
   if(write.error)throw write.error;
   // The saved private record is the source of truth. GitHub sync only receives
@@ -504,6 +619,7 @@ Deno.serve(async(req:Request)=>{
       if(upd.error)throw upd.error;
       return json({ok:true,...upd.data});
     }
+    if(action==="save-knockout-bracket")return json(await saveKnockoutBracket(body));
     if(action==="save-knockout")return json(await saveKnockout(body));
     if(action==="list")return json({ok:true,archives:await listArchives()});
     if(action==="get")return json({ok:true,archive:await readArchive(String(body?.tid||""),body?.round==null?undefined:Number(body.round),member.id)});
