@@ -23,7 +23,7 @@
     return data;
   }
   const accountId=()=>String(pairingSession?.user?.id||"");
-  const numericRound=value=>/^\\d+$/.test(String(value||""))?Number(value):null;
+  const numericRound=value=>/^\d+$/.test(String(value||""))?Number(value):null;
   async function archiveGet(tid,round=null,{force=false}={}){
     const user=accountId();
     const key=user+":"+tid+":"+(round??"final");
