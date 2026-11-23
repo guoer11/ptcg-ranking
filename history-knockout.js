@@ -94,7 +94,7 @@
       });
     }
     return game.from.map((from,i)=>({id:bracketWinners[from]||'',
-      hint:(game.stage==='sf'?'八強':'四強')+' '+(i+1)+' 勝者'}));
+      hint:({qf1:'八強①',qf2:'八強②',qf3:'八強③',qf4:'八強④',sf1:'四強①',sf2:'四強②'}[from]||from)+' 勝者'}));
   }
   function bracketOption(game,slot) {
     const player=slot.id?bracketPlayer(slot.id):null;
@@ -139,7 +139,7 @@
     const legacy=$('historyKnockoutLegacy');
     if(legacy)legacy.hidden=count>0;
     if(saveBtn){saveBtn.disabled=bracketBusy||!bracketDirty;saveBtn.textContent=bracketBusy?'儲存中…':'儲存目前戰況';}
-    if(bracketDirty)bracketStatus(count===7
+    if(bracketDirty&&$('historyBracketStatus')?.dataset.error!=='1')bracketStatus(count===7
       ?'尚未儲存：七場已填完，儲存後會同步冠亞軍、四強與 LP。'
       :'尚未儲存：已確認 '+count+' / 7 場；不完整戰況只會保存，不會更新 LP。');
   }
@@ -154,6 +154,7 @@
         bracketWinners[later.key]='';
     }
     bracketDirty=true;
+    bracketStatus('',false);
     drawBracket();
   }
   async function saveBracket(){
