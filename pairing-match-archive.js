@@ -250,6 +250,14 @@
   }
   function init() {
     document.addEventListener("pairing:tracking-started",registerFromTracking);
+    // A private knockout save must invalidate its cached podium, otherwise
+    // returning to the event within 90 seconds would show stale results.
+    document.addEventListener("archive:invalidate",event=>{
+      const tid=String(event.detail?.tid||"");
+      if(!tid)return;
+      const prefix=accountId()+":"+tid+":";
+      for(const key of archiveCache.keys())if(key.startsWith(prefix))archiveCache.delete(key);
+    });
     if(!$("matchArchive"))return;
     $("matchArchiveEvent")?.addEventListener("change",e=>{activeTid=e.target.value;void choose(activeTid);});
     $("matchArchiveRound")?.addEventListener("change",()=>{void loadSelected();});
