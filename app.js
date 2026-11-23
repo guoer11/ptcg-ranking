@@ -195,7 +195,7 @@ function renderRanking() {
   const notice = document.getElementById('rankingProjectionNotice');
   if (notice) {
     notice.hidden = !trial;
-    if (trial) notice.textContent = '依 Pokémon Asia 官方目前積分為基準，補入本站已知、尚未完全入帳的賽事積分；涉及 Best 8 或官方尚未匯入的成績，試算名次僅供參考，不是官方排名。';
+    if (trial) notice.textContent = '以 Pokémon Asia 官方目前積分為基準，加入已封存且尚未正式入帳的賽事試算；高級球前 8 名待複賽確認。官方正式賽事成績公布後，該場一律改用官方資料，不重複計分。';
   }
   const allRows = displayedRankingRows();
   if (trial && allRows === null) {

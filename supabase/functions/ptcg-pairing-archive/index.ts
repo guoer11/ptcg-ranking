@@ -110,6 +110,22 @@ async function saveFinal(tid:string,expectedRounds:number|null=null) {
   return {available:true,changed:existing.data?.fingerprint!==checksum,
     players:result.player_count};
 }
+// A completed final snapshot can initiate trial import immediately; the
+// existing nightly Supabase cron remains a backup if GitHub is unavailable.
+async function triggerPreliminarySync() {
+  const {data,error}=await db.rpc("get_ptcg_github_trigger_config_for_service");
+  if(error)throw error;
+  const secret=String(data?.cron_secret||"");
+  if(!secret)throw new Error("試算匯入排程密鑰尚未設定");
+  const resp=await fetch(URL_BASE+"/functions/v1/ptcg-github-trigger",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-ptcg-cron-secret":secret},
+    body:JSON.stringify({workflow:"sync-preliminary.yml"}),
+    signal:AbortSignal.timeout(18000)
+  });
+  if(!resp.ok)throw new Error("試算同步觸發失敗（HTTP "+resp.status+"）");
+  return {triggered:true};
+}
 async function pollEvent(event:any) {
   const tid=String(event.tid);
   const ts=now();
@@ -165,6 +181,15 @@ async function pollEvent(event:any) {
       ...(firstFinal?{final_seen_at:now(),poll_until:addMinutes(45)}:{})
     }).eq("tid",tid);
     if(error)throw error;
+    if(completed) {
+      try {detail.trial_sync=await triggerPreliminarySync();}
+      catch(syncError) {
+        // Archive completion is durable even if the dispatch fails.
+        // The scheduled sync-preliminary cron retries it separately.
+        detail.trial_sync_error=String((syncError as Error).message||syncError).slice(0,180);
+        console.warn("archive-to-trial-dispatch",tid,detail.trial_sync_error);
+      }
+    }
     return { ...detail,completed};
   }catch(e) {
     const message=String((e as Error).message||e).slice(0,300);

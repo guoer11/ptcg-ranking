@@ -47,6 +47,8 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Verify last-round standings fallback
         run: python -m unittest discover -s tests -p 'test_sync_preliminary_round.py'
+      - name: Verify completed archives can import scores without official site
+        run: python -m unittest discover -s tests -p 'test_sync_preliminary_archive.py'
       - name: Scrape public standings and validate completeness
         env:
           SOURCE_EVENT_ID: ${{ inputs.event_id }}

@@ -7,7 +7,7 @@ import os
 import re
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse, parse_qs
 
 import requests
 from bs4 import BeautifulSoup
@@ -124,6 +124,52 @@ def fetch_configured_standings(session, tid, source):
         return standings, ranking_url(tid, round_no=last_round)
 
 
+def verify_archived_standings(entry, event, tid):
+    """Only completed archived match results can feed a provisional ranking.
+
+    Always validate event identity, round source, sequential ranks and PTCG IDs.
+    An unconfirmed intermediate leaderboard must never earn LP.
+    """
+    raw = entry.get("standings")
+    if raw is None:
+        return None
+    if event.get("league") != "Ultra" or event.get("group") != "Junior":
+        raise ValueError("Archived auto-import is limited to Junior Ultra")
+    if not isinstance(raw, list) or not 9 <= len(raw) <= 1024:
+        raise ValueError("Archived standings participant count is invalid")
+    status = entry.get("source_status")
+    if status not in ("official_final", "completed_last_round"):
+        raise ValueError("Archived standings are not confirmed final")
+    source_url = str(entry.get("source_url", ""))
+    url = urlparse(source_url)
+    query = parse_qs(url.query)
+    if (url.scheme != "https" or url.netloc != "tcg.sfc-jpn.jp"
+            or url.path != "/tourround.asp"
+            or query.get("tid") != [tid] or query.get("znt") != ["1"]):
+        raise ValueError("Archived rankings do not match this TID")
+    kno = query.get("kno", [""])[0]
+    if status == "official_final" and kno != "9999999":
+        raise ValueError("Official final ranking path mismatch")
+    if status == "completed_last_round":
+        round_no = entry.get("expected_rounds")
+        if type(round_no) is not int or not 1 <= round_no <= 40 or kno != str(round_no):
+            raise ValueError("Last-round finish not verified")
+    players = []
+    seen = set()
+    for pair in raw:
+        if not isinstance(pair, list) or len(pair) != 2:
+            raise ValueError("Malformed archived player row")
+        player_id, rank = pair
+        if (not isinstance(player_id, str) or not ID_RE.fullmatch(player_id)
+                or player_id.lower() in seen or type(rank) is not int):
+            raise ValueError("Invalid or duplicate archived player ID")
+        seen.add(player_id.lower())
+        players.append({"player_id": player_id.lower(), "rank": rank})
+    if sorted(row["rank"] for row in players) != list(range(1, len(players) + 1)):
+        raise ValueError("Archived rankings are missing or duplicated")
+    return sorted(players, key=lambda row: row["rank"])
+
+
 def lp_score(league, participants, rank):
     if league == "Ultra":
         if not (1 <= participants <= 1024 and 1 <= rank <= participants):
@@ -158,6 +204,7 @@ def sync():
     config = read_json(SOURCES, {"version": 1, "sources": []})
     events = {str(event["event_id"]): event for event in read_json(TOURNAMENTS)["events"]}
     added_sources = False
+    archived_by_event = {}
     if args.auto_sources_json:
         if args.event_id or args.tid:
             parser.error("automatic sources cannot be combined with manual source input")
@@ -183,6 +230,17 @@ def sync():
             if collision or (match and str(match.get("tid")) != tid):
                 print(f"Skipping conflicting mapping for event {event_id}")
                 continue
+            if entry.get("standings") is not None:
+                try:
+                    standings = verify_archived_standings(entry, event, tid)
+                except ValueError as error:
+                    print(f"Skipping unsafe archive for {event_id}: {error}")
+                    continue
+                archived_by_event[event_id] = {
+                    "standings": standings,
+                    "source_url": str(entry["source_url"]),
+                    "tid": tid
+                }
             if not match:
                 config["sources"].append({"event_id": event_id, "tid": tid,
                                          "league": event["league"], "group": "Junior",
@@ -222,8 +280,13 @@ def sync():
             print(f"Event {event_id}: Pokémon Asia official result already exists; retained as priority")
             continue
         attempted += 1
+        archived = archived_by_event.get(event_id)
         try:
-            standings, standings_url = fetch_configured_standings(session, tid, source)
+            if archived and archived["tid"] == tid:
+                standings, standings_url = archived["standings"], archived["source_url"]
+                print(f"Event {event_id}: using completed Supabase match archive; no official re-fetch")
+            else:
+                standings, standings_url = fetch_configured_standings(session, tid, source)
         except (requests.RequestException, ValueError) as error:
             # An unavailable or incomplete official result must never wipe saved scores.
             print(f"Event {event_id}: official standings unavailable; retain previous data ({error})")
