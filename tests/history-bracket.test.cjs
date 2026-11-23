@@ -56,7 +56,11 @@ eventCallbacks.DOMContentLoaded();
 const archive={
   event:{tid:'5865462',title:'2026/11/21 UBL 1-4 孩童組',final_seen_at:'2026-11-21T06:45:00Z'},
   final:{standings:people},
-  context:{real_names:{}},
+  context:{real_names:{},decks:{
+    tw00000001:{current:{deck:'多龍火雞',round:4}},
+    tw00000008:{previous:{deck:'上一場舊牌組'}},
+    tw00000004:{current:{deck:'夢幻<測試>'}}
+  }},
   knockout:{podium:{results:[]}}
 };
 eventCallbacks['archive:loaded']({detail:{archive,tid:'5865462'}});
@@ -66,6 +70,9 @@ const settle=()=>new Promise(resolve=>setTimeout(resolve,10));
   assert.equal(elements.historyKnockoutPanel.hidden,false);
   assert.match(elements.historyKnockoutBracket.innerHTML,/第1名/);
   assert.match(elements.historyKnockoutBracket.innerHTML,/第8名/);
+  assert.match(elements.historyKnockoutBracket.innerHTML,/多龍火雞/,'show same-event recorded deck');
+  assert.match(elements.historyKnockoutBracket.innerHTML,/夢幻&lt;測試&gt;/,'escape recorded deck label');
+  assert.doesNotMatch(elements.historyKnockoutBracket.innerHTML,/上一場舊牌組/,'never show historical deck as current deck');
   const click=(key,id)=>{
     elements.historyKnockoutBracket.handlers.click({
       target:{closest:()=>({dataset:{bracketPick:key,playerId:id}})}
