@@ -54,7 +54,41 @@ listeners.DOMContentLoaded();
 const settle=()=>new Promise(resolve=>setTimeout(resolve,25));
 const getCalls=()=>calls.filter(call=>call.action==='get').length;
 (async()=>{
-  document.dispatchEvent(new CustomEvent('pairing:auth-ready',{detail:{allowed:true}}));
-  // In real DOM the auth event invokes listeners, not just dispatchEvent.
-  // Invoke the registered callback below, tracking the actual fetches.
+  listeners['pairing:auth-ready']({detail:{allowed:true}});
+  await settle();
+  assert.equal(calls.filter(c=>c.action==='list').length,1,'one list load');
+  assert.equal(getCalls(),1,'first event needs only ONE GET, not two');
+  assert.equal(calls.find(c=>c.action==='get').round,null,'finished event defaults to final ranking');
+
+  el('matchArchiveRound').value='1';
+  el('matchArchiveRound').handlers.change();
+  await settle();
+  assert.equal(getCalls(),2,'first viewing a new round fetches one record');
+  assert.equal(calls.filter(c=>c.action==='get').at(-1).round,1,'numeric round must remain a number');
+
+  el('matchArchiveRound').value='final';
+  el('matchArchiveRound').handlers.change();
+  await settle();
+  assert.equal(getCalls(),2,'revisiting final ranking uses private memory cache');
+
+  el('matchArchiveEvent').value='8123029';
+  el('matchArchiveEvent').handlers.change({target:el('matchArchiveEvent')});
+  await settle();
+  assert.equal(getCalls(),3,'another event fetched once');
+
+  el('matchArchiveEvent').value='5865462';
+  el('matchArchiveEvent').handlers.change({target:el('matchArchiveEvent')});
+  await settle();
+  assert.equal(getCalls(),3,'recently viewed event uses cache, no extra GET');
+
+  el('matchArchiveRefresh').handlers.click();
+  await settle();
+  assert.equal(calls.filter(c=>c.action==='list').length,2,'manual refresh requests a new list');
+  assert.equal(getCalls(),4,'manual refresh bypasses the cache');
+
+  listeners['pairing:auth-ready']({detail:{allowed:false}});
+  listeners['pairing:auth-ready']({detail:{allowed:true}});
+  await settle();
+  assert.equal(getCalls(),5,'sign-out clears private cached event data');
+  console.log('PASS: single initial archive GET, numeric round, in-memory revisit, explicit refresh, logout invalidation');
 })().catch(e=>{console.error(e);process.exitCode=1;});
