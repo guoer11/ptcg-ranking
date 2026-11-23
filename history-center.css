@@ -19,3 +19,42 @@
 #historyKnockoutStatus{font-size:12px;color:#52637a}
 #historyKnockoutStatus[data-error="1"]{color:#b42318}
 @media(max-width:600px){.history-panel{padding:12px}.history-knockout-form{grid-template-columns:1fr}}
+
+/* 私人 TOP8 淘汰賽籤表：桌機三欄，手機切換單一輪次。 */
+.history-bracket{margin-top:14px}
+.history-bracket-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.history-bracket-progress{color:#36557c;font-size:13px;font-weight:800}
+.history-bracket-notice{color:#667085;font-size:12px;line-height:1.55}
+.history-bracket-tabs{display:none}
+.history-bracket-columns{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:stretch}
+.history-bracket-stage{min-width:0;display:flex;flex-direction:column;gap:12px}
+.history-bracket-stage h4{margin:0;color:#334967;font-size:13px}
+.history-bracket-matches{display:flex;flex-direction:column;justify-content:space-around;flex:1;gap:12px}
+.history-bracket-match{min-width:0;padding:10px;border:1px solid #d9e2ef;border-radius:12px;background:#f8faff}
+.history-bracket-match-title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px;font-size:11px;font-weight:800;color:#62738c}
+.history-bracket-match-title span:last-child{color:#7b8ba1;font-weight:700}
+.history-bracket-pick{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-width:0;margin:5px 0 0;padding:9px 10px;border:1px solid #e0e7f0;border-radius:9px;background:#fff;color:#213850;text-align:left;font-family:inherit;font-size:13px;cursor:pointer}
+.history-bracket-pick:disabled{cursor:default;opacity:.7;background:#f2f4f7}
+.history-bracket-pick.is-winner{border-color:#6cba92;background:#e6f8ef;color:#116444}
+.history-bracket-pick.is-eliminated{color:#7f8997;opacity:.75}
+.history-bracket-pick:focus-visible{outline:3px solid #7ba7e8;outline-offset:2px}
+.history-bracket-pick-main{display:grid;gap:2px;min-width:0}
+.history-bracket-pick-main strong{overflow-wrap:anywhere;font-weight:800}
+.history-bracket-pick-main small{color:#748195;font-size:10px;overflow-wrap:anywhere}
+.history-bracket-result{flex:none;font-size:11px;font-weight:900}
+.history-bracket-champion{margin-top:12px;padding:12px;border:1px solid #e7c678;border-radius:10px;background:#fff8e8;color:#805b0d;font-size:14px;font-weight:800}
+.history-bracket-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+#historyBracketStatus{font-size:12px;line-height:1.55;color:#475467}
+#historyBracketStatus[data-error="1"]{color:#b42318}
+.history-knockout-legacy{margin-top:20px;padding-top:14px;border-top:1px solid #dce4ee}
+.history-knockout-legacy[hidden]{display:none}
+.history-knockout-legacy>summary{cursor:pointer;color:#52657f;font-size:13px;font-weight:800}
+@media(max-width:760px){
+  .history-bracket-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:12px}
+  .history-bracket-tab{padding:10px 6px;border:1px solid #d2dcea;border-radius:9px;background:#fff;color:#52657f;font-size:13px;font-weight:800;cursor:pointer}
+  .history-bracket-tab.active{background:#e9f2ff;border-color:#85a9dc;color:#1c59a5}
+  .history-bracket-columns{display:block}
+  .history-bracket-stage{display:none}
+  .history-bracket-stage.is-mobile-active{display:flex}
+  .history-bracket-matches{gap:10px}
+}
