@@ -168,7 +168,7 @@ export async function captureRound(tid:string,round:number) {
   return {tid,round_no:round,source_url:pageUrl(tid,round),
     page_count:page.page_count,...parsed};
 }
-function standingsFromRows(rows:string[][]) {
+export function standingsFromRows(rows:string[][]) {
   const header=rows.some(c=>c.some(t=>/^(rank|排名|順位|名次)$/i.test(clean(t))));
   if(!header)return [];
   const standings:any[]=[];const seen=new Set<string>();
@@ -181,7 +181,7 @@ function standingsFromRows(rows:string[][]) {
     if(seen.has(id))throw new Error("排名資料有重複玩家，請稍後重試");
     seen.add(id);
     const after=cells.slice(cells.indexOf(idCell)+1);
-    const points=after.map(t=>/^\\d+$/.test(clean(t))?Number(clean(t)):null).find(v=>v!==null);
+    const points=ttlScoreAfterId(cells,id);
     standings.push({rank,id,name:nameOf(idCell,id),points:points??null});
   }
   return standings.sort((a,b)=>a.rank-b.rank);

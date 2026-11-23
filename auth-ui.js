@@ -15,12 +15,12 @@ function currentIdentityUserId() {
 }
 
 function pairingNavLink() {
-  return document.querySelector('.site-nav a[href="pairing.html"]');
+  return document.querySelectorAll('.site-nav a[href="pairing.html"], .site-nav a[href="history.html"]');
 }
 
 function hidePairingNav() {
   const link = pairingNavLink();
-  if (link) link.hidden = true;
+  link?.forEach(item => { item.hidden = true; });
 }
 
 function invalidatePairingNavAccess() {
@@ -30,22 +30,22 @@ function invalidatePairingNavAccess() {
 
 async function refreshPairingNavAccess() {
   const link = pairingNavLink();
-  if (!link) return;
+  if (!link?.length) return;
 
   const requestId = ++pairingNavRequestId;
   const userId = currentIdentityUserId();
-  link.hidden = true;
+  link.forEach(item => { item.hidden = true; });
   if (!userId || !identityClient) return;
 
   try {
     const { data, error } = await identityClient.rpc('can_use_pairing');
     if (requestId !== pairingNavRequestId || currentIdentityUserId() !== userId) return;
     if (error) throw error;
-    link.hidden = data !== true;
+    link.forEach(item => { item.hidden = data !== true; });
   } catch (error) {
     if (requestId !== pairingNavRequestId || currentIdentityUserId() !== userId) return;
     console.warn('即時配對權限確認失敗', error);
-    link.hidden = true;
+    link.forEach(item => { item.hidden = true; });
   }
 }
 

@@ -4,6 +4,7 @@ const fs=require('node:fs');
 
 const read=path=>fs.readFileSync(path,'utf8');
 const html=read('pairing.html');
+const historyPage=read('history.html');
 const archive=read('supabase/functions/ptcg-pairing-archive/source.ts');
 const archiveFn=read('supabase/functions/ptcg-pairing-archive/index.ts');
 const archiveUi=read('pairing-match-archive.js');
@@ -38,6 +39,6 @@ assert.match(forecastApi,/if\(completed\.available\)return json\(completed\)/);
 assert.match(odds,/const p=data\.standing,interim=Boolean\(data\.is_interim\)/);
 assert.match(odds,/官方暫定/);
 assert(!archiveUi.includes("window.open("),'archive displays own saved data');
-assert.match(html,/id="pairingHistory"/,'legacy personal deck history must remain');
+assert.match(historyPage,/id="pairingHistory"/,'legacy personal deck history moved to private history page');
 assert.match(html,/id="pairingDeckScout"/,'legacy deck scout must remain');
 console.log('PASS: interim rankings are displayed and archived separately from official finals; live watch and deck history preserved.');

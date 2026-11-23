@@ -1,0 +1,44 @@
+name: Sync owner-verified Top 8 results
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: "Validated private-archive Top8 snapshot (public PTCG IDs only)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-ptcg-knockout
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate Top 8 against archived standings
+        env:
+          KNOCKOUT_PAYLOAD: ${{ inputs.payload }}
+        run: python sync_knockout.py
+      - name: Persist only verified Top 8 results
+        run: |
+          if [[ -z "$(git status --porcelain -- data/knockout_results.json)" ]]; then
+            echo 'Top 8 unchanged'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/knockout_results.json
+          git commit -m "Sync authorized Top 8 trial results"
+          git pull --rebase origin main
+          git push origin HEAD:main

@@ -1,0 +1,32 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),read=p=>fs.readFileSync(p,'utf8');
+const live=read('pairing.html'),history=read('history.html'),gate=read('history-center.js');
+const backend=read('supabase/functions/ptcg-pairing-archive/index.ts');
+const source=read('supabase/functions/ptcg-pairing-archive/source.ts');
+const ui=read('history-knockout.js'),archiveUi=read('pairing-match-archive.js');
+const trigger=read('supabase/functions/ptcg-github-trigger/index.ts');
+const workflow=read('.github/workflows/deploy-pages.yml');
+for(const id of ['matchArchive','matchArchiveEvent','matchArchiveRound','matchArchiveRows','matchArchiveSetRounds','pairingHistory','pairingHistoryList','historyKnockoutPanel','historyKnockoutSave'])
+ assert.match(history,new RegExp('id="'+id+'"'),id+' must be private history UI');
+for(const id of ['matchArchive','pairingHistory'])assert.doesNotMatch(live,new RegExp('id="'+id+'"'),id+' must leave pairing');
+assert.match(live,/pairing-match-archive\.js/);
+assert.match(archiveUi,/document\.addEventListener\("pairing:tracking-started",registerFromTracking\)/);
+assert.match(gate,/can_use_pairing/);assert.match(gate,/if\(main\)main\.hidden=!pairingAuthorized/);
+assert.match(history,/id="historyProtectedMain" hidden/);
+assert.match(backend,/const member=await requireMember\(req\)/);
+assert.match(backend,/is_pairing_authorized/);
+assert.match(backend,/action==="save-knockout"/);
+assert.match(backend,/new Set\(chosen\)\.size!==4/);
+assert.match(backend,/ptcg_match_archive_knockouts/);
+assert.match(trigger,/sync-knockout-results\.yml/);
+assert.match(ui,/semifinalists:\[semi_one,semi_two\]/);
+assert.match(source,/const points=ttlScoreAfterId\(cells,id\)/);
+assert.match(backend,/action==="repair-final-scores"/);
+assert.match(backend,/final_score_references:finalScoreReferences/);
+assert.match(archiveUi,/不是最終分數/);
+for(const page of ['index.html','tournaments.html','pairing.html'])
+ assert.match(read(page),/href="history\.html" hidden/);
+assert.match(workflow,/cp index\.html tournaments\.html pairing\.html history\.html/);
+assert.match(workflow,/node --check history-knockout\.js/);
+assert.match(read('site-version.js'),/v2\.12\.0/);
+console.log('PASS: owner-only history route, private knockout editing, background archiving and TtlScore');

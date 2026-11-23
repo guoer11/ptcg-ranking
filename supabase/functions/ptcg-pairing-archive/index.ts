@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
-import { sourceTid, validTid, officialUrl, publishedRounds, captureRound, captureFinal, captureInterim, fingerprint, parseMatchRows } from "./source.ts";
+import { sourceTid, validTid, officialUrl, publishedRounds, captureRound, captureFinal, captureInterim, fingerprint, parseMatchRows, standingsFromRows } from "./source.ts";
 
 const URL_BASE=Deno.env.get("SUPABASE_URL")!;
 const KEY=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -303,13 +303,138 @@ async function readArchive(tid:string,round:number|undefined,userId:string) {
   const final=await db.from("ptcg_match_archive_finals")
      .select("captured_at,player_count,source_url,source_status,standings").eq("tid",tid).maybeSingle();
   if(final.error)throw final.error;
+  const knockout=await db.from("ptcg_match_archive_knockouts")
+    .select("event_id,podium,updated_at").eq("tid",tid).maybeSingle();
+  if(knockout.error)throw knockout.error;
   const interim=await db.from("ptcg_match_archive_interims")
     .select("captured_at,round_no,player_count,source_url,standings")
     .eq("tid",tid).order("round_no",{ascending:false}).limit(1).maybeSingle();
   if(interim.error)throw interim.error;
+  // Final standings can omit TtlScore. Use the latest preserved pairing
+  // scores only as a clearly labeled BEFORE-round reference, never as final LP.
+  let finalScoreReferences:any=null;
+  if(final.data?.standings?.some((row:any)=>row.points==null)) {
+    const recent=await db.from("ptcg_match_archive_rounds").select("round_no,matches")
+      .eq("tid",tid).order("round_no",{ascending:false}).limit(1).maybeSingle();
+    if(recent.error)throw recent.error;
+    if(recent.data) {
+      const scores:Record<string,number>={};
+      for(const row of recent.data.matches||[]) {
+        for(const p of [row.a,row.b]){
+          const id=String(p?.id||"").toLowerCase();
+          const value=p?.record?.points;
+          if(/^tw[0-9]{6,12}$/.test(id)&&typeof value==="number"&&Number.isFinite(value))
+            scores[id]=value;
+        }
+      }
+      finalScoreReferences={before_round:recent.data.round_no,points:scores};
+    }
+  }
   const context=await archivePlayerContext(tid,String(ev.data.title||""),details,final.data||interim.data,userId);
   return {event:ev.data,rounds:list.data||[],selected:details,
-    final:final.data,interim:interim.data,context};
+    final:final.data,final_score_references:finalScoreReferences,
+    interim:interim.data,knockout:knockout.data,context};
+}
+async function repairFinalScores(tid:string) {
+  if(!validTid(tid))throw new Error("TID 不正確");
+  const event=await db.from("ptcg_match_archives").select("expected_rounds")
+    .eq("tid",tid).maybeSingle();
+  if(event.error||!event.data)throw new Error("找不到封存賽事");
+  const existing=await db.from("ptcg_match_archive_finals")
+    .select("standings,source_status").eq("tid",tid).maybeSingle();
+  if(existing.error||!Array.isArray(existing.data?.standings))throw new Error("找不到封存最終排名");
+  const actual=await captureFinal(tid,event.data.expected_rounds==null?null:Number(event.data.expected_rounds));
+  if(!actual?.standings?.length)
+    return {ok:true,tid,repaired:false,reason:"官方最終排名已關閉或無法讀取"};
+  const previous=existing.data.standings;
+  if(actual.standings.length!==previous.length)throw new Error("人數改變，拒絕覆蓋原封存");
+  const ids=new Map(previous.map((p:any)=>[String(p.id).toLowerCase(),Number(p.rank)]));
+  if(actual.standings.some((p:any)=>ids.get(String(p.id).toLowerCase())!==Number(p.rank)))
+    throw new Error("最終名次改變，拒絕覆蓋原封存");
+  let improved=0;
+  const incoming=new Map(actual.standings.map((p:any)=>[String(p.id).toLowerCase(),p.points]));
+  const merged=previous.map((p:any)=>{
+    const score=incoming.get(String(p.id).toLowerCase());
+    if(p.points==null&&typeof score==="number"&&Number.isFinite(score))improved++;
+    return {...p,points:typeof score==="number"&&Number.isFinite(score)?score:p.points};
+  });
+  if(!improved)return {ok:true,tid,repaired:false,reason:"來源未提供更多最終 TtlScore",scores:0};
+  const upd=await db.from("ptcg_match_archive_finals")
+    .update({standings:merged,fingerprint:await fingerprint(merged)}).eq("tid",tid);
+  if(upd.error)throw upd.error;
+  return {ok:true,tid,repaired:true,scores:improved};
+}
+const OWNER="guoer11",REPO="ptcg-ranking";
+async function publicGitJson(file:string) {
+  if(!["data/preliminary_sources.json","data/tournaments.json"].includes(file))
+    throw new Error("不允許讀取其他賽事設定");
+  const response=await fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${file}`,{
+    headers:{Accept:"application/json"},signal:AbortSignal.timeout(12000)});
+  if(!response.ok)throw new Error("試算來源暫時無法驗證，請稍後再試");
+  return await response.json();
+}
+async function saveKnockout(body:any) {
+  const tid=String(body?.tid||""),eventId=String(body?.event_id||"");
+  if(!validTid(tid)||!/^[0-9]{1,12}$/.test(eventId))throw new Error("賽事識別碼不正確");
+  const champion=String(body?.champion||"").toLowerCase();
+  const runner=String(body?.runner_up||"").toLowerCase();
+  const semis=Array.isArray(body?.semifinalists)?body.semifinalists.map((id:any)=>String(id||"").toLowerCase()):[];
+  if(semis.length!==2)throw new Error("請指定兩位四強選手");
+  const chosen=[champion,runner,...semis];
+  if(chosen.some(id=>!/^tw[0-9]{6,12}$/.test(id))||new Set(chosen).size!==4)
+    throw new Error("冠軍、亞軍、兩位四強必須是四位不同的選手");
+  const archive=await db.from("ptcg_match_archives")
+    .select("tid,status,final_seen_at").eq("tid",tid).maybeSingle();
+  if(archive.error)throw archive.error;
+  if(!archive.data?.final_seen_at||archive.data.status!=="completed")
+    throw new Error("這場還沒完成最終排名封存");
+  const final=await db.from("ptcg_match_archive_finals")
+    .select("player_count,standings").eq("tid",tid).maybeSingle();
+  if(final.error)throw final.error;
+  const all=final.data?.standings;
+  if(!Array.isArray(all)||all.length<9||Number(final.data?.player_count)!==all.length)
+    throw new Error("最終排名不完整");
+  const top=all.filter((p:any)=>Number.isInteger(p.rank)&&p.rank>=1&&p.rank<=8);
+  const map=new Map(top.map((p:any)=>[String(p.id||"").toLowerCase(),Number(p.rank)]));
+  if(top.length!==8||map.size!==8||new Set(top.map((p:any)=>p.rank)).size!==8
+      ||chosen.some(id=>!map.has(id)))throw new Error("設定的選手必須出自本場預賽前八名");
+  const [sources,tournaments]=await Promise.all([
+    publicGitJson("data/preliminary_sources.json"),publicGitJson("data/tournaments.json")
+  ]);
+  const source=(sources.sources||[]).find((x:any)=>
+    String(x.event_id)===eventId&&String(x.tid)===tid
+    &&x.league==="Ultra"&&x.group==="Junior");
+  const official=(tournaments.events||[]).find((x:any)=>String(x.event_id)===eventId
+    &&x.league==="Ultra"&&x.group==="Junior");
+  if(!source||!official)throw new Error("這場尚未完成高級球試算來源對應，稍後再儲存");
+  const results=top.map((p:any)=>{
+    const id=String(p.id).toLowerCase();
+    const finish=id===champion?"冠軍":id===runner?"亞軍":semis.includes(id)?"四強":"八強";
+    const rank=finish==="冠軍"?1:finish==="亞軍"?2:finish==="四強"?3:5;
+    const points=rank===1?100:rank===2?75:rank===3?50:25;
+    return {player_id:id,preliminary_rank:p.rank,final_rank:rank,finish,points};
+  });
+  if(results.length!==8||results.reduce((sum:number,p:any)=>sum+p.points,0)!==375)
+    throw new Error("名次與 LP 加總驗證失敗");
+  const write=await db.from("ptcg_match_archive_knockouts").upsert({
+    tid,event_id:eventId,podium:{results},updated_at:now()
+  },{onConflict:"tid"}).select("updated_at").single();
+  if(write.error)throw write.error;
+  // The saved private record is the source of truth. GitHub sync only receives
+  // public IDs and scores, never the account's identity or recorded decks.
+  let syncError="";
+  try{
+    const {data,error}=await db.rpc("get_ptcg_github_trigger_config_for_service");
+    if(error)throw error;
+    const secret=String(data?.cron_secret||"");
+    const response=await fetch(URL_BASE+"/functions/v1/ptcg-github-trigger",{
+      method:"POST",headers:{"Content-Type":"application/json","x-ptcg-cron-secret":secret},
+      body:JSON.stringify({workflow:"sync-knockout-results.yml",event_id:eventId}),
+      signal:AbortSignal.timeout(18000)});
+    if(!response.ok)throw new Error("同步啟動失敗 HTTP "+response.status);
+  }catch(e){syncError=String((e as Error).message||e).slice(0,140);}
+  return {ok:true,saved:true,tid,event_id:eventId,
+    sync_triggered:!syncError,...(syncError?{sync_error:syncError}:{})};
 }
 Deno.serve(async(req:Request)=>{
   if(req.method==="OPTIONS")return new Response("ok",{headers:cors});
@@ -335,13 +460,22 @@ Deno.serve(async(req:Request)=>{
         || ttlParsed.matches[1]?.a?.record?.points!==0
         || ttlParsed.matches[1]?.b?.record?.points!==0)
         throw new Error("TtlScore parser selftest failed");
+      const finalScoreTest=standingsFromRows([
+        ["Rank","Name","TtlScore"],["1","tw82928313","18"],["2","tw61881775","15"]
+      ]);
+      if(finalScoreTest.length!==2||finalScoreTest[0].points!==18||finalScoreTest[1].points!==15)
+        throw new Error("final standings TtlScore parser selftest failed");
       const parsed=parseMatchRows(example);
       if(parsed.table_count!==2 || parsed.player_count!==3
         || parsed.matches[0]?.a?.name!=="王品澤"
         || parsed.matches.at(-1)?.kind!=="bye")
         throw new Error("archive parser selftest failed");
       return json({ok:true,tables:parsed.table_count,players:parsed.player_count,
-        bye:parsed.matches.at(-1)?.kind==="bye",ttl_score_test:true});
+        bye:parsed.matches.at(-1)?.kind==="bye",ttl_score_test:true,final_ttl_score_test:true});
+    }
+    if(action==="repair-final-scores") {
+      await requireCron(req);
+      return json(await repairFinalScores(String(body?.tid||"")));
     }
     if(action==="poll") {
       await requireCron(req);
@@ -370,6 +504,7 @@ Deno.serve(async(req:Request)=>{
       if(upd.error)throw upd.error;
       return json({ok:true,...upd.data});
     }
+    if(action==="save-knockout")return json(await saveKnockout(body));
     if(action==="list")return json({ok:true,archives:await listArchives()});
     if(action==="get")return json({ok:true,archive:await readArchive(String(body?.tid||""),body?.round==null?undefined:Number(body.round),member.id)});
     if(action==="link") {

@@ -57,7 +57,7 @@
     const bracket = cachedKnockout?.events?.[String(event.event_id)];
     if (!bracket || event.league !== 'Ultra' || bracket.event_id !== String(event.event_id)
         || bracket.date !== event.date || bracket.group !== event.group
-        || bracket.league !== event.league || bracket.source_type !== 'community_knockout_bracket'
+        || bracket.league !== event.league || !['community_knockout_bracket','owner_entered_knockout'].includes(bracket.source_type)
         || !Array.isArray(bracket.results) || bracket.results.length !== 8
         || !Array.isArray(prelim.standings)) return null;
     const eligible = prelim.standings.filter(row => Number.isInteger(row.rank) && row.rank >= 1 && row.rank <= 8);
@@ -109,6 +109,7 @@
       points: knockout?.points ?? (pending ? null : row.points),
       pending,
       bracketEstimate: Boolean(knockout),
+      ownerEntered: Boolean(knockout && bracket?.source_type === 'owner_entered_knockout'),
       source_url: knockout ? bracket.source_url : (cached.source_url || '')
     };
   }
@@ -140,6 +141,7 @@
         preliminary: event.league === 'Ultra' && !row.bracketEstimate,
         preliminaryRank: row.preliminaryRank,
         finishLabel: row.finishLabel,
+        ownerEntered: row.ownerEntered,
         sourceUrl: row.source_url,
         url: event.url || '',
         eventId: String(event.event_id)
@@ -174,7 +176,7 @@
       explanation.textContent = event.resultStatus === 'pending-final'
         ? '預賽名次不是最終名次'
         : (event.resultStatus === 'knockout-estimated'
-          ? '預賽第 ' + event.preliminaryRank + ' 名；非官方複賽圖試算'
+          ? '預賽第 ' + event.preliminaryRank + ' 名；' + (event.ownerEntered ? '管理者確認複賽名次試算' : '非官方複賽圖試算')
           : '試算');
       cells[3].appendChild(explanation);
       cells[4].textContent = event.resultStatus === 'pending-final'
@@ -197,7 +199,7 @@
         note.className = 'preliminary-result-note';
         note.textContent = event.resultStatus === 'pending-final'
           ? '預賽名次不是最終名次，待複賽成績確認'
-          : '預賽第 ' + event.preliminaryRank + ' 名；非官方複賽圖試算，待官方確認';
+          : '預賽第 ' + event.preliminaryRank + ' 名；' + (event.ownerEntered ? '管理者確認複賽成績，待官方入帳' : '非官方複賽圖試算，待官方確認');
         card.appendChild(note);
       }
     });
@@ -219,7 +221,7 @@
         notice.className = 'preliminary-totals-note';
         notice.textContent = '另收錄 ' + estimated + ' 場可試算成績'
           + (pending ? '、' + pending + ' 場高級球預賽前 8 名待複賽確認（不列入積分與 Best 8）' : '')
-          + (knockout ? '；其中 ' + knockout + ' 場採用非官方複賽圖試算' : '')
+          + (knockout ? '；其中 ' + knockout + ' 場採用已核對複賽成績試算' : '')
           + '；正式排名與積分以 Pokémon Asia 公告為準。';
         html = html.replace('</section>', notice.outerHTML + '</section>');
       }

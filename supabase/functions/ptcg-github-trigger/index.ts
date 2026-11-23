@@ -9,7 +9,7 @@ const service = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
 
 const OWNER = "guoer11";
 const REPO = "ptcg-ranking";
-const ALLOWED_WORKFLOWS = new Set(["update-tournaments.yml", "update-ranking.yml", "sync-preliminary.yml"]);
+const ALLOWED_WORKFLOWS = new Set(["update-tournaments.yml", "update-ranking.yml", "sync-preliminary.yml", "sync-knockout-results.yml"]);
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -227,12 +227,35 @@ Deno.serve(async (req: Request) => {
     }
 
     const sources = workflow === "sync-preliminary.yml" ? await discoverFinishedEvents() : [];
+    let knockoutPayload: null | Record<string, unknown> = null;
+    if(workflow === "sync-knockout-results.yml") {
+      const eventId=String(body?.event_id||"");
+      if(!/^[0-9]{1,12}$/.test(eventId))return json({error:"invalid event ID"},400);
+      const {data:verified,error:verifiedError}=await service
+        .from("ptcg_match_archive_knockouts")
+        .select("tid,event_id,podium").eq("event_id",eventId).maybeSingle();
+      if(verifiedError)throw verifiedError;
+      if(!verified?.tid||!Array.isArray(verified.podium?.results)||verified.podium.results.length!==8)
+        return json({error:"verified Top 8 not found"},404);
+      const {data:archived,error:archivedError}=await service
+        .from("ptcg_match_archive_finals").select("source_url,standings")
+        .eq("tid",String(verified.tid)).maybeSingle();
+      if(archivedError)throw archivedError;
+      if(!archived?.source_url||!Array.isArray(archived.standings)||archived.standings.length<9)
+        return json({error:"completed archive not found"},404);
+      // Only public player IDs and results leave Supabase. No private names or scout data.
+      knockoutPayload={event_id:String(verified.event_id),tid:String(verified.tid),
+        source_url:String(archived.source_url),results:verified.podium.results};
+    }
     if (body?.dry_run === true) {
-      return json({ok:true, dry_run:true, workflow, new_mapping_count:sources.length, mappings:sources});
+      return json({ok:true,dry_run:true,workflow,new_mapping_count:sources.length,
+        mappings:sources,knockout_ready:Boolean(knockoutPayload)});
     }
     const dispatchBody = workflow === "sync-preliminary.yml"
       ? {ref:"main",inputs:{auto_sources:JSON.stringify(sources)}}
-      : {ref:"main"};
+      : workflow === "sync-knockout-results.yml"
+        ? {ref:"main",inputs:{payload:JSON.stringify(knockoutPayload)}}
+        : {ref:"main"};
     const response = await fetch(
       `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${workflow}/dispatches`,
       {

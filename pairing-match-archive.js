@@ -84,9 +84,16 @@
       const fromLastRound=source?.source_status==="completed_last_round";
       const title=provisional?`Round ${source.round_no} 暫定排名（非最終成績）`:
         fromLastRound?`第 ${view.event.expected_rounds||"最後"} 輪結束排名（本場最終）`:"官方最終排名";
+      const reference=view.final_score_references;
+      const roundBefore=reference?.before_round;
+      const fallbackCount=!provisional?rows.filter(p=>p.points==null&&
+        reference?.points?.[normalizedId(p)]!=null).length:0;
       root.innerHTML=`<p class="archive-subtitle">${escape(title)} · ${rows.length} 位${term?"（篩選結果）":""} · ${escape(source.captured_at||"")}</p>
+        ${fallbackCount?`<p class="archive-empty">最終排名的 TtlScore 尚未全部取得；標示 R${escape(roundBefore)} 前的數字是最後一輪開始前的積分，<strong>不是最終分數</strong>。</p>`:""}
         <div class="archive-scroll"><table><thead><tr><th>名次</th><th>選手／歷史牌組</th><th>TtlScore</th></tr></thead><tbody>
-        ${rows.map(p=>`<tr><td>${escape(p.rank)}</td><td>${playerHTML(p)}</td><td>${p.points==null?"—":escape(p.points)}</td></tr>`).join("")}
+        ${rows.map(p=>`<tr><td>${escape(p.rank)}</td><td>${playerHTML(p)}</td>
+          <td>${p.points!=null?escape(p.points):!provisional&&reference?.points?.[normalizedId(p)]!=null
+            ?`${escape(reference.points[normalizedId(p)])} <small>R${escape(roundBefore)} 前</small>`:"—"}</td></tr>`).join("")}
         </tbody></table></div>
         ${provisional?'<p class="archive-empty">這是官方各輪結束後的暫定排名，尚未確認已打完全部輪次。</p>':
       fromLastRound?'<p class="archive-empty">這場賽事的總輪數已確認完成。來源頁雖標示 interim result，本站依最後輪結果保存本場最終名次。</p>':""}`;
@@ -107,6 +114,7 @@
       message("正在讀取已保存的比賽資料…");
       const result=await api("get",{tid:activeTid,round:value==="final"||value==="interim"?null:Number(value)});
       view=result.archive;
+      document.dispatchEvent(new CustomEvent("archive:loaded",{detail:{archive:view,tid:activeTid}}));
       if(!view)throw new Error("找不到這場賽事的封存");
       renderRows();
       message(view.event.last_error?"部分備份曾讀取失敗；已取得的資料仍保留。":"顯示本站封存資料（不需官方網站仍開放）。");
@@ -117,6 +125,7 @@
     if(!activeTid){$("matchArchiveRows").innerHTML='<p class="archive-empty">目前尚無已追蹤並封存的賽事。</p>';return;}
     const result=await api("get",{tid:activeTid});
     view=result.archive;
+    document.dispatchEvent(new CustomEvent("archive:loaded",{detail:{archive:view,tid:activeTid}}));
     if(!view){message("目前查不到封存紀錄",true);return;}
     const expected=$("matchArchiveExpectedRounds"),button=$("matchArchiveSetRounds");
     if(expected) {
@@ -154,7 +163,7 @@
     try {
       await api("register",{url:source});
       message("已啟動整場賽事封存；每 5 分鐘檢查新配對與最終排名。");
-      await refresh();
+      if($("matchArchive"))await refresh();
     }catch(e){message("追蹤通知已啟動，但封存登記失敗："+String(e.message||e),true);}
   }
   async function configureRounds() {
@@ -176,6 +185,7 @@
     catch(e){message(String(e.message||e),true);}
   }
   function init() {
+    document.addEventListener("pairing:tracking-started",registerFromTracking);
     if(!$("matchArchive"))return;
     $("matchArchiveEvent")?.addEventListener("change",e=>{activeTid=e.target.value;void choose(activeTid);});
     $("matchArchiveRound")?.addEventListener("change",()=>{void loadSelected();});
@@ -185,7 +195,6 @@
     $("matchArchiveSetRounds")?.addEventListener("click",()=>{void configureRounds();});
     $("matchArchive")?.addEventListener("toggle",e=>{if(e.target.open)void refresh();});
     document.addEventListener("pairing:auth-ready",ev=>{if(ev.detail?.allowed&&$("matchArchive")?.open)void refresh();});
-    document.addEventListener("pairing:tracking-started",registerFromTracking);
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true}); else init();
 })();

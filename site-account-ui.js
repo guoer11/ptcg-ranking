@@ -141,10 +141,19 @@ async function siteAccountEnsureSupabase() {
   });
 }
 
+function siteAccountHidePrivateNav() {
+  document.querySelectorAll('.site-nav a[href="pairing.html"], .site-nav a[href="history.html"]')
+    .forEach(link => { link.hidden = true; });
+}
+function siteAccountTogglePrivateNav(allowed) {
+  document.querySelectorAll('.site-nav a[href="pairing.html"], .site-nav a[href="history.html"]')
+    .forEach(link => { link.hidden = !allowed; });
+}
 async function siteAccountRefreshAuthorization() {
   const generation = ++siteAccountAuthGeneration;
   const userId = identitySession?.user?.id || '';
   identityAuthorized = false;
+  siteAccountHidePrivateNav();
   siteAccountSyncUI(identitySession ? '正在確認帳號權限…' : '');
   if (!identitySession || !identityClient) return;
   try {
@@ -152,11 +161,13 @@ async function siteAccountRefreshAuthorization() {
     if (error) throw error;
     if (generation !== siteAccountAuthGeneration || identitySession?.user?.id !== userId) return;
     identityAuthorized = data === true;
+    siteAccountTogglePrivateNav(identityAuthorized);
     siteAccountSyncUI();
   } catch (error) {
     if (generation !== siteAccountAuthGeneration || identitySession?.user?.id !== userId) return;
     console.warn('共用帳號權限確認失敗', error);
     identityAuthorized = false;
+    siteAccountHidePrivateNav();
     siteAccountSyncUI('登入權限確認失敗，請稍後再試。');
   }
 }
@@ -198,6 +209,7 @@ async function siteAccountInitAuth() {
   identityClient.auth.onAuthStateChange((_event, session) => {
     identitySession = session || null;
     identityAuthorized = false;
+    siteAccountHidePrivateNav();
     ++siteAccountAuthGeneration;
     siteAccountSyncUI();
     setTimeout(siteAccountRefreshAuthorization, 0);
@@ -220,6 +232,7 @@ function siteAccountInit() {
   siteAccountEnsureStylesheet('auth-ui.css?v=0.13.1-r1', 'auth');
   siteAccountEnsureStylesheet('push-ui.css?v=0.13.1-r1', 'push');
   siteAccountEnsureControls();
+  siteAccountHidePrivateNav();
   siteAccountEnsurePushModal();
   siteAccountInitAuth();
 }
