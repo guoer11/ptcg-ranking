@@ -239,99 +239,104 @@ async function archivePlayerContext(tid:string,eventTitle:string,roundRows:any,f
   if(!participants.length)return {real_names:realNames,decks,observations};
   const chunks:string[][]=[];
   for(let i=0;i<participants.length;i+=150)chunks.push(participants.slice(i,i+150));
-  for(const chunk of chunks) {
-    const {data,error}=await db.from("player_identities")
-      .select("player_id,real_name").in("player_id",chunk);
-    if(error)throw error;
-    for(const row of data||[])if(row.real_name)realNames[String(row.player_id).toLowerCase()]=String(row.real_name);
-  }
-  // Only records owned by this logged-in account, not records from any other
-  // account. Never write to either of the two pre-existing scout tables.
-  const current=await db.from("pairing_deck_scouts")
+  // Historical decks must predate this event; never show later records as a
+  // prior tournament reference.
+  const dateMatch=String(eventTitle||"").match(/(20\d{2})\/(\d{1,2})\/(\d{1,2})/);
+  const cutoff=dateMatch
+    ? new Date([dateMatch[1],dateMatch[2].padStart(2,"0"),dateMatch[3].padStart(2,"0")].join("-")+"T23:59:59+08:00").toISOString()
+    : "";
+  // Independent read-only queries can run together, without 4+ successive
+  // network round-trips for each historical tournament.
+  const identityQueries=chunks.map(chunk=>db.from("player_identities")
+    .select("player_id,real_name").in("player_id",chunk));
+  const currentQuery=db.from("pairing_deck_scouts")
     .select("player_id,deck_name,observed_round,tid,created_at")
     .eq("user_id",userId).eq("tid",tid).limit(5000);
+  const historyQueries=chunks.map(chunk=>{
+    let query=db.from("pairing_deck_scouts")
+      .select("player_id,deck_name,tid,created_at")
+      .eq("user_id",userId).neq("tid",tid).in("player_id",chunk)
+      .order("created_at",{ascending:false}).limit(500);
+    if(cutoff)query=query.lte("created_at",cutoff);
+    return query;
+  });
+  const observationsQuery=db.from("pairing_deck_pair_observations")
+    .select("round_no,table_no,deck_a,deck_b")
+    .eq("user_id",userId).eq("tid",tid).limit(5000);
+  const [identities,current,historical,observationRows]=await Promise.all([
+    Promise.all(identityQueries),currentQuery,Promise.all(historyQueries),observationsQuery
+  ]);
+  for(const result of identities){
+    if(result.error)throw result.error;
+    for(const row of result.data||[])if(row.real_name)
+      realNames[String(row.player_id).toLowerCase()]=String(row.real_name);
+  }
   if(current.error)throw current.error;
   for(const row of current.data||[]) {
     const id=String(row.player_id||"").toLowerCase();
     if(ids.has(id)&&row.deck_name)
       decks[id]={...decks[id],current:{deck:String(row.deck_name),round:row.observed_round,tid}};
   }
-  // Historical reference must precede the *event date*, never a subsequent
-  // tournament: a newer deck is not evidence for an older match.
-  const dateMatch=String(eventTitle||"").match(/(20\d{2})\/(\d{1,2})\/(\d{1,2})/);
-  const cutoff=dateMatch
-    ? new Date(`${dateMatch[1]}-${dateMatch[2].padStart(2,"0")}-${dateMatch[3].padStart(2,"0")}T23:59:59+08:00`).toISOString()
-    : "";
-  for(const chunk of chunks) {
-    let query=db.from("pairing_deck_scouts")
-      .select("player_id,deck_name,tid,created_at")
-      .eq("user_id",userId).neq("tid",tid).in("player_id",chunk)
-      .order("created_at",{ascending:false}).limit(500);
-    if(cutoff)query=query.lte("created_at",cutoff);
-    const {data,error}=await query;
-    if(error)throw error;
-    for(const row of data||[]) {
+  for(const result of historical){
+    if(result.error)throw result.error;
+    for(const row of result.data||[]) {
       const id=String(row.player_id||"").toLowerCase();
       if(!ids.has(id)||decks[id]?.previous||!row.deck_name)continue;
       decks[id]={...decks[id],previous:{deck:String(row.deck_name),tid:String(row.tid),date:row.created_at}};
     }
   }
-  const observationsResult=await db.from("pairing_deck_pair_observations")
-    .select("round_no,table_no,deck_a,deck_b")
-    .eq("user_id",userId).eq("tid",tid).limit(5000);
-  if(observationsResult.error)throw observationsResult.error;
-  for(const row of observationsResult.data||[])if(row.deck_a||row.deck_b)
-    observations[`${row.round_no}:${row.table_no}`]={deck_a:String(row.deck_a||""),deck_b:String(row.deck_b||"")};
+  if(observationRows.error)throw observationRows.error;
+  for(const row of observationRows.data||[])if(row.deck_a||row.deck_b)
+    observations[String(row.round_no)+":"+String(row.table_no)]={deck_a:String(row.deck_a||""),deck_b:String(row.deck_b||"")};
   return {real_names:realNames,decks,observations};
 }
 async function readArchive(tid:string,round:number|undefined,userId:string) {
   if(!validTid(tid))throw new Error("TID 無效");
-  const ev=await db.from("ptcg_match_archives").select("*").eq("tid",tid).maybeSingle();
-  if(ev.error)throw ev.error;
+  const selectedRound=round&&Number.isInteger(round)&&round>=1&&round<=100?round:null;
+  const [ev,list,selected,final,knockout,interim]=await Promise.all([
+    db.from("ptcg_match_archives").select("*").eq("tid",tid).maybeSingle(),
+    db.from("ptcg_match_archive_rounds")
+      .select("round_no,captured_at,player_count,table_count,source_url")
+      .eq("tid",tid).order("round_no",{ascending:true}),
+    selectedRound?db.from("ptcg_match_archive_rounds").select("*")
+      .eq("tid",tid).eq("round_no",selectedRound).maybeSingle()
+      :Promise.resolve({data:null,error:null}),
+    db.from("ptcg_match_archive_finals")
+      .select("captured_at,player_count,source_url,source_status,standings").eq("tid",tid).maybeSingle(),
+    db.from("ptcg_match_archive_knockouts")
+      .select("event_id,podium,updated_at").eq("tid",tid).maybeSingle(),
+    db.from("ptcg_match_archive_interims")
+      .select("captured_at,round_no,player_count,source_url,standings")
+      .eq("tid",tid).order("round_no",{ascending:false}).limit(1).maybeSingle()
+  ]);
+  for(const result of [ev,list,selected,final,knockout,interim])
+    if(result.error)throw result.error;
   if(!ev.data)return null;
-  const list=await db.from("ptcg_match_archive_rounds")
-    .select("round_no,captured_at,player_count,table_count,source_url")
-    .eq("tid",tid).order("round_no",{ascending:true});
-  if(list.error)throw list.error;
-  let details:any=null;
-  if(round&&Number.isInteger(round)&&round>=1&&round<=100) {
-    const r=await db.from("ptcg_match_archive_rounds").select("*")
-      .eq("tid",tid).eq("round_no",round).maybeSingle();
-    if(r.error)throw r.error;
-    details=r.data;
-  }
-  const final=await db.from("ptcg_match_archive_finals")
-     .select("captured_at,player_count,source_url,source_status,standings").eq("tid",tid).maybeSingle();
-  if(final.error)throw final.error;
-  const knockout=await db.from("ptcg_match_archive_knockouts")
-    .select("event_id,podium,updated_at").eq("tid",tid).maybeSingle();
-  if(knockout.error)throw knockout.error;
-  const interim=await db.from("ptcg_match_archive_interims")
-    .select("captured_at,round_no,player_count,source_url,standings")
-    .eq("tid",tid).order("round_no",{ascending:false}).limit(1).maybeSingle();
-  if(interim.error)throw interim.error;
-  // Final standings can omit TtlScore. Use the latest preserved pairing
-  // scores only as a clearly labeled BEFORE-round reference, never as final LP.
+  // Final TtlScore references are not official final LP; retrieve the last
+  // saved pre-round points concurrently with the private player/deck context.
+  const referenceQuery=final.data?.standings?.some((row:any)=>row.points==null)
+    ?db.from("ptcg_match_archive_rounds").select("round_no,matches")
+      .eq("tid",tid).order("round_no",{ascending:false}).limit(1).maybeSingle()
+    :Promise.resolve({data:null,error:null});
+  const [context,recent]=await Promise.all([
+    archivePlayerContext(tid,String(ev.data.title||""),selected.data,final.data||interim.data,userId),
+    referenceQuery
+  ]);
+  if(recent.error)throw recent.error;
   let finalScoreReferences:any=null;
-  if(final.data?.standings?.some((row:any)=>row.points==null)) {
-    const recent=await db.from("ptcg_match_archive_rounds").select("round_no,matches")
-      .eq("tid",tid).order("round_no",{ascending:false}).limit(1).maybeSingle();
-    if(recent.error)throw recent.error;
-    if(recent.data) {
-      const scores:Record<string,number>={};
-      for(const row of recent.data.matches||[]) {
-        for(const p of [row.a,row.b]){
-          const id=String(p?.id||"").toLowerCase();
-          const value=p?.record?.points;
-          if(/^tw[0-9]{6,12}$/.test(id)&&typeof value==="number"&&Number.isFinite(value))
-            scores[id]=value;
-        }
+  if(recent.data){
+    const scores:Record<string,number>={};
+    for(const row of recent.data.matches||[]) {
+      for(const p of [row.a,row.b]){
+        const id=String(p?.id||"").toLowerCase();
+        const value=p?.record?.points;
+        if(/^tw[0-9]{6,12}$/.test(id)&&typeof value==="number"&&Number.isFinite(value))
+          scores[id]=value;
       }
-      finalScoreReferences={before_round:recent.data.round_no,points:scores};
     }
+    finalScoreReferences={before_round:recent.data.round_no,points:scores};
   }
-  const context=await archivePlayerContext(tid,String(ev.data.title||""),details,final.data||interim.data,userId);
-  return {event:ev.data,rounds:list.data||[],selected:details,
+  return {event:ev.data,rounds:list.data||[],selected:selected.data,
     final:final.data,final_score_references:finalScoreReferences,
     interim:interim.data,knockout:knockout.data,context};
 }
