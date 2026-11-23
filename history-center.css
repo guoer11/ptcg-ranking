@@ -33,15 +33,20 @@
 .history-bracket-match{min-width:0;padding:10px;border:1px solid #d9e2ef;border-radius:12px;background:#f8faff}
 .history-bracket-match-title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px;font-size:11px;font-weight:800;color:#62738c}
 .history-bracket-match-title span:last-child{color:#7b8ba1;font-weight:700}
-.history-bracket-pick{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-width:0;margin:5px 0 0;padding:9px 10px;border:1px solid #e0e7f0;border-radius:9px;background:#fff;color:#213850;text-align:left;font-family:inherit;font-size:13px;cursor:pointer}
-.history-bracket-pick:disabled{cursor:default;opacity:.7;background:#f2f4f7}
+.history-bracket-pick{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-width:0;margin:5px 0 0;padding:9px 10px;border:1px solid #e0e7f0;border-radius:9px;background:#fff;color:#213850;text-align:left;font-family:inherit;font-size:13px}
+.history-bracket-pick.is-unavailable{opacity:.7;background:#f2f4f7}
 .history-bracket-pick.is-winner{border-color:#6cba92;background:#e6f8ef;color:#116444}
 .history-bracket-pick.is-eliminated{color:#7f8997;opacity:.75}
-.history-bracket-pick:focus-visible{outline:3px solid #7ba7e8;outline-offset:2px}
-.history-bracket-pick-main{display:grid;gap:2px;min-width:0}
+.history-bracket-pick-main{display:grid;gap:2px;min-width:0;user-select:text;-webkit-user-select:text}
+.history-bracket-seed{font-size:11px;color:#667b94;font-weight:700}
 .history-bracket-pick-main strong{overflow-wrap:anywhere;font-weight:800}
-.history-bracket-pick-main small{color:#748195;font-size:10px;overflow-wrap:anywhere}
-.history-bracket-result{flex:none;font-size:11px;font-weight:900}
+.history-bracket-pick-main small{color:#748195;font-size:12px;overflow-wrap:anywhere}
+.history-bracket-copytext{user-select:text;-webkit-user-select:text;cursor:text}
+.history-bracket-result{flex:none;min-height:30px;padding:5px 8px;border:1px solid #b7cce6;border-radius:7px;background:#f1f6ff;color:#24558d;font:inherit;font-size:11px;font-weight:900;cursor:pointer}
+.history-bracket-result:focus-visible{outline:3px solid #7ba7e8;outline-offset:2px}
+.history-bracket-pick.is-winner .history-bracket-result{background:#cfefdb;border-color:#83c5a0;color:#116444}
+.history-bracket-pick.is-eliminated .history-bracket-result{background:#f4f5f7;border-color:#d6dce4;color:#6f7781}
+.history-bracket-result.is-pending{background:transparent;border:0;color:#667085;cursor:default}
 .history-bracket-champion{margin-top:12px;padding:12px;border:1px solid #e7c678;border-radius:10px;background:#fff8e8;color:#805b0d;font-size:14px;font-weight:800}
 .history-bracket-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
 #historyBracketStatus{font-size:12px;line-height:1.55;color:#475467}
