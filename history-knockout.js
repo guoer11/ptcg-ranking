@@ -184,6 +184,7 @@
       if(!response.ok||!data.ok)throw new Error(data.error||'儲存失敗');
       if(String(current?.event?.tid)!==targetTid)return;
       bracketDirty=false;
+      document.dispatchEvent?.(new CustomEvent('archive:invalidate',{detail:{tid:targetTid}}));
       if(data.complete){
         bracketStatus(data.sync_triggered
           ?'七場戰況已儲存，冠亞軍及 LP 試算同步已啟動。官方成績仍優先。'
@@ -269,6 +270,7 @@
         champion,runner_up,semifinalists:[semi_one,semi_two]})});
       const data=await response.json().catch(()=>({}));
       if(!response.ok||!data.ok)throw new Error(data.error||'成績儲存失敗');
+      document.dispatchEvent?.(new CustomEvent('archive:invalidate',{detail:{tid:String(current.event.tid)}}));
       if(data.sync_triggered)status('複賽成績已儲存，本站試算同步已啟動；官方正式成績仍優先。');
       else status('複賽成績已儲存，但試算同步未啟動：'+(data.sync_error||'請稍後再試'),true);
     }catch(e){status('儲存失敗：'+String(e.message||e),true);}
