@@ -71,6 +71,7 @@ jobs:
           node tests/history-auth-stability.test.cjs
           node tests/history-bracket.test.cjs
           node tests/pairing-match-archive.test.cjs
+          node tests/history-archive-speed.test.cjs
           python -m unittest discover -s tests -p 'test_sync_knockout.py'
           node tests/pairing-interim-ranking.test.cjs
           node tests/pairing-last-round-final.test.cjs
