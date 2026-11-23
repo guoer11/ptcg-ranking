@@ -28,5 +28,15 @@ for(const page of ['index.html','tournaments.html','pairing.html'])
  assert.match(read(page),/href="history\.html" hidden/);
 assert.match(workflow,/cp index\.html tournaments\.html pairing\.html history\.html/);
 assert.match(workflow,/node --check history-knockout\.js/);
+assert.match(workflow,/cp data\/preliminary_sources\.json _site\/data\/preliminary_sources\.json/,'publish archived TID to official event mapping');
+assert.match(workflow,/Sync PTCG unofficial-preliminary ranking/,'deploy as soon as automatic trial import finishes');
+const tournamentJS=read('tournaments.js');
+const tournamentHTML=read('tournaments.html');
+assert.match(tournamentJS,/existing\.hidden = false;/,'reuse the existing private pairing link');
+assert.match(tournamentJS,/a\[href="pairing\.html"\]:not\(\[data-pairing-nav\]\)/,'no extra pairing link');
+assert.equal((tournamentHTML.match(/href="pairing\.html"/g)||[]).length,1,'one pairing link per page');
+assert.match(tournamentHTML,/tournaments\.js\?v=2\.12\.0-r2/,'bust the cached legacy dynamic nav');
+const mapped=JSON.parse(read('data/preliminary_sources.json')).sources.find(s=>s.tid==='5865462');
+assert.equal(mapped?.event_id,'66990','verified 11/21 archived tournament mapping must be present');
 assert.match(read('site-version.js'),/v2\.12\.0/);
 console.log('PASS: owner-only history route, private knockout editing, background archiving and TtlScore');

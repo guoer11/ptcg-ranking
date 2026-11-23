@@ -25,6 +25,7 @@ on:
       - "Update PTCG tournaments"
       - "Update CPBL game stats"
       - "Sync owner-verified Top 8 results"
+      - "Sync PTCG unofficial-preliminary ranking"
     types:
       - completed
   schedule:
@@ -94,6 +95,10 @@ jobs:
           cp data/wcs_2027_invites.json _site/data/wcs_2027_invites.json
           cp data/ranking.json _site/data/ranking.json
           cp data/preliminary_results.json _site/data/preliminary_results.json
+          # This source map is used by the private history Top8 editor to
+          # link archived TID to the official event ID.
+          cp data/preliminary_sources.json _site/data/preliminary_sources.json
+          test -s _site/data/preliminary_sources.json
           cp data/knockout_results.json _site/data/knockout_results.json
           cp data/ranking_history.json _site/data/ranking_history.json
           if [ -f data/season_2025_26.json ]; then

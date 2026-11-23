@@ -69,10 +69,18 @@ function ensureTournamentSupabase() {
 }
 
 function removeTournamentPairingNav() {
-  document.querySelector('.site-nav a[data-pairing-nav]')?.remove();
+  // v2.12.0: The page now owns a static private navigation link. Reuse that
+  // link instead of adding a second, identical "即時配對" entry.
+  document.querySelectorAll('.site-nav a[data-pairing-nav]').forEach(link => link.remove());
+  document.querySelector('.site-nav a[href="pairing.html"]')?.setAttribute('hidden', '');
 }
 
 function insertTournamentPairingNav() {
+  const existing = document.querySelector('.site-nav a[href="pairing.html"]:not([data-pairing-nav])');
+  if (existing) {
+    existing.hidden = false;
+    return;
+  }
   if (document.querySelector('.site-nav a[data-pairing-nav]')) return;
   const nav = document.querySelector('.site-nav');
   const tournamentLink = nav?.querySelector('a[href^="tournaments.html"]');
