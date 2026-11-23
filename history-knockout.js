@@ -83,7 +83,10 @@
   function bracketCount(){return bracketKeys.filter(key=>Boolean(bracketWinners[key])).length;}
   function bracketPlayer(id){
     const row=(getTop(current)||[]).find(p=>String(p.id).toLowerCase()===id);
-    return row?{id,rank:row.rank,name:String(current?.context?.real_names?.[id]||row.name||id)}:null;
+    // Only this event's recorded deck; never substitute a previous-event deck.
+    const recorded=String(current?.context?.decks?.[id]?.current?.deck||'').trim();
+    return row?{id,rank:row.rank,name:String(current?.context?.real_names?.[id]||row.name||id),
+      deck:recorded}:null;
   }
   function bracketSlots(game) {
     if(game.seeds){
@@ -111,7 +114,9 @@
     return '<div class="'+cls+'">'+
       '<div class="history-bracket-pick-main">'+
       '<span class="history-bracket-seed">'+escape(slot.hint)+'</span>'+
-      '<strong class="history-bracket-copytext">'+escape(player?player.name:'待確認')+'</strong>'+
+      '<span class="history-bracket-player-line"><strong class="history-bracket-copytext">'+escape(player?player.name:'待確認')+'</strong>'+
+      (player?.deck?'<span class="history-bracket-deck history-bracket-copytext" title="本場已記錄牌組（不代表逐輪確認）">'+escape(player.deck)+'</span>':'')+
+      '</span>'+
       (player?'<small class="history-bracket-copytext">'+escape(player.id)+'</small>':'')+
       '</div>'+action+'</div>';
   }
