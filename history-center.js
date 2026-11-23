@@ -3,6 +3,7 @@ const PAIRING_SUPABASE_URL='https://ceobnyikrudlxasyjukg.supabase.co';
 const PAIRING_SUPABASE_KEY='sb_publishable_6uVBALI1T3lMZoFEUiLK4g__R7gv0fz';
 let pairingClient=null,pairingSession=null,pairingAuthorized=false;
 let historyAuthRequest=0;
+let historyLastNotifiedUser='';
 function historyDisplayAuth(allowed,message=''){
   pairingAuthorized=Boolean(allowed);
   const main=document.getElementById('historyProtectedMain');
@@ -13,11 +14,18 @@ function historyDisplayAuth(allowed,message=''){
   if(deniedText&&!pairingAuthorized)deniedText.textContent=message||'請回玩家排行登入唯一授權的 Google 帳號。';
   document.querySelectorAll('.site-nav a[href="pairing.html"],.site-nav a[href="history.html"]')
     .forEach(a=>{a.hidden=!pairingAuthorized;});
-  document.dispatchEvent(new CustomEvent('pairing:auth-ready',{detail:{allowed:pairingAuthorized}}));
+  // Only notify feature modules when account authorization actually changes.
+  // Background token refresh/SIGNED_IN events must not erase the open event,
+  // round selection, or unsaved knockout picks.
+  const notifiedUser=pairingAuthorized?String(pairingSession?.user?.id||''):'';
+  if(notifiedUser!==historyLastNotifiedUser){
+    historyLastNotifiedUser=notifiedUser;
+    document.dispatchEvent(new CustomEvent('pairing:auth-ready',{detail:{allowed:pairingAuthorized}}));
+  }
 }
 async function historyVerifyAuth(){
   const generation=++historyAuthRequest,uid=pairingSession?.user?.id;
-  historyDisplayAuth(false,'正在確認帳號授權…');
+  // Revalidate permissions without unmounting an already authorized page.
   if(!uid||!pairingClient){historyDisplayAuth(false,'請先回玩家排行登入授權 Google 帳號。');return;}
   try{
     const {data,error}=await pairingClient.rpc('can_use_pairing');
@@ -35,10 +43,15 @@ async function historyInitAuth(){
   pairingSession=data?.session||null;
   await historyVerifyAuth();
   pairingClient.auth.onAuthStateChange((_event,session)=>{
+    const previousUser=pairingSession?.user?.id||'';
+    const nextUser=session?.user?.id||'';
     pairingSession=session||null;
     ++historyAuthRequest;
-    historyDisplayAuth(false,'正在確認登入權限…');
-    setTimeout(historyVerifyAuth,0);
+    if(previousUser!==nextUser){
+      // Only a different account or a real sign-out should reset private UI.
+      historyDisplayAuth(false,nextUser?'正在確認登入權限…':'請先回玩家排行登入授權 Google 帳號。');
+    }
+    if(nextUser)setTimeout(historyVerifyAuth,0);
   });
 }
 document.addEventListener('DOMContentLoaded',historyInitAuth,{once:true});
