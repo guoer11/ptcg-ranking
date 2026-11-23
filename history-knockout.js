@@ -68,6 +68,117 @@
     if(!champion||!runner||semis.length!==2)return null;
     return [champion,runner,...semis];
   }
+  // 七場固定籤位；不從既有冠亞軍名次反向猜測個別對戰勝負。
+  const bracketGames=[
+    {key:'qf1',stage:'qf',label:'八強 ①',seeds:[1,8]},
+    {key:'qf2',stage:'qf',label:'八強 ②',seeds:[4,5]},
+    {key:'qf3',stage:'qf',label:'八強 ③',seeds:[3,6]},
+    {key:'qf4',stage:'qf',label:'八強 ④',seeds:[2,7]},
+    {key:'sf1',stage:'sf',label:'四強 ①',from:['qf1','qf2']},
+    {key:'sf2',stage:'sf',label:'四強 ②',from:['qf3','qf4']},
+    {key:'final',stage:'final',label:'冠軍決賽',from:['sf1','sf2']}
+  ];
+  const bracketKeys=bracketGames.map(game=>game.key);
+  let bracketWinners={},bracketDirty=false,bracketStage='qf',bracketBusy=false;
+  function bracketCount(){return bracketKeys.filter(key=>Boolean(bracketWinners[key])).length;}
+  function bracketPlayer(id){
+    const row=(getTop(current)||[]).find(p=>String(p.id).toLowerCase()===id);
+    return row?{id,rank:row.rank,name:String(current?.context?.real_names?.[id]||row.name||id)}:null;
+  }
+  function bracketSlots(game) {
+    if(game.seeds){
+      const top=getTop(current)||[];
+      return game.seeds.map(seed=>{
+        const row=top.find(p=>p.rank===seed);
+        return {id:row?String(row.id).toLowerCase():'',hint:'第'+seed+'名'};
+      });
+    }
+    return game.from.map((from,i)=>({id:bracketWinners[from]||'',
+      hint:(game.stage==='sf'?'八強':'四強')+' '+(i+1)+' 勝者'}));
+  }
+  function bracketOption(game,slot) {
+    const player=slot.id?bracketPlayer(slot.id):null;
+    const selected=!!player&&bracketWinners[game.key]===slot.id;
+    const eliminated=!!bracketWinners[game.key]&&!!player&&!selected;
+    const cls='history-bracket-pick'+(selected?' is-winner':'')+(eliminated?' is-eliminated':'');
+    return '<button type="button" class="'+cls+'" data-bracket-pick="'+game.key+'" data-player-id="'+escape(slot.id)+'"'+
+      (player?'':' disabled')+' aria-pressed="'+String(selected)+'">'+
+      '<span class="history-bracket-pick-main"><strong>'+escape(player?(slot.hint+' · '+player.name):slot.hint+'（待確認）')+'</strong>'+
+      (player?'<small>'+escape(player.id)+'</small>':'')+'</span>'+
+      '<span class="history-bracket-result">'+(selected?'✓ 晉級':(eliminated?'淘汰':(player?'選為勝者':'待確認')))+'</span></button>';
+  }
+  function bracketMatch(game){
+    const slots=bracketSlots(game),selected=bracketWinners[game.key]||'';
+    return '<div class="history-bracket-match"><div class="history-bracket-match-title"><span>'+
+      escape(game.label)+'</span><span>'+(selected?'勝者已確認':'尚未確認')+'</span></div>'+
+      slots.map(slot=>bracketOption(game,slot)).join('')+'</div>';
+  }
+  function bracketStatus(message,failed=false){
+    const el=$('historyBracketStatus');
+    if(el){el.textContent=message;el.dataset.error=failed?'1':'0';}
+  }
+  function drawBracket(){
+    const root=$('historyKnockoutBracket'),saveBtn=$('historyBracketSave');
+    if(!root||!current)return;
+    const stages=[['qf','八強'],['sf','四強'],['final','決賽']];
+    const count=bracketCount(),winner=bracketPlayer(bracketWinners.final||'');
+    root.innerHTML=
+      '<div class="history-bracket-head"><strong class="history-bracket-progress">已確認 '+count+' / 7 場</strong>'+
+      '<span class="history-bracket-notice">可點擊玩家選擇勝者，再點一次可取消；變更上一輪會清除後續不符合的結果。</span></div>'+
+      '<div class="history-bracket-tabs" aria-label="切換複賽輪次">'+stages.map(stage=>
+        '<button type="button" class="history-bracket-tab'+(bracketStage===stage[0]?' active':'')+
+        '" data-bracket-stage="'+stage[0]+'" aria-pressed="'+String(bracketStage===stage[0])+'">'+stage[1]+'</button>'
+      ).join('')+'</div>'+
+      '<div class="history-bracket-columns">'+stages.map(stage=>
+        '<section class="history-bracket-stage'+(bracketStage===stage[0]?' is-mobile-active':'')+'">'+
+        '<h4>'+stage[1]+'</h4><div class="history-bracket-matches">'+
+        bracketGames.filter(game=>game.stage===stage[0]).map(bracketMatch).join('')+
+        '</div></section>'
+      ).join('')+'</div>'+
+      (winner?'<div class="history-bracket-champion">🏆 冠軍：'+escape(winner.name)+'（預賽第'+winner.rank+'名）</div>':'');
+    const legacy=$('historyKnockoutLegacy');
+    if(legacy)legacy.hidden=count>0;
+    if(saveBtn){saveBtn.disabled=bracketBusy||!bracketDirty;saveBtn.textContent=bracketBusy?'儲存中…':'儲存目前戰況';}
+    if(bracketDirty)bracketStatus(count===7
+      ?'尚未儲存：七場已填完，儲存後會同步冠亞軍、四強與 LP。'
+      :'尚未儲存：已確認 '+count+' / 7 場；不完整戰況只會保存，不會更新 LP。');
+  }
+  function updateBracketWinner(key,id){
+    const game=bracketGames.find(g=>g.key===key);
+    if(!game||bracketBusy||!id||!bracketSlots(game).some(slot=>slot.id===id))return;
+    bracketWinners[key]=bracketWinners[key]===id?'':id;
+    // 上游勝者改變時，只清空受影響的四強或決賽結果。
+    for(const later of bracketGames.slice(4)){
+      const slots=bracketSlots(later).map(slot=>slot.id);
+      if(bracketWinners[later.key]&&!slots.includes(bracketWinners[later.key]))
+        bracketWinners[later.key]='';
+    }
+    bracketDirty=true;
+    drawBracket();
+  }
+  async function saveBracket(){
+    if(bracketBusy||!bracketDirty||!pairingAuthorized||!pairingSession?.access_token||!eventId||!current)return;
+    const targetTid=String(current.event.tid),targetEvent=eventId;
+    const currentWinners=Object.fromEntries(bracketKeys.map(k=>[k,bracketWinners[k]||'']));
+    bracketBusy=true;drawBracket();bracketStatus('正在儲存已確認的複賽戰況…');
+    try{
+      const response=await fetch(ENDPOINT,{method:'POST',cache:'no-store',headers:{
+        Authorization:'Bearer '+pairingSession.access_token,'Content-Type':'application/json'
+      },body:JSON.stringify({action:'save-knockout-bracket',tid:targetTid,
+        event_id:targetEvent,winners:currentWinners})});
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok||!data.ok)throw new Error(data.error||'儲存失敗');
+      if(String(current?.event?.tid)!==targetTid)return;
+      bracketDirty=false;
+      if(data.complete){
+        bracketStatus(data.sync_triggered
+          ?'七場戰況已儲存，冠亞軍及 LP 試算同步已啟動。官方成績仍優先。'
+          :'戰況已儲存，但積分試算同步失敗：'+(data.sync_error||'請稍後再試'),!data.sync_triggered);
+      }else bracketStatus('已儲存 '+data.confirmed+' / 7 場；其餘保留待確認，不會推測勝負。');
+    }catch(e){bracketStatus('儲存失敗：'+String(e.message||e),true);}
+    finally{bracketBusy=false;drawBracket();}
+  }
+
   async function render(archive,tid){
     if(!pairingAuthorized)return;
     const panel=$('historyKnockoutPanel');
@@ -108,8 +219,16 @@
         select.value=initial[i];
         select.addEventListener('change',drawPreview);
       });
+      // 先載入逐場手動記錄；既有名次不能用來推算任何一場的勝者。
+      bracketWinners=Object.fromEntries(bracketKeys.map(k=>[
+        k,String(archive.knockout?.podium?.bracket?.winners?.[k]||'').toLowerCase()
+      ]));
+      bracketDirty=false;bracketStage='qf';bracketBusy=false;
       panel.dataset.ready='1';panel.hidden=false;
-      drawPreview();
+      drawPreview();drawBracket();
+      if(!bracketCount()&&configured.length===8)
+        bracketStatus('已保留原本登錄的冠亞軍名次，但缺少逐場勝負；請從八強開始手動確認，系統不會倒推。');
+      else bracketStatus('戰況已載入：目前確認 '+bracketCount()+' / 7 場。');
       if(match.results?.length){
         status('官方正式成績已公布：試算一律使用官方資料，這裡的複賽名次僅供歷史紀錄。');
       }else if(configured.length===8){
@@ -151,5 +270,14 @@
   });
   document.addEventListener('DOMContentLoaded',()=>{
     $('historyKnockoutSave')?.addEventListener('click',()=>{void save();});
+    $('historyBracketSave')?.addEventListener('click',()=>{void saveBracket();});
+    $('historyKnockoutBracket')?.addEventListener('click',event=>{
+      const button=event.target.closest('button');
+      if(!button)return;
+      if(button.dataset.bracketStage){
+        bracketStage=button.dataset.bracketStage;drawBracket();return;
+      }
+      if(button.dataset.bracketPick)updateBracketWinner(button.dataset.bracketPick,button.dataset.playerId);
+    });
   },{once:true});
 })();
