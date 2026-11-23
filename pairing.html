@@ -12,11 +12,32 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="site-nav.css?v=0.6.1-r1" />
   <link rel="stylesheet" href="pairing.css?v=1.11.1-r1" />
-  <link rel="stylesheet" href="pairing-deck-scout.css?v=1.10.1-r1" />
+  <link rel="stylesheet" href="pairing-deck-scout.css?v=2.12.1-r1" />
   <link rel="stylesheet" href="pairing-odds.css?v=1.11.0-r1" />
   <link rel="stylesheet" href="pairing-history.css?v=2.6.0-r1" />
   <link rel="stylesheet" href="pairing-match-archive.css?v=2.10.0-r2" />
   <link id="ptcgPlayerBadgesCss" rel="stylesheet" href="player-badges.css?v=2.8.0-r5" />
+  <!-- 牌組分布必要樣式：即使外部 CSS 快取失效，也要維持圓餅圖與圖例排版 -->
+  <style id="ptcgScoutChartCritical">
+    #pairingScoutStats .pairing-scout-stats-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+    #pairingScoutStats .pairing-scout-stats-head strong{font-size:15px}
+    #pairingScoutStats .pairing-scout-stats-head span{color:var(--muted);font-size:11px}
+    #pairingScoutStats .pairing-scout-chart-wrap{display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:center}
+    #pairingScoutStats .pairing-scout-donut{position:relative;width:140px;height:140px;aspect-ratio:1;border-radius:50%;margin:auto;flex-shrink:0}
+    #pairingScoutStats .pairing-scout-donut::after{content:"";position:absolute;inset:28px;border-radius:50%;background:#fafcff}
+    #pairingScoutStats .pairing-scout-donut>span{position:absolute;z-index:1;inset:0;display:grid;place-content:center;text-align:center;font-size:26px;font-weight:900}
+    #pairingScoutStats .pairing-scout-donut small{display:block;color:var(--muted);font-size:10px;font-weight:700}
+    #pairingScoutStats .pairing-scout-legend{display:grid;gap:7px;min-width:0}
+    #pairingScoutStats .pairing-scout-legend>div{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:7px;align-items:center;font-size:12px}
+    #pairingScoutStats .pairing-scout-legend i{width:9px;height:9px;border-radius:50%;background:var(--dot)}
+    #pairingScoutStats .pairing-scout-legend span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #pairingScoutStats .pairing-scout-legend b{color:var(--muted);font-size:11px;white-space:nowrap}
+    @media(max-width:680px){
+      #pairingScoutStats .pairing-scout-chart-wrap{grid-template-columns:1fr}
+      #pairingScoutStats .pairing-scout-donut{width:128px;height:128px}
+      #pairingScoutStats .pairing-scout-donut::after{inset:26px}
+    }
+  </style>
 </head>
 <body>
   <header class="site-header pairing-header">
