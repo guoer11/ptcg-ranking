@@ -6,6 +6,11 @@
   const $=id=>document.getElementById(id);
   const escape=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   let archives=[],view=null,activeTid="",selectedRound="final";
+  // Private, per-account in-memory cache only. Never persist archived player/deck
+  // context in localStorage or share cached data across sign-ins.
+  const archiveCache=new Map(),lastRoundByTid=new Map();
+  const CACHE_MS=90*1000;
+  let archiveGeneration=0,loadedForUser="",refreshPromise=null;
   const token=()=>typeof pairingSession!=="undefined"&&pairingAuthorized?pairingSession?.access_token:null;
   async function api(action,extra={}) {
     const auth=token();
@@ -16,6 +21,27 @@
     const data=await response.json().catch(()=>({}));
     if(!response.ok||!data.ok)throw new Error(data.error||"封存服務回應失敗");
     return data;
+  }
+  const accountId=()=>String(pairingSession?.user?.id||"");
+  const numericRound=value=>/^\\d+$/.test(String(value||""))?Number(value):null;
+  async function archiveGet(tid,round=null,{force=false}={}){
+    const user=accountId();
+    const key=user+":"+tid+":"+(round??"final");
+    const cached=archiveCache.get(key);
+    if(!force&&cached&&Date.now()-cached.at<CACHE_MS)return cached.archive;
+    const result=await api("get",{tid,round});
+    // A response returned after sign-out must not populate another user's cache.
+    if(user&&user===accountId()&&token())archiveCache.set(key,{at:Date.now(),archive:result.archive});
+    return result.archive;
+  }
+  function useArchive(data,tid,round){
+    view=data;
+    selectedRound=String(round||"final");
+    if(data)document.dispatchEvent(new CustomEvent("archive:loaded",{detail:{archive:data,tid}}));
+    renderRows();
+    message(data?.event?.last_error
+      ?"部分備份曾讀取失敗；已取得的資料仍保留。"
+      :"顯示本站封存資料（不需官方網站仍開放）。");
   }
   const message=(text,error=false)=>{if($("matchArchiveStatus")){$("matchArchiveStatus").textContent=text;$("matchArchiveStatus").dataset.error=error?"1":"0";}};
   const archiveTitle=a=>(a.title||"TCG Meister")+" · TID "+a.tid+
@@ -108,54 +134,92 @@
       </tbody></table></div>`;
   }
   async function loadSelected() {
-    const value=$("matchArchiveRound")?.value||"final";
+    const tid=activeTid,value=$("matchArchiveRound")?.value||"final";
+    if(!tid)return;
+    const request=++archiveGeneration;
     selectedRound=value;
+    lastRoundByTid.set(tid,value);
     try {
       message("正在讀取已保存的比賽資料…");
-      const result=await api("get",{tid:activeTid,round:value==="final"||value==="interim"?null:Number(value)});
-      view=result.archive;
-      document.dispatchEvent(new CustomEvent("archive:loaded",{detail:{archive:view,tid:activeTid}}));
-      if(!view)throw new Error("找不到這場賽事的封存");
-      renderRows();
-      message(view.event.last_error?"部分備份曾讀取失敗；已取得的資料仍保留。":"顯示本站封存資料（不需官方網站仍開放）。");
-    }catch(e){message(String(e.message||e),true);}
+      const data=await archiveGet(tid,numericRound(value));
+      if(request!==archiveGeneration||tid!==activeTid||!token())return;
+      if(!data)throw new Error("找不到這場賽事的封存");
+      useArchive(data,tid,value);
+    }catch(e){if(request===archiveGeneration)message(String(e.message||e),true);}
   }
-  async function choose(tid="") {
+  async function choose(tid="",force=false) {
     activeTid=tid||$("matchArchiveEvent")?.value||"";
-    if(!activeTid){$("matchArchiveRows").innerHTML='<p class="archive-empty">目前尚無已追蹤並封存的賽事。</p>';return;}
-    const result=await api("get",{tid:activeTid});
-    view=result.archive;
-    document.dispatchEvent(new CustomEvent("archive:loaded",{detail:{archive:view,tid:activeTid}}));
-    if(!view){message("目前查不到封存紀錄",true);return;}
-    const expected=$("matchArchiveExpectedRounds"),button=$("matchArchiveSetRounds");
-    if(expected) {
-      expected.value=view.event.expected_rounds==null?"":String(view.event.expected_rounds);
-      expected.disabled=Boolean(view.event.final_seen_at)||view.event.status==="completed";
+    const chosen=activeTid,request=++archiveGeneration;
+    if(!chosen){
+      view=null;
+      $("matchArchiveRows").innerHTML='<p class="archive-empty">目前尚無已追蹤並封存的賽事。</p>';
+      return;
     }
-    if(button)button.disabled=Boolean(expected?.disabled);
-    const options=(view.rounds||[]).map(r=>`<option value="${escape(r.round_no)}">Round ${escape(r.round_no)}（${escape(r.table_count)} 桌）</option>`);
-    if(view.interim)options.push(`<option value="interim">Round ${escape(view.interim.round_no)} 暫定排名</option>`);
-    if(view.final)options.push('<option value="final">最終排名</option>');
-    const select=$("matchArchiveRound");
-    select.innerHTML=options.join("");
-    selectedRound=view.final?"final":view.interim?"interim":String(view.rounds?.at(-1)?.round_no||"");
-    select.value=selectedRound;
-    if(!selectedRound){$("matchArchiveRows").innerHTML='<p class="archive-empty">已建立封存，正在等待首輪配對公布。</p>';return;}
-    await loadSelected();
-  }
-  async function refresh() {
-    if(!token())return;
+    const item=archives.find(x=>String(x.tid)===chosen);
+    const preferred=lastRoundByTid.get(chosen);
+    // Finished events normally display the final ranking. Otherwise fetch the
+    // latest available round in the same request (no second archive GET).
+    const firstRound=preferred||((item?.final_seen_at)?"final":String(item?.last_round||"final"));
+    const requestedRound=numericRound(firstRound);
     try {
-      const data=await api("list");archives=data.archives||[];
-      const select=$("matchArchiveEvent");
-      const current=activeTid||select.value;
-      select.innerHTML=archives.map(a=>`<option value="${escape(a.tid)}">${escape(archiveTitle(a))}</option>`).join("");
-      if(current&&archives.some(a=>a.tid===current))select.value=current;
-      else activeTid=archives[0]?.tid||"";
-      $("matchArchiveLinkDay1").innerHTML='<option value="">Day 1（不設定）</option>'+
-        archives.filter(a=>a.tid!==select.value).map(a=>`<option value="${escape(a.tid)}">${escape(a.tid)} · ${escape(a.title||"賽事")}</option>`).join("");
-      await choose(select.value||activeTid);
-    }catch(e){message("讀取封存清單失敗："+String(e.message||e),true);}
+      message("正在讀取已保存的比賽資料…");
+      const data=await archiveGet(chosen,requestedRound,{force});
+      if(request!==archiveGeneration||chosen!==activeTid||!token())return;
+      if(!data)throw new Error("目前查不到封存紀錄");
+      const expected=$("matchArchiveExpectedRounds"),button=$("matchArchiveSetRounds");
+      if(expected) {
+        expected.value=data.event.expected_rounds==null?"":String(data.event.expected_rounds);
+        expected.disabled=Boolean(data.event.final_seen_at)||data.event.status==="completed";
+      }
+      if(button)button.disabled=Boolean(expected?.disabled);
+      const options=(data.rounds||[]).map(r=>`<option value="${escape(r.round_no)}">Round ${escape(r.round_no)}（${escape(r.table_count)} 桌）</option>`);
+      if(data.interim)options.push(`<option value="interim">Round ${escape(data.interim.round_no)} 暫定排名</option>`);
+      if(data.final)options.push('<option value="final">最終排名</option>');
+      const select=$("matchArchiveRound");
+      select.innerHTML=options.join("");
+      let wanted=firstRound;
+      const validValues=(data.rounds||[]).map(r=>String(r.round_no));
+      if(data.interim)validValues.push("interim");
+      if(data.final)validValues.push("final");
+      if(!validValues.includes(wanted))
+        wanted=data.final?"final":data.interim?"interim":String(data.rounds?.at(-1)?.round_no||"");
+      select.value=wanted;
+      lastRoundByTid.set(chosen,wanted);
+      if(!wanted){
+        view=data;
+        $("matchArchiveRows").innerHTML='<p class="archive-empty">已建立封存，正在等待首輪配對公布。</p>';
+        return;
+      }
+      // A missing/changed preferred round should never display the wrong rows.
+      if(numericRound(wanted)!==requestedRound){
+        await loadSelected();
+        return;
+      }
+      useArchive(data,chosen,wanted);
+    }catch(e){if(request===archiveGeneration)message("讀取封存資料失敗："+String(e.message||e),true);}
+  }
+  async function refresh(force=false) {
+    if(!token())return;
+    if(refreshPromise)return refreshPromise;
+    refreshPromise=(async()=>{
+      try {
+        const user=accountId();
+        const data=await api("list");
+        if(!token()||accountId()!==user)return;
+        archives=data.archives||[];
+        loadedForUser=user;
+        if(force)archiveCache.clear();
+        const select=$("matchArchiveEvent");
+        const current=activeTid||select.value;
+        select.innerHTML=archives.map(a=>`<option value="${escape(a.tid)}">${escape(archiveTitle(a))}</option>`).join("");
+        if(current&&archives.some(a=>a.tid===current))select.value=current;
+        else activeTid=archives[0]?.tid||"";
+        $("matchArchiveLinkDay1").innerHTML='<option value="">Day 1（不設定）</option>'+
+          archives.filter(a=>a.tid!==select.value).map(a=>`<option value="${escape(a.tid)}">${escape(a.tid)} · ${escape(a.title||"賽事")}</option>`).join("");
+        await choose(select.value||activeTid,force);
+      }catch(e){message("讀取封存清單失敗："+String(e.message||e),true);}
+    })();
+    try{return await refreshPromise;}finally{refreshPromise=null;}
   }
   async function registerFromTracking(ev) {
     const source=ev.detail?.parsed?.url||ev.detail?.watch?.source_url;
@@ -175,7 +239,7 @@
     try {
       await api("configure-rounds",{tid:activeTid,expected_rounds:number});
       message("已確認本場總共 "+number+" 輪；官方最後一輪的 End of Round 排名將自動判定為本場最終成績。");
-      await refresh();
+      await refresh(true);
     }catch(e){message(String(e.message||e),true);}
   }
   async function linkDay1() {
@@ -190,11 +254,20 @@
     $("matchArchiveEvent")?.addEventListener("change",e=>{activeTid=e.target.value;void choose(activeTid);});
     $("matchArchiveRound")?.addEventListener("change",()=>{void loadSelected();});
     $("matchArchiveSearch")?.addEventListener("input",renderRows);
-    $("matchArchiveRefresh")?.addEventListener("click",()=>{void refresh();});
+    $("matchArchiveRefresh")?.addEventListener("click",()=>{void refresh(true);});
     $("matchArchiveLinkButton")?.addEventListener("click",()=>{void linkDay1();});
     $("matchArchiveSetRounds")?.addEventListener("click",()=>{void configureRounds();});
-    $("matchArchive")?.addEventListener("toggle",e=>{if(e.target.open)void refresh();});
-    document.addEventListener("pairing:auth-ready",ev=>{if(ev.detail?.allowed&&$("matchArchive")?.open)void refresh();});
+    $("matchArchive")?.addEventListener("toggle",e=>{
+      if(e.target.open&&(!archives.length||loadedForUser!==accountId()))void refresh();
+    });
+    document.addEventListener("pairing:auth-ready",ev=>{
+      if(!ev.detail?.allowed){
+        ++archiveGeneration;archiveCache.clear();lastRoundByTid.clear();
+        archives=[];view=null;activeTid="";loadedForUser="";
+        return;
+      }
+      if($("matchArchive")?.open&&(!archives.length||loadedForUser!==accountId()))void refresh();
+    });
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true}); else init();
 })();
