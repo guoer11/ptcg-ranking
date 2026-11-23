@@ -25,7 +25,7 @@ assert.match(archiveFn,/detail\.final=final\.available/);
 assert.match(archiveFn,/final_seen_at:now\(\)/);
 assert.match(archiveUi,/selectedRound==="final"\|\|selectedRound==="interim"/);
 assert.match(archiveUi,/暫定排名（非最終成績）/);
-assert.match(archiveUi,/view\.interim\?"interim"/);
+assert.match(archiveUi,/data\.interim\?"interim"/,'latest cached archive must still support the interim ranking choice');
 assert.match(html,/standing && finalState\?\.ranking\?\.is_final === true/);
 assert.match(html,/existing\?\.active && existing\.tid === parsed\.tid/);
 assert.match(html,/暫定排名/);
