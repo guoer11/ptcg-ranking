@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="pairing-deck-scout.css?v=2.12.1-r1">
   <link rel="stylesheet" href="pairing-history.css?v=2.6.0-r1">
   <link rel="stylesheet" href="pairing-match-archive.css?v=2.12.0">
-  <link rel="stylesheet" href="history-center.css?v=2.12.0">
+  <link rel="stylesheet" href="history-center.css?v=2.13.0">
 </head>
 <body>
 <header class="site-header pairing-header">
@@ -59,11 +59,17 @@
             </div>
           </details>
 <div id="historyKnockoutPanel" class="history-knockout" hidden>
-  <h3>高級球複賽前八名設定</h3>
-  <p class="archive-note">從本場封存的預賽前八名選出冠軍、亞軍和兩名四強，其餘四位自動列為八強。儲存後同步至「本站試算」，官方正式成績永遠優先。</p>
-  <div id="historyKnockoutForm" class="history-knockout-form"></div>
-  <div id="historyKnockoutPreview" class="history-knockout-preview"></div>
-  <div class="history-knockout-actions"><button type="button" class="primary-btn" id="historyKnockoutSave">儲存並更新積分試算</button><span id="historyKnockoutStatus" role="status" aria-live="polite"></span></div>
+  <h3>TOP8 複賽對戰樹</h3>
+  <p class="archive-note">依預賽名次自動排列八強：1 對 8、4 對 5、3 對 6、2 對 7。官方通常不公布複賽勝負，請逐場手動確認。未記錄的比賽不會推測誰贏。</p>
+  <div id="historyKnockoutBracket" class="history-bracket"></div>
+  <div class="history-bracket-actions"><button type="button" class="primary-btn" id="historyBracketSave">儲存目前戰況</button><span id="historyBracketStatus" role="status" aria-live="polite"></span></div>
+  <details id="historyKnockoutLegacy" class="history-knockout-legacy">
+    <summary>直接設定冠亞軍／四強（舊版備用）</summary>
+    <p class="archive-note">若沒有逐場勝負，仍可使用原有名次設定；開始記錄對戰樹後，請統一由對戰樹管理，避免兩份結果互相衝突。</p>
+    <div id="historyKnockoutForm" class="history-knockout-form"></div>
+    <div id="historyKnockoutPreview" class="history-knockout-preview"></div>
+    <div class="history-knockout-actions"><button type="button" class="primary-btn" id="historyKnockoutSave">儲存並更新積分試算</button><span id="historyKnockoutStatus" role="status" aria-live="polite"></span></div>
+  </details>
 </div>
 </section>
 <section class="panel history-panel">
@@ -82,11 +88,11 @@
 <a class="primary-btn" href="index.html">回玩家排行登入</a></section></main>
 <footer class="footer"><div class="wrap">賽事封存資料僅限授權帳號存取，正式名次與積分仍依 Pokémon Asia 公告。</div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="site-version.js?v=2.12.0" defer></script>
+<script src="site-version.js?v=2.13.0" defer></script>
 <script src="history-center.js?v=2.12.0" defer></script>
 <script src="pairing-history.js?v=2.6.0-r1" defer></script>
 <script src="pairing-match-archive.js?v=2.12.0" defer></script>
-<script src="history-knockout.js?v=2.12.0" defer></script>
+<script src="history-knockout.js?v=2.13.0" defer></script>
 <script src="site-account-ui.js?v=1.9.2-r1" defer></script>
 </body>
 </html>
