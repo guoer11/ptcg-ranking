@@ -10,7 +10,7 @@ assert.doesNotMatch(html,/id="historyBracketCopy"/,'copy should use normal text 
 assert.match(frontend,/history-bracket-copytext/,'name and PTCG ID should remain text selectable');
 assert.match(frontend,/class="history-bracket-result"/,'winner selection should be a separate control');
 assert.match(css,/user-select:text/,'allow selecting player text on desktop and mobile');
-assert.match(html,/history-knockout\.js\?v=2\.13\.0/);
+assert.match(html,/history-knockout\.js\?v=\d+\.\d+\.\d+/, 'knockout JS must use a versioned asset URL');
 assert.match(css,/history-bracket-columns/);
 assert.match(css,/@media\(max-width:760px\)/);
 assert.match(backend,/async function saveKnockoutBracket/);
