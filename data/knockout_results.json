@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-11-22",
+  "updated_at": "2026-11-23",
   "events": {
     "66987": {
       "event_id": "66987",
@@ -74,65 +74,65 @@
       "date": "2026-11-21",
       "league": "Ultra",
       "group": "Junior",
-      "source_type": "community_knockout_bracket",
+      "source_type": "owner_entered_knockout",
       "source_url": "https://tcg.sfc-jpn.jp/tourround.asp?tid=5865462&kno=7&Page=1&Sort=Number&Order=&znt=1",
-      "verification": "User-supplied Top8 final results matched by PTCG ID to the 77-player saved official Round 7 standings; not yet published as Pokémon Asia official LP.",
+      "verification": "Authorized owner-entered final Top 8 placements; validated against the archived official preliminary Top 8. Pokémon Asia official results take priority.",
       "results": [
         {
-          "player_id": "tw39371632",
-          "preliminary_rank": 3,
-          "final_rank": 1,
           "finish": "冠軍",
-          "points": 100
+          "points": 100,
+          "player_id": "tw39371632",
+          "final_rank": 1,
+          "preliminary_rank": 3
         },
         {
-          "player_id": "tw82928313",
-          "preliminary_rank": 1,
-          "final_rank": 2,
           "finish": "亞軍",
-          "points": 75
+          "points": 75,
+          "player_id": "tw82928313",
+          "final_rank": 2,
+          "preliminary_rank": 1
         },
         {
+          "finish": "四強",
+          "points": 50,
           "player_id": "tw61881775",
-          "preliminary_rank": 2,
           "final_rank": 3,
-          "finish": "四強",
-          "points": 50
+          "preliminary_rank": 2
         },
         {
+          "finish": "四強",
+          "points": 50,
           "player_id": "tw06034751",
-          "preliminary_rank": 5,
           "final_rank": 3,
-          "finish": "四強",
-          "points": 50
+          "preliminary_rank": 5
         },
         {
+          "finish": "八強",
+          "points": 25,
           "player_id": "tw48375877",
-          "preliminary_rank": 4,
           "final_rank": 5,
-          "finish": "八強",
-          "points": 25
+          "preliminary_rank": 4
         },
         {
+          "finish": "八強",
+          "points": 25,
           "player_id": "tw65932690",
-          "preliminary_rank": 6,
           "final_rank": 5,
-          "finish": "八強",
-          "points": 25
+          "preliminary_rank": 6
         },
         {
+          "finish": "八強",
+          "points": 25,
           "player_id": "tw77088088",
-          "preliminary_rank": 7,
           "final_rank": 5,
-          "finish": "八強",
-          "points": 25
+          "preliminary_rank": 7
         },
         {
-          "player_id": "tw27928464",
-          "preliminary_rank": 8,
-          "final_rank": 5,
           "finish": "八強",
-          "points": 25
+          "points": 25,
+          "player_id": "tw27928464",
+          "final_rank": 5,
+          "preliminary_rank": 8
         }
       ]
     }
