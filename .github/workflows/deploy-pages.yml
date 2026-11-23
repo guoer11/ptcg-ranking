@@ -24,6 +24,7 @@ on:
       - "Update PTCG ranking"
       - "Update PTCG tournaments"
       - "Update CPBL game stats"
+      - "Sync owner-verified Top 8 results"
     types:
       - completed
   schedule:
