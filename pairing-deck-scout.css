@@ -100,3 +100,5 @@
 .pairing-scout-navigation{display:flex;justify-content:space-between;gap:8px;margin-top:8px}
 .pairing-scout-navigation button{min-height:38px;flex:1}
 .pairing-scout-controls button{min-height:42px}
+
+.pairing-scout-name-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:10px}.pairing-scout-name-options button{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:5px;text-align:left;min-height:40px;overflow-wrap:anywhere}.pairing-scout-name-options small{font-size:11px;color:#64748b}
