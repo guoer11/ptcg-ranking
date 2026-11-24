@@ -24,10 +24,18 @@ const sandbox = {
   sourceInput: () => urlField, roundInput: () => roundField,
   normalizeRoundUrl(raw, override) { const url = new URL(raw); return { tid: url.searchParams.get('tid'), round: Number(override), url: url.toString() }; },
   normalizePlayerId: id => String(id || '').toLowerCase().trim(), window: {}, console,
-  pairingAuthorized:true,pairingSession:{user:{id:'owner'}},
+  pairingAuthorized:true,pairingSession:{user:{id:'owner'},access_token:'mock-token'},
+  fetch:async (_url,opts)=>{
+    const body=JSON.parse(opts.body);
+    assert.equal(body.action,'scout-roster');
+    assert.equal(body.tid,new URL(urlField.value).searchParams.get('tid'));
+    assert.equal(body.round,Number(roundField.value));
+    return {ok:true,json:async()=>({ok:true,tid:body.tid,round:body.round,available:true,player_ids:['tw11111111','tw22222222']})};
+  },
   pairingClient:{from(table){
     assert.equal(table,'player_identities');
-    const q={select(){return q;},ilike(column,pattern){assert.equal(column,'real_name');assert.equal(pattern,'%王%');return q;},order(){return q;},limit(n){assert.equal(n,31);return Promise.resolve({data:[{player_id:'tw11111111',real_name:'王小明'},{player_id:'tw22222222',real_name:'王小明'}],error:null});}};
+    let scoped=false;
+    const q={select(){return q;},in(column,ids){assert.equal(column,'player_id');assert.equal(Array.from(ids).join(','),'tw11111111,tw22222222');scoped=true;return q;},ilike(column,pattern){assert.equal(column,'real_name');assert.equal(pattern,'%王%');assert.equal(scoped,true);return q;},order(){return q;},then(resolve){return Promise.resolve({data:[{player_id:'tw11111111',real_name:'王小明'},{player_id:'tw22222222',real_name:'王小明'},{player_id:'tw99999999',real_name:'王其他場'}],error:null}).then(resolve);}};
     return q;
   }}
 };
@@ -56,10 +64,12 @@ console.log('PASS pairing-scout safety: round/TID, stored IDs, conflicting decks
   assert.match(html,/data-pairing-scout-mode="name"/);
   const rows=await helpers.searchScoutNames('王');
   assert.equal(rows.length,2);
+  assert.ok(!rows.some(row=>row.id==='tw99999999'),'exclude all nonparticipants before displaying candidates');
   assert.notEqual(rows[0].id,rows[1].id);
   helpers.renderNameCandidates(rows,'王');
   assert.match(resultBox.innerHTML,/tw11111111/);
   assert.match(resultBox.innerHTML,/tw22222222/);
+  assert.doesNotMatch(resultBox.innerHTML,/tw99999999/);
   assert.match(resultBox.innerHTML,/data-scout-name-index="0"/);
   helpers.invalidateScoutContext();
   assert.doesNotMatch(resultBox.innerHTML,/data-scout-name-index/);
