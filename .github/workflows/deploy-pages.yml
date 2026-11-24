@@ -77,6 +77,7 @@ jobs:
           node tests/pairing-last-round-final.test.cjs
           node --check pairing-deck-scout.js
           node --check player-badges.js
+          node tests/player-attention-note.test.cjs
           node --check wcs-2027-standalone.js
           node --check lookup-ui.js
           node --check app.js
