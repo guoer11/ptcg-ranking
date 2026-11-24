@@ -10,7 +10,7 @@ assert.equal(source.split(target).length, 2);
 const injection = [
   '  globalThis.__scoutSafety = {',
   '    setCurrent(data, parsed) { currentContext = { data, parsed }; },',
-  '    isCurrentScout, samePairIds, pairDeckConsistent, invalidateScoutContext',
+  '    isCurrentScout, samePairIds, pairDeckConsistent, invalidateScoutContext, searchScoutNames, renderNameCandidates, setQueryMode',
   '  };'
 ].join('\n') + '\n';
 const injected = source.replace(target, injection + target);
@@ -23,7 +23,13 @@ const sandbox = {
   document: { addEventListener() {}, getElementById(id) { return elements[id] || null; }, querySelectorAll() { return []; } },
   sourceInput: () => urlField, roundInput: () => roundField,
   normalizeRoundUrl(raw, override) { const url = new URL(raw); return { tid: url.searchParams.get('tid'), round: Number(override), url: url.toString() }; },
-  normalizePlayerId: id => String(id || '').toLowerCase().trim(), window: {}, console
+  normalizePlayerId: id => String(id || '').toLowerCase().trim(), window: {}, console,
+  pairingAuthorized:true,pairingSession:{user:{id:'owner'}},
+  pairingClient:{from(table){
+    assert.equal(table,'player_identities');
+    const q={select(){return q;},ilike(column,pattern){assert.equal(column,'real_name');assert.equal(pattern,'%王%');return q;},order(){return q;},limit(n){assert.equal(n,31);return Promise.resolve({data:[{player_id:'tw11111111',real_name:'王小明'},{player_id:'tw22222222',real_name:'王小明'}],error:null});}};
+    return q;
+  }}
 };
 vm.runInNewContext(injected, sandbox, { filename: 'pairing-deck-scout.js' });
 const helpers = sandbox.__scoutSafety;
@@ -44,3 +50,19 @@ assert.equal(helpers.samePairIds({ player_a_id:'tw11111111', player_b_id:'tw3333
 assert.equal(helpers.pairDeckConsistent({ player_a_id:'tw1', player_b_id:'tw2', deck_a:'大鳥胡地', deck_b:'多龍' }, new Map([['tw1','胡地']])), false);
 assert.equal(helpers.pairDeckConsistent({ player_a_id:'tw1', player_b_id:'tw2', deck_a:'多龍', deck_b:'胡地' }, new Map([['tw1','胡地'],['tw2','多龍']])), true);
 console.log('PASS pairing-scout safety: round/TID, stored IDs, conflicting decks, no implicit deletion');
+
+(async()=>{
+  const html=fs.readFileSync(path.join(__dirname,'../pairing.html'),'utf8');
+  assert.match(html,/data-pairing-scout-mode="name"/);
+  const rows=await helpers.searchScoutNames('王');
+  assert.equal(rows.length,2);
+  assert.notEqual(rows[0].id,rows[1].id);
+  helpers.renderNameCandidates(rows,'王');
+  assert.match(resultBox.innerHTML,/tw11111111/);
+  assert.match(resultBox.innerHTML,/tw22222222/);
+  assert.match(resultBox.innerHTML,/data-scout-name-index="0"/);
+  helpers.invalidateScoutContext();
+  assert.doesNotMatch(resultBox.innerHTML,/data-scout-name-index/);
+  await assert.rejects(helpers.searchScoutNames('%'),/有效/);
+  console.log('PASS: name search, duplicate names, source change invalidation');
+})().catch(e=>{console.error(e);process.exitCode=1;});
