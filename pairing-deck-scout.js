@@ -11,6 +11,7 @@
   let queryMode = 'table';
   let queryBusy = false;
   let scoutRevision = 0;
+  let nameCandidates = null;
 
   const $ = id => document.getElementById(id);
 
@@ -66,8 +67,9 @@
 
   function invalidateScoutContext() {
     scoutRevision++;
-    if (!currentContext && !queryBusy) return;
+    if (!currentContext && !queryBusy && !nameCandidates) return;
     currentContext = null;
+    nameCandidates = null;
     const box = $('pairingScoutResult');
     if (box) {
       box.className = 'pairing-scout-result is-idle';
@@ -100,8 +102,9 @@
 
   function setQueryMode(mode, value = '') {
     scoutRevision++;
-    queryMode = mode === 'player' ? 'player' : 'table';
+    queryMode = ['player','name'].includes(mode) ? mode : 'table';
     currentContext = null;
+    nameCandidates = null;
     document.querySelectorAll('[data-pairing-scout-mode]').forEach(button => {
       const active = button.dataset.pairingScoutMode === queryMode;
       button.classList.toggle('active', active);
@@ -111,14 +114,14 @@
     if (input) {
       input.value = value;
       input.inputMode = queryMode === 'table' ? 'numeric' : 'text';
-      input.placeholder = queryMode === 'table' ? '例如 1' : '例如 tw39371632';
-      input.setAttribute('aria-label', queryMode === 'table' ? '桌號' : 'PTCG ID');
+      input.placeholder = queryMode === 'table' ? '例如 1' : queryMode === 'name' ? '輸入完整或部分玩家姓名' : '例如 tw39371632';
+      input.setAttribute('aria-label', queryMode === 'table' ? '桌號' : queryMode === 'name' ? '姓名' : 'PTCG ID');
     }
-    if ($('pairingScoutValueLabel')) $('pairingScoutValueLabel').textContent = queryMode === 'table' ? '桌號' : 'PTCG ID';
+    if ($('pairingScoutValueLabel')) $('pairingScoutValueLabel').textContent = queryMode === 'table' ? '桌號' : queryMode === 'name' ? '姓名' : 'PTCG ID';
     const box = $('pairingScoutResult');
     if (box) {
       box.className = 'pairing-scout-result is-idle';
-      box.innerHTML = `<strong>${queryMode === 'table' ? '輸入桌號查詢這桌的玩家與對手' : '輸入 PTCG ID 查詢玩家的桌號與對手'}</strong><span>查詢後可直接記錄牌組；上方追蹤玩家與監控設定不會變更。</span>`;
+      box.innerHTML = `<strong>${queryMode === 'table' ? '輸入桌號查詢這桌的玩家與對手' : queryMode === 'name' ? '輸入姓名查詢玩家的桌號與對手' : '輸入 PTCG ID 查詢玩家的桌號與對手'}</strong><span>查詢後可直接記錄牌組；上方追蹤玩家與監控設定不會變更。</span>`;
     }
     setStatus('');
     setBusy(false);
@@ -423,24 +426,66 @@
     }
   }
 
-  async function loadSelection(value, mode = queryMode) {
+  async function searchScoutNames(raw) {
+    if (!pairingAuthorized || !pairingSession?.user?.id || !pairingClient)
+      throw new Error('請先登入授權帳號');
+    const term = String(raw || '').trim();
+    if (!term || Array.from(term).length > 40 || /[%_*\\]/.test(term))
+      throw new Error('請輸入有效的玩家姓名');
+    const {data,error} = await pairingClient.from('player_identities')
+      .select('player_id,real_name').ilike('real_name','%'+term+'%')
+      .order('real_name').order('player_id').limit(31);
+    if (error) throw error;
+    return (data || []).filter(row => /^tw\d+$/.test(normalizeQueryPlayerId(row.player_id)) && row.real_name)
+      .map(row => ({id:normalizeQueryPlayerId(row.player_id),name:String(row.real_name)}));
+  }
+  function renderNameCandidates(rows, raw) {
+    const box = $('pairingScoutResult');
+    if (!box) return;
+    nameCandidates = {source:scoutSourceKey(), revision:scoutRevision, rows:rows.slice(0,30)};
+    box.className = 'pairing-scout-result is-idle';
+    if (!rows.length) {
+      box.innerHTML = '<strong>查無姓名資料</strong><span>請確認姓名，或使用 PTCG ID 查詢。</span>';
+      setStatus('本站尚未找到符合的姓名。');
+      return;
+    }
+    box.innerHTML = '<strong>找到多位符合的玩家，請選擇</strong><div class="pairing-scout-name-options">'+
+      nameCandidates.rows.map((row,index) => '<button type="button" class="secondary-btn" data-scout-name-index="'+index+'"><strong>'+esc(row.name)+'</strong> <small>'+esc(row.id)+'</small></button>').join('')+
+      '</div>'+(rows.length>30?'<span>符合結果過多，請輸入更完整的姓名。</span>':'');
+    setStatus('請選擇正確的姓名與 PTCG ID。');
+  }
+  async function loadSelection(value, mode = queryMode, resolvedId = '') {
     if (queryBusy) return;
     const raw = String(value || '').trim();
-    const byPlayer = mode === 'player';
-    const selected = byPlayer ? normalizeQueryPlayerId(raw) : Number(raw);
-    if (byPlayer && !/^tw\d+$/.test(selected)) return setStatus('請輸入有效的 PTCG ID，例如 tw39371632。', 'error');
+    const byName = mode === 'name';
+    const byPlayer = mode === 'player' || byName;
+    let selected = byName ? normalizeQueryPlayerId(resolvedId) : byPlayer ? normalizeQueryPlayerId(raw) : Number(raw);
+    if (mode === 'player' && !/^tw\d+$/.test(selected)) return setStatus('請輸入有效的 PTCG ID，例如 tw39371632。', 'error');
     if (!byPlayer && (!/^\d+$/.test(raw) || !Number.isSafeInteger(selected) || selected < 1)) return setStatus('桌號請輸入 1 以上的整數。', 'error');
     const requestRevision = ++scoutRevision;
+    nameCandidates = null;
+    currentContext = null;
+    const box = $('pairingScoutResult');
+    if (box) {
+      box.className = 'pairing-scout-result is-idle';
+      box.innerHTML = '<strong>正在查詢…</strong>';
+    }
     setBusy(true);
     setStatus('正在讀取配對與牌組紀錄…');
     try {
-      const { data, parsed } = await fetchLookup(selected, mode);
+      if (byName && !selected) {
+        const rows = await searchScoutNames(raw);
+        if (requestRevision !== scoutRevision) return;
+        if (rows.length !== 1) { renderNameCandidates(rows,raw); return; }
+        selected = rows[0].id;
+      }
+      const { data, parsed } = await fetchLookup(selected, byPlayer ? 'player' : 'table');
       if (requestRevision !== scoutRevision) return;
       if (String(data.tid) !== parsed.tid || Number(data.round) !== parsed.round) throw new Error('後端配對的賽事或 Round 與查詢條件不一致，請重新查詢。');
       const matchedTable = Number(data.match?.table);
       currentContext = { data, parsed, table: Number.isSafeInteger(matchedTable) && matchedTable > 0 ? matchedTable : (byPlayer ? null : selected), target: byPlayer ? selected : '' };
       const input = $('pairingScoutTable');
-      if (input) input.value = String(selected);
+      if (input) input.value = byName ? raw : String(selected);
       await renderScoutMatch(data, currentContext.table, currentContext.target);
       if (requestRevision !== scoutRevision) return;
       await refreshStats(parsed.tid);
@@ -451,6 +496,7 @@
         setStatus(data.available ? '這一輪已公布，但找不到指定配對。' : '這一輪尚未公布。');
       }
     } catch (error) {
+      if (requestRevision !== scoutRevision) return;
       currentContext = null;
       const box = $('pairingScoutResult');
       if (box) {
@@ -594,13 +640,23 @@
       button.addEventListener('click', () => setQueryMode(button.dataset.pairingScoutMode));
     });
     $('pairingScoutLoad')?.addEventListener('click', () => loadSelection($('pairingScoutTable')?.value));
+    $('pairingScoutResult')?.addEventListener('click', event => {
+      const button = event.target.closest?.('[data-scout-name-index]');
+      if (!button || queryBusy || queryMode !== 'name' || !nameCandidates ||
+          nameCandidates.revision !== scoutRevision || nameCandidates.source !== scoutSourceKey()) return;
+      const row = nameCandidates.rows[Number(button.dataset.scoutNameIndex)];
+      if (row) void loadSelection(row.name,'name',row.id);
+    });
     $('pairingScoutPrev')?.addEventListener('click', () => navigateTable(-1));
     $('pairingScoutNext')?.addEventListener('click', () => navigateTable(1));
     [sourceInput(), roundInput()].filter(Boolean).forEach(input => {
       input.addEventListener('input', invalidateScoutContext);
       input.addEventListener('change', invalidateScoutContext);
     });
-    $('pairingScoutTable')?.addEventListener('input', () => setBusy(queryBusy));
+    $('pairingScoutTable')?.addEventListener('input', () => {
+      if (nameCandidates) invalidateScoutContext();
+      setBusy(queryBusy);
+    });
     $('pairingScoutTable')?.addEventListener('keydown', event => {
       if (event.key !== 'Enter') return;
       event.preventDefault();
