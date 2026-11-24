@@ -6,6 +6,9 @@
 
   let badgeData = { season: '2026-27', great_window_days: 60, players: {} };
   let attentionSet = new Set();
+  let attentionNotes = new Map();
+  let attentionGeneration = 0;
+  const NOTE_LIMIT = 10;
   let attentionUserId = '';
   let wcsIconSrc = '';
   let publicReady = false;
@@ -62,6 +65,11 @@
     return `<span class="player-badge-wcs player-badge-wcs-fallback" title="${label}" aria-label="${label}">WCS</span>`;
   }
 
+  function ownAttentionNote(playerId) {
+    const uid = String(currentAuthContext()?.session?.user?.id || '');
+    return uid && uid === attentionUserId ? (attentionNotes.get(normalizeId(playerId)) || '') : '';
+  }
+
   function attentionHtml(active, interactive = false, playerId = '') {
     if (interactive) {
       const label = active ? '取消注意標記' : '標記為注意選手';
@@ -82,6 +90,9 @@
 
     if (!skipWcs && info.wcs_2026) parts.push(wcsBadgeHtml());
     if (attention || interactiveAttention) parts.push(attentionHtml(attention, interactiveAttention, id));
+    // Never attach a private note to a family/externally supplied attention flag.
+    const note = attention && typeof forcedAttention !== 'boolean' ? ownAttentionNote(id) : '';
+    if (note) parts.push(`<span class="player-attention-note" title="私人注意備註">${esc(note)}</span>`);
     if (info.premier) parts.push(ballBadgeHtml('premier', info.premier.best_rank));
     if (info.ultra) parts.push(ballBadgeHtml('ultra', info.ultra.best_rank));
     if (info.great) parts.push(ballBadgeHtml('great', info.great.best_rank));
@@ -100,6 +111,7 @@
       Number(info.ultra?.best_rank || 0),
       Number(info.great?.best_rank || 0),
       attention ? 1 : 0,
+      typeof forcedAttention !== 'boolean' ? ownAttentionNote(id) : '',
       options.interactiveAttention ? 1 : 0,
       wcsIconSrc ? 1 : 0
     ].join('|');
@@ -166,8 +178,16 @@
   async function refreshAttentionMarks() {
     const auth = currentAuthContext();
     const userId = String(auth?.session?.user?.id || '');
+    const generation = ++attentionGeneration;
+    if (attentionUserId !== userId) {
+      attentionSet = new Set();
+      attentionNotes = new Map();
+      attentionUserId = '';
+      scheduleDecorate();
+    }
     if (!auth?.client || !userId) {
       attentionSet = new Set();
+      attentionNotes = new Map();
       attentionUserId = '';
       scheduleDecorate();
       return false;
@@ -178,10 +198,12 @@
     try {
       const { data, error } = await auth.client
         .from('player_attention_marks')
-        .select('player_id')
+        .select('player_id,note')
         .eq('user_id', userId);
       if (error) throw error;
+      if (generation !== attentionGeneration || String(currentAuthContext()?.session?.user?.id || '') !== userId) return false;
       attentionSet = new Set((data || []).map(row => normalizeId(row.player_id)).filter(Boolean));
+      attentionNotes = new Map((data || []).map(row => [normalizeId(row.player_id), String(row.note || '')]));
       attentionUserId = userId;
       scheduleDecorate();
       return true;
@@ -211,7 +233,12 @@
     const userId = String(auth?.session?.user?.id || '');
     if (!id || !auth?.client || !userId) throw new Error('請先登入帳號後再使用注意標記');
 
+    if (attentionUserId !== userId) {
+      await refreshAttentionMarks();
+      if (attentionUserId !== userId) throw new Error('注意名單尚未載入');
+    }
     const active = attentionSet.has(id);
+    ++attentionGeneration;
     if (active) {
       const { error } = await auth.client
         .from('player_attention_marks')
@@ -219,18 +246,40 @@
         .eq('user_id', userId)
         .eq('player_id', id);
       if (error) throw error;
+      if (String(currentAuthContext()?.session?.user?.id || '') !== userId) return false;
       attentionSet.delete(id);
+      attentionNotes.delete(id);
     } else {
       const { error } = await auth.client
         .from('player_attention_marks')
         .upsert({ user_id: userId, player_id: id, updated_at: new Date().toISOString() }, { onConflict: 'user_id,player_id' });
       if (error) throw error;
+      if (String(currentAuthContext()?.session?.user?.id || '') !== userId) return false;
       attentionSet.add(id);
     }
     attentionUserId = userId;
     scheduleDecorate();
     document.dispatchEvent(new CustomEvent('ptcg:attention-changed', { detail: { playerId: id, active: !active } }));
     return !active;
+  }
+
+  async function saveAttentionNote(playerId, value) {
+    const id = normalizeId(playerId);
+    const auth = currentAuthContext();
+    const userId = String(auth?.session?.user?.id || '');
+    const note = String(value || '').trim();
+    if (!userId || !auth?.client || attentionUserId !== userId || !attentionSet.has(id))
+      throw new Error('請先加入自己的注意名單');
+    if (Array.from(note).length > NOTE_LIMIT) throw new Error('備註最多 10 個字');
+    ++attentionGeneration;
+    const {data,error} = await auth.client.from('player_attention_marks')
+      .update({note,updated_at:new Date().toISOString()})
+      .eq('user_id',userId).eq('player_id',id).select('player_id,note').maybeSingle();
+    if (error) throw error;
+    if (!data) throw new Error('注意名單已變更，請重新開啟玩家資料');
+    if (String(currentAuthContext()?.session?.user?.id || '') !== userId) return;
+    attentionNotes.set(id,String(data.note || ''));
+    scheduleDecorate();
   }
 
   function ensureLegend(id, target, position = 'afterend') {
@@ -386,9 +435,11 @@
       else body.prepend(box);
     }
     const modalHtml = `<div class="player-badge-row">${infoHtml}</div>${auth ? `<button class="player-attention-modal-control${attentionSet.has(id) ? ' is-active' : ''}" type="button" data-player-attention-toggle="${esc(id)}">${attentionSet.has(id) ? '★ 已加入注意名單' : '☆ 加入注意名單'}</button>` : ''}`;
-    const modalSignature = `${badgeSignature(id)}|${auth ? 1 : 0}`;
+    const noteEditor = auth && attentionSet.has(id) && attentionUserId === String(auth.session.user.id)
+      ? `<form class="player-attention-note-form" data-attention-note-form="${esc(id)}"><label>私人備註（最多 10 字）<input type="text" name="note" maxlength="10" value="${esc(ownAttentionNote(id))}" placeholder="輸入備註" autocomplete="off"></label><button type="submit">儲存</button><span class="player-attention-note-status" role="status"></span></form>` : '';
+    const modalSignature = `${badgeSignature(id)}|${auth?.session?.user?.id || ''}`;
     if (box.dataset.badgeSignature !== modalSignature) {
-      box.innerHTML = modalHtml;
+      box.innerHTML = modalHtml + noteEditor;
       box.dataset.badgeSignature = modalSignature;
     }
   }
@@ -414,6 +465,22 @@
     document.addEventListener('pairing:auth-ready', () => {
       refreshAttentionMarks();
       scheduleDecorate();
+    });
+    document.addEventListener('submit', async event => {
+      const form = event.target.closest?.('[data-attention-note-form]');
+      if (!form) return;
+      event.preventDefault();
+      const input = form.querySelector('input[name="note"]');
+      const button = form.querySelector('button[type="submit"]');
+      const status = form.querySelector('[role="status"]');
+      if (!input || !button || !status || button.disabled) return;
+      button.disabled = true;
+      try {
+        await saveAttentionNote(form.dataset.attentionNoteForm, input.value);
+        status.textContent = '已儲存';
+      } catch (error) {
+        status.textContent = error?.message || '備註儲存失敗';
+      } finally { button.disabled = false; }
     });
     document.addEventListener('click', async event => {
       const button = event.target.closest?.('[data-player-attention-toggle]');
