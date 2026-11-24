@@ -426,18 +426,53 @@
     }
   }
 
+  let scoutRosterCache = null;
+  async function getScoutRoster() {
+    const parsed = normalizeRoundUrl(sourceInput()?.value, Number(roundInput()?.value || 1));
+    const key = currentUserId()+':'+parsed.tid+':'+parsed.round;
+    if (scoutRosterCache?.key === key && Date.now()-scoutRosterCache.at < 30000)
+      return scoutRosterCache.ids;
+    const response = await fetch('https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-pairing-archive',{
+      method:'POST',cache:'no-store',headers:{Authorization:'Bearer '+pairingSession.access_token,'Content-Type':'application/json'},
+      body:JSON.stringify({action:'scout-roster',tid:parsed.tid,round:parsed.round})
+    });
+    const data = await response.json().catch(()=>({}));
+    if (!response.ok || !data.ok) throw new Error(data.error || '本輪參賽名單讀取失敗');
+    if (String(data.tid)!==String(parsed.tid) || Number(data.round)!==Number(parsed.round))
+      throw new Error('參賽名單與目前賽事或 Round 不一致');
+    if (!data.available) throw new Error('本輪配對尚未公布，請稍後再查詢姓名');
+    if (key!==currentUserId()+':'+scoutSourceKey()) throw new Error('活動或輪次已變更，請重新查詢');
+    const ids=[...new Set((data.player_ids||[]).map(normalizeQueryPlayerId).filter(id=>/^tw\d+$/.test(id)))];
+    if (!ids.length) throw new Error('本輪參賽名單尚未完整');
+    scoutRosterCache={key,at:Date.now(),ids};
+    return ids;
+  }
   async function searchScoutNames(raw) {
     if (!pairingAuthorized || !pairingSession?.user?.id || !pairingClient)
       throw new Error('請先登入授權帳號');
     const term = String(raw || '').trim();
     if (!term || Array.from(term).length > 40 || /[%_*\\]/.test(term))
       throw new Error('請輸入有效的玩家姓名');
-    const {data,error} = await pairingClient.from('player_identities')
-      .select('player_id,real_name').ilike('real_name','%'+term+'%')
-      .order('real_name').order('player_id').limit(31);
-    if (error) throw error;
-    return (data || []).filter(row => /^tw\d+$/.test(normalizeQueryPlayerId(row.player_id)) && row.real_name)
-      .map(row => ({id:normalizeQueryPlayerId(row.player_id),name:String(row.real_name)}));
+    const ids = await getScoutRoster(), allowed = new Set(ids);
+    const chunks=[];
+    for(let i=0;i<ids.length;i+=100) chunks.push(ids.slice(i,i+100));
+    const results=[];
+    // Only request identities belonging to the selected round; no global search.
+    for(let i=0;i<chunks.length;i+=4){
+      const batch=await Promise.all(chunks.slice(i,i+4).map(chunk=>pairingClient.from('player_identities')
+        .select('player_id,real_name').in('player_id',chunk).ilike('real_name','%'+term+'%')
+        .order('real_name').order('player_id')));
+      for(const result of batch){
+        if(result.error)throw result.error;
+        results.push(...(result.data||[]));
+      }
+    }
+    const rows=new Map();
+    for(const row of results){
+      const id=normalizeQueryPlayerId(row.player_id);
+      if(allowed.has(id)&&row.real_name)rows.set(id,{id,name:String(row.real_name)});
+    }
+    return [...rows.values()].sort((a,b)=>a.name.localeCompare(b.name,'zh-TW')||a.id.localeCompare(b.id)).slice(0,31);
   }
   function renderNameCandidates(rows, raw) {
     const box = $('pairingScoutResult');
@@ -446,10 +481,10 @@
     box.className = 'pairing-scout-result is-idle';
     if (!rows.length) {
       box.innerHTML = '<strong>查無姓名資料</strong><span>請確認姓名，或使用 PTCG ID 查詢。</span>';
-      setStatus('本站尚未找到符合的姓名。');
+      setStatus('本場、本輪沒有符合的已知姓名。');
       return;
     }
-    box.innerHTML = '<strong>找到多位符合的玩家，請選擇</strong><div class="pairing-scout-name-options">'+
+    box.innerHTML = '<strong>本輪找到多位符合的玩家，請選擇</strong><div class="pairing-scout-name-options">'+
       nameCandidates.rows.map((row,index) => '<button type="button" class="secondary-btn" data-scout-name-index="'+index+'"><strong>'+esc(row.name)+'</strong> <small>'+esc(row.id)+'</small></button>').join('')+
       '</div>'+(rows.length>30?'<span>符合結果過多，請輸入更完整的姓名。</span>':'');
     setStatus('請選擇正確的姓名與 PTCG ID。');
