@@ -231,3 +231,13 @@
   .player-attention-toggle { width: 19px; height: 19px; flex-basis: 19px; font-size: 19px; }
   .player-badge-modal-box { align-items: flex-start; flex-direction: column; }
 }
+
+/* Personal attention note; wraps on narrow screens without widening the ranking. */
+.player-attention-note{font-size:11px;color:#9a3412;font-weight:700;max-width:100%;overflow-wrap:anywhere;line-height:1.4}
+.player-badge-modal-box{flex-wrap:wrap}
+.player-attention-note-form{display:flex;align-items:flex-end;gap:8px;flex:1 0 100%;flex-wrap:wrap;min-width:0}
+.player-attention-note-form label{display:grid;gap:4px;flex:1;min-width:120px;color:#475467;font-size:12px;font-weight:700}
+.player-attention-note-form input{width:100%;min-width:0;box-sizing:border-box;padding:8px 10px;border:1px solid #d0d5dd;border-radius:8px;background:#fff;color:#253047;font:inherit;font-size:14px}
+.player-attention-note-form button{padding:8px 12px;border:1px solid #c4d3e8;border-radius:8px;background:#eef4fc;color:#24558d;font-size:13px;font-weight:800;cursor:pointer}
+.player-attention-note-form button:disabled{opacity:.55;cursor:default}
+.player-attention-note-status{flex-basis:100%;color:#52657f;font-size:12px}
