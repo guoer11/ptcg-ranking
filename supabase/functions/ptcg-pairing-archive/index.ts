@@ -290,6 +290,27 @@ async function archivePlayerContext(tid:string,eventTitle:string,roundRows:any,f
     observations[String(row.round_no)+":"+String(row.table_no)]={deck_a:String(row.deck_a||""),deck_b:String(row.deck_b||"")};
   return {real_names:realNames,decks,observations};
 }
+// Read-only, round-scoped roster for private deck scout. Never search unrelated events.
+async function scoutRoster(tid:string,round:number) {
+  if(!validTid(tid)||!Number.isInteger(round)||round<1||round>40)
+    throw new Error("請確認活動 TID 與 Round（1–40）");
+  const saved=await db.from("ptcg_match_archive_rounds")
+    .select("matches,player_count").eq("tid",tid).eq("round_no",round).maybeSingle();
+  if(saved.error)throw saved.error;
+  let data=saved.data;
+  let source="archive";
+  if(!data?.matches?.length){
+    data=await captureRound(tid,round);
+    source="official";
+  }
+  if(!data?.matches?.length)
+    return {ok:true,tid,round,available:false,player_ids:[]};
+  const ids=[...new Set<string>(data.matches.flatMap((match:any)=>[match.a?.id,match.b?.id])
+    .map((id:any)=>String(id||"").toLowerCase()).filter((id:string)=>/^tw\d+$/.test(id)))];
+  if(!ids.length||ids.length!==Number(data.player_count))
+    throw new Error("本輪參賽名單尚未完整，請稍後重試");
+  return {ok:true,tid,round,available:true,source,player_ids:ids};
+}
 async function readArchive(tid:string,round:number|undefined,userId:string) {
   if(!validTid(tid))throw new Error("TID 無效");
   const selectedRound=round&&Number.isInteger(round)&&round>=1&&round<=100?round:null;
@@ -626,6 +647,7 @@ Deno.serve(async(req:Request)=>{
     }
     if(action==="save-knockout-bracket")return json(await saveKnockoutBracket(body));
     if(action==="save-knockout")return json(await saveKnockout(body));
+    if(action==="scout-roster")return json(await scoutRoster(String(body?.tid||""),Number(body?.round)));
     if(action==="list")return json({ok:true,archives:await listArchives()});
     if(action==="get")return json({ok:true,archive:await readArchive(String(body?.tid||""),body?.round==null?undefined:Number(body.round),member.id)});
     if(action==="link") {
