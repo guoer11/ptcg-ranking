@@ -98,6 +98,11 @@ jobs:
           cp pairing-match-archive.css _site/pairing-match-archive-2.17.2-r1.css
           cmp pairing-match-archive.js _site/pairing-match-archive-2.17.2-r1.js
           cmp pairing-match-archive.css _site/pairing-match-archive-2.17.2-r1.css
+          # Keep previous URLs available to installed PWAs while publishing the new revision.
+          cp pairing-match-archive.js _site/pairing-match-archive-2.17.2-r2.js
+          cp pairing-match-archive.css _site/pairing-match-archive-2.17.2-r2.css
+          cmp pairing-match-archive.js _site/pairing-match-archive-2.17.2-r2.js
+          cmp pairing-match-archive.css _site/pairing-match-archive-2.17.2-r2.css
           cp baseball-reference-ui.css baseball-3d.css baseball-3d.js _site/
           cp -R pitching-app _site/pitching-app
           cp assets/q-icons/*.webp _site/assets/q-icons/
