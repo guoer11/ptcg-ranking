@@ -386,9 +386,9 @@
         saved_at: new Date().toISOString()
       };
 
+      if(multiSummaryActive())return;
       const nextContext = rememberSummary(summary) || context;
       if (updateUrl) updateAddress(summary);
-      if(multiSummaryActive())return;
       renderRound(summary, nextContext);
       syncControls(nextContext, round);
       if (!silent) setMessage(`Round ${round} 查詢完成。`, 'success');

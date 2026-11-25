@@ -419,8 +419,7 @@ function buildMultiNotice(batch:any,cards:any[],type:"round"|"final",test=false)
   let pushBody=text;
   const makeUrl=(items:any[])=>{
     const params=new URLSearchParams({type,round:String(batch.round||""),official,players:encodeCards(items),mv:"2180"});
-    // A versioned multi-player page prevents an installed single-player UI from
-    // interpreting the first player as the whole notification.
+    // Explicit revision parameter helps older installed clients reload the page.
     return "/ptcg-ranking/family-notify.html?"+params.toString();
   };
   let familyUrl=makeUrl(cards);

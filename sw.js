@@ -116,6 +116,9 @@ self.addEventListener('notificationclick', event => {
         try {
           const clientUrl = new URL(client.url);
           if (!/\/family-notify\.html$/i.test(clientUrl.pathname)) continue;
+          if (new URL(targetUrl).searchParams.has('players') && 'navigate' in client) {
+            try { const updated=await client.navigate(targetUrl); if(updated && 'focus' in updated)return updated.focus(); } catch (_) {}
+          }
           client.postMessage({ type: 'ptcg-family-update', url: targetUrl });
           if ('focus' in client) return client.focus();
         } catch (_) {}
