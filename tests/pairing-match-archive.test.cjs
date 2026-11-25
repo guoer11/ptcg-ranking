@@ -52,7 +52,7 @@ const mobile=css.slice(css.indexOf('@media(max-width:720px)'));
 assert.match(mobile,/width:100%;min-width:0;table-layout:fixed/);
 assert.match(mobile,/td:last-child\{min-width:0\}/);
 assert.match(ui,/archive-standings-scroll"><table class="archive-standings-table" style="width:100%;min-width:0;table-layout:fixed"><colgroup>/);
-assert.match(ui,/archive-matches-scroll"><table style="width:100%;min-width:0;table-layout:fixed"><colgroup><col style="width:clamp\(46px,8vw,70px\)"><col><col><col style="width:clamp\(58px,16vw,150px\)">/);
+assert.match(ui,/archive-matches-scroll"><table style="width:100%;min-width:0;table-layout:fixed"><colgroup><col style="width:clamp\(52px,15vw,70px\)"><col><col><col style="width:clamp\(58px,16vw,150px\)">/);
 assert.doesNotMatch(css,/min-width:(630|400|155|95)px/);
 assert.match(page,/id="archiveFitCritical"/);
 assert.match(page,/min-width:0 !important; table-layout:fixed/);
@@ -94,7 +94,7 @@ assert.match(page,/archive-standings-table td \{ text-align:center !important; v
 assert.match(css,/archive-standings-scroll\{width:100%;max-width:760px;margin-inline:0 auto\}/,'desktop remains left aligned');
 
 for(const source of [css,page]){
- assert.match(source,/archive-matches-scroll col:first-child\{width:46px !important\}/);
+ assert.match(source,/archive-matches-scroll col:first-child\{width:clamp\(52px,15vw,60px\) !important\}/);
  assert.match(source,/archive-matches-scroll td:first-child\{padding-inline:3px;white-space:nowrap !important;overflow-wrap:normal !important;word-break:keep-all;text-align:center/);
  assert.match(source,/archive-matches-scroll td:first-child\{font-size:12px\}/);
 }
@@ -102,3 +102,8 @@ assert.match(deploy,/cp history\.html _site\/history-2\.17\.2-r5\.html/);
 
 assert.match(ui,/class="archive-table-number" style="display:inline-block;white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important"/);
 assert.match(deploy,/cp history\.html _site\/history-2\.17\.2-r6\.html/);
+
+for(const source of [css,page]){
+ assert.match(source,/archive-matches-scroll td:nth-child\(2\)\{padding-left:6px\}/,'move player A to the right of the widened table number column');
+}
+assert.match(deploy,/cp history\.html _site\/history-2\.17\.2-r7\.html/);

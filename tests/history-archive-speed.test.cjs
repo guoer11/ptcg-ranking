@@ -79,7 +79,7 @@ const getCalls=()=>calls.filter(call=>call.action==='get').length;
   assert.equal(getCalls(),2,'first viewing a new round fetches one record');
   assert.equal(calls.filter(c=>c.action==='get').at(-1).round,1,'numeric round must remain a number');
   const pairing=el('matchArchiveRows').innerHTML;
-  assert.match(pairing,/<col style="width:clamp\(46px,8vw,70px\)">/);
+  assert.match(pairing,/<col style="width:clamp\(52px,15vw,70px\)">/);
   for(const number of ['601','1602']){
     const cell=pairing.match(new RegExp('<td style="([^"]+)"><span class="archive-table-number" style="([^"]+)">'+number+'</span></td>'));
     assert(cell,'render intact table number '+number);

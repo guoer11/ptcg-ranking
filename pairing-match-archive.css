@@ -85,7 +85,8 @@
 
 /* Round pairing table: keep three- and four-digit table numbers intact. */
 @media(max-width:720px){
-  #matchArchive .archive-matches-scroll col:first-child{width:46px !important}
+  #matchArchive .archive-matches-scroll col:first-child{width:clamp(52px,15vw,60px) !important}
   #matchArchive .archive-matches-scroll th:first-child,#matchArchive .archive-matches-scroll td:first-child{padding-inline:3px;white-space:nowrap !important;overflow-wrap:normal !important;word-break:keep-all;text-align:center;font-variant-numeric:tabular-nums}
   #matchArchive .archive-matches-scroll td:first-child{font-size:12px}
+  #matchArchive .archive-matches-scroll th:nth-child(2),#matchArchive .archive-matches-scroll td:nth-child(2){padding-left:6px}
 }

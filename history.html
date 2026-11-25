@@ -12,7 +12,7 @@
   <!-- 歷史賽事牌組分布共用即時配對的甜甜圈圖版型，必須先載入基礎 CSS -->
   <link rel="stylesheet" href="pairing-deck-scout.css?v=2.12.1-r1">
   <link rel="stylesheet" href="pairing-history.css?v=2.6.0-r1">
-  <link rel="stylesheet" href="pairing-match-archive-2.17.2-r6.css">
+  <link rel="stylesheet" href="pairing-match-archive-2.17.2-r7.css">
   <link rel="stylesheet" href="history-center.css?v=2.14.0-r1">
   <style id="archiveFitCritical">
     #matchArchive .archive-scroll { max-width:100%; min-width:0; }
@@ -25,9 +25,10 @@
     #matchArchive .archive-standings-table td { text-align:center !important; vertical-align:middle; }
     #matchArchive .archive-standings-table .archive-deck { margin:0 auto; text-align:center; }
     @media(max-width:720px) {
-      #matchArchive .archive-matches-scroll col:first-child{width:46px !important}
+      #matchArchive .archive-matches-scroll col:first-child{width:clamp(52px,15vw,60px) !important}
       #matchArchive .archive-matches-scroll th:first-child,#matchArchive .archive-matches-scroll td:first-child{padding-inline:3px;white-space:nowrap !important;overflow-wrap:normal !important;word-break:keep-all;text-align:center;font-variant-numeric:tabular-nums}
       #matchArchive .archive-matches-scroll td:first-child{font-size:12px}
+  #matchArchive .archive-matches-scroll th:nth-child(2),#matchArchive .archive-matches-scroll td:nth-child(2){padding-left:6px}
       #matchArchive #matchArchiveRows { width:100%; max-width:none; min-width:0; }
       #matchArchive #matchArchiveRows > .archive-standings-scroll { width:calc(100% + 16px) !important; max-width:none !important; margin-inline:-8px !important; box-sizing:border-box; }
       #matchArchive .archive-standings-table th,
@@ -115,7 +116,7 @@
 <script src="site-version.js?v=2.17.2" defer></script>
 <script src="history-center.js?v=2.14.0" defer></script>
 <script src="pairing-history.js?v=2.17.2" defer></script>
-<script src="pairing-match-archive-2.17.2-r6.js" defer></script>
+<script src="pairing-match-archive-2.17.2-r7.js" defer></script>
 <script src="history-knockout.js?v=2.17.2" defer></script>
 <script src="site-account-ui.js?v=2.17.0-r4" defer></script>
 </body>
