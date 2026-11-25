@@ -16,6 +16,11 @@ const PAIRING_ACCESS_SUPABASE_URL = 'https://ceobnyikrudlxasyjukg.supabase.co';
 const PAIRING_ACCESS_SUPABASE_KEY = 'sb_publishable_6uVBALI1T3lMZoFEUiLK4g__R7gv0fz';
 let tournamentPairingClient = null;
 let tournamentIdentityMap = {};
+let tournamentIdentityGeneration = 0;
+function clearTournamentPrivateIdentities(){
+  tournamentIdentityMap={};
+  if(tournamentModal?.classList.contains('open')&&tournamentModal.dataset.eventId)openTournamentModal(tournamentModal.dataset.eventId);
+}
 
 let tournamentData = { season: '2026-27', updated_at: null, events: [] };
 let tournamentLeague = 'all';
@@ -96,6 +101,8 @@ function insertTournamentPairingNav() {
 }
 
 async function refreshTournamentPairingNav() {
+  const request=++tournamentIdentityGeneration;
+  clearTournamentPrivateIdentities();
   removeTournamentPairingNav();
   try {
     await ensureTournamentSupabase();
@@ -107,22 +114,25 @@ async function refreshTournamentPairingNav() {
       });
     }
     const { data: sessionData } = await tournamentPairingClient.auth.getSession();
-    if (!sessionData?.session) return;
+    if (request!==tournamentIdentityGeneration || !sessionData?.session) return;
     const { data: allowed, error } = await tournamentPairingClient.rpc('pairing_access_role');
+    if (request!==tournamentIdentityGeneration) return;
     if (error) throw error;
     if (['admin','guest'].includes(allowed)) {
       insertTournamentPairingNav();
-      if(allowed==='admin')await loadTournamentPrivateIdentities();else tournamentIdentityMap={};
+      await loadTournamentPrivateIdentities(request);
     } else {
       tournamentIdentityMap = {};
     }
   } catch (error) {
+    if(request!==tournamentIdentityGeneration)return;
     console.warn('即時配對導覽權限確認失敗', error);
+    clearTournamentPrivateIdentities();
     removeTournamentPairingNav();
   }
 }
 
-async function loadTournamentPrivateIdentities() {
+async function loadTournamentPrivateIdentities(request=tournamentIdentityGeneration) {
   if (!tournamentPairingClient) return;
   const players = {};
   const pageSize = 1000;
@@ -134,6 +144,7 @@ async function loadTournamentPrivateIdentities() {
         .select('player_id, real_name')
         .order('player_id', { ascending: true })
         .range(from, from + pageSize - 1);
+      if(request!==tournamentIdentityGeneration)return;
       if (error) throw error;
       for (const row of data || []) {
         if (!row?.player_id || !row?.real_name) continue;
@@ -142,13 +153,15 @@ async function loadTournamentPrivateIdentities() {
       if (!data || data.length < pageSize) break;
       from += pageSize;
     }
+    if(request!==tournamentIdentityGeneration)return;
     tournamentIdentityMap = players;
     const openModal = tournamentModal?.classList.contains('open');
     const eventId = tournamentModal?.dataset.eventId;
     if (openModal && eventId) openTournamentModal(eventId);
   } catch (error) {
+    if(request!==tournamentIdentityGeneration)return;
     console.warn('賽事頁真實姓名讀取失敗', error);
-    tournamentIdentityMap = {};
+    clearTournamentPrivateIdentities();
   }
 }
 

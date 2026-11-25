@@ -79,6 +79,7 @@ jobs:
           node tests/pairing-watch-latency.test.cjs
           node --check pairing-guest-admin.js
           node tests/pairing-guest-access.test.cjs
+          node tests/guest-real-names.test.cjs
           node tests/default-tracking-players.test.cjs
           node tests/mobile-site-nav.test.cjs
           node tests/history-auth-stability.test.cjs

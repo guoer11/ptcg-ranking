@@ -136,7 +136,7 @@ function updateIdentityTextUI() {
   const lookupHint = document.getElementById('playerLookupHint');
   const noticeText = document.getElementById('versionNoticeText');
 
-  if (identityAuthorized && identityAccessRole === 'admin') {
+  if (identityAuthorized && ['admin','guest'].includes(identityAccessRole)) {
     if (searchInput) searchInput.placeholder = '搜尋玩家名稱 / 真實姓名 / PTCG ID / 地區';
     if (lookupDescription) lookupDescription.textContent = '輸入真實姓名、暱稱或 PTCG ID。';
     if (lookupInput) lookupInput.placeholder = '姓名 / 暱稱 / PTCG ID';
@@ -194,8 +194,8 @@ async function loadPrivateIdentities() {
     if (role.error) throw role.error;
     if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
     identityAccessRole = role.data || 'none';
-    if (identityAccessRole !== 'admin') {
-      identityAuthorized = identityAccessRole === 'guest';
+    if (!['admin','guest'].includes(identityAccessRole)) {
+      identityAuthorized = false;
       updateIdentityAuthUI();
       await refreshPairingNavAccess();
       renderRanking();
@@ -221,7 +221,7 @@ async function loadPrivateIdentities() {
     if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
     const count = Object.keys(players).length;
     identityData = { updated_at: new Date().toISOString(), count, players };
-    identityAuthorized = count > 0;
+    identityAuthorized = ['admin','guest'].includes(identityAccessRole);
     updateIdentityAuthUI();
   } catch (error) {
     if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
