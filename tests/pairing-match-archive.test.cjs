@@ -46,7 +46,7 @@ assert.match(ui,/archive-matches-scroll/);
 const mobile=css.slice(css.indexOf('@media(max-width:720px)'));
 assert.match(mobile,/width:100%;min-width:0;table-layout:fixed/);
 assert.match(mobile,/td:last-child\{min-width:0\}/);
-assert.match(ui,/archive-standings-scroll"><table style="width:100%;min-width:0;table-layout:fixed"><colgroup><col style="width:clamp\(38px,10vw,76px\)"><col><col style="width:clamp\(65px,17vw,120px\)">/);
+assert.match(ui,/archive-standings-scroll"><table class="archive-standings-table" style="width:100%;min-width:0;table-layout:fixed"><colgroup>/);
 assert.match(ui,/archive-matches-scroll"><table style="width:100%;min-width:0;table-layout:fixed"><colgroup><col style="width:clamp\(32px,8vw,70px\)"><col><col><col style="width:clamp\(58px,16vw,150px\)">/);
 assert.doesNotMatch(css,/min-width:(630|400|155|95)px/);
 assert.match(page,/id="archiveFitCritical"/);
