@@ -16,6 +16,8 @@ let activePairingWatch = null;
 let pairingFormOwner = null;
 let pairingFormEdited = false;
 const PAIRING_WATCH_FORM_KEY = 'ptcg-pairing-watch-form-v1:';
+const PAIRING_CURRENT_EVENT_KEY = 'ptcg-pairing-current-event-v1:';
+let currentEventMemory=null;
 
 const sourceInput = () => document.getElementById('pairingSourceUrl');
 const playerInput = () => document.getElementById('pairingPlayerId');
@@ -102,7 +104,7 @@ function setPairingMessage(text, type = '') {
 }
 
 function setPairingBusy(busy) {
-  [lookupButton(), testButton(), finalTestButton(), startButton(), stopButton(), document.getElementById('pairingLoadTestButton'),document.getElementById('pairingAddPlayer'),...extraPlayerInputs(),...(extraPlayersRoot()?.querySelectorAll('button')||[])]
+  [lookupButton(), testButton(), finalTestButton(), startButton(), stopButton(), document.getElementById('pairingLoadTestButton'),document.getElementById('pairingAddPlayer'),document.getElementById('pairingEndEventButton'),...extraPlayerInputs(),...(extraPlayersRoot()?.querySelectorAll('button')||[])]
     .filter(Boolean)
     .forEach(button => { button.disabled = busy; });
 }
@@ -167,6 +169,36 @@ function savePairingWatchForm() {
   } catch (_) { /* Ignore incomplete edits and unavailable browser storage. */ }
 }
 
+function currentEventKey(){
+  const uid=pairingSession?.user?.id;
+  return uid?PAIRING_CURRENT_EVENT_KEY+uid:'';
+}
+function readCurrentPairingEvent(){
+  const key=currentEventKey();
+  if(!pairingAuthorized||!key)return null;
+  try{const stored=localStorage.getItem(key);if(stored){const value=JSON.parse(stored);if(/^\d{1,12}$/.test(String(value.tid))&&value.url)return value;}return null;}
+  catch(_){return currentEventMemory?.key===key?currentEventMemory.value:null;}
+}
+function rememberCurrentPairingEvent(watch){
+  const key=currentEventKey();
+  if(!key||!pairingAuthorized||!watch?.active||watch.user_id!==pairingSession?.user?.id)return;
+  try{
+    const parsed=normalizeRoundUrl(watch.source_url);
+    if(String(parsed.tid)!==String(watch.tid))return;
+    const value={tid:String(watch.tid),url:parsed.url,round:parsed.round,player_id:watch.player_id,player_ids:watch.player_ids||[watch.player_id]};
+    currentEventMemory={key,value};
+    try{localStorage.setItem(key,JSON.stringify(value));}catch(_){}
+  }catch(_){}
+}
+function clearCurrentPairingEvent(){
+  const key=currentEventKey();
+  currentEventMemory=null;
+  if(key)try{localStorage.removeItem(key);}catch(_){}
+}
+function renderCurrentEventControls(){
+  const row=document.getElementById('pairingCurrentEventActions');
+  if(row)row.hidden=!readCurrentPairingEvent();
+}
 function syncPairingWatchForm(watch) {
   const userId = pairingSession?.user?.id;
   if (!pairingAuthorized || !userId) return;
@@ -181,9 +213,18 @@ function syncPairingWatchForm(watch) {
   pairingFormOwner = userId;
   activePairingWatch = watch || null;
 
+  if(watch?.active)rememberCurrentPairingEvent(watch);
+  const currentEvent=readCurrentPairingEvent();
+  renderCurrentEventControls();
   if (!watch?.active) {
-    // Keep this page's fields usable for a final lookup, but do not restore them next time.
     clearSavedPairingWatchForm();
+    // Only explicitly started sessions can be restored. Never resurrect old inactive watches.
+    if(currentEvent&&!pairingFormEdited&&!sourceInput()?.value){
+      if(sourceInput())sourceInput().value=currentEvent.url;
+      if(roundInput())roundInput().value=String(currentEvent.round||1);
+      if(playerInput())playerInput().value=currentEvent.player_id||'';
+      restoreExtraPlayers(currentEvent.player_ids||[currentEvent.player_id]);
+    }
     return;
   }
   if (pairingFormEdited) return;
@@ -434,14 +475,15 @@ async function refreshWatchStatus({ reopened = false } = {}) {
   try {
     const data = await authorizedWatchRequest('status');
     if (!pairingAuthorized || pairingSession?.user?.id !== userId) return;
-    if (reopened && !data.watch?.active) {
+    if (reopened && !data.watch?.active && !readCurrentPairingEvent()) {
       if (sourceInput()) sourceInput().value = '';
       resetDefaultTrackingPlayers();clearMultiResults();
       if (roundInput()) roundInput().value = '1';
       pairingFormEdited = false;
     }
     syncPairingWatchForm(data.watch);
-    renderWatchStatus(data.watch);
+    renderWatchStatus(data.watch?.active||readCurrentPairingEvent()?.tid===String(data.watch?.tid)?data.watch:null);
+    document.dispatchEvent(new CustomEvent('pairing:current-event-changed'));
   } catch (error) {
     console.warn('監控狀態讀取失敗', error);
     renderWatchStatus(null);
@@ -539,6 +581,32 @@ async function handleStopWatch() {
   } finally {
     setPairingBusy(false);
   }
+}
+
+async function handleEndCurrentEvent(){
+  if(!pairingAuthorized||!readCurrentPairingEvent())return;
+  if(window.PTCGTop8HasUnsaved?.()&&!confirm('TOP8 尚有未儲存戰況，結束後未儲存的內容會清除。確定繼續？'))return;
+  if(!confirm('結束本次賽事？將停止自己的配對通知並清除目前畫面，已儲存的牌組及 TOP8 紀錄都會保留。'))return;
+  const uid=pairingSession?.user?.id,tid=readCurrentPairingEvent()?.tid;
+  setPairingBusy(true);
+  try{
+    const state=await authorizedWatchRequest('status');
+    if(pairingSession?.user?.id!==uid)return;
+    if(state.watch?.active&&String(state.watch.tid)===tid)await authorizedWatchRequest('stop');
+    if(pairingSession?.user?.id!==uid)return;
+    clearCurrentPairingEvent();clearSavedPairingWatchForm();activePairingWatch=null;lastPairing=null;
+    if(sourceInput())sourceInput().value='';
+    if(roundInput())roundInput().value='1';
+    resetDefaultTrackingPlayers();clearMultiResults();
+    const box=resultBox();
+    if(box){box.hidden=false;box.className='pairing-result is-waiting';box.innerHTML='<div class="pairing-result-title"><strong>尚未開始追蹤</strong><span class="pairing-round-badge">等待輸入</span></div><div class="pairing-watch-copy">貼上目前賽事網址並開始追蹤。</div>';}
+    sourceInput()?.dispatchEvent(new Event('input',{bubbles:true}));
+    pairingFormEdited=false;
+    renderWatchStatus(null);renderCurrentEventControls();
+    document.dispatchEvent(new CustomEvent('pairing:current-event-ended'));
+    setPairingMessage('本次賽事已結束，已儲存的歷史紀錄均保留。','success');
+  }catch(error){setPairingMessage('結束賽事失敗：'+(error?.message||String(error)),'error');}
+  finally{setPairingBusy(false);}
 }
 
 function loadHistoricalTest() {
@@ -730,6 +798,7 @@ function initPairingPage() {
   finalTestButton()?.addEventListener('click', handleFinalTestNotification);
   startButton()?.addEventListener('click', handleStartWatch);
   stopButton()?.addEventListener('click', handleStopWatch);
+  document.getElementById('pairingEndEventButton')?.addEventListener('click',handleEndCurrentEvent);
   document.getElementById('pairingOpenOfficialButton')?.addEventListener('click', () => {
     if (!pairingAuthorized) return;
     try {

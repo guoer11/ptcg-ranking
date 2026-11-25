@@ -198,7 +198,7 @@
         event_id:targetEvent,winners:currentWinners,base_winners:bracketBase,...(resolve?{resolve_conflict:resolve,conflict_id:bracketConflict.id}:{})})});
       const data=await response.json().catch(()=>({}));
       if(!response.ok||!data.ok)throw new Error(data.error||'儲存失敗');
-      if(String(current?.event?.tid)!==targetTid)return;
+      if(String(current?.event?.tid)!==targetTid||(isLive()&&selectedLiveTid()!==targetTid))return;
       bracketWinners=data.winners||currentWinners;bracketBase={...bracketWinners};bracketConflict=data.conflict||null;bracketDirty=false;
       if(current.knockout?.podium)current.knockout.podium.bracket={winners:bracketWinners,conflict:bracketConflict};
       document.dispatchEvent?.(new CustomEvent('archive:invalidate',{detail:{tid:targetTid}}));
@@ -220,7 +220,7 @@
     const top=getTop(archive);
     const title=String(archive?.event?.title||'');
     if(!top||!/(UBL|高級球)/i.test(title)||!/(孩童|Junior)/i.test(title)
-        ||!archive?.event?.final_seen_at){panel.hidden=true;current=null;eventId='';return;}
+        ||!archive?.event?.final_seen_at){if(isLive())showLiveEmpty('等待預賽最終排名');else{panel.hidden=true;current=null;eventId='';}return;}
     // Do not overwrite the owner's unsaved selections when changing only the
     // viewed Round of the same archived event.
     if(current?.event?.tid===tid&&panel.dataset.ready==='1'){
@@ -235,7 +235,7 @@
       return;
     }
     const request=++generation;
-    current=archive;eventId='';panel.hidden=true;panel.dataset.ready='0';
+    current=archive;eventId='';if(!isLive())panel.hidden=true;panel.dataset.ready='0';
     try{
       const [sources,oldKnockout,tournaments]=isLive()?[{sources:[]},{events:{}},{events:[]}]:await Promise.all([
         publicJson('data/preliminary_sources.json'),
@@ -270,6 +270,7 @@
       bracketBase={...bracketWinners};bracketConflict=archive.knockout?.podium?.bracket?.conflict||null;
       bracketDirty=false;bracketStage='qf';bracketBusy=false;
       panel.dataset.ready='1';panel.hidden=false;
+      if(isLive()){$('historyBracketActions').hidden=false;panel.open=true;}
       if($('historyKnockoutForm')&&eventId)drawPreview();drawBracket();
       if(!bracketCount()&&configured.length===8)
         bracketStatus('已保留原本登錄的冠亞軍名次，但缺少逐場勝負；請從八強開始手動確認，系統不會倒推。');
@@ -311,50 +312,68 @@
     if(archive&&tid)void render(archive,tid);
   });
   document.addEventListener('pairing:auth-ready',e=>{
-    if(!e.detail?.allowed){generation++;current=null;eventId='';
-      const el=$('historyKnockoutPanel');if(el)el.hidden=true;}
+    if(!e.detail?.allowed){if(isLive())showLiveEmpty('目前尚無複賽資料');else{generation++;current=null;eventId='';
+      const el=$('historyKnockoutPanel');if(el)el.hidden=true;}}
   });
   // Both pages refresh the same narrow endpoint. Realtime is backed by a 5s
   // fallback (including after the watch stops at preliminary final ranking).
-  let liveTid='',liveBusy=false,liveChannel=null,liveUser='',liveTimer=null;
+  let liveBusy=false,liveChannel=null,liveUser='',liveTimer=null;
+  function selectedLiveTid(){
+    if(!isLive()||typeof readCurrentPairingEvent!=='function')return '';
+    const saved=readCurrentPairingEvent();if(!saved)return '';
+    try{const raw=$('pairingSourceUrl')?.value||'';const url=new URL(raw);return url.hostname==='tcg.sfc-jpn.jp'&&url.searchParams.get('tid')===String(saved.tid)?String(saved.tid):'';}catch(_){return '';}
+  }
+  function showLiveEmpty(message){
+    if(!isLive())return;
+    const panel=$('historyKnockoutPanel'),root=$('historyKnockoutBracket'),actions=$('historyBracketActions');
+    if(!panel||!root)return;
+    const changed=!!current||panel.dataset.ready==='1'||panel.dataset.empty!==message;
+    if(changed){generation++;current=null;eventId='';bracketWinners={};bracketBase={};bracketConflict=null;bracketDirty=false;panel.dataset.ready='0';panel.dataset.empty=message;panel.open=false;root.textContent=message;}
+    panel.hidden=false;if(actions)actions.hidden=true;
+  }
+  window.PTCGTop8HasUnsaved=()=>isLive()&&(bracketDirty||bracketBusy);
   async function refreshLive(){
-    if(!pairingAuthorized||!pairingSession?.access_token||liveBusy||bracketBusy||bracketDirty)return;
+    if(!pairingAuthorized||!pairingSession?.access_token)return;
     if(!isLive()&&!current?.event?.tid)return;
-    let tid=isLive()?liveTid:String(current.event.tid);
-    if(isLive()){
-      const raw=$('pairingSourceUrl')?.value||'';
-      try{if(raw){const url=new URL(raw);if(url.hostname==='tcg.sfc-jpn.jp')tid=url.searchParams.get('tid')||tid;}}catch(_){}
-    }
+    const tid=isLive()?selectedLiveTid():String(current.event.tid);
+    if(isLive()&&!tid){showLiveEmpty('目前尚無複賽資料');return;}
+    if(isLive()&&current&&String(current.event.tid)!==tid)showLiveEmpty('等待預賽最終排名');
+    if(liveBusy||bracketBusy||bracketDirty)return;
     const user=pairingSession.user?.id;
     liveBusy=true;
     try{
       const response=await fetch(ENDPOINT,{method:'POST',cache:'no-store',headers:{Authorization:'Bearer '+pairingSession.access_token,'Content-Type':'application/json'},body:JSON.stringify({action:'top8-live',tid})});
       const data=await response.json();
-      if(!pairingAuthorized||pairingSession?.user?.id!==user)return;
+      if(!pairingAuthorized||pairingSession?.user?.id!==user||(isLive()?selectedLiveTid()!==tid:String(current?.event?.tid)!==tid))return;
       if(!response.ok||!data.ok)throw Error(data.error||'讀取 TOP8 失敗');
-      if(isLive()&&data.tid)liveTid=data.tid;
-      if(data.archive)await render(data.archive,String(data.tid));
-      else if(isLive()){$('historyKnockoutPanel').hidden=true;current=null;eventId='';}
-    }catch(error){if(isLive()&&current&&String(current.event.tid)!==tid){$('historyKnockoutPanel').hidden=true;current=null;eventId='';}console.warn('TOP8 同步',error);}
+      if(data.archive&&String(data.tid)===tid)await render(data.archive,tid);
+      else if(isLive())showLiveEmpty('等待預賽最終排名');
+    }catch(error){if(isLive()&&selectedLiveTid()===tid&&!current)showLiveEmpty('等待預賽最終排名（暫時無法讀取）');console.warn('TOP8 同步',error);}
     finally{liveBusy=false;}
   }
   function startLive(){
     const user=pairingAuthorized?pairingSession?.user?.id:'';
     if(user===liveUser)return;
     if(liveChannel&&typeof pairingClient!=='undefined')void pairingClient?.removeChannel(liveChannel);
-    liveChannel=null;liveUser=user||'';liveTid='';
+    liveChannel=null;liveUser=user||'';
     clearInterval(liveTimer);liveTimer=null;
     if(!user)return;
     if(typeof pairingClient!=='undefined'&&pairingClient?.channel){
-      liveChannel=pairingClient.channel('top8-shared-'+user).on('postgres_changes',{event:'*',schema:'public',table:'pairing_top8_changes'},event=>{if(String(event.new?.tid)===String(current?.event?.tid||liveTid))void refreshLive();}).subscribe();
+      liveChannel=pairingClient.channel('top8-shared-'+user).on('postgres_changes',{event:'*',schema:'public',table:'pairing_top8_changes'},event=>{if(String(event.new?.tid)===String(isLive()?selectedLiveTid():current?.event?.tid))void refreshLive();}).subscribe();
     }
     liveTimer=setInterval(()=>{if(!document.hidden)void refreshLive();},5000);
     void refreshLive();
   }
   document.addEventListener('pairing:auth-ready',startLive);
-  for(const event of ['pairing:tracking-started','pairing:history-mode','pairing:tracking-stopped'])document.addEventListener(event,e=>{if(!isLive())return;liveTid=String(e.detail?.parsed?.tid||e.detail?.watch?.tid||liveTid);void refreshLive();});
+  for(const event of ['pairing:tracking-started','pairing:history-mode','pairing:tracking-stopped','pairing:current-event-changed'])document.addEventListener(event,()=>{if(isLive())void refreshLive();});
+  document.addEventListener('pairing:current-event-ended',()=>showLiveEmpty('目前尚無複賽資料'));
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refreshLive();});
   document.addEventListener('DOMContentLoaded',()=>{
+    if(isLive()){
+      showLiveEmpty('目前尚無複賽資料');
+      $('pairingSourceUrl')?.addEventListener('input',()=>{void refreshLive();});
+      $('pairingSourceUrl')?.addEventListener('change',()=>{void refreshLive();});
+    }
     $('historyKnockoutSave')?.addEventListener('click',()=>{void save();});
     $('historyBracketSave')?.addEventListener('click',()=>{void saveBracket();});
     $('historyKnockoutBracket')?.addEventListener('click',event=>{

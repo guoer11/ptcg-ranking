@@ -71,6 +71,7 @@
     .pairing-multi-grid>div>b{font-size:14px}
     .pairing-multi-status{display:grid;gap:4px;margin-top:7px}
   </style>
+<style>#historyBracketActions[hidden],#pairingCurrentEventActions[hidden]{display:none!important}</style>
 </head>
 <body class="site-bottom-nav-page">
   <header class="site-header pairing-header">
@@ -101,7 +102,7 @@
         </div>
         <div id="pairingResult" class="pairing-result is-waiting"><div class="pairing-result-title"><strong>尚未開始追蹤</strong><span class="pairing-round-badge">等待輸入</span></div><div class="pairing-watch-copy">貼上目前賽事網址並選擇 Round，按「開始追蹤」即可查詢配對、啟動監控並使用牌組偵察。</div></div>
         <div id="pairingMultiResults" hidden></div>
-        <section class="pairing-watch-card pairing-watch-inline"><div class="pairing-watch-head"><strong>追蹤狀態</strong><span id="pairingWatchStatus" class="pairing-watch-status"><span class="pairing-watch-dot"></span>未追蹤</span></div><div id="pairingWatchCopy" class="pairing-watch-copy">按上方「開始追蹤」後，系統會先查詢目前 Round，再自動監控後續配對與最終排名。</div><div id="pairingStopActions" class="pairing-actions" style="margin-top:14px;" hidden><button id="pairingStopButton" class="secondary-btn" type="button">停止追蹤</button></div></section>
+        <section class="pairing-watch-card pairing-watch-inline"><div class="pairing-watch-head"><strong>追蹤狀態</strong><span id="pairingWatchStatus" class="pairing-watch-status"><span class="pairing-watch-dot"></span>未追蹤</span></div><div id="pairingWatchCopy" class="pairing-watch-copy">按上方「開始追蹤」後，系統會先查詢目前 Round，再自動監控後續配對與最終排名。</div><div id="pairingStopActions" class="pairing-actions" style="margin-top:14px;" hidden><button id="pairingStopButton" class="secondary-btn" type="button">停止追蹤</button></div><div id="pairingCurrentEventActions" class="pairing-actions" style="margin-top:10px" hidden><button id="pairingEndEventButton" class="secondary-btn" type="button">結束本次賽事</button><small class="pairing-watch-copy">僅結束自己的操作狀態，已儲存紀錄保留。</small></div></section>
         <div id="pairingMessage" class="pairing-message"></div>
         </details>
         <details id="pairingAdvancedCollapse" class="pairing-history-panel pairing-advanced-tools pairing-feature-collapse">
@@ -123,11 +124,11 @@
           <div class="pairing-history-moved" hidden><a class="secondary-btn" href="history.html">查看賽事歷史中心（歷史牌組、官方對戰與排名封存）</a></div>
           </details>
         </section>
-        <details id="historyKnockoutPanel" class="history-knockout pairing-history-panel pairing-feature-collapse" hidden>
+        <details id="historyKnockoutPanel" class="history-knockout pairing-history-panel pairing-feature-collapse">
           <summary>TOP8 複賽對戰樹</summary>
           <p class="archive-note">預賽前八名確認後自動出現。勝負請現場手動確認，儲存後同步；七場完成且無衝突時自動更新 LP（官方正式成績優先）。</p>
-          <div id="historyKnockoutBracket" class="history-bracket"></div>
-          <div class="history-bracket-actions"><button type="button" class="primary-btn" id="historyBracketSave">儲存目前戰況</button><span id="historyBracketStatus" role="status" aria-live="polite"></span></div>
+          <div id="historyKnockoutBracket" class="history-bracket">目前尚無複賽資料</div>
+          <div id="historyBracketActions" class="history-bracket-actions" hidden><button type="button" class="primary-btn" id="historyBracketSave">儲存目前戰況</button><span id="historyBracketStatus" role="status" aria-live="polite"></span></div>
         </details>
       </section>
       <aside><section class="pairing-watch-card"><details id="pairingNoticeCollapse" class="pairing-feature-collapse"><summary>通知與姓名</summary><div id="pairingAuthCopy" class="pairing-watch-copy">正在確認登入狀態…</div><div class="pairing-watch-copy" style="margin-top:8px;">配對頁本身只提供 PTCG ID。登入你目前網站的授權帳號後，系統會用現有私人資料補上玩家真實姓名。</div></details></section></aside>
@@ -159,7 +160,7 @@
   <script src="site-version.js?v=3.0.0" defer></script>
   <script src="pairing-guest-admin.js?v=3.0.0" defer></script>
   <script src="pairing-auth-stability.js?v=3.0.0" defer></script>
-  <script src="pairing-3.0.0.js" defer></script>
+  <script src="pairing-3.0.0.js?v=event-r1" defer></script>
   <script src="pairing-odds-engine.js?v=1.11.0-r1" defer></script>
   <script src="pairing-odds.js?v=2.10.1-r2" defer></script>
   <script id="ptcgPlayerBadgesJs" src="player-badges-2.18.1.js" defer></script>
@@ -167,7 +168,7 @@
   <script id="ptcgPairingV222R4" src="pairing-v222-r4.js?v=2.7.0-r2" defer></script>
   <script src="pairing-history.js?v=3.0.0" defer></script>
   <script src="pairing-match-archive.js?v=3.0.0-top8" defer></script>
-  <script src="history-knockout.js?v=3.0.0-top8" defer></script>
+  <script src="history-knockout.js?v=3.0.0-top8-event-r1" defer></script>
   <script src="site-account-ui.js?v=3.0.0" defer></script>
   <script src="family-owner-ui.js?v=3.0.0" defer></script>
   <script>

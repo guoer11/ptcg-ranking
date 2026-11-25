@@ -3,9 +3,9 @@ const fs=require('node:fs'),assert=require('node:assert/strict'),vm=require('nod
 const source=fs.readFileSync('pairing.js','utf8');
 const constants=source.split('\n').filter(l=>l.startsWith('const DEFAULT_PLAYER_ID =')||l.startsWith('const DEFAULT_TRACKING_IDS =')).join('\n');
 const reset=source.slice(source.indexOf('function resetDefaultTrackingPlayers(){'),source.indexOf('function trackingIds(){'));
-const sync=source.slice(source.indexOf('function syncPairingWatchForm('),source.indexOf('async function fetchPairing('));
+const sync=source.slice(source.indexOf('function currentEventKey('),source.indexOf('async function fetchPairing('));
 const input={value:''},url={value:''},round={value:'1'};let extras=[];
-const ctx=vm.createContext({playerInput:()=>input,sourceInput:()=>url,roundInput:()=>round,restoreExtraPlayers:ids=>{extras=Array.from(ids||[]).slice(1)},clearMultiResults(){},clearSavedPairingWatchForm(){},savePairingWatchForm(){},pairingAuthorized:true,pairingSession:{user:{id:'owner'}},pairingFormOwner:null,activePairingWatch:null,pairingFormEdited:false,normalizeRoundUrl:()=>({url:'https://example.test/',round:2,tid:'1'}),localStorage:{getItem(){return null}},pairingWatchFormKey:()=>'',console});
+const ctx=vm.createContext({playerInput:()=>input,sourceInput:()=>url,roundInput:()=>round,restoreExtraPlayers:ids=>{extras=Array.from(ids||[]).slice(1)},clearMultiResults(){},clearSavedPairingWatchForm(){},savePairingWatchForm(){},pairingAuthorized:true,pairingSession:{user:{id:'owner'}},pairingFormOwner:null,activePairingWatch:null,pairingFormEdited:false,normalizeRoundUrl:()=>({url:'https://example.test/',round:2,tid:'1'}),localStorage:{getItem(){return null}},pairingWatchFormKey:()=>'',PAIRING_CURRENT_EVENT_KEY:'fixture:',currentEventMemory:null,document:{getElementById(){return null}},console});
 vm.runInContext(constants+'\n'+reset+'\n'+sync,ctx);
 vm.runInContext('resetDefaultTrackingPlayers()',ctx);
 assert.equal(input.value,'tw39371632');assert.deepEqual(extras,['tw69121729']);
@@ -20,6 +20,6 @@ assert.deepEqual(extras,['tw22222222'],'manual edits retained during status refr
 vm.runInContext("globalThis.pairingAccessRole='guest';resetDefaultTrackingPlayers()",ctx);
 assert.equal(input.value,'');assert.deepEqual(extras,[],'guest does not inherit the owner player defaults');
 assert.match(source,/function initPairingPage\(\)[\s\S]*?resetDefaultTrackingPlayers\(\)/);
-assert.match(source,/if \(reopened && !data\.watch\?\.active\) \{[\s\S]*?resetDefaultTrackingPlayers\(\)/);
-assert.match(fs.readFileSync('pairing.html','utf8'),/src="pairing-3\.0\.0\.js"/);
+assert.match(source,/if \(reopened && !data\.watch\?\.active && !readCurrentPairingEvent\(\)\) \{[\s\S]*?resetDefaultTrackingPlayers\(\)/);
+assert.match(fs.readFileSync('pairing.html','utf8'),/src="pairing-3\.0\.0\.js\?v=event-r1"/);
 console.log('PASS: two default players, saved active watches preserved, manual selection retained');
