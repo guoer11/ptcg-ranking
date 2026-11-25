@@ -13,12 +13,12 @@ const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,
 const now=()=>new Date().toISOString();
 const addMinutes=(mins:number)=>new Date(Date.now()+mins*60_000).toISOString();
 
-async function requireMember(req:Request) {
+async function requireMember(req:Request,allowGuest=false) {
   const token=(req.headers.get("authorization")||"").replace(/^Bearer\s+/i,"").trim();
   if(!token)throw new Error("請先登入授權帳號");
   const {data,error}=await db.auth.getUser(token);
   if(error||!data?.user)throw new Error("授權驗證失敗");
-  const {data:allowed,error:permissionError}=await db.rpc("is_pairing_authorized",{target_user:data.user.id});
+  const {data:allowed,error:permissionError}=await db.rpc(allowGuest?"is_pairing_member":"is_pairing_authorized",{target_user:data.user.id});
   if(permissionError||!allowed)throw new Error("沒有即時配對查詢權限");
   return data.user;
 }
@@ -249,20 +249,20 @@ async function archivePlayerContext(tid:string,eventTitle:string,roundRows:any,f
   // network round-trips for each historical tournament.
   const identityQueries=chunks.map(chunk=>db.from("player_identities")
     .select("player_id,real_name").in("player_id",chunk));
-  const currentQuery=db.from("pairing_deck_scouts")
+  const currentQuery=db.from("pairing_shared_scouts")
     .select("player_id,deck_name,observed_round,tid,created_at")
-    .eq("user_id",userId).eq("tid",tid).limit(5000);
+    .eq("conflict",false).eq("tid",tid).limit(5000);
   const historyQueries=chunks.map(chunk=>{
-    let query=db.from("pairing_deck_scouts")
+    let query=db.from("pairing_shared_scouts")
       .select("player_id,deck_name,tid,created_at")
-      .eq("user_id",userId).neq("tid",tid).in("player_id",chunk)
+      .eq("conflict",false).neq("tid",tid).in("player_id",chunk)
       .order("created_at",{ascending:false}).limit(500);
     if(cutoff)query=query.lte("created_at",cutoff);
     return query;
   });
-  const observationsQuery=db.from("pairing_deck_pair_observations")
+  const observationsQuery=db.from("pairing_shared_pairs")
     .select("round_no,table_no,deck_a,deck_b")
-    .eq("user_id",userId).eq("tid",tid).limit(5000);
+    .eq("conflict",false).eq("tid",tid).limit(5000);
   const [identities,current,historical,observationRows]=await Promise.all([
     Promise.all(identityQueries),currentQuery,Promise.all(historyQueries),observationsQuery
   ]);
@@ -622,6 +622,7 @@ Deno.serve(async(req:Request)=>{
       await requireCron(req);
       return json({ok:true,...await pollAll()});
     }
+    if(action==="scout-roster") {await requireMember(req,true);return json(await scoutRoster(String(body?.tid||""),Number(body?.round)));}
     const member=await requireMember(req);
     if(action==="register") {
       const tid=sourceTid(String(body?.url||""));
@@ -647,7 +648,7 @@ Deno.serve(async(req:Request)=>{
     }
     if(action==="save-knockout-bracket")return json(await saveKnockoutBracket(body));
     if(action==="save-knockout")return json(await saveKnockout(body));
-    if(action==="scout-roster")return json(await scoutRoster(String(body?.tid||""),Number(body?.round)));
+
     if(action==="list")return json({ok:true,archives:await listArchives()});
     if(action==="get")return json({ok:true,archive:await readArchive(String(body?.tid||""),body?.round==null?undefined:Number(body.round),member.id)});
     if(action==="link") {

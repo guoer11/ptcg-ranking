@@ -66,15 +66,19 @@
 
       const userId = session.user?.id || '';
       try {
-        const { data, error } = await pairingClient.rpc('can_use_pairing');
+        const { data, error } = await pairingClient.rpc('pairing_access_role');
         if (error) throw error;
         if (generation !== checkGeneration || pairingSession?.user?.id !== userId) return;
 
-        if (data === true) {
+        if (['admin','guest'].includes(data)) {
+          const priorRole = pairingAccessRole;
+          pairingAccessRole = data;
+          if (priorRole !== data && !pairingFormEdited) resetDefaultTrackingPlayers();
           lastAuthorizedUserId = userId;
           lastAuthorizedAt = Date.now();
           renderPairingAccess(true);
-          setAuthCopy('已確認授權登入，可使用姓名對照、LINE 與網站推播。');
+          setAuthCopy(data==='admin'?'已確認管理者登入，可使用姓名對照、LINE 與網站推播。':'已確認家長授權，可使用即時配對、共用牌組及網站推播。');
+          document.dispatchEvent(new CustomEvent('pairing:role-changed',{detail:{role:data}}));
           await refreshWatchStatus();
           document.dispatchEvent(new CustomEvent('pairing:auth-ready', { detail: { allowed: true } }));
           return;
@@ -82,6 +86,7 @@
 
         lastAuthorizedUserId = '';
         lastAuthorizedAt = 0;
+        pairingAccessRole = 'none';
         renderPairingAccess(false, '目前登入的帳號沒有即時配對使用權限。此功能只開放指定的授權帳號。');
         setAuthCopy('目前帳號未授權使用即時配對。');
         document.dispatchEvent(new CustomEvent('pairing:auth-ready', { detail: { allowed: false } }));

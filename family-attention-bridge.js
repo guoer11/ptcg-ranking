@@ -65,7 +65,7 @@
     try {
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.getSubscription();
-      return String(subscription?.endpoint || '');
+      return subscription?.toJSON?.()||null;
     } catch (_) {
       return '';
     }
@@ -132,7 +132,8 @@
       renderPreviousDeck('');
       return;
     }
-    const endpoint = await familySubscriptionEndpoint();
+    const credentials = await familySubscriptionEndpoint();
+    const endpoint=credentials?.endpoint;
     if (!endpoint) {
       renderPreviousDeck('');
       return;
@@ -142,7 +143,7 @@
       const response = await fetch(DECK_HISTORY_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ endpoint, player_id: playerId, current_tid: currentTid() })
+        body: JSON.stringify({ endpoint, auth:credentials.keys?.auth, player_id: playerId, current_tid: currentTid() })
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok || !data?.ok) throw new Error('deck history lookup failed');

@@ -33,7 +33,7 @@ Deno.serve(async (req: Request) => {
     const {data:device,error:deviceError}=await service.from("family_push_subscriptions")
       .select("owner_user_id").eq("endpoint",endpoint).eq("auth",auth).eq("active",true).maybeSingle();
     if(deviceError||!device?.owner_user_id)return json({ok:false},403);
-    const {data:allowed,error:allowError}=await service.rpc("is_pairing_authorized",{target_user:device.owner_user_id});
+    const {data:allowed,error:allowError}=await service.rpc("is_pairing_member",{target_user:device.owner_user_id});
     if(allowError||!allowed)return json({ok:false},403);
     const {data:rows,error}=await service.from("player_attention_marks")
       .select("player_id,note").eq("user_id",device.owner_user_id).in("player_id",ids);

@@ -221,7 +221,7 @@
     try {
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.getSubscription();
-      return String(subscription?.endpoint || '');
+      return subscription?.toJSON?.()||null;
     } catch (_) {
       return '';
     }
@@ -230,14 +230,15 @@
   async function opponentKnowledgeLookup(context, opponentId) {
     const empty = { name: '', confirmedDeck: '', possibleDeck: '', previousDeck: '' };
     if (!opponentId) return empty;
-    const endpoint = await subscriptionEndpoint();
-    if (!endpoint) return empty;
+    const credentials = await subscriptionEndpoint();
+    if (!credentials?.endpoint) return empty;
+    const endpoint=credentials.endpoint;
     try {
       const response = await fetch(DECK_HISTORY_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         cache: 'no-store',
-        body: JSON.stringify({ endpoint, player_id: opponentId, current_tid: context.tid })
+        body: JSON.stringify({ endpoint, auth:credentials.keys?.auth, player_id: opponentId, current_tid: context.tid })
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok || !data?.ok) return empty;

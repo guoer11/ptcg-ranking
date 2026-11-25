@@ -30,7 +30,7 @@ assert.match(live,/pairing-match-archive\.js/,'live page must retain background 
 assert.doesNotMatch(live,/id="matchArchive"/,'archive UI must move away from live pairing');
 assert.match(source,/ttlScoreAfterId/,'must parse numeric official TtlScore after each player ID');
 assert.match(fn,/archivePlayerContext/,'must read real names and recorded decks using authorized context');
-assert.match(fn,/\.eq\("user_id",userId\)\.eq\("tid",tid\)/,'same-event decks must be scoped to account and event');
+assert.match(fn,/\.eq\("conflict",false\)\.eq\("tid",tid\)/,'same-event shared decks exclude conflicts');
 assert.match(fn,/\.neq\("tid",tid\)\.in\("player_id",chunk\)/,'historical references must come from another event');
 assert.match(ui,/對戰前積分（TtlScore）/);
 assert.match(ui,/本場已記錄牌組/);

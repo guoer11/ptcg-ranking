@@ -3,6 +3,7 @@ const SITE_ACCOUNT_SUPABASE_KEY = 'sb_publishable_6uVBALI1T3lMZoFEUiLK4g__R7gv0f
 
 let identitySession = null;
 let identityAuthorized = false;
+let identityAccessRole = 'none';
 let identityClient = null;
 let siteAccountAuthGeneration = 0;
 
@@ -145,23 +146,26 @@ function siteAccountHidePrivateNav() {
   document.querySelectorAll('.site-nav a[href="pairing.html"], .site-nav a[href="history.html"]')
     .forEach(link => { link.hidden = true; });
 }
-function siteAccountTogglePrivateNav(allowed) {
+function siteAccountTogglePrivateNav(allowed, role='none') {
   document.querySelectorAll('.site-nav a[href="pairing.html"], .site-nav a[href="history.html"]')
-    .forEach(link => { link.hidden = !allowed; });
+    .forEach(link => { link.hidden = !allowed || (link.getAttribute('href') === 'history.html' && role !== 'admin'); });
 }
 async function siteAccountRefreshAuthorization() {
   const generation = ++siteAccountAuthGeneration;
   const userId = identitySession?.user?.id || '';
   identityAuthorized = false;
+  identityAccessRole = 'none';
   siteAccountHidePrivateNav();
   siteAccountSyncUI(identitySession ? '正在確認帳號權限…' : '');
   if (!identitySession || !identityClient) return;
   try {
-    const { data, error } = await identityClient.rpc('can_use_pairing');
+    const { data, error } = await identityClient.rpc('pairing_access_role');
     if (error) throw error;
     if (generation !== siteAccountAuthGeneration || identitySession?.user?.id !== userId) return;
-    identityAuthorized = data === true;
-    siteAccountTogglePrivateNav(identityAuthorized);
+    identityAccessRole = data || 'none';
+    identityAuthorized = ['admin','guest'].includes(data);
+    siteAccountTogglePrivateNav(identityAuthorized, identityAccessRole);
+    document.dispatchEvent(new CustomEvent('pairing:role-changed',{detail:{role:identityAccessRole}}));
     siteAccountSyncUI();
   } catch (error) {
     if (generation !== siteAccountAuthGeneration || identitySession?.user?.id !== userId) return;

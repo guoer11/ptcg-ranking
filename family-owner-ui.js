@@ -7,7 +7,7 @@ let familyOwnerSession = null;
 let familyOwnerAuthorized = false;
 let familyOwnerBusy = false;
 let familyOwnerAuthBound = false;
-let familyOwnerPlayers = [{id:'tw39371632',name:''},{id:'tw69121729',name:''}];
+let familyOwnerPlayers = [];
 function familyFilterHTML(mode='all',ids=[]) {
   const options=[...new Map([...familyOwnerPlayers,...ids.map(id=>({id,name:familyOwnerPlayers.find(p=>p.id===id)?.name||''}))].map(p=>[p.id,p])).values()];
   return `<fieldset class="family-filter"><legend>接收玩家</legend><label><input type="radio" data-filter-mode value="all" ${mode==='all'?'checked':''}> 全部追蹤玩家</label><label><input type="radio" data-filter-mode value="custom" ${mode==='custom'?'checked':''}> 指定追蹤玩家</label><div data-filter-options ${mode==='custom'?'':'hidden'}>${options.map(p=>`<label><input type="checkbox" data-filter-id value="${familyOwnerEscape(p.id)}" ${ids.includes(p.id)?'checked':''}> ${familyOwnerEscape(p.name?p.name+' · '+p.id:p.id)}</label>`).join('')}<label>其他 PTCG ID（以空格或逗號分隔）<input class="search-input" data-extra-ids placeholder="tw12345678"></label></div></fieldset>`;
@@ -292,9 +292,10 @@ async function refreshFamilyOwnerAuth() {
   }
 
   try {
-    const { data: allowed, error } = await familyOwnerClient.rpc('can_use_pairing');
+    const { data: allowed, error } = await familyOwnerClient.rpc('pairing_access_role');
     if (error) throw error;
-    familyOwnerAuthorized = allowed === true;
+    familyOwnerAuthorized = ['admin','guest'].includes(allowed);
+    if(allowed==='guest')familyOwnerPlayers=[];
     familyOwnerSetBusy(false);
     if (!familyOwnerAuthorized) {
       renderFamilyDevices([]);

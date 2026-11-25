@@ -224,6 +224,7 @@
     try{return await refreshPromise;}finally{refreshPromise=null;}
   }
   async function registerFromTracking(ev) {
+    if(typeof pairingAccessRole!=='undefined'&&pairingAccessRole==='guest')return;
     const source=ev.detail?.parsed?.url||ev.detail?.watch?.source_url;
     if(!source)return;
     try {

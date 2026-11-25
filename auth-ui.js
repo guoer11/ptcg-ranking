@@ -4,6 +4,7 @@ const IDENTITY_REDIRECT_URL = 'https://guoer11.github.io/ptcg-ranking/';
 
 let identitySession = null;
 let identityAuthorized = false;
+let identityAccessRole = 'none';
 let identityClient = null;
 let pairingNavRequestId = 0;
 let identityLoadRequestId = 0;
@@ -38,10 +39,12 @@ async function refreshPairingNavAccess() {
   if (!userId || !identityClient) return;
 
   try {
-    const { data, error } = await identityClient.rpc('can_use_pairing');
+    const { data, error } = await identityClient.rpc('pairing_access_role');
     if (requestId !== pairingNavRequestId || currentIdentityUserId() !== userId) return;
     if (error) throw error;
-    link.forEach(item => { item.hidden = data !== true; });
+    identityAccessRole = data || 'none';
+    link.forEach(item => { item.hidden = item.getAttribute('href') === 'history.html' ? data !== 'admin' : !['admin','guest'].includes(data); });
+    document.dispatchEvent(new CustomEvent('pairing:role-changed',{detail:{role:identityAccessRole}}));
   } catch (error) {
     if (requestId !== pairingNavRequestId || currentIdentityUserId() !== userId) return;
     console.warn('即時配對權限確認失敗', error);
@@ -52,6 +55,7 @@ async function refreshPairingNavAccess() {
 hidePairingNav();
 
 function clearPrivateIdentities() {
+  identityAccessRole = 'none';
   identityData = { updated_at: null, count: 0, players: {} };
   identityAuthorized = false;
 }
@@ -132,7 +136,7 @@ function updateIdentityTextUI() {
   const lookupHint = document.getElementById('playerLookupHint');
   const noticeText = document.getElementById('versionNoticeText');
 
-  if (identityAuthorized) {
+  if (identityAuthorized && identityAccessRole === 'admin') {
     if (searchInput) searchInput.placeholder = '搜尋玩家名稱 / 真實姓名 / PTCG ID / 地區';
     if (lookupDescription) lookupDescription.textContent = '輸入真實姓名、暱稱或 PTCG ID。';
     if (lookupInput) lookupInput.placeholder = '姓名 / 暱稱 / PTCG ID';
@@ -186,6 +190,17 @@ async function loadPrivateIdentities() {
   let from = 0;
 
   try {
+    const role = await identityClient.rpc('pairing_access_role');
+    if (role.error) throw role.error;
+    if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
+    identityAccessRole = role.data || 'none';
+    if (identityAccessRole !== 'admin') {
+      identityAuthorized = identityAccessRole === 'guest';
+      updateIdentityAuthUI();
+      await refreshPairingNavAccess();
+      renderRanking();
+      return;
+    }
     while (true) {
       const { data, error } = await identityClient
         .from('player_identities')

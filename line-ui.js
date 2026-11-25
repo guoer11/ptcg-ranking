@@ -30,7 +30,7 @@ function lineSetUsage(usage) {
 }
 
 function lineSetBusy(busy) {
-  if (lineTestButton()) lineTestButton().disabled = busy || !identityAuthorized;
+  if (lineTestButton()) lineTestButton().disabled = busy || !identityAuthorized || (typeof identityAccessRole!=='undefined'&&identityAccessRole!=='admin');
 }
 
 async function lineRequest(action) {
@@ -49,7 +49,7 @@ async function lineRequest(action) {
 }
 
 async function lineRefreshStatus() {
-  if (!identityAuthorized || !identitySession) {
+  if (!identityAuthorized || (typeof identityAccessRole!=='undefined'&&identityAccessRole!=='admin') || !identitySession) {
     lineSetStatus(identitySession ? '目前登入的帳號沒有 LINE 通知設定權限。' : '請先在上方登入授權 Google 帳號。');
     lineSetUsage(null);
     lineSetBusy(true);
@@ -75,7 +75,7 @@ async function lineRefreshStatus() {
 }
 
 async function lineHandleTest() {
-  if (!identityAuthorized || !identitySession) {
+  if (!identityAuthorized || (typeof identityAccessRole!=='undefined'&&identityAccessRole!=='admin') || !identitySession) {
     lineSetStatus('請先以授權帳號登入。');
     return;
   }

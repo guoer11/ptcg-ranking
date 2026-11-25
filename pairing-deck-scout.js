@@ -12,6 +12,8 @@
   let queryBusy = false;
   let scoutRevision = 0;
   let nameCandidates = null;
+  let realtimeChannel=null,realtimeTimer=null,realtimeUser='',saving=0;
+  let lastMainDetail=null;
 
   const $ = id => document.getElementById(id);
 
@@ -180,8 +182,8 @@
   async function scoutRows(tid, ids = []) {
     if (!tid || !pairingClient) return [];
     let query = pairingClient
-      .from('pairing_deck_scouts')
-      .select('player_id,deck_name,observed_round,table_no,updated_at')
+      .from('pairing_shared_scouts')
+      .select('player_id,deck_name,observed_round,table_no,updated_at,user_id,conflict,contributor_count,alternatives')
       .eq('tid', String(tid));
     if (ids.length) query = query.in('player_id', ids.map(normalizePlayerId));
     const { data, error } = await query;
@@ -192,8 +194,8 @@
   async function pairObservationRows(tid) {
     if (!tid || !pairingClient) return [];
     const { data, error } = await pairingClient
-      .from('pairing_deck_pair_observations')
-      .select('round_no,table_no,player_a_id,player_b_id,deck_a,deck_b,created_at,updated_at')
+      .from('pairing_shared_pairs')
+      .select('round_no,table_no,player_a_id,player_b_id,deck_a,deck_b,created_at,updated_at,user_id,conflict,contributor_count')
       .eq('tid', String(tid))
       .order('created_at', { ascending: true });
     if (error) throw error;
@@ -203,8 +205,8 @@
   async function pairObservation(tid, round, table) {
     if (!tid || !pairingClient) return null;
     const { data, error } = await pairingClient
-      .from('pairing_deck_pair_observations')
-      .select('round_no,table_no,player_a_id,player_b_id,deck_a,deck_b,created_at,updated_at')
+      .from('pairing_shared_pairs')
+      .select('round_no,table_no,player_a_id,player_b_id,deck_a,deck_b,created_at,updated_at,user_id,conflict,contributor_count')
       .eq('tid', String(tid))
       .eq('round_no', Number(round))
       .eq('table_no', String(table))
@@ -247,6 +249,7 @@
     const { error } = await pairingClient
       .from('pairing_deck_pair_observations')
       .delete()
+      .eq('user_id',currentUserId())
       .eq('tid', String(tid))
       .eq('round_no', Number(round))
       .eq('table_no', String(table));
@@ -255,12 +258,14 @@
 
   function possibleDecksForPlayer(playerId, exactRows, pairRows) {
     const id = normalizePlayerId(playerId);
-    const exact = new Map(exactRows.map(row => [normalizePlayerId(row.player_id), row.deck_name]));
+    const conflict=exactRows.find(row=>normalizePlayerId(row.player_id)===id&&row.conflict);
+    if(conflict)return {confirmed:'',possible:conflict.alternatives||[],conflict:true};
+    const exact = new Map(exactRows.filter(row=>!row.conflict).map(row => [normalizePlayerId(row.player_id), row.deck_name]));
     if (exact.has(id)) return { confirmed: exact.get(id), possible: [] };
 
     const possible = new Set();
     for (const row of pairRows) {
-      if (!pairDeckConsistent(row, exact)) continue; // Ignore conflicting historical guesses.
+      if (row.conflict || !pairDeckConsistent(row, exact)) continue; // Ignore conflicting historical guesses.
       const a = normalizePlayerId(row.player_a_id);
       const b = normalizePlayerId(row.player_b_id);
       if (a !== id && b !== id) continue;
@@ -327,13 +332,17 @@
     const cards = ids.map((id, index) => {
       const display = playerLabel(id, index, names, match);
       const selected = savedMap[id] || '';
+      const record=saved.find(r=>normalizePlayerId(r.player_id)===id);
+      const conflict=record?.conflict;
+      const source=record?`<small>共用紀錄 · ${Number(record.contributor_count||1)} 人登記${record.user_id===currentUserId()?' · 包含自己的紀錄':''}</small>`:'';
+      const conflictUI=conflict?`<small style="color:#b45309;font-weight:700">牌組衝突：${(record.alternatives||[]).map(esc).join(' / ')}（暫不計入統計）</small>${typeof pairingAccessRole!=='undefined'&&pairingAccessRole==='admin'?(record.alternatives||[]).map(deck=>`<button type="button" class="secondary-btn" data-resolve-player="${esc(id)}" data-resolve-deck="${esc(deck)}">採用 ${esc(deck)}</button>`).join(''):''}`:'';
       const knowledge = possibleDecksForPlayer(id, saved, allPairs);
       const possible = !selected && knowledge.possible.length
         ? `<em class="pairing-scout-player-possible">可能：${knowledge.possible.map(esc).join(' / ')}</em>`
         : '';
       return `
         <article class="pairing-scout-player">
-          <div><span>玩家 ${index + 1}</span><strong>${esc(display)}</strong><small>${esc(id)}</small>${possible}</div>
+          <div><span>玩家 ${index + 1}</span><strong>${esc(display)}</strong><small>${esc(id)}</small>${possible}${source}${conflictUI}</div>
           <select data-scout-player="${esc(id)}" ${deckCatalog.length ? '' : 'disabled'}>
             ${deckOptions(selected)}
           </select>
@@ -343,6 +352,7 @@
     box.className = 'pairing-scout-result is-found';
     box.innerHTML = `
       <div class="pairing-scout-result-head"><strong>第 ${esc(match.table || table)} 桌</strong><span>Round ${esc(data.round || '—')} · TID ${esc(data.tid || '—')}</span></div>
+      ${pairSaved?.conflict?`<div class="pairing-scout-message error">同桌牌組紀錄有衝突，暫不列入統計。${typeof pairingAccessRole!=='undefined'&&pairingAccessRole==='admin'?'<button type="button" class="secondary-btn" id="pairingResolvePair">選擇採用的登記</button>':''}</div>`:''}
       <label class="pairing-scout-unknown-toggle">
         <input id="pairingScoutUnknownToggle" type="checkbox" ${pairSaved ? 'checked' : ''}>
         <span><strong>不知道哪位是哪副牌</strong><small>只記這桌看到的兩副牌，不必先認出玩家。</small></span>
@@ -377,20 +387,47 @@
       if (!toggle.checked && pairSaved) setStatus('已切換成玩家辨識模式，原雙牌組紀錄仍保留。', 'success');
     });
 
+    box.querySelectorAll('[data-resolve-player]').forEach(button=>button.addEventListener('click',async()=>{
+      if(!isCurrentScout(data)||pairingAccessRole!=='admin')return;
+      const id=button.dataset.resolvePlayer;
+      const record=saved.find(r=>normalizePlayerId(r.player_id)===id),chosen=button.dataset.resolveDeck||'';
+      if(!record?.alternatives?.includes(chosen))return setStatus('請先選擇現有衝突紀錄中的牌組。','error');
+      const {error}=await pairingClient.from('pairing_scout_resolutions').upsert({tid:String(data.tid),player_id:id,deck_name:chosen,resolved_by:currentUserId(),resolved_at:new Date().toISOString()},{onConflict:'tid,player_id'});
+      if(error)return setStatus(error.message,'error');
+      await syncSharedScouting();
+    }));
+    $('pairingResolvePair')?.addEventListener('click',async()=>{
+      if(!isCurrentScout(data)||pairingAccessRole!=='admin')return;
+      const {data:records,error}=await pairingClient.from('pairing_deck_pair_observations').select('user_id,player_a_id,player_b_id,deck_a,deck_b').eq('tid',String(data.tid)).eq('round_no',Number(data.round)).eq('table_no',String(match.table||table));
+      if(error)return setStatus(error.message,'error');
+      const choices=records||[];
+      const panel=document.createElement('div');panel.className='pairing-scout-message';
+      for(const record of choices){
+        const option=document.createElement('button');option.type='button';option.className='secondary-btn';option.textContent=(record.user_id===currentUserId()?'自己':'其他家長')+'：'+record.deck_a+' / '+record.deck_b;
+        option.addEventListener('click',async()=>{
+          const {error}=await pairingClient.from('pairing_pair_resolutions').upsert({tid:String(data.tid),round_no:Number(data.round),table_no:String(match.table||table),chosen_user_id:record.user_id,deck_a:record.deck_a,deck_b:record.deck_b,player_a_id:record.player_a_id,player_b_id:record.player_b_id,resolved_by:currentUserId(),resolved_at:new Date().toISOString()},{onConflict:'tid,round_no,table_no'});
+          if(error)return setStatus(error.message,'error');await syncSharedScouting();
+        });panel.append(option);
+      }
+      $('pairingResolvePair')?.replaceWith(panel);
+    });
     box.querySelectorAll('[data-scout-player]').forEach(select => {
       select.addEventListener('change', async () => {
         if (!isCurrentScout(data)) return setStatus('活動或 Round 已變更，請重新查詢配對後再存檔。', 'error');
         const deckName = select.value;
         if (!deckName) return;
         select.disabled = true;
+        saving++;
         try {
           await saveScout(data.tid, data.round, match.table || table, select.dataset.scoutPlayer, deckName);
-          setStatus(`已確認：${deckName}`, 'success');
+          const latest=await scoutRows(data.tid,[select.dataset.scoutPlayer]);
+          setStatus(latest[0]?.conflict?'已保存你的登記；與其他紀錄衝突，等待管理者確認。':`已確認：${deckName}`,latest[0]?.conflict?'error':'success');
           await refreshStats(data.tid);
         } catch (error) {
           setStatus(`儲存失敗：${error?.message || error}`, 'error');
         } finally {
           select.disabled = false;
+          saving--;scheduleSharedSync();
         }
       });
     });
@@ -405,6 +442,7 @@
       }
       const selects = [$('pairingScoutPairDeckA'), $('pairingScoutPairDeckB')].filter(Boolean);
       selects.forEach(select => { select.disabled = true; });
+      saving++;
       try {
         await savePairObservation(data.tid, data.round, match.table || table, ids[0], ids[1], deckA, deckB);
         setStatus(`已記錄這桌：${deckA} vs ${deckB}（尚未對應玩家）`, 'success');
@@ -413,6 +451,7 @@
         setStatus(`儲存失敗：${error?.message || error}`, 'error');
       } finally {
         selects.forEach(select => { select.disabled = false; });
+        saving--;scheduleSharedSync();
       }
     }
 
@@ -559,20 +598,21 @@
     const [exactRows, pairRows] = await Promise.all([scoutRows(tid), pairObservationRows(tid)]);
     const counts = new Map();
     const countedPlayers = new Set();
-    const exactMap = new Map(exactRows.map(row => [normalizePlayerId(row.player_id), row.deck_name]));
+    const blockedPlayers=new Set(exactRows.filter(r=>r.conflict).map(r=>normalizePlayerId(r.player_id)));
+    const exactMap = new Map(exactRows.filter(r=>!r.conflict).map(row => [normalizePlayerId(row.player_id), row.deck_name]));
     let ambiguousPairs = 0;
     let conflictingPairs = 0;
 
     const add = deck => counts.set(deck, (counts.get(deck) || 0) + 1);
     for (const row of exactRows) {
       const id = normalizePlayerId(row.player_id);
-      if (!id || countedPlayers.has(id)) continue;
+      if (!id || row.conflict || countedPlayers.has(id)) continue;
       countedPlayers.add(id);
       add(row.deck_name);
     }
 
     for (const row of pairRows) {
-      if (!pairDeckConsistent(row, exactMap)) { conflictingPairs++; continue; }
+      if (row.conflict || blockedPlayers.has(normalizePlayerId(row.player_a_id)) || blockedPlayers.has(normalizePlayerId(row.player_b_id)) || !pairDeckConsistent(row, exactMap)) { conflictingPairs++; continue; }
       const a = normalizePlayerId(row.player_a_id);
       const b = normalizePlayerId(row.player_b_id);
       if (!a || !b) continue;
@@ -614,7 +654,7 @@
 
     const sorted = [...counts.entries()].sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-Hant'));
     if (!sorted.length) {
-      box.innerHTML = '<div class="pairing-scout-stats-empty">這場比賽還沒有牌組紀錄。</div>';
+      box.innerHTML = '<div class="pairing-scout-stats-empty">'+(blockedPlayers.size||conflictingPairs?'牌組紀錄有衝突，暫無可確認統計。':'這場比賽還沒有牌組紀錄。')+'</div>';
       return;
     }
 
@@ -630,6 +670,7 @@
       return `<div><i style="--dot:hsl(${(index * 67 + 210) % 360} 65% 56%)"></i><span>${esc(name)}</span><b>${count} · ${pct}%</b></div>`;
     }).join('');
     const notes = [];
+    if(blockedPlayers.size)notes.push(blockedPlayers.size+' 位玩家牌組衝突，暫不計入');
     if (ambiguousPairs) notes.push(`含 ${ambiguousPairs} 桌未辨識`);
     if (conflictingPairs) notes.push(`${conflictingPairs} 桌牌組紀錄有衝突，已排除推估`);
     const note = notes.length ? `（${notes.join('；')}）` : '';
@@ -642,6 +683,7 @@
   }
 
   async function decorateMainPairing(detail) {
+    lastMainDetail=detail;
     const data = detail?.data;
     const opponentId = normalizePlayerId(detail?.opponentId);
     const tid = String(data?.tid || '');
@@ -653,7 +695,8 @@
     article.querySelector('.pairing-scout-known')?.remove();
 
     const badge = document.createElement('div');
-    if (knowledge.confirmed) {
+    if(knowledge.conflict){badge.className='pairing-scout-known possible';badge.textContent='牌組衝突：'+knowledge.possible.join(' / ');}
+    else if (knowledge.confirmed) {
       badge.className = 'pairing-scout-known';
       badge.innerHTML = `已記錄牌組：<strong>${esc(knowledge.confirmed)}</strong>`;
     } else if (knowledge.possible.length) {
@@ -700,8 +743,33 @@
     setBusy(false);
   }
 
+  async function syncSharedScouting(){
+    if(!pairingAuthorized||!currentUserId()||saving||queryBusy)return;
+    const context=currentContext;
+    if(context&&isCurrentScout(context.data)){
+      await renderScoutMatch(context.data,context.table,context.target);
+      await refreshStats(context.data.tid);
+      document.dispatchEvent(new CustomEvent('pairing:scout-rendered',{detail:context.data}));
+    }
+    if(lastMainDetail)await decorateMainPairing(lastMainDetail);
+  }
+  function scheduleSharedSync(){
+    clearTimeout(realtimeTimer);realtimeTimer=setTimeout(()=>{if(saving||queryBusy||document.activeElement?.closest?.('#pairingScoutResult select')){scheduleSharedSync();return;}void syncSharedScouting().catch(error=>console.warn('共用牌組同步失敗',error));},300);
+  }
+  function bindSharedRealtime(){
+    const uid=pairingAuthorized?currentUserId():'';
+    if(uid===realtimeUser)return;
+    if(realtimeChannel){void pairingClient?.removeChannel(realtimeChannel);realtimeChannel=null;}
+    realtimeUser=uid;
+    if(!uid||!pairingClient?.channel)return;
+    let channel=pairingClient.channel('ptcg-shared-scout-'+uid);
+    for(const table of ['pairing_deck_scouts','pairing_deck_pair_observations','pairing_scout_resolutions','pairing_pair_resolutions'])
+      channel=channel.on('postgres_changes',{event:'*',schema:'public',table},scheduleSharedSync);
+    realtimeChannel=channel.subscribe(status=>{if(status==='SUBSCRIBED')scheduleSharedSync();});
+  }
   async function onAuthorized() {
-    if (!pairingAuthorized || !pairingSession?.user?.id) return;
+    bindSharedRealtime();
+    if (!pairingAuthorized || !pairingSession?.user?.id) {initializedForUser='';lastMainDetail=null;invalidateScoutContext();return;}
     if (initializedForUser === pairingSession.user.id) return;
     initializedForUser = pairingSession.user.id;
     try { await loadCatalog(); }
@@ -709,6 +777,7 @@
   }
 
   document.addEventListener('pairing:auth-ready', onAuthorized);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&pairingAuthorized)scheduleSharedSync();});
   document.addEventListener('deck-catalog-updated', async () => {
     if (!pairingAuthorized || !pairingSession?.user?.id) return;
     try {

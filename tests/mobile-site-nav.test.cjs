@@ -31,6 +31,6 @@ assert.match(css,/#identityAuthButton::after \{ content:"我的"/);
 assert.match(css,/modal-open \.site-nav \{ visibility:hidden; \}/);
 assert.match(account,/siteAccountEnsureControls/);
 assert.match(account,/button\.addEventListener\('click', siteAccountOpenPanel\)/);
-assert.match(account,/can_use_pairing/);
-assert.match(account,/link\.hidden = !allowed/);
+assert.match(account,/pairing_access_role/);
+assert.match(account,/link\.hidden = !allowed/);assert.match(account,/role !== 'admin'/);
 console.log('PASS: mobile fixed nav, safe area, unique links, unchanged private gating and account action');

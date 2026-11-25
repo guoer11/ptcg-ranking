@@ -10,7 +10,7 @@ const families=[
  {endpoint:'inactive',active:false,player_filter_mode:'all',allowed_player_ids:[]}
 ];
 const sends=[],lines=[];
-const service={from(table){const q={select(){return q},eq(){return q},then(resolve){return Promise.resolve({data:table==='push_subscriptions'?rows:families,error:null}).then(resolve)}};return q;},rpc(){return Promise.resolve({data:{public_key:'fixture',private_key:'fixture',subject:'fixture'}})}};
+const service={from(table){const q={select(){return q},eq(){return q},then(resolve){return Promise.resolve({data:table==='push_subscriptions'?rows:families,error:null}).then(resolve)}};return q;},rpc(name){if(['is_pairing_member','is_pairing_authorized'].includes(name))return Promise.resolve({data:true,error:null});return Promise.resolve({data:{public_key:'fixture',private_key:'fixture',subject:'fixture'}})}};
 function edge(path){let handler;const ctx=vm.createContext({URL,URLSearchParams,TextEncoder,TextDecoder,Request,Response,AbortSignal,atob,btoa,console,fetch:async()=>{throw Error('no network')},Deno:{env:{get:()=>''},serve:fn=>{handler=fn}},createClient:()=>service,sendNotification:async(sub,payload)=>sends.push({endpoint:sub.endpoint,payload:JSON.parse(payload)}),ids,A,B,lines});
  vm.runInContext(stripTypeScriptTypes(read(path).replace(/^import .*;\s*$/gm,''),{mode:'transform'}),ctx,{filename:path});
  return {ctx,handler,run:s=>vm.runInContext(s,ctx)};

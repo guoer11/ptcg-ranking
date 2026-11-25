@@ -108,11 +108,11 @@ async function refreshTournamentPairingNav() {
     }
     const { data: sessionData } = await tournamentPairingClient.auth.getSession();
     if (!sessionData?.session) return;
-    const { data: allowed, error } = await tournamentPairingClient.rpc('can_use_pairing');
+    const { data: allowed, error } = await tournamentPairingClient.rpc('pairing_access_role');
     if (error) throw error;
-    if (allowed === true) {
+    if (['admin','guest'].includes(allowed)) {
       insertTournamentPairingNav();
-      await loadTournamentPrivateIdentities();
+      if(allowed==='admin')await loadTournamentPrivateIdentities();else tournamentIdentityMap={};
     } else {
       tournamentIdentityMap = {};
     }

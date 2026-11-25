@@ -10,6 +10,7 @@ const TEST_TID = '3000442';
 let pairingClient = null;
 let pairingSession = null;
 let pairingAuthorized = false;
+let pairingAccessRole = 'none';
 let lastPairing = null;
 let activePairingWatch = null;
 let pairingFormOwner = null;
@@ -543,7 +544,7 @@ async function handleStopWatch() {
 function loadHistoricalTest() {
   pairingFormEdited = true;
   if (sourceInput()) sourceInput().value = TEST_TOURNAMENT_URL;
-  if (playerInput()) playerInput().value = DEFAULT_PLAYER_ID;
+  if (playerInput()) playerInput().value = pairingAccessRole==='guest'?'':DEFAULT_PLAYER_ID;
   if (roundInput()) roundInput().value = '1';
   setPairingMessage('已載入 2026/9/12 高級球孩童組歷史測試場。可測 Round 配對通知或最終排名通知。');
 }
@@ -551,9 +552,10 @@ function loadHistoricalTest() {
 async function verifyPairingAuthorization() {
   if (!pairingSession || !pairingClient) return false;
   try {
-    const { data, error } = await pairingClient.rpc('can_use_pairing');
+    const { data, error } = await pairingClient.rpc('pairing_access_role');
     if (error) throw error;
-    return data === true;
+    pairingAccessRole = data || 'none';
+    return ['admin','guest'].includes(data);
   } catch (error) {
     console.warn('即時配對權限確認失敗', error);
     return false;
@@ -624,8 +626,9 @@ function restoreExtraPlayers(ids=[]){
   updateExtraPlayerButtons();
 }
 function resetDefaultTrackingPlayers(){
-  if(playerInput())playerInput().value=DEFAULT_TRACKING_IDS[0];
-  restoreExtraPlayers(DEFAULT_TRACKING_IDS);
+  const ids=typeof pairingAccessRole!=='undefined'&&pairingAccessRole==='guest'?[]:DEFAULT_TRACKING_IDS;
+  if(playerInput())playerInput().value=ids[0]||'';
+  restoreExtraPlayers(ids);
 }
 function trackingIds(){
   const ids=[playerInput()?.value,...extraPlayerInputs().map(input=>input.value)].map(normalizePlayerId);

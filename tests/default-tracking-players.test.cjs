@@ -17,7 +17,9 @@ vm.runInContext("syncPairingWatchForm({active:true,user_id:'owner',player_id:'tw
 assert.equal(input.value,'tw11111111');assert.deepEqual(extras,['tw22222222'],'active multi-player watch restores saved IDs');
 vm.runInContext('pairingFormEdited=true;syncPairingWatchForm(null)',ctx);
 assert.deepEqual(extras,['tw22222222'],'manual edits retained during status refresh');
+vm.runInContext("globalThis.pairingAccessRole='guest';resetDefaultTrackingPlayers()",ctx);
+assert.equal(input.value,'');assert.deepEqual(extras,[],'guest does not inherit the owner player defaults');
 assert.match(source,/function initPairingPage\(\)[\s\S]*?resetDefaultTrackingPlayers\(\)/);
 assert.match(source,/if \(reopened && !data\.watch\?\.active\) \{[\s\S]*?resetDefaultTrackingPlayers\(\)/);
-assert.match(fs.readFileSync('pairing.html','utf8'),/src="pairing-2\.19\.1\.js"/);
+assert.match(fs.readFileSync('pairing.html','utf8'),/src="pairing-3\.0\.0\.js"/);
 console.log('PASS: two default players, saved active watches preserved, manual selection retained');

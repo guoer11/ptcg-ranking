@@ -13,7 +13,7 @@ export function createHandler(authService:any,dataReader:any=reader) {
       if(!token)return json({ok:false,error:"請先登入授權帳號。"},401);
       const {data,error}=await authService.auth.getUser(token);
       if(error || !data?.user)return json({ok:false,error:"登入已失效，請重新登入。"},401);
-      const {data:allowed,error:allowError}=await authService.rpc("is_pairing_authorized",{target_user:data.user.id});
+      const {data:allowed,error:allowError}=await authService.rpc("is_pairing_member",{target_user:data.user.id});
       if(allowError || allowed!==true)return json({ok:false,error:"此帳號未授權使用即時配對。"},403);
       const raw=await req.text();if(raw.length>8192)return json({ok:false,error:"request too large"},413);
       let body:any;try{body=JSON.parse(raw);}catch{return json({ok:false,error:"invalid JSON"},400);}

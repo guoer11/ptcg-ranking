@@ -71,9 +71,9 @@
   async function exactRows(tid = '') {
     if (!pairingClient || !pairingAuthorized || !currentUserId()) return [];
     let query = pairingClient
-      .from('pairing_deck_scouts')
+      .from('pairing_shared_scouts')
       .select('tid,player_id,deck_name,observed_round,table_no,created_at,updated_at')
-      .eq('user_id', currentUserId());
+      .eq('conflict', false);
     if (tid) query = query.eq('tid', String(tid));
     const { data, error } = await query;
     if (error) throw error;
@@ -83,9 +83,9 @@
   async function pairRows(tid = '') {
     if (!pairingClient || !pairingAuthorized || !currentUserId()) return [];
     let query = pairingClient
-      .from('pairing_deck_pair_observations')
+      .from('pairing_shared_pairs')
       .select('tid,round_no,table_no,player_a_id,player_b_id,deck_a,deck_b,created_at,updated_at')
-      .eq('user_id', currentUserId());
+      .eq('conflict', false);
     if (tid) query = query.eq('tid', String(tid));
     const { data, error } = await query;
     if (error) throw error;
@@ -97,9 +97,9 @@
     if (!id || !currentTid || !pairingClient || !pairingAuthorized) return null;
 
     const { data: current, error: currentError } = await pairingClient
-      .from('pairing_deck_scouts')
+      .from('pairing_shared_scouts')
       .select('tid,deck_name,created_at')
-      .eq('user_id', currentUserId())
+      .eq('conflict', false)
       .eq('tid', String(currentTid))
       .eq('player_id', id)
       .maybeSingle();
@@ -107,9 +107,9 @@
     if (current?.deck_name) return null;
 
     const { data, error } = await pairingClient
-      .from('pairing_deck_scouts')
+      .from('pairing_shared_scouts')
       .select('tid,deck_name,created_at')
-      .eq('user_id', currentUserId())
+      .eq('conflict', false)
       .eq('player_id', id)
       .neq('tid', String(currentTid))
       .order('created_at', { ascending: false })

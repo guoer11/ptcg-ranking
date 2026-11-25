@@ -25,7 +25,7 @@ async function requireUser(req: Request) {
   if (!token) throw new Error("missing authorization");
   const { data, error } = await service.auth.getUser(token);
   if (error || !data?.user) throw new Error("unauthorized");
-  const { data: allowed, error: allowError } = await service.rpc("is_pairing_authorized", { target_user: data.user.id });
+  const { data: allowed, error: allowError } = await service.rpc("is_pairing_member", { target_user: data.user.id });
   if (allowError || !allowed) throw new Error("unauthorized");
   return data.user;
 }
@@ -134,14 +134,14 @@ async function resolveDeckKnowledge(userId: string, tid: string, playerId: strin
 
   const [{ data: exactRows }, { data: pairRows }] = await Promise.all([
     service
-      .from("pairing_deck_scouts")
+      .from("pairing_shared_scouts")
       .select("player_id,deck_name")
-      .eq("user_id", userId)
+      .eq("conflict",false)
       .eq("tid", String(tid)),
     service
-      .from("pairing_deck_pair_observations")
+      .from("pairing_shared_pairs")
       .select("player_a_id,player_b_id,deck_a,deck_b")
-      .eq("user_id", userId)
+      .eq("conflict",false)
       .eq("tid", String(tid)),
   ]);
 
@@ -283,7 +283,9 @@ async function sendLine(title: string, body: string) {
 
 async function sendBoth(userId: string, title: string, lineBody: string, pushBody = lineBody, familyUrl = "", familyRoute?:FamilyRoute) {
   const started=Date.now();
-  const [line, push] = await Promise.allSettled([sendLine(title, lineBody), sendWebPush(userId, title, pushBody, familyUrl, familyRoute)]);
+  const [member,admin]=await Promise.all([service.rpc("is_pairing_member",{target_user:userId}),service.rpc("is_pairing_authorized",{target_user:userId})]);
+  if(member.error||member.data!==true)return {line:{sent:false,reason:"not_authorized"},push:{sent:0}};
+  const [line, push] = await Promise.allSettled([admin.data===true&&!admin.error?sendLine(title,lineBody):Promise.resolve({sent:false,reason:"guest_web_only"}), sendWebPush(userId, title, pushBody, familyUrl, familyRoute)]);
   const result={
     line: line.status === "fulfilled" ? line.value : { sent: false, error: String(line.reason) },
     push: push.status === "fulfilled" ? push.value : { sent: 0, error: String(push.reason) },
@@ -421,8 +423,8 @@ function shortText(value: unknown, max = 48) { return Array.from(String(value ??
 function labelFor(id: string, name: string) { return name ? shortText(name,32)+" ("+id+")" : id; }
 async function previousDeckFor(userId:string,tid:string,playerId:string) {
   if(!playerId)return "";
-  const {data,error}=await service.from("pairing_deck_scouts").select("deck_name")
-    .eq("user_id",userId).eq("player_id",playerId.toLowerCase()).neq("tid",tid)
+  const {data,error}=await service.from("pairing_shared_scouts").select("deck_name")
+    .eq("conflict",false).eq("player_id",playerId.toLowerCase()).neq("tid",tid)
     .order("updated_at",{ascending:false}).limit(1);
   if(error){console.warn("multi-previous-deck",error.message);return "";}
   return shortText(data?.[0]?.deck_name);
@@ -654,10 +656,13 @@ async function pollAll() {
   const { data: watches, error } = await service.from("pairing_watches").select("*").eq("active", true);
   if (error) throw error;
   const results: unknown[] = [];
-  for (const watch of watches || []) {
-    try { results.push(await pollOne(watch)); }
-    catch (error: any) { trace("poll-error",{watch_id:watch.id,round:watch.next_round});results.push({ id: watch.id, error: String(error?.message || error) }); }
-  }
+  await Promise.all((watches||[]).map(async(watch:any)=>{
+    try {
+      const {data:allowed,error}=await service.rpc("is_pairing_member",{target_user:watch.user_id});
+      if(error||allowed!==true){if(!error)await service.from("pairing_watches").update({active:false,updated_at:new Date().toISOString()}).eq("id",watch.id).eq("updated_at",watch.updated_at);return;}
+      results.push(await pollOne(watch));
+    }catch(error:any){trace("poll-error",{watch_id:watch.id,round:watch.next_round});results.push({id:watch.id,error:String(error?.message||error)});}
+  }));
   return results;
 }
 
@@ -667,7 +672,13 @@ Deno.serve(async (req: Request) => {
   try {
     const body = await req.json().catch(() => ({}));
     const action = String(body?.action || "");
-    if (action === "poll") return json({ ok: true, results: await pollAll() });
+    if (action === "poll") {
+      const {data:cfg,error}=await service.rpc("get_ptcg_github_trigger_config_for_service");
+      const secret=String(cfg?.cron_secret||"");
+      if(error||!secret||req.headers.get("x-ptcg-cron-secret")!==secret)return json({ok:false,error:"unauthorized"},403);
+      const results=await pollAll();
+      return json({ok:true,checked:results.length});
+    }
 
     const user = await requireUser(req);
     if (["lookup-multi","final-multi","start-multi","test-multi","test-final-multi"].includes(action)) {

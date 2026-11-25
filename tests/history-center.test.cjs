@@ -37,7 +37,7 @@ const tournamentHTML=read('tournaments.html');
 assert.match(tournamentJS,/existing\.hidden = false;/,'reuse the existing private pairing link');
 assert.match(tournamentJS,/a\[href="pairing\.html"\]:not\(\[data-pairing-nav\]\)/,'no extra pairing link');
 assert.equal((tournamentHTML.match(/<a\b[^>]*href="pairing\.html"/g)||[]).length,1,'one actual pairing link per page');
-assert.match(tournamentHTML,/tournaments\.js\?v=2\.12\.0-r2/,'bust the cached legacy dynamic nav');
+assert.match(tournamentHTML,/tournaments\.js\?v=3\.0\.0/,'bust the cached legacy dynamic nav');
 const mapped=JSON.parse(read('data/preliminary_sources.json')).sources.find(s=>s.tid==='5865462');
 assert.equal(mapped?.event_id,'66990','verified 11/21 archived tournament mapping must be present');
 assert.match(read('site-version.js'),/const SITE_VERSION = 'v\d+\.\d+\.\d+';/,'version format must be valid without pinning an obsolete release');

@@ -25,7 +25,7 @@ async function requireAuthorizedUser(req: Request) {
   if (!token) throw new Error("missing authorization");
   const { data, error } = await service.auth.getUser(token);
   if (error || !data?.user) throw new Error("unauthorized");
-  const { data: allowed, error: allowError } = await service.rpc("is_pairing_authorized", { target_user: data.user.id });
+  const { data: allowed, error: allowError } = await service.rpc("is_pairing_member", { target_user: data.user.id });
   if (allowError || !allowed) throw new Error("unauthorized");
   return data.user;
 }
@@ -78,7 +78,9 @@ function filterSettings(body: any) {
 async function playerOptions(userId: string, extras: string[] = []) {
   const {data,error}=await service.from("pairing_watches").select("player_id,player_ids").eq("user_id",userId).eq("active",true);
   if(error)throw error;
-  const ids=[...new Set([...DEFAULT_IDS,...(data||[]).flatMap((w:any)=>w.player_ids?.length?w.player_ids:[w.player_id]),...extras])].filter(id=>/^tw\d{1,16}$/.test(id));
+  const {data:admin,error:adminError}=await service.rpc("is_pairing_authorized",{target_user:userId});
+  if(adminError)throw adminError;
+  const ids=[...new Set([...(admin===true?DEFAULT_IDS:[]),...(data||[]).flatMap((w:any)=>w.player_ids?.length?w.player_ids:[w.player_id]),...extras])].filter(id=>/^tw\d{1,16}$/.test(id));
   const {data:names,error:nameError}=await service.from("player_identities").select("player_id,real_name").in("player_id",ids);
   if(nameError)throw nameError;
   return ids.map(id=>({id,name:names?.find((n:any)=>n.player_id===id)?.real_name||""}));
@@ -144,6 +146,8 @@ async function subscribeFamily(token: string, subscription: any, platform: strin
   if (!invite) throw new Error("邀請連結不存在或已失效");
   if (invite.used_at) throw new Error("這個邀請連結已經使用過");
   if (Date.parse(invite.expires_at) <= Date.now()) throw new Error("這個邀請連結已過期，請重新產生");
+  const {data:allowed,error:allowError}=await service.rpc("is_pairing_member",{target_user:invite.owner_user_id});
+  if(allowError||allowed!==true)throw new Error("邀請者未獲授權");
 
   const endpoint = String(subscription?.endpoint || "").trim();
   const p256dh = String(subscription?.keys?.p256dh || "").trim();
@@ -231,7 +235,7 @@ Deno.serve(async (req: Request) => {
       if(!endpoint || endpoint.length>2048 || !/^[A-Za-z0-9_-]{22}$/.test(auth)) return json({ok:false,error:"裝置驗證失敗"},403);
       const {data:device,error}=await service.from("family_push_subscriptions").select("owner_user_id,device_label,player_filter_mode,allowed_player_ids,device_platform").eq("endpoint",endpoint).eq("auth",auth).eq("active",true).maybeSingle();
       if(error||!device)return json({ok:false,error:"裝置未綁定或已移除"},403);
-      const {data:allowed,error:allowError}=await service.rpc("is_pairing_authorized",{target_user:device.owner_user_id});
+      const {data:allowed,error:allowError}=await service.rpc("is_pairing_member",{target_user:device.owner_user_id});
       if(allowError||!allowed)return json({ok:false,error:"裝置未授權"},403);
       const {owner_user_id,...safe}=device;
       const players=(await playerOptions(owner_user_id,safe.allowed_player_ids)).filter(p=>safe.player_filter_mode==="all"||safe.allowed_player_ids.includes(p.id));
