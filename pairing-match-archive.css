@@ -32,3 +32,28 @@
 #matchArchive .archive-scroll table{min-width:630px}
 #matchArchive .archive-scroll td:nth-child(2),#matchArchive .archive-scroll td:nth-child(3){min-width:155px}
 #matchArchive .archive-scroll td:last-child{min-width:95px}
+
+/* Mobile archive: fit every column in the available width; preserve all data. */
+#matchArchive .archive-score-mobile{display:none}
+@media(max-width:720px){
+  #matchArchiveRows,#matchArchive .archive-scroll{min-width:0;max-width:100%}
+  #matchArchive .archive-scroll table{width:100%;min-width:0;table-layout:fixed;font-size:12px}
+  #matchArchive .archive-scroll th,#matchArchive .archive-scroll td{min-width:0;padding:8px 5px;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+  #matchArchive .archive-scroll td:nth-child(2),#matchArchive .archive-scroll td:nth-child(3),#matchArchive .archive-scroll td:last-child{min-width:0}
+  #matchArchive .archive-scroll th{font-size:11px;line-height:1.4}
+  #matchArchive .archive-standings-scroll th:first-child{width:42px}
+  #matchArchive .archive-standings-scroll th:last-child{width:62px}
+  #matchArchive .archive-matches-scroll th:first-child{width:32px}
+  #matchArchive .archive-matches-scroll th:last-child{width:58px}
+  #matchArchive .archive-scroll td:first-child,#matchArchive .archive-standings-scroll td:last-child{font-weight:750}
+  #matchArchive .archive-standings-scroll th:last-child,#matchArchive .archive-standings-scroll td:last-child{text-align:right}
+  #matchArchive .archive-scroll td strong{font-size:13px;line-height:1.45}
+  #matchArchive .archive-scroll td small{font-size:11px;line-height:1.45}
+  #matchArchive .archive-matches-scroll td small{font-size:10px}
+  #matchArchive .archive-deck{margin-top:5px;padding:5px;font-size:12px;line-height:1.45;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+  #matchArchive .archive-deck b{font-size:10px}
+  #matchArchive .archive-deck small{font-size:10px;margin-top:3px}
+  #matchArchive .archive-pair-observation{max-width:100%;padding:4px;font-size:10px}
+  #matchArchive .archive-score-desktop{display:none}
+  #matchArchive .archive-score-mobile{display:inline}
+}

@@ -70,7 +70,7 @@
   };
   const deckHTML=p=>{
     const deck=deckInfo(p);
-    if(deck.current?.deck)return `<span class="archive-deck archive-deck-current"><b>本場已記錄牌組</b>${escape(deck.current.deck)}${deck.current.round?`<small>記錄於 Round ${escape(deck.current.round)}；不代表每輪都使用相同牌組</small>`:""}</span>`;
+    if(deck.current?.deck)return `<span class="archive-deck archive-deck-current"><b>本場已記錄牌組</b>${escape(deck.current.deck)}${deck.current.round?`<small>記錄於 Round ${escape(deck.current.round)}</small>`:""}</span>`;
     if(deck.previous?.deck)return `<span class="archive-deck archive-deck-history"><b>其他場歷史參考</b>${escape(deck.previous.deck)}
       <small>${escape(shortDate(deck.previous.date))} · TID ${escape(deck.previous.tid)}（非本場確認）</small></span>`;
     return "";
@@ -116,7 +116,7 @@
         reference?.points?.[normalizedId(p)]!=null).length:0;
       root.innerHTML=`<p class="archive-subtitle">${escape(title)} · ${rows.length} 位${term?"（篩選結果）":""} · ${escape(source.captured_at||"")}</p>
         ${fallbackCount?`<p class="archive-empty">最終排名的 TtlScore 尚未全部取得；標示 R${escape(roundBefore)} 前的數字是最後一輪開始前的積分，<strong>不是最終分數</strong>。</p>`:""}
-        <div class="archive-scroll"><table><thead><tr><th>名次</th><th>選手／歷史牌組</th><th>TtlScore</th></tr></thead><tbody>
+        <div class="archive-scroll archive-standings-scroll"><table><thead><tr><th>名次</th><th>選手／歷史牌組</th><th>TtlScore</th></tr></thead><tbody>
         ${rows.map(p=>`<tr><td>${escape(p.rank)}</td><td>${playerHTML(p)}</td>
           <td>${p.points!=null?escape(p.points):!provisional&&reference?.points?.[normalizedId(p)]!=null
             ?`${escape(reference.points[normalizedId(p)])} <small>R${escape(roundBefore)} 前</small>`:"—"}</td></tr>`).join("")}
@@ -128,7 +128,7 @@
     if(!view.selected){root.innerHTML='<p class="archive-empty">該輪尚無封存資料。</p>';return;}
     const rows=currentMatchRows();
     root.innerHTML=`<p class="archive-subtitle">Round ${escape(selectedRound)} · ${rows.length} 桌${term?"（篩選結果）":""} · ${escape(view.selected.captured_at||"")}</p>
-      <div class="archive-scroll"><table><thead><tr><th>桌號</th><th>選手 A／歷史牌組</th><th>選手 B／歷史牌組</th><th>對戰前積分（TtlScore）</th></tr></thead><tbody>
+      <div class="archive-scroll archive-matches-scroll"><table><thead><tr><th>桌號</th><th>選手 A／歷史牌組</th><th>選手 B／歷史牌組</th><th><span class="archive-score-desktop">對戰前積分（TtlScore）</span><span class="archive-score-mobile">對戰前<br>TtlScore</span></th></tr></thead><tbody>
       ${rows.map(r=>`<tr><td>${escape(r.table)}</td><td>${playerHTML(r.a)}</td><td>${playerHTML(r.b)}</td>
         <td><small>A：${score(r.a)}</small><small>B：${score(r.b)}</small>${observationHTML(r)}</td></tr>`).join("")}
       </tbody></table></div>`;
