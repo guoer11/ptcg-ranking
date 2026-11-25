@@ -350,7 +350,20 @@
     }
   }
 
+  function decorateMultiPairing() {
+    const root = document.getElementById('pairingMultiResults');
+    if (!root || root.hidden) return;
+    const auth = currentAuthContext();
+    for (const host of root.querySelectorAll('[data-pairing-badge-id]')) {
+      const id = normalizeId(host.dataset.pairingBadgeId);
+      if (!/^tw\d+$/.test(id)) continue;
+      renderArticleBadges(host, id, { interactiveAttention: host.dataset.pairingBadgeRole === 'opponent' && Boolean(auth) });
+    }
+    ensureLegend('pairingBadgeLegend', root, 'beforebegin');
+  }
+
   function decoratePairing(detail = null) {
+    decorateMultiPairing();
     const result = document.getElementById('pairingResult');
     if (!result?.querySelector('.pairing-match-grid')) return;
     const playerArticle = findPairingArticle('你的玩家');

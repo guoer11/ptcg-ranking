@@ -637,18 +637,22 @@ function renderMultiCards(batch,cards,mode='round'){
   const root=document.getElementById('pairingMultiResults');if(!root)return;
   if(resultBox())resultBox().hidden=true;
   root.hidden=false;
-  const cell=(label,value)=>'<div><span>'+escPairing(label)+'</span><b>'+escPairing(value||'—')+'</b></div>';
+  const badgeAttrs=(id,role)=>/^tw\d+$/.test(normalizePlayerId(id))?' data-pairing-badge-id="'+escPairing(normalizePlayerId(id))+'" data-pairing-badge-role="'+role+'"':'';
+  const cell=(label,value,id='')=>'<div'+badgeAttrs(id,'opponent')+'><span>'+escPairing(label)+'</span><b>'+escPairing(value||'—')+'</b></div>';
+  const resultsById=new Map((batch?.results||[]).map(r=>[normalizePlayerId(r.player_id),r]));
   const interim=new Map((batch?.results||[]).map(r=>[r.player_id,r.standing_match]));
   root.innerHTML=(cards||[]).map(c=>{
     const deckLabel=c.deck?'已記錄牌組':c.possible_deck?'可能牌組':c.previous_deck?'上次比賽牌組':'對手牌組';
     const provisional=mode==='interim'?interim.get(c.player_id):null;
+    const opponentId=resultsById.get(normalizePlayerId(c.player_id))?.match?.opponent || '';
     const status=c.final?'最終排名':mode==='interim'?'暫定排名':mode==='final'?'等待最終排名':'Round '+(batch?.round||'—');
     const content=c.final?cell('最終排名','第 '+c.rank+' 名')
       :provisional?cell('暫定排名','第 '+provisional.rank+' 名')
       :c.waiting||mode!=='round'?cell('狀態',mode==='round'?'本輪尚未找到配對':'尚未取得排名')
-      :cell('桌號',c.table)+cell('TtlScore',c.ttl_score||'—')+cell('對手',c.opponent)+cell(deckLabel,c.deck||c.possible_deck||c.previous_deck||'尚未記錄');
-    return '<article class="pairing-multi-card"><div class="pairing-multi-heading"><strong>'+escPairing(c.player)+'</strong><span class="pairing-round-badge">'+escPairing(status)+'</span></div><div class="pairing-multi-grid">'+content+'</div></article>';
+      :cell('桌號',c.table)+cell('TtlScore',c.ttl_score||'—')+cell('對手',c.opponent,opponentId)+cell(deckLabel,c.deck||c.possible_deck||c.previous_deck||'尚未記錄');
+    return '<article class="pairing-multi-card"><div class="pairing-multi-heading"><div class="pairing-multi-player-label"'+badgeAttrs(c.player_id,'player')+'><strong>'+escPairing(c.player)+'</strong></div><span class="pairing-round-badge">'+escPairing(status)+'</span></div><div class="pairing-multi-grid">'+content+'</div></article>';
   }).join('');
+  window.PTCGPlayerBadges?.refresh();
 }
 async function handleMultiWatch(){
   setPairingBusy(true);setPairingMessage('正在查詢多位玩家及賽事狀態…');
