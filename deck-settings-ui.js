@@ -9,6 +9,8 @@
   let catalog = [];
   let authBound = false;
   let busy = false;
+  let admin = false;
+  let editing = null;
 
   const $ = id => document.getElementById(id);
 
@@ -25,7 +27,7 @@
     if (document.querySelector('link[data-deck-settings-style]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'deck-settings-ui.css?v=0.18.0-r1';
+    link.href = 'deck-settings-ui.css?v=3.1.0';
     link.dataset.deckSettingsStyle = 'true';
     document.head.appendChild(link);
   }
@@ -73,10 +75,10 @@
     busy = Boolean(next);
     const input = $('deckSettingsName');
     const add = $('deckSettingsAdd');
-    if (input) input.disabled = busy || !session;
-    if (add) add.disabled = busy || !session;
-    document.querySelectorAll('[data-deck-settings-delete]').forEach(button => {
-      button.disabled = busy || !session;
+    if (input) input.disabled = busy || !session || !admin;
+    if (add) add.disabled = busy || !session || !admin;
+    document.querySelectorAll('[data-deck-settings-delete],[data-deck-settings-edit],[data-deck-settings-save],[data-deck-settings-cancel],#deckSettingsRenameName').forEach(button => {
+      button.disabled = busy || !session || !admin;
     });
   }
 
@@ -84,9 +86,9 @@
     const list = $('deckSettingsList');
     if (!list) return;
 
-    if (!session) {
-      list.innerHTML = '<div class="deck-settings-empty">請先到「個人資料」登入 Google 帳號。</div>';
-      setMessage('登入後即可管理自己的牌組清單。');
+    if (!session || !admin) {
+      list.innerHTML = session?'<div class="deck-settings-empty">牌組設定僅限管理者使用。</div>':'<div class="deck-settings-empty">請先到「個人資料」登入 Google 帳號。</div>';
+      setMessage(session?'僅管理者可管理共用牌組清單。':'登入後即可管理共用牌組清單。');
       setBusy(false);
       return;
     }
@@ -98,21 +100,29 @@
       return;
     }
 
-    list.innerHTML = catalog.map(item => `
+    list.innerHTML = catalog.map(item => Number(item.id)===editing?`
+      <div class="deck-settings-row deck-settings-row-editing">
+        <input id="deckSettingsRenameName" class="search-input" maxlength="40" value="${escapeHtml(item.name)}" aria-label="修改牌組名稱" autocomplete="off">
+        <div class="deck-settings-row-actions"><button type="button" data-deck-settings-save="${item.id}">儲存</button><button type="button" data-deck-settings-cancel>取消</button></div>
+      </div>`:`
       <div class="deck-settings-row">
         <span>${escapeHtml(item.name)}</span>
-        <button type="button" data-deck-settings-delete="${item.id}" aria-label="刪除 ${escapeHtml(item.name)}">刪除</button>
+        <div class="deck-settings-row-actions"><button type="button" data-deck-settings-edit="${item.id}" aria-label="修改 ${escapeHtml(item.name)}">修改</button><button type="button" data-deck-settings-delete="${item.id}" aria-label="刪除 ${escapeHtml(item.name)}">刪除</button></div>
       </div>`).join('');
 
     list.querySelectorAll('[data-deck-settings-delete]').forEach(button => {
       button.addEventListener('click', () => deleteDeck(Number(button.dataset.deckSettingsDelete)));
     });
+    list.querySelectorAll('[data-deck-settings-edit]').forEach(button=>button.addEventListener('click',()=>{if(busy||!admin)return;editing=Number(button.dataset.deckSettingsEdit);render();const input=$('deckSettingsRenameName');input?.focus();input?.select();}));
+    list.querySelector('[data-deck-settings-save]')?.addEventListener('click',renameDeck);
+    list.querySelector('[data-deck-settings-cancel]')?.addEventListener('click',()=>{editing=null;render();});
+    $('deckSettingsRenameName')?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void renameDeck();}else if(event.key==='Escape'){editing=null;render();}});
     setMessage(`已建立 ${catalog.length} 個牌組選項。`, 'success');
     setBusy(false);
   }
 
   async function loadCatalog() {
-    if (!client || !session) {
+    if (!client || !session || !admin) {
       catalog = [];
       render();
       return;
@@ -121,6 +131,7 @@
     const { data, error } = await client
       .from('pairing_deck_catalog')
       .select('id,name,sort_order')
+      .eq('user_id',session.user.id)
       .order('sort_order', { ascending: true })
       .order('id', { ascending: true });
     if (error) throw error;
@@ -128,8 +139,28 @@
     render();
   }
 
+  async function renameDeck(){
+    if(busy||!admin||!session)return;
+    const item=catalog.find(row=>Number(row.id)===editing);
+    const name=String($('deckSettingsRenameName')?.value||'').trim();
+    if(!item)return;
+    if(!name||Array.from(name).length>40)return setMessage('請輸入 1 至 40 字的牌組名稱。','error');
+    if(name===item.name){editing=null;render();return;}
+    if(catalog.some(row=>Number(row.id)!==editing&&row.name.toLowerCase()===name.toLowerCase()))return setMessage('這個牌組名稱已經存在。','error');
+    if(!confirm(`將「${item.name}」修改為「${name}」？已記錄的共用及歷史牌組也會一併更名。`))return;
+    setBusy(true);setMessage('正在修改牌組名稱…');
+    try{
+      const {data,error}=await client.rpc('rename_pairing_deck',{p_id:item.id,p_expected_name:item.name,p_new_name:name});
+      if(error)throw error;
+      editing=null;await loadCatalog();
+      document.dispatchEvent(new CustomEvent('deck-catalog-updated'));
+      setMessage(`已修改為「${name}」，同步更新 ${data?.scouts||0} 筆玩家牌組、${data?.pairs||0} 筆雙牌組紀錄。`,'success');
+    }catch(error){setMessage(`修改失敗：${error?.message||error}`,'error');}
+    finally{setBusy(false);}
+  }
+
   async function addDeck() {
-    if (busy) return;
+    if (busy || !admin) return;
     const input = $('deckSettingsName');
     const name = String(input?.value || '').trim();
     if (!session) return setMessage('請先登入 Google 帳號。', 'error');
@@ -157,7 +188,7 @@
   }
 
   async function deleteDeck(id) {
-    if (busy || !session) return;
+    if (busy || !session || !admin) return;
     const item = catalog.find(entry => Number(entry.id) === Number(id));
     if (!item) return;
     if (!confirm(`刪除牌組「${item.name}」？已經記錄過的玩家牌組不會被刪除。`)) return;
@@ -179,8 +210,10 @@
     if (!client || !ensureCard()) return;
     const { data } = await client.auth.getSession();
     session = data?.session || null;
+    admin=false;editing=null;
     setBusy(false);
     try {
+      if(session){const access=await client.rpc('pairing_access_role');if(access.error)throw access.error;admin=access.data==='admin';}
       await loadCatalog();
     } catch (error) {
       console.warn('牌組設定讀取失敗', error);

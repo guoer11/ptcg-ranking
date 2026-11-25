@@ -243,6 +243,6 @@ function siteAccountInit() {
 
 siteAccountLoadScript('push-ui.js?v=0.18.0-r2', 'initPushUI');
 siteAccountLoadScript('line-ui.js?v=0.13.1-r1', 'initLineUI');
-siteAccountLoadScript('account-hub-v2.js?v=1.9.1-r4', '');
+siteAccountLoadScript('account-hub-v2.js?v=3.1.0', '');
 siteAccountLoadScript('family-owner-ui.js?v=0.13.1-r1', '');
 document.addEventListener('DOMContentLoaded', siteAccountInit);

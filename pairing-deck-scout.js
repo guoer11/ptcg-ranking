@@ -745,6 +745,7 @@
 
   async function syncSharedScouting(){
     if(!pairingAuthorized||!currentUserId()||saving||queryBusy)return;
+    await loadCatalog();
     const context=currentContext;
     if(context&&isCurrentScout(context.data)){
       await renderScoutMatch(context.data,context.table,context.target);
@@ -763,7 +764,7 @@
     realtimeUser=uid;
     if(!uid||!pairingClient?.channel)return;
     let channel=pairingClient.channel('ptcg-shared-scout-'+uid);
-    for(const table of ['pairing_deck_scouts','pairing_deck_pair_observations','pairing_scout_resolutions','pairing_pair_resolutions'])
+    for(const table of ['pairing_deck_scouts','pairing_deck_pair_observations','pairing_scout_resolutions','pairing_pair_resolutions','pairing_deck_catalog'])
       channel=channel.on('postgres_changes',{event:'*',schema:'public',table},scheduleSharedSync);
     realtimeChannel=channel.subscribe(status=>{if(status==='SUBSCRIBED')scheduleSharedSync();});
   }

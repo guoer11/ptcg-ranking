@@ -101,6 +101,8 @@ jobs:
           node tests/player-current-points.test.cjs
           node tests/wcs-2027-lookup.test.cjs
           node tests/pairing-scout-safety.test.cjs
+          node --check deck-settings-ui.js
+          node tests/deck-rename.test.cjs
 
       - name: Build public site artifact
         run: |

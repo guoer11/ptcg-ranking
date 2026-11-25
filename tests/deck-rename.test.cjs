@@ -1,0 +1,24 @@
+'use strict';
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const read=p=>fs.readFileSync(p,'utf8');
+const source=read('deck-settings-ui.js');
+const rename=source.slice(source.indexOf('  async function renameDeck(){'),source.indexOf('  async function addDeck()'));
+let calls=[],messages=[],confirmed=true,events=[];
+const input={value:'新名稱'};
+const ctx=vm.createContext({busy:false,admin:true,session:{user:{id:'owner'}},editing:1,catalog:[{id:1,name:'舊名稱'},{id:2,name:'其他'}],$:()=>input,confirm:()=>confirmed,setBusy:v=>{ctx.busy=v},setMessage:(...m)=>messages.push(m),render(){},loadCatalog:async()=>{},client:{rpc:async(name,args)=>{calls.push([name,args]);return {data:{scouts:3,pairs:2},error:null}}},document:{dispatchEvent:e=>events.push(e.type)},CustomEvent:class{constructor(type){this.type=type}}});
+vm.runInContext(rename,ctx);
+(async()=>{
+ await vm.runInContext('renameDeck()',ctx);
+ assert.equal(calls.length,1);assert.equal(calls[0][0],'rename_pairing_deck');
+ assert.equal(calls[0][1].p_expected_name,'舊名稱');assert.equal(calls[0][1].p_new_name,'新名稱');
+ assert.equal(events[0],'deck-catalog-updated');
+ assert.match(messages.at(-1)[0],/3 筆玩家牌組、2 筆雙牌組/);
+ ctx.editing=1;input.value='其他';await vm.runInContext('renameDeck()',ctx);assert.equal(calls.length,1);
+ input.value='更新';confirmed=false;await vm.runInContext('renameDeck()',ctx);assert.equal(calls.length,1);
+ confirmed=true;ctx.admin=false;await vm.runInContext('renameDeck()',ctx);assert.equal(calls.length,1);
+ assert.match(source,/data-deck-settings-edit/);assert.match(source,/data-deck-settings-save/);assert.match(source,/data-deck-settings-cancel/);
+ const sql=read('supabase/migrations/20261125163200_pairing_deck_rename_v310.sql');
+ assert.match(sql,/not private\.pairing_is_admin\(uid\)/);assert.match(sql,/update public\.pairing_deck_scouts set deck_name=new_name/);assert.match(sql,/update public\.pairing_deck_pair_observations/);assert.match(sql,/insert into public\.pairing_scout_resolutions/);
+ assert.match(read('site-version.js'),/SITE_VERSION = 'v3\.1\.0'/);
+ console.log('PASS: rename validation, cancellation, admin access, shared update and audit migration');
+})().catch(e=>{console.error(e);process.exitCode=1});

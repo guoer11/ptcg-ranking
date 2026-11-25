@@ -21,3 +21,7 @@
   .deck-settings-add{grid-template-columns:minmax(0,1fr) 68px}
   .deck-settings-row{min-height:52px;padding:7px 10px}
 }
+.deck-settings-row-actions{display:flex;gap:6px;align-items:center;flex-wrap:nowrap}
+.deck-settings-row button[data-deck-settings-edit],.deck-settings-row button[data-deck-settings-save]{background:#eaf2ff;color:#245fc7}
+.deck-settings-row button[data-deck-settings-cancel]{background:#edf0f3;color:#52637a}
+.deck-settings-row-editing input{width:100%;min-width:0;box-sizing:border-box;padding:8px;font-size:14px}
