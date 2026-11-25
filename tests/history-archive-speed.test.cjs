@@ -61,7 +61,15 @@ const getCalls=()=>calls.filter(call=>call.action==='get').length;
   assert.equal(calls.find(c=>c.action==='get').round,null,'finished event defaults to final ranking');
 
   const rendered=el('matchArchiveRows').innerHTML;
-  assert.match(rendered,/class="archive-player has-deck"><div class="archive-player-identity"><strong>選手A<\/strong>[\s\S]*tw33000082[\s\S]*<\/div><span class="archive-deck archive-deck-current">/);
+  assert.match(rendered,/<th>名次<\/th><th>選手<\/th><th>牌組<\/th><th>TtlScore<\/th>/);
+  const firstRow=rendered.match(/<tbody>\s*<tr>([\s\S]*?)<\/tr>/)[1];
+  const cells=[...firstRow.matchAll(/<td>([\s\S]*?)<\/td>/g)].map(x=>x[1]);
+  assert.equal(cells.length,4,'standings has four actual cells on all viewports');
+  assert.equal(cells[0],'1');
+  assert.match(cells[1],/選手A[\s\S]*tw33000082/);
+  assert.doesNotMatch(cells[1],/archive-deck/);
+  assert.match(cells[2],/測試牌組[\s\S]*記錄於 Round 1/);
+  assert.equal(cells[3],'18');
   assert.match(rendered,/測試牌組/);
   assert.match(rendered,/記錄於 Round 1/);
   assert.match(rendered,/<td>18<\/td>/,'preserve points');

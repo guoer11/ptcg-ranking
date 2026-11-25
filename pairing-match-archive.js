@@ -75,11 +75,11 @@
       <small>${escape(shortDate(deck.previous.date))} · TID ${escape(deck.previous.tid)}（非本場確認）</small></span>`;
     return "";
   };
-  const playerHTML=p=>{
+  const playerHTML=(p,includeDeck=true)=>{
     if(!p)return "<span>輪空／未公布</span>";
     const id=normalizedId(p),real=realName(p),official=String(p.name||"");
     const primary=real||official||id;
-    const deckMarkup=deckHTML(p);
+    const deckMarkup=includeDeck?deckHTML(p):"";
     return `<div class="archive-player${deckMarkup?" has-deck":""}"><div class="archive-player-identity"><strong>${escape(primary)}</strong>
       ${primary!==id?`<small>${escape(id)}</small>`:""}
       ${real&&official&&real!==official?`<small>官方名稱：${escape(official)}</small>`:""}
@@ -117,8 +117,8 @@
         reference?.points?.[normalizedId(p)]!=null).length:0;
       root.innerHTML=`<p class="archive-subtitle">${escape(title)} · ${rows.length} 位${term?"（篩選結果）":""} · ${escape(source.captured_at||"")}</p>
         ${fallbackCount?`<p class="archive-empty">最終排名的 TtlScore 尚未全部取得；標示 R${escape(roundBefore)} 前的數字是最後一輪開始前的積分，<strong>不是最終分數</strong>。</p>`:""}
-        <div class="archive-scroll archive-standings-scroll"><table style="width:100%;min-width:0;table-layout:fixed"><colgroup><col style="width:clamp(38px,10vw,76px)"><col><col style="width:clamp(65px,17vw,120px)"></colgroup><thead><tr><th>名次</th><th>選手／歷史牌組</th><th>TtlScore</th></tr></thead><tbody>
-        ${rows.map(p=>`<tr><td>${escape(p.rank)}</td><td>${playerHTML(p)}</td>
+        <div class="archive-scroll archive-standings-scroll"><table class="archive-standings-table" style="width:100%;min-width:0;table-layout:fixed"><colgroup><col style="width:11%"><col style="width:32%"><col style="width:39%"><col style="width:18%"></colgroup><thead><tr><th>名次</th><th>選手</th><th>牌組</th><th>TtlScore</th></tr></thead><tbody>
+        ${rows.map(p=>`<tr><td>${escape(p.rank)}</td><td>${playerHTML(p,false)}</td><td>${deckHTML(p)||"—"}</td>
           <td>${p.points!=null?escape(p.points):!provisional&&reference?.points?.[normalizedId(p)]!=null
             ?`${escape(reference.points[normalizedId(p)])} <small>R${escape(roundBefore)} 前</small>`:"—"}</td></tr>`).join("")}
         </tbody></table></div>
