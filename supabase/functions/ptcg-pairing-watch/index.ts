@@ -181,28 +181,35 @@ async function loadVapid() {
   return { subject: data.subject, publicKey: data.public_key, privateKey: data.private_key };
 }
 
-async function sendWebPush(userId: string, title: string, body: string, familyUrl = "") {
-  const [{ data: rows, error }, { data: familyRows }] = await Promise.all([
+type FamilyPayload = {title:string,body:string,url:string,tag:string};
+type FamilyRoute = (ids:string[])=>FamilyPayload|null;
+async function sendWebPush(userId: string, title: string, body: string, familyUrl = "", familyRoute?:FamilyRoute) {
+  const [{ data: rows, error }, { data: familyRows, error:familyError }] = await Promise.all([
     service.from("push_subscriptions")
       .select("endpoint,p256dh,auth")
       .eq("user_id", userId)
       .eq("notify_pairing", true),
     service.from("family_push_subscriptions")
-      .select("endpoint")
-      .eq("owner_user_id", userId)
-      .eq("active", true),
+      .select("endpoint,active,player_filter_mode,allowed_player_ids")
+      .eq("owner_user_id", userId),
   ]);
   if (error) throw error;
+  if (familyError) throw familyError;
   if (!rows?.length) return { sent: 0 };
-  const familyEndpoints = new Set((familyRows || []).map((row: any) => String(row.endpoint || "")));
+  const familyEndpoints = new Map((familyRows || []).map((row: any) => [String(row.endpoint || ""),row]));
   const vapid = await loadVapid();
   let sent = 0;
   for (const row of rows) {
     try {
-      const isFamily = familyEndpoints.has(String(row.endpoint || ""));
-      const payload = isFamily && familyUrl
+      const family:any = familyEndpoints.get(String(row.endpoint || ""));
+      if(family && !family.active)continue;
+      let payload:FamilyPayload|null = family && familyUrl
         ? { title, body, url: familyUrl, tag: "ptcg-family-pairing" }
         : { title, body, url: "/ptcg-ranking/pairing.html", tag: "ptcg-pairing" };
+      if(family?.player_filter_mode==="custom"){
+        payload=familyRoute?familyRoute(family.allowed_player_ids||[]):null;
+        if(!payload)continue;
+      }
       await sendNotification(
         { endpoint: row.endpoint, keys: { p256dh: row.p256dh, auth: row.auth } },
         JSON.stringify(payload),
@@ -211,7 +218,10 @@ async function sendWebPush(userId: string, title: string, body: string, familyUr
       sent += 1;
     } catch (error: any) {
       const code = Number(error?.statusCode || 0);
-      if (code === 404 || code === 410) await service.from("push_subscriptions").delete().eq("endpoint", row.endpoint);
+      if (code === 404 || code === 410) {
+        await service.from("push_subscriptions").delete().eq("endpoint", row.endpoint).eq("user_id",userId);
+        await service.from("family_push_subscriptions").update({active:false}).eq("endpoint",row.endpoint).eq("owner_user_id",userId);
+      }
     }
   }
   return { sent };
@@ -229,8 +239,8 @@ async function sendLine(title: string, body: string) {
   return { sent: true };
 }
 
-async function sendBoth(userId: string, title: string, lineBody: string, pushBody = lineBody, familyUrl = "") {
-  const [line, push] = await Promise.allSettled([sendLine(title, lineBody), sendWebPush(userId, title, pushBody, familyUrl)]);
+async function sendBoth(userId: string, title: string, lineBody: string, pushBody = lineBody, familyUrl = "", familyRoute?:FamilyRoute) {
+  const [line, push] = await Promise.allSettled([sendLine(title, lineBody), sendWebPush(userId, title, pushBody, familyUrl, familyRoute)]);
   return {
     line: line.status === "fulfilled" ? line.value : { sent: false, error: String(line.reason) },
     push: push.status === "fulfilled" ? push.value : { sent: 0, error: String(push.reason) },
@@ -275,7 +285,7 @@ async function notifyMatch(userId: string, pairing: any, test = false) {
     opponent_possible_decks: deckKnowledge.possible,
     official_url: officialUrl,
     family_url: familyUrl,
-    ...(await sendBoth(userId, title, lineBody, pushBody, familyUrl))
+    ...(await sendBoth(userId, title, lineBody, pushBody, familyUrl, ids=>ids.includes(String(match.player).toLowerCase())?{title,body:pushBody,url:familyUrl,tag:"ptcg-family-pairing"}:null))
   };
 }
 
@@ -295,7 +305,7 @@ async function notifyFinalRank(userId: string, ranking: any, test = false) {
     official: officialUrl,
   });
   const familyUrl = `/ptcg-ranking/family-notify.html?${familyParams.toString()}`;
-  return { title, body: lineBody, push_body: pushBody, player_name: playerName, official_url: officialUrl, family_url: familyUrl, ...(await sendBoth(userId, title, lineBody, pushBody, familyUrl)) };
+  return { title, body: lineBody, push_body: pushBody, player_name: playerName, official_url: officialUrl, family_url: familyUrl, ...(await sendBoth(userId, title, lineBody, pushBody, familyUrl, ids=>ids.includes(String(standing.player).toLowerCase())?{title,body:pushBody,url:familyUrl,tag:"ptcg-family-pairing"}:null)) };
 }
 
 async function startWatch(userId: string, sourceUrl: string, playerId: string) {
@@ -418,7 +428,7 @@ function buildMultiNotice(batch:any,cards:any[],type:"round"|"final",test=false)
   const compactPush=cards.map(c=>c.player+"｜"+(c.final?"第 "+c.rank+" 名":c.waiting?"等待公布":"桌號 "+c.table)).join("\n");
   let pushBody=text;
   const makeUrl=(items:any[])=>{
-    const params=new URLSearchParams({type,round:String(batch.round||""),official,players:encodeCards(items),mv:"2180"});
+    const params=new URLSearchParams({type,round:String(batch.round||""),official,players:encodeCards(items),mv:"2190"});
     // Explicit revision parameter helps older installed clients reload the page.
     return "/ptcg-ranking/family-notify.html?"+params.toString();
   };
@@ -431,7 +441,20 @@ function buildMultiNotice(batch:any,cards:any[],type:"round"|"final",test=false)
 }
 async function notifyMulti(userId:string,batch:any,cards:any[],type:"round"|"final",test=false) {
   const msg=buildMultiNotice(batch,cards,type,test);
-  return await sendBoth(userId,msg.title,msg.lineBody,msg.pushBody,msg.familyUrl);
+  return await sendBoth(userId,msg.title,msg.lineBody,msg.pushBody,msg.familyUrl,ids=>{
+    const selected=cards.filter(c=>ids.includes(c.player_id));
+    if(!selected.length||selected.every(c=>type==="final"?!c.final:c.waiting||c.final))return null;
+    const part=buildMultiNotice(batch,selected,type,test);
+    let url=part.familyUrl;
+    // Single-player links retain the existing round lookup UI rather than the multi-card-only path.
+    if(selected.length===1){
+      const card=selected[0], params=new URLSearchParams({type,round:String(batch.round||""),player:card.player,player_id:card.player_id,official:type==="final"?String(batch.source_url||officialFinalRankUrl(batch.tid)):officialRoundUrl(batch.tid,Number(batch.round)),mv:"2190"});
+      if(type==="final")params.set("rank",String(card.rank||""));
+      else for(const field of ["table","opponent","deck","possible_deck","previous_deck","ttl_score"])if(card[field]!=null)params.set(field,String(card[field]));
+      url="/ptcg-ranking/family-notify.html?"+params.toString();
+    }
+    return {title:part.title,body:part.pushBody,url,tag:"ptcg-family-pairing"};
+  });
 }
 async function startMulti(userId:string,source:string,ids:string[]) {
   const parsed=parseRoundUrl(source), old=await getStatus(userId);

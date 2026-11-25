@@ -23,7 +23,7 @@ function buildPairingSummaryUrl(payload = {}) {
     if (player) params.set('player', player);
     if (rank) params.set('rank', rank);
     if (official) params.set('official', official);
-    params.set('_v', '241r1');
+    params.set('_v', '250r1');
     return `/ptcg-ranking/family-notify.html?${params.toString()}`;
   }
 
@@ -42,7 +42,7 @@ function buildPairingSummaryUrl(payload = {}) {
   if (previousDeckLine) params.set('previous_deck', previousDeckLine.replace(/^上次比賽牌組：/, '').trim());
   if (possibleDeckLine) params.set('possible_deck', possibleDeckLine.replace(/^可能牌組：/, '').trim());
   if (official) params.set('official', official);
-  params.set('_v', '241r1');
+  params.set('_v', '250r1');
   return `/ptcg-ranking/family-notify.html?${params.toString()}`;
 }
 
@@ -50,7 +50,7 @@ function withFamilyRevision(value) {
   try {
     const url = new URL(value, self.location.origin);
     if (!/\/family-notify\.html$/i.test(url.pathname)) return url.href;
-    url.searchParams.set('_v', '241r1');
+    url.searchParams.set('_v', '250r1');
     return url.href;
   } catch (_) {
     return value;

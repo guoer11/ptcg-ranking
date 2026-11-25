@@ -3,6 +3,77 @@ const FAMILY_INVITE_STORAGE_KEY = 'ptcgFamilyInviteToken';
 const FAMILY_LINKED_STORAGE_KEY = 'ptcgFamilyPushLinked';
 const FAMILY_MATCH_STORAGE_KEY = 'ptcgFamilyLatestMatch';
 const FAMILY_MATCH_TTL_MS = 24 * 60 * 60 * 1000;
+const FAMILY_PREF_KEY='ptcgFamilyDevicePreferencesV250';
+let familyPrefs=null;
+try{familyPrefs=JSON.parse(localStorage.getItem(FAMILY_PREF_KEY)||'null');}catch(_){}
+function familyAllowedPlayer(id){
+  if(familyPrefs?.revoked)return false;
+  if(familyPrefs?.player_filter_mode!=='custom')return true;
+  return (familyPrefs.allowed_player_ids||[]).includes(String(id||'').match(/tw\d{1,16}\b/i)?.[0]?.toLowerCase());
+}
+function familyFilterSummary(data){
+  if(!data)return null;
+  if(Array.isArray(data.players)){
+    const players=data.players.filter(p=>familyAllowedPlayer(p.player_id));
+    if(!players.length)return null;
+    if(players.length===1){const p=players[0];return {...data,...p,players:undefined,rank:p.rank||'',player_id:p.player_id};}
+    return {...data,players};
+  }
+  return familyAllowedPlayer(data.player_id||data.player)?data:null;
+}
+function familySetPreferences(device,players){
+  const previous=familyPrefs;
+  familyPrefs=device;
+  try{localStorage.setItem(FAMILY_PREF_KEY,JSON.stringify(device));}catch(_){}
+  const info=document.getElementById('familyDevicePreferences');
+  if(info){
+    info.hidden=false;
+    document.getElementById('familyDeviceName').textContent=device.device_label||'家庭裝置';
+    document.getElementById('familyDevicePlayers').textContent=device.player_filter_mode==='all'?'全部追蹤玩家':(players||[]).map(p=>p.name?p.name+' · '+p.id:p.id).join('、')||(device.allowed_player_ids||[]).join('、');
+    document.getElementById('familyDeviceStatus').textContent='通知設定由家庭管理者統一管理。';
+  }
+  const changed=JSON.stringify([previous?.player_filter_mode,previous?.allowed_player_ids])!==JSON.stringify([device.player_filter_mode,device.allowed_player_ids]);
+  if(changed){
+    localStorage.removeItem('ptcgFamilyRoundContextV230');localStorage.removeItem('ptcgFamilyRoundHistoryV230');
+    const current=familySummaryFromParams(new URLSearchParams(window.location.search));
+    const filtered=familyFilterSummary(current||familyLoadStoredSummary());
+    if(filtered)familyStoreSummary(filtered);else localStorage.removeItem(FAMILY_MATCH_STORAGE_KEY);
+    if(current&&device.player_filter_mode==='custom'){
+      // Remove old unfiltered notification query data; retain only the allowed summary locally.
+      history.replaceState(null,'',window.location.pathname);
+    }
+    familyRenderMatchSummary();
+    document.dispatchEvent(new CustomEvent('ptcg-family-preferences-updated'));
+  }
+}
+let familyStatusRequest=null;
+async function familyRefreshDeviceStatus(){
+  if(familyStatusRequest)return familyStatusRequest;
+  familyStatusRequest=(async()=>{
+    if(!familyPushSupported())return;
+    const info=document.getElementById('familyDevicePreferences');
+    try{
+      const registration=await navigator.serviceWorker.getRegistration('./');
+      const sub=await registration?.pushManager.getSubscription();
+      if(!sub)throw Error('找不到推播訂閱，請管理者重新邀請');
+      const payload=sub.toJSON();
+      const data=await familyFunctionRequest('device-status',{endpoint:payload.endpoint,auth:payload.keys?.auth});
+      familySetPreferences(data.device,data.players);
+    }catch(e){
+      if(info){info.hidden=false;document.getElementById('familyDeviceStatus').textContent=e.message||'無法讀取最新裝置設定';}
+      if(/未綁定|已移除|未授權|找不到推播訂閱/.test(e.message)){
+        familyPrefs={revoked:true};localStorage.setItem(FAMILY_PREF_KEY,JSON.stringify(familyPrefs));
+        for(const k of [FAMILY_LINKED_STORAGE_KEY,FAMILY_MATCH_STORAGE_KEY,'ptcgFamilyRoundContextV230','ptcgFamilyRoundHistoryV230'])localStorage.removeItem(k);
+        familySetState('家庭通知未啟用','請管理者重新產生邀請連結。','error');
+        document.getElementById('familyMatchSummary').hidden=true;
+        document.getElementById('familyRoundQuery').hidden=true;
+        const b=familyNotifyButton();if(b){b.disabled=true;b.textContent='請重新綁定';}
+        document.dispatchEvent(new CustomEvent('ptcg-family-preferences-updated'));
+      }
+    }
+  })().finally(()=>{familyStatusRequest=null;});
+  return familyStatusRequest;
+}
 
 const familyNotifyCard = () => document.querySelector('.family-notify-card');
 const familyNotifyTitle = () => document.getElementById('familyNotifyTitle');
@@ -91,10 +162,10 @@ function familyStoreSummary(summary) {
 
 function familyRenderMatchSummary() {
   const params = new URLSearchParams(window.location.search);
-  const querySummary = familySummaryFromParams(params);
+  const querySummary = familyFilterSummary(familySummaryFromParams(params));
   if (querySummary) familyStoreSummary(querySummary);
-  const data = querySummary || familyLoadStoredSummary();
-  if (!data) return false;
+  const data = querySummary || familyFilterSummary(familyLoadStoredSummary());
+  if (!data) {const summary=document.getElementById('familyMatchSummary');if(summary)summary.hidden=true;return false;}
 
   const summary = document.getElementById('familyMatchSummary');
   const title = document.getElementById('familyMatchTitle');
@@ -167,7 +238,7 @@ function familyRenderMatchSummary() {
   return true;
 }
 
-function familyHandleServiceWorkerMessage(event) {
+async function familyHandleServiceWorkerMessage(event) {
   const message = event?.data || {};
   if (message.type !== 'ptcg-family-update' || !message.url) return;
 
@@ -176,18 +247,19 @@ function familyHandleServiceWorkerMessage(event) {
     if (target.origin !== window.location.origin || !/\/family-notify\.html$/i.test(target.pathname)) return;
 
     history.replaceState(null, '', `${target.pathname}${target.search}${target.hash}`);
+    const linked = localStorage.getItem(FAMILY_LINKED_STORAGE_KEY) === '1';
+    if(linked)await familyRefreshDeviceStatus();
     const rendered = familyRenderMatchSummary();
     if (!rendered) return;
 
-    const linked = localStorage.getItem(FAMILY_LINKED_STORAGE_KEY) === '1';
-    if (linked) {
+    if (linked && !familyPrefs?.revoked) {
       familySetState('家庭通知已啟用', '收到新的配對通知，畫面已自動更新，不需要重新開啟 App。', 'success');
     }
   } catch (_) {}
 }
 
 function familyIsIOS() {
-  return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  return /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 }
 
 function familyIsStandalone() {
@@ -253,18 +325,21 @@ async function enableFamilyPush() {
 
   const permission = await Notification.requestPermission();
   if (permission !== 'granted') {
-    throw new Error(permission === 'denied' ? '通知權限已被拒絕，請到 iPhone 設定重新允許' : '尚未允許通知');
+    throw new Error(permission === 'denied' ? '通知權限已被拒絕，請到手機或瀏覽器設定重新允許' : '尚未允許通知');
   }
 
   const subscription = await familyGetSubscription();
   const payload = subscription.toJSON();
-  const data = await familyFunctionRequest('subscribe', { token, subscription: payload });
+  const data = await familyFunctionRequest('subscribe', { token, subscription: payload, device_platform:familyIsIOS()?'ios':/Android/i.test(navigator.userAgent)?'android':'other' });
 
   localStorage.setItem(FAMILY_LINKED_STORAGE_KEY, '1');
   localStorage.removeItem(FAMILY_INVITE_STORAGE_KEY);
+  history.replaceState(null,'',window.location.pathname);
+  await familyRefreshDeviceStatus();
+  if(familyPrefs?.revoked)throw Error('裝置綁定驗證失敗，請重新邀請');
   familySetState('家庭通知已啟用', data.confirmation_sent
-    ? '設定完成。剛剛已送出一則確認推播；之後 Round 配對與最終排名都會通知這支 iPhone。'
-    : '設定完成。之後 Round 配對與最終排名都會通知這支 iPhone。', 'success');
+    ? '設定完成。剛剛已送出一則確認推播；之後 Round 配對與最終排名都會通知這支裝置。'
+    : '設定完成。之後 Round 配對與最終排名都會通知這支裝置。', 'success');
   if (familyNotifyButton()) {
     familyNotifyButton().disabled = true;
     familyNotifyButton().textContent = '已開啟通知';
@@ -274,7 +349,7 @@ async function enableFamilyPush() {
 
 async function handleFamilyEnable() {
   familySetBusy(true);
-  familySetState('正在設定通知', '請稍候，正在向這支 iPhone 建立網站推播訂閱。');
+  familySetState('正在設定通知', '請稍候，正在向這支裝置 建立網站推播訂閱。');
   try {
     await enableFamilyPush();
   } catch (error) {
@@ -295,11 +370,20 @@ async function initFamilyNotify() {
   }
 
   const params = new URLSearchParams(window.location.search);
+  if(!familyIsIOS()){
+    const steps=document.querySelectorAll('#familyNotifySteps article');
+    if(steps[0])steps[0].querySelector('div').innerHTML='<b>開啟 Chrome</b><span>Android 可直接使用 Chrome，亦可選擇加入主畫面。</span>';
+    if(steps[1])steps[1].querySelector('div').innerHTML='<b>開啟配對通知</b><span>按下方按鈕並允許網站通知。</span>';
+  }
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localStorage.getItem(FAMILY_LINKED_STORAGE_KEY)==='1')familyRefreshDeviceStatus();});
+  window.addEventListener('pageshow',()=>{if(localStorage.getItem(FAMILY_LINKED_STORAGE_KEY)==='1')familyRefreshDeviceStatus();});
   const queryToken = params.get('token');
   if (queryToken) localStorage.setItem(FAMILY_INVITE_STORAGE_KEY, queryToken);
 
+  const alreadyLinked = localStorage.getItem(FAMILY_LINKED_STORAGE_KEY) === '1' && !queryToken;
+  if(alreadyLinked)await familyRefreshDeviceStatus();
+  if(alreadyLinked&&familyPrefs?.revoked)return;
   const hasMatchSummary = familyRenderMatchSummary();
-  const alreadyLinked = localStorage.getItem(FAMILY_LINKED_STORAGE_KEY) === '1';
   const token = localStorage.getItem(FAMILY_INVITE_STORAGE_KEY) || '';
   const button = familyNotifyButton();
   button?.addEventListener('click', handleFamilyEnable);
@@ -312,7 +396,7 @@ async function initFamilyNotify() {
       button.disabled = true;
       button.textContent = '已開啟通知';
     }
-    if (familyNotifyHint()) familyNotifyHint().textContent = '若日後不想接收通知，可直接從 iPhone 通知設定關閉。';
+    if (familyNotifyHint()) familyNotifyHint().textContent = '若日後不想接收通知，可直接從手機通知設定關閉。';
     return;
   }
 
@@ -329,7 +413,7 @@ async function initFamilyNotify() {
   }
 
   if (!familyPushSupported()) {
-    familySetState('此裝置不支援推播', '請使用支援網站推播的 iPhone Safari，並從加入主畫面的圖示開啟。', 'error');
+    familySetState('此裝置不支援推播', 'iPhone 請使用 Safari 並加入主畫面；Android 請使用支援通知的 Chrome。', 'error');
     if (button) button.disabled = true;
     return;
   }
@@ -344,7 +428,7 @@ async function initFamilyNotify() {
     return;
   }
 
-  familySetState('可以開啟通知了', '按下「開啟配對通知」，再允許 iPhone 通知權限。');
+  familySetState('可以開啟通知了', '按下「開啟配對通知」，再允許手機通知權限。');
   if (button) button.disabled = false;
 }
 

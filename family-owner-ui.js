@@ -7,12 +7,38 @@ let familyOwnerSession = null;
 let familyOwnerAuthorized = false;
 let familyOwnerBusy = false;
 let familyOwnerAuthBound = false;
+let familyOwnerPlayers = [{id:'tw39371632',name:''},{id:'tw69121729',name:''}];
+function familyFilterHTML(mode='all',ids=[]) {
+  const options=[...new Map([...familyOwnerPlayers,...ids.map(id=>({id,name:familyOwnerPlayers.find(p=>p.id===id)?.name||''}))].map(p=>[p.id,p])).values()];
+  return `<fieldset class="family-filter"><legend>接收玩家</legend><label><input type="radio" data-filter-mode value="all" ${mode==='all'?'checked':''}> 全部追蹤玩家</label><label><input type="radio" data-filter-mode value="custom" ${mode==='custom'?'checked':''}> 指定追蹤玩家</label><div data-filter-options ${mode==='custom'?'':'hidden'}>${options.map(p=>`<label><input type="checkbox" data-filter-id value="${familyOwnerEscape(p.id)}" ${ids.includes(p.id)?'checked':''}> ${familyOwnerEscape(p.name?p.name+' · '+p.id:p.id)}</label>`).join('')}<label>其他 PTCG ID（以空格或逗號分隔）<input class="search-input" data-extra-ids placeholder="tw12345678"></label></div></fieldset>`;
+}
+function familyBindFilter(root) {
+  if(!root)return;
+  const radios=[...root.querySelectorAll('[data-filter-mode]')];
+  radios.forEach(r=>r.addEventListener('change',()=>{radios.forEach(x=>{if(x!==r)x.checked=false});root.querySelector('[data-filter-options]').hidden=r.value!=='custom';}));
+}
+function familyReadFilter(root){
+  const mode=root?.querySelector('[data-filter-mode]:checked')?.value||'all';
+  const ids=[...new Set([...Array.from(root?.querySelectorAll('[data-filter-id]:checked')||[],x=>x.value),...(root?.querySelector('[data-extra-ids]')?.value||'').toLowerCase().split(/[\s,，、]+/).filter(Boolean)])];
+  if(mode==='custom'&&(ids.length<1||ids.length>5||ids.some(id=>!/^tw\d{1,16}$/.test(id))))throw Error('請選擇 1 至 5 位有效玩家');
+  return {player_filter_mode:mode,allowed_player_ids:mode==='custom'?ids:[]};
+}
+function familyRenderInviteFilter(){
+  const root=document.getElementById('familyInviteFilter');if(!root)return;
+  const old=root.querySelector('[data-filter-mode]:checked')?.value||'all';
+  const ids=Array.from(root.querySelectorAll('[data-filter-id]:checked'),x=>x.value);
+  root.innerHTML=familyFilterHTML(old,ids);familyBindFilter(root);
+}
+function familyFilterLabel(d){
+  return d.player_filter_mode==='custom'?(d.allowed_player_ids||[]).map(id=>{const p=familyOwnerPlayers.find(p=>p.id===id);return p?.name?p.name+' · '+id:id;}).join('、'):'全部追蹤玩家';
+}
+function familyPlatform(d){return ({ios:'iPhone / iPad',android:'Android',other:'其他',unknown:'未辨識'})[d.device_platform]||'未辨識';}
 
 function familyOwnerEnsureStyle() {
   if (document.querySelector('link[data-family-owner-style]')) return;
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'family-owner-ui.css?v=0.13.1-r1';
+  link.href = 'family-owner-ui.css?v=2.19.0';
   link.dataset.familyOwnerStyle = 'true';
   document.head.appendChild(link);
 }
@@ -31,13 +57,14 @@ function familyOwnerEnsureCard() {
     <div class="family-owner-head">
       <div>
         <strong>家庭通知裝置</strong>
-        <span>家人的 iPhone 只接收 Round 配對與最終排名網站推播，不需要 Google 登入，也不增加 LINE 官方帳號訊息量。</span>
+        <span>家人的手機 只接收 Round 配對與最終排名網站推播，不需要 Google 登入，也不增加 LINE 官方帳號訊息量。</span>
       </div>
       <span id="familyDeviceCount" class="family-owner-count">0 台</span>
     </div>
     <div class="family-owner-form">
       <label for="familyDeviceLabel">裝置名稱</label>
-      <input id="familyDeviceLabel" class="search-input" type="text" value="家庭 iPhone" maxlength="40" autocomplete="off" />
+      <input id="familyDeviceLabel" class="search-input" type="text" value="家庭裝置" maxlength="40" autocomplete="off" />
+      <div id="familyInviteFilter"></div>
       <div class="family-owner-actions">
         <button id="familyCreateInviteButton" class="primary-btn" type="button">產生邀請連結</button>
         <button id="familyShareInviteButton" class="secondary-btn" type="button">分享邀請</button>
@@ -55,6 +82,7 @@ function familyOwnerEnsureCard() {
       <div id="familyDeviceList"><div class="family-owner-empty">讀取中…</div></div>
     </div>`;
   card.dataset.familyOwnerReady = '1';
+  familyRenderInviteFilter();
 
   document.getElementById('familyCreateInviteButton')?.addEventListener('click', createFamilyInvite);
   document.getElementById('familyCopyInviteButton')?.addEventListener('click', copyFamilyInvite);
@@ -75,7 +103,7 @@ function familyOwnerSetBusy(busy) {
     const el = document.getElementById(id);
     if (el) el.disabled = busy || !familyOwnerAuthorized;
   });
-  document.querySelectorAll('[data-family-remove]').forEach(button => { button.disabled = busy || !familyOwnerAuthorized; });
+  document.querySelectorAll('[data-family-remove],[data-family-edit],[data-family-save]').forEach(button => { button.disabled = busy || !familyOwnerAuthorized; });
 }
 
 async function familyOwnerRequest(action, extra = {}) {
@@ -127,11 +155,34 @@ function renderFamilyDevices(devices = []) {
     <div class="family-owner-device">
       <div>
         <strong>${familyOwnerEscape(device.device_label || '家庭裝置')}</strong>
-        <small>綁定：${familyOwnerEscape(familyOwnerFormatDate(device.created_at))}</small>
+        <small>${familyOwnerEscape(familyPlatform(device))} · ${device.active?'已啟用':'已失效'}</small><small>接收：${familyOwnerEscape(familyFilterLabel(device))}</small><small>綁定：${familyOwnerEscape(familyOwnerFormatDate(device.created_at))}</small>
       </div>
-      <button class="secondary-btn family-owner-remove" type="button" data-family-remove="${familyOwnerEscape(device.id)}">移除</button>
-    </div>`).join('');
+      <div><button class="secondary-btn" type="button" data-family-edit="${familyOwnerEscape(device.id)}">修改設定</button><button class="secondary-btn family-owner-remove" type="button" data-family-remove="${familyOwnerEscape(device.id)}">移除</button></div>
+    </div><div data-family-editor="${familyOwnerEscape(device.id)}" hidden></div>`).join('');
 
+  list.querySelectorAll('[data-family-edit]').forEach(button=>button.addEventListener('click',()=>{
+    if(!familyOwnerAuthorized||familyOwnerBusy)return;
+    const d=devices.find(x=>String(x.id)===button.dataset.familyEdit);
+    if(!d)return;
+    const panel=list.querySelector('[data-family-editor="'+d.id+'"]');
+    if(!panel.hidden){panel.hidden=true;return;}
+    panel.hidden=false;
+    panel.innerHTML=`<div class="family-owner-form"><label>裝置名稱<input class="search-input" data-edit-label maxlength="40" value="${familyOwnerEscape(d.device_label)}"></label>${familyFilterHTML(d.player_filter_mode,d.allowed_player_ids||[])}<button class="primary-btn" data-family-save type="button">儲存</button><button class="secondary-btn" data-family-cancel type="button">取消</button></div>`;
+    familyBindFilter(panel);
+    panel.querySelector('[data-family-cancel]').onclick=()=>panel.hidden=true;
+    panel.querySelector('[data-family-save]').onclick=async()=>{
+      if(familyOwnerBusy||!familyOwnerAuthorized)return;
+      try{
+        const device_label=panel.querySelector('[data-edit-label]').value.trim();
+        if(!device_label)throw Error('請輸入裝置名稱');
+        const settings=familyReadFilter(panel);
+        familyOwnerSetBusy(true);
+        const data=await familyOwnerRequest('update-device',{device_id:d.id,device_label,...settings});
+        if(data.players)familyOwnerPlayers=data.players;
+        renderFamilyDevices(data.devices||[]);familyOwnerMessage('已儲存裝置設定，後續通知立即適用。','success');
+      }catch(e){familyOwnerMessage(e.message,'error');}finally{familyOwnerSetBusy(false);}
+    };
+  }));
   list.querySelectorAll('[data-family-remove]').forEach(button => {
     button.addEventListener('click', async () => {
       if (familyOwnerBusy || !familyOwnerAuthorized) return;
@@ -156,6 +207,8 @@ async function refreshFamilyDevices() {
   if (!familyOwnerAuthorized) return;
   try {
     const data = await familyOwnerRequest('list-devices');
+    if(data.players)familyOwnerPlayers=data.players;
+    familyRenderInviteFilter();
     renderFamilyDevices(data.devices || []);
   } catch (error) {
     console.warn('家庭通知裝置讀取失敗', error);
@@ -166,18 +219,18 @@ async function refreshFamilyDevices() {
 async function createFamilyInvite() {
   if (familyOwnerBusy || !familyOwnerAuthorized) return;
   const labelInput = document.getElementById('familyDeviceLabel');
-  const label = String(labelInput?.value || '家庭 iPhone').trim() || '家庭 iPhone';
+  const label = String(labelInput?.value || '家庭裝置').trim() || '家庭裝置';
   familyOwnerSetBusy(true);
   familyOwnerMessage('正在產生一次性邀請連結…');
   try {
-    const data = await familyOwnerRequest('create-invite', { device_label: label });
+    const data = await familyOwnerRequest('create-invite', { device_label: label, ...familyReadFilter(document.getElementById('familyInviteFilter')) });
     const panel = document.getElementById('familyInvitePanel');
     const input = document.getElementById('familyInviteUrl');
     const expiry = document.getElementById('familyInviteExpiry');
     if (input) input.value = data.invite_url || '';
     if (expiry) expiry.textContent = `有效到 ${familyOwnerFormatDate(data.expires_at)}，成功綁定後即失效。`;
     if (panel) panel.hidden = false;
-    familyOwnerMessage('邀請連結已產生。傳給家人後，請在對方 iPhone 完成加入主畫面與通知授權。', 'success');
+    familyOwnerMessage('邀請連結已產生。傳給家人後，請在對方手機完成通知授權（iPhone 需加入主畫面）。', 'success');
   } catch (error) {
     familyOwnerMessage(error?.message || String(error), 'error');
   } finally {
@@ -214,7 +267,7 @@ async function shareFamilyInvite() {
     try {
       await navigator.share({
         title: 'PTCG 家庭配對通知',
-        text: '請用這個一次性連結，在你的 iPhone 開啟家庭配對通知。',
+        text: '請用這個一次性連結，在你的手機 開啟家庭配對通知。',
         url
       });
       return;
@@ -273,6 +326,7 @@ async function initFamilyOwnerUI() {
 
 function familyOwnerBoot() {
   familyOwnerEnsureStyle();
+  if(document.getElementById('familyDeviceTest'))return;
   let tries = 0;
   const timer = setInterval(async () => {
     tries += 1;
@@ -285,3 +339,40 @@ document.addEventListener('account-family-view-ready', () => initFamilyOwnerUI()
 document.addEventListener('account-family-opened', () => refreshFamilyOwnerAuth());
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', familyOwnerBoot, { once: true });
 else familyOwnerBoot();
+
+async function initFamilyDeviceTest(){
+  const root=document.getElementById('familyDeviceTest');if(!root||!window.supabase?.createClient)return;
+  const select=root.querySelector('select'), msg=root.querySelector('[role=status]'), button=root.querySelector('[data-send-test]');
+  const client=(typeof identityClient!=='undefined'&&identityClient)||(typeof pairingClient!=='undefined'&&pairingClient)||window.supabase.createClient(FAMILY_OWNER_SUPABASE_URL,FAMILY_OWNER_SUPABASE_KEY);
+  async function call(action,extra={}){
+    const {data}=await client.auth.getSession();
+    if(!data?.session?.access_token)throw Error('請先登入授權帳號');
+    const response=await fetch(FAMILY_OWNER_FUNCTION_URL,{method:'POST',headers:{Authorization:'Bearer '+data.session.access_token,'Content-Type':'application/json'},body:JSON.stringify({action,...extra})});
+    const result=await response.json();if(!response.ok||!result.ok)throw Error(result.error||'家庭通知服務失敗');return result;
+  }
+  let devices=[];
+  async function load(){
+    button.disabled=true;
+    try{
+      const data=await call('list-devices');devices=(data.devices||[]).filter(d=>d.active);
+      if(data.players)familyOwnerPlayers=data.players;
+      select.replaceChildren(new Option('請選擇家庭裝置',''));
+      devices.forEach(d=>select.add(new Option(d.device_label+' · '+familyFilterLabel(d),String(d.id))));
+      if(devices.length)select.add(new Option('全部家庭裝置','all'));
+      msg.textContent=devices.length?'僅發送家庭推播，不會發送 LINE。':'目前沒有可測試的裝置。';
+      button.disabled=!select.value;
+    }catch(e){select.replaceChildren(new Option('無法讀取裝置',''));msg.textContent=e.message;}
+  }
+  root.closest('details')?.addEventListener('toggle',()=>{if(root.closest('details').open)load();});
+  root.querySelector('[data-refresh-devices]').onclick=load;
+  select.onchange=()=>button.disabled=!select.value;
+  button.onclick=async()=>{
+    if(!select.value)return;
+    button.disabled=true;msg.textContent='正在發送測試推播…';
+    try{const data=await call('test-device',{device_id:select.value});msg.textContent=data.results.map(r=>r.device_label+'：'+(r.sent?'推播服務已接受（請確認手機）':'發送失敗'+(r.status?' ('+r.status+')':''))).join('；');}
+    catch(e){msg.textContent=e.message;}
+    finally{button.disabled=!select.value;}
+  };
+  if(root.closest('details')?.open)load();
+}
+document.addEventListener('DOMContentLoaded',initFamilyDeviceTest);

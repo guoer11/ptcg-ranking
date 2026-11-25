@@ -60,3 +60,5 @@
   .family-owner-actions button { width: 100%; min-width: 0; }
   .family-owner-actions #familyCreateInviteButton { grid-column: 1 / -1; }
 }
+
+.family-filter{border:1px solid #d5dae1;border-radius:10px;padding:10px;margin:10px 0;min-width:0}.family-filter label{display:block;margin:7px 0;font-size:14px}.family-filter [data-filter-options]{padding-left:12px}.family-filter [data-extra-ids]{width:100%;margin-top:4px}.family-owner-device>div:last-child{display:flex;gap:6px;flex-wrap:wrap}.family-owner-device small{overflow-wrap:anywhere}.family-owner-form [data-family-save],.family-owner-form [data-family-cancel]{margin:4px}.family-device-test{margin-top:14px;display:grid;gap:8px}.family-device-test select{width:100%;min-width:0;max-width:100%}.family-device-test [role=status]{overflow-wrap:anywhere}

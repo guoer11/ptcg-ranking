@@ -72,6 +72,10 @@ jobs:
           node tests/multi-player-watch.test.cjs
           node tests/multi-player-badges.test.cjs
           node tests/family-badges.test.cjs
+          node --check family-owner-ui.js
+          node --check family-notify.js
+          node --check family-round-query.js
+          node tests/family-device-routing.test.cjs
           node tests/default-tracking-players.test.cjs
           node tests/mobile-site-nav.test.cjs
           node tests/history-auth-stability.test.cjs
@@ -167,6 +171,18 @@ jobs:
           cmp family-notify.css _site/family-notify-2.4.1.css
           cp wcs-2027-standalone.js _site/wcs-2027-family-2.4.1.js
           cmp wcs-2027-standalone.js _site/wcs-2027-family-2.4.1.js
+          cp family-notify.js _site/family-notify-2.5.0.js
+          cmp family-notify.js _site/family-notify-2.5.0.js
+          cp family-round-query.js _site/family-round-query-2.5.0.js
+          cmp family-round-query.js _site/family-round-query-2.5.0.js
+          cp family-attention-bridge.js _site/family-attention-bridge-2.5.0.js
+          cmp family-attention-bridge.js _site/family-attention-bridge-2.5.0.js
+          cp player-badges.js _site/player-badges-family-2.5.0.js
+          cmp player-badges.js _site/player-badges-family-2.5.0.js
+          cp family-notify.css _site/family-notify-2.5.0.css
+          cmp family-notify.css _site/family-notify-2.5.0.css
+          cp wcs-2027-standalone.js _site/wcs-2027-family-2.5.0.js
+          cmp wcs-2027-standalone.js _site/wcs-2027-family-2.5.0.js
           cp baseball-reference-ui.css baseball-3d.css baseball-3d.js _site/
           cp -R pitching-app _site/pitching-app
           cp assets/q-icons/*.webp _site/assets/q-icons/

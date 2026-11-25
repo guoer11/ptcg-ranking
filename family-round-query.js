@@ -73,7 +73,8 @@
   function sameRound(a, b) {
     if (!a || !b) return false;
     return String(a.round || '') === String(b.round || '')
-      && tidFromOfficial(a.official) === tidFromOfficial(b.official);
+      && tidFromOfficial(a.official) === tidFromOfficial(b.official)
+      && extractPlayerId(a.player)===extractPlayerId(b.player);
   }
 
   function mergeSummary(base, incoming) {
@@ -105,6 +106,7 @@
     if (!summary || summary.type !== 'round') return null;
     const round = Number(summary.round || 0);
     const playerId = extractPlayerId(summary.player);
+    if(typeof familyAllowedPlayer==='function'&&!familyAllowedPlayer(playerId))return null;
     const official = String(summary.official || '');
     const tid = tidFromOfficial(official);
     if (!Number.isInteger(round) || round < 1 || !playerId || !tid || !official) return null;
@@ -140,6 +142,7 @@
     if (summary) rememberSummary(summary);
     const context = readJson(CONTEXT_KEY, null);
     if (!context?.tid || !context?.player_id || !context?.official || Number(context.max_round || 0) < 1) return null;
+    if(typeof familyAllowedPlayer==='function'&&!familyAllowedPlayer(context.player_id))return null;
     const updated = Date.parse(context.updated_at || '');
     if (!Number.isFinite(updated) || Date.now() - updated > CONTEXT_TTL_MS) return null;
     return context;
@@ -386,7 +389,7 @@
         saved_at: new Date().toISOString()
       };
 
-      if(multiSummaryActive())return;
+      if(multiSummaryActive()||(typeof familyAllowedPlayer==='function'&&!familyAllowedPlayer(context.player_id)))return;
       const nextContext = rememberSummary(summary) || context;
       if (updateUrl) updateAddress(summary);
       renderRound(summary, nextContext);
@@ -404,7 +407,7 @@
   function ingestNotificationUrl(urlValue) {
     if(new URL(urlValue,window.location.origin).searchParams.has('players')||multiSummaryActive()){const panel=byId('familyRoundQuery');if(panel)panel.hidden=true;return;}
     const incoming = summaryFromUrl(urlValue);
-    if (!incoming) return;
+    if (!incoming || (typeof familyAllowedPlayer==='function'&&!familyAllowedPlayer(extractPlayerId(incoming.player)))) return;
     const stored = readJson(SUMMARY_KEY, null);
     const merged = mergeSummary(stored?.type === 'round' ? stored : null, incoming);
     const context = rememberSummary(merged) || currentContext();
@@ -467,8 +470,9 @@
     });
     window.addEventListener('pageshow', () => refreshFromCurrentState({ autoFill: true }));
 
+    document.addEventListener('ptcg-family-preferences-updated',()=>refreshFromCurrentState({autoFill:true}));
     const version = document.querySelector('.family-notify-version strong');
-    if (version) version.textContent = '目前版本 v2.4.1';
+    if (version) version.textContent = '目前版本 v2.5.0';
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true });

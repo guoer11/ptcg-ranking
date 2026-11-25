@@ -107,6 +107,7 @@
           <summary>進階 / 測試工具</summary>
           <p class="pairing-watch-copy" style="margin:10px 0 12px;">正式比賽平常可保持收合；需要測試通知時再展開。</p>
           <div class="pairing-actions"><button id="pairingTestButton" class="secondary-btn pairing-test-btn" type="button">測試 Round 通知</button><button id="pairingFinalTestButton" class="secondary-btn pairing-test-btn" type="button">測試最終排名通知</button></div>
+          <section id="familyDeviceTest" class="family-device-test"><strong>家庭裝置推播測試</strong><label for="familyTestDevice">選擇測試裝置</label><select id="familyTestDevice" class="search-input"><option value="">請選擇家庭裝置</option></select><div class="pairing-actions"><button type="button" class="secondary-btn" data-refresh-devices>重新讀取裝置</button><button type="button" class="secondary-btn" data-send-test disabled>發送測試推播</button></div><small role="status" aria-live="polite">只會通知選取的家庭裝置，不會發送 LINE。</small></section>
         </details>
         <section id="pairingDeckScout" class="pairing-scout-panel pairing-scout-card" aria-labelledby="pairingScoutHeading">
           <details id="pairingScoutCollapse" class="pairing-feature-collapse">
@@ -148,7 +149,7 @@
 
   <footer class="footer"><div class="wrap">非官方網站。本頁僅協助整理公開配對資訊，Pokémon 相關商標屬原權利人所有。</div></footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="site-version.js?v=2.18.1" defer></script>
+  <script src="site-version.js?v=2.19.0" defer></script>
   <script src="pairing-auth-stability.js?v=1.11.2-r1" defer></script>
   <script src="pairing-2.18.1-r1.js" defer></script>
   <script src="pairing-odds-engine.js?v=1.11.0-r1" defer></script>
@@ -159,6 +160,7 @@
   <script src="pairing-history.js?v=2.6.0-r1" defer></script>
   <script src="pairing-match-archive.js?v=2.17.1-r3" defer></script>
   <script src="site-account-ui.js?v=2.17.0-r4" defer></script>
+  <script src="family-owner-ui.js?v=2.19.0" defer></script>
   <script>
     document.addEventListener('click', async event => {
       const button = event.target.closest?.('#pairingLookupButton');
