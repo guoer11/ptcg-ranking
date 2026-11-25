@@ -8,8 +8,13 @@ const source=fs.readFileSync('supabase/functions/ptcg-pairing-archive/source.ts'
 const fn=fs.readFileSync('supabase/functions/ptcg-pairing-archive/index.ts','utf8');
 const ui=fs.readFileSync('pairing-match-archive.js','utf8');
 assert.match(page,/id="matchArchive"/);
-assert.match(page,/pairing-match-archive\.js\?v=\d+\.\d+\.\d+/);
-assert.match(page,/pairing-match-archive\.css\?v=\d+\.\d+\.\d+/);
+const archiveJs=page.match(/src="(pairing-match-archive-\d+\.\d+\.\d+-r\d+\.js)"/)?.[1];
+assert(archiveJs,'history must load uniquely named archive JS');
+assert(deploy.includes('cp pairing-match-archive.js _site/'+archiveJs),'deploy the canonical JS under its new cache-safe name');
+const archiveCss=page.match(/href="(pairing-match-archive-\d+\.\d+\.\d+-r\d+\.css)"/)?.[1];
+assert(archiveCss,'history must load uniquely named archive CSS');
+assert(deploy.includes('cp pairing-match-archive.css _site/'+archiveCss),'deploy the canonical CSS under its new cache-safe name');
+assert.equal(archiveJs.replace(/\.js$/,'.css'),archiveCss,'paired asset revisions');
 assert.match(deploy,/pairing-match-archive\.js/);
 assert.match(deploy,/node --check pairing-match-archive\.js/);
 assert.match(fn,/requireMember\(req\)/,'archive reads require auth');
