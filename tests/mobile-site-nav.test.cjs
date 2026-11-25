@@ -19,15 +19,16 @@ for(const page of ['index.html','tournaments.html','pairing.html','history.html'
 const css=read('site-nav.css'),account=read('site-account-ui.js');
 assert.match(css,/\.site-nav \.site-mobile-label \{ display:none; \}/,'desktop keeps original labels');
 assert.match(css,/@media \(max-width: 720px\)/);
-assert.match(css,/padding-bottom: calc\(102px \+ env\(safe-area-inset-bottom/);
+assert.match(css,/--site-nav-bottom: max\(0px, calc\(env\(safe-area-inset-bottom, 0px\) - 20px\)\);/,'trial lowers the bar up to 20px without negative bottom inset');
+assert.match(css,/padding-bottom: calc\(102px \+ var\(--site-nav-bottom\)\)/);
 assert.match(css,/position:fixed/);
 const navRule=css.match(/\.site-bottom-nav-page \.site-nav\s*\{([^}]+)\}/)?.[1];
 assert(navRule,'mobile nav rule required');
-assert.match(navRule,/bottom:env\(safe-area-inset-bottom, 0px\);/,'nav touches safe-area edge without extra gap');
+assert.match(navRule,/bottom:var\(--site-nav-bottom\);/,'nav uses adjusted safe-area inset');
 
 const footerSurface=css.match(/body\.site-bottom-nav-page::after\s*\{([^}]+)\}/)?.[1];
 assert(footerSurface,'opaque full-width footer surface is required');
-for(const rule of [/position:fixed/,/z-index:89/,/left:0/,/right:0/,/bottom:0/,/height:calc\(78px \+ env\(safe-area-inset-bottom, 0px\)\)/,/background:#f4f7fb/])
+for(const rule of [/position:fixed/,/z-index:89/,/left:0/,/right:0/,/bottom:0/,/height:calc\(78px \+ var\(--site-nav-bottom\)\)/,/background:#f4f7fb/])
   assert.match(footerSurface,rule,'footer must cover the screen bottom and safe area');
 assert.match(css,/body\.site-bottom-nav-page\.modal-open::after \{ display:none; \}/);
 

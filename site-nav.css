@@ -82,7 +82,9 @@
 
 @media (max-width: 720px) {
   body.site-bottom-nav-page {
-    padding-bottom: calc(102px + env(safe-area-inset-bottom, 0px));
+    /* Trial: lower the bar by up to 20px; never extend beyond the viewport. */
+    --site-nav-bottom: max(0px, calc(env(safe-area-inset-bottom, 0px) - 20px));
+    padding-bottom: calc(102px + var(--site-nav-bottom));
   }
   /* An opaque, full-width footer surface blocks scrolling page content
      behind the floating bar, including the iPhone home-indicator area. */
@@ -93,7 +95,7 @@
     left:0;
     right:0;
     bottom:0;
-    height:calc(78px + env(safe-area-inset-bottom, 0px));
+    height:calc(78px + var(--site-nav-bottom));
     background:#f4f7fb;
     pointer-events:auto;
   }
@@ -102,7 +104,7 @@
     z-index:90;
     left:max(10px, env(safe-area-inset-left, 0px));
     right:max(10px, env(safe-area-inset-right, 0px));
-    bottom:env(safe-area-inset-bottom, 0px);
+    bottom:var(--site-nav-bottom);
     width:auto;
     max-width:560px;
     margin:0 auto;
