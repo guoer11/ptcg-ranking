@@ -87,7 +87,9 @@
     {key:'final',stage:'final',label:'冠軍決賽',from:['sf1','sf2']}
   ];
   const bracketKeys=bracketGames.map(game=>game.key);
-  let bracketWinners={},bracketDirty=false,bracketStage='qf',bracketBusy=false;
+  let bracketWinners={},bracketBase={},bracketConflict=null,bracketDirty=false,bracketStage='qf',bracketBusy=false;
+  const isLive=()=>typeof location!=='undefined'&&location.pathname.endsWith('pairing.html');
+  const isAdmin=()=>typeof pairingAccessRole==='undefined'||pairingAccessRole==='admin';
   function bracketCount(){return bracketKeys.filter(key=>Boolean(bracketWinners[key])).length;}
   function bracketPlayer(id){
     const row=(getTop(current)||[]).find(p=>String(p.id).toLowerCase()===id);
@@ -144,7 +146,7 @@
     const stages=[['qf','八強'],['sf','四強'],['final','決賽']];
     const count=bracketCount(),winner=bracketPlayer(bracketWinners.final||'');
     root.innerHTML=
-      '<div class="history-bracket-head"><strong class="history-bracket-progress">已確認 '+count+' / 7 場</strong>'+
+      '<div class="history-bracket-head"><strong class="history-bracket-progress">'+escape(current.event.title||'')+' · 已確認 '+count+' / 7 場</strong>'+
       '<span class="history-bracket-notice">姓名與 PTCG ID 可直接選取複製；按「選為勝者」確認戰況，再按一次取消。變更上一輪會清除不符合的後續結果。</span></div>'+
       '<div class="history-bracket-tabs" aria-label="切換複賽輪次">'+stages.map(stage=>
         '<button type="button" class="history-bracket-tab'+(bracketStage===stage[0]?' active':'')+
@@ -158,15 +160,19 @@
       ).join('')+'</div>'+
       (winner?'<div class="history-bracket-champion">🏆 冠軍：'+escape(winner.name)+'（預賽第'+winner.rank+'名）</div>':'');
     const legacy=$('historyKnockoutLegacy');
-    if(legacy)legacy.hidden=count>0;
-    if(saveBtn){saveBtn.disabled=bracketBusy||!bracketDirty;saveBtn.textContent=bracketBusy?'儲存中…':'儲存目前戰況';}
+    if(legacy)legacy.hidden=count>0||!!current?.knockout?.podium?.bracket||isLive()||!eventId;
+    if(bracketConflict){
+      const names=bracketConflict.games.map(key=>bracketGames.find(g=>g.key===key)?.label||key);
+      root.innerHTML+='<div class="history-bracket-champion" role="alert">戰況衝突：'+escape(names.join('、'))+'。暫停 LP 更新。'+(isAdmin()?'<p>現有紀錄與另一份登記均已保存，請選擇採用的完整戰況。</p><div>'+bracketConflict.games.map(key=>escape((bracketGames.find(g=>g.key===key)?.label||key)+'：現有 '+(bracketPlayer(bracketConflict.stored[key])?.name||'未確認')+' ／另一份 '+(bracketPlayer(bracketConflict.incoming[key])?.name||'未確認'))).join('<br>')+'</div><button type="button" class="secondary-btn" data-bracket-resolve="keep">保留現有戰況</button> <button type="button" class="secondary-btn" data-bracket-resolve="adopt">採用另一份戰況</button>':' 等待管理者裁決。')+'</div>';
+    }
+    if(saveBtn){saveBtn.disabled=bracketBusy||!bracketDirty||!!bracketConflict;saveBtn.textContent=bracketBusy?'儲存中…':'儲存目前戰況';}
     if(bracketDirty&&$('historyBracketStatus')?.dataset.error!=='1')bracketStatus(count===7
       ?'尚未儲存：七場已填完，儲存後會同步冠亞軍、四強與 LP。'
       :'尚未儲存：已確認 '+count+' / 7 場；不完整戰況只會保存，不會更新 LP。');
   }
   function updateBracketWinner(key,id){
     const game=bracketGames.find(g=>g.key===key);
-    if(!game||bracketBusy||!id||!bracketSlots(game).some(slot=>slot.id===id))return;
+    if(!game||bracketBusy||bracketConflict||!id||!bracketSlots(game).some(slot=>slot.id===id))return;
     bracketWinners[key]=bracketWinners[key]===id?'':id;
     // 上游勝者改變時，只清空受影響的四強或決賽結果。
     for(const later of bracketGames.slice(4)){
@@ -178,22 +184,27 @@
     bracketStatus('',false);
     drawBracket();
   }
-  async function saveBracket(){
-    if(bracketBusy||!bracketDirty||!pairingAuthorized||!pairingSession?.access_token||!eventId||!current)return;
+  async function saveBracket(resolve=''){
+    if(bracketBusy||(!bracketDirty&&!resolve)||(!resolve&&bracketConflict)||!pairingAuthorized||!pairingSession?.access_token||!current)return;
+    if(resolve&&(!isAdmin()||!bracketConflict))return;
     const targetTid=String(current.event.tid),targetEvent=eventId;
+    if(isLive()){try{const input=$('pairingSourceUrl')?.value;if(input&&new URL(input).searchParams.get('tid')!==targetTid){bracketStatus('賽事網址已變更，請先切回原賽事再儲存。',true);return;}}catch(_){return;}}
     const currentWinners=Object.fromEntries(bracketKeys.map(k=>[k,bracketWinners[k]||'']));
     bracketBusy=true;drawBracket();bracketStatus('正在儲存已確認的複賽戰況…');
     try{
       const response=await fetch(ENDPOINT,{method:'POST',cache:'no-store',headers:{
         Authorization:'Bearer '+pairingSession.access_token,'Content-Type':'application/json'
       },body:JSON.stringify({action:'save-knockout-bracket',tid:targetTid,
-        event_id:targetEvent,winners:currentWinners})});
+        event_id:targetEvent,winners:currentWinners,base_winners:bracketBase,...(resolve?{resolve_conflict:resolve,conflict_id:bracketConflict.id}:{})})});
       const data=await response.json().catch(()=>({}));
       if(!response.ok||!data.ok)throw new Error(data.error||'儲存失敗');
       if(String(current?.event?.tid)!==targetTid)return;
-      bracketDirty=false;
+      bracketWinners=data.winners||currentWinners;bracketBase={...bracketWinners};bracketConflict=data.conflict||null;bracketDirty=false;
+      if(current.knockout?.podium)current.knockout.podium.bracket={winners:bracketWinners,conflict:bracketConflict};
       document.dispatchEvent?.(new CustomEvent('archive:invalidate',{detail:{tid:targetTid}}));
-      if(data.complete){
+      if(data.conflict){bracketStatus('雙方紀錄已保留；有衝突，暫停 LP 更新。',true);}
+      else if(data.sync_waiting){bracketStatus('戰況已儲存；官方賽事對應或試算尚未完成，系統將自動重試同步。');}
+      else if(data.complete){
         bracketStatus(data.sync_triggered
           ?'七場戰況已儲存，冠亞軍及 LP 試算同步已啟動。官方成績仍優先。'
           :'戰況已儲存，但積分試算同步失敗：'+(data.sync_error||'請稍後再試'),!data.sync_triggered);
@@ -212,11 +223,21 @@
         ||!archive?.event?.final_seen_at){panel.hidden=true;current=null;eventId='';return;}
     // Do not overwrite the owner's unsaved selections when changing only the
     // viewed Round of the same archived event.
-    if(current?.event?.tid===tid&&panel.dataset.ready==='1')return;
+    if(current?.event?.tid===tid&&panel.dataset.ready==='1'){
+      if(bracketBusy||bracketDirty)return;
+      current=archive;
+      bracketWinners=Object.fromEntries(bracketKeys.map(k=>[k,String(archive.knockout?.podium?.bracket?.winners?.[k]||'').toLowerCase()]));
+      bracketBase={...bracketWinners};bracketConflict=archive.knockout?.podium?.bracket?.conflict||null;
+      drawBracket();
+      if(bracketConflict)bracketStatus('戰況有衝突，等待管理者裁決。',true);
+      else if(archive.knockout?.podium?.bracket?.sync_pending)bracketStatus('七場已儲存，等待 LP 自動同步。');
+      else bracketStatus('戰況已同步：目前確認 '+bracketCount()+' / 7 場。');
+      return;
+    }
     const request=++generation;
     current=archive;eventId='';panel.hidden=true;panel.dataset.ready='0';
     try{
-      const [sources,oldKnockout,tournaments]=await Promise.all([
+      const [sources,oldKnockout,tournaments]=isLive()?[{sources:[]},{events:{}},{events:[]}]:await Promise.all([
         publicJson('data/preliminary_sources.json'),
         knockoutCache||publicJson('data/knockout_results.json'),
         tournamentsCache||publicJson('data/tournaments.json')
@@ -225,20 +246,20 @@
       knockoutCache=oldKnockout;tournamentsCache=tournaments;
       const source=(sources.sources||[]).find(x=>String(x.tid)===String(tid)
         &&x.league==='Ultra'&&x.group==='Junior');
-      if(!source){panel.hidden=true;return;}
-      const match=(tournaments.events||[]).find(e=>String(e.event_id)===String(source.event_id)
+      
+      const match=(tournaments.events||[]).find(e=>String(e.event_id)===String(source?.event_id||'')
         &&e.league==='Ultra'&&e.group==='Junior');
-      if(!match){panel.hidden=true;return;}
-      eventId=String(source.event_id);
+      eventId=match?String(source.event_id):'';
       const configured=archive.knockout?.podium?.results
         ||oldKnockout.events?.[eventId]?.results||[];
       const initial=savedSelections(configured)||['','','',''];
       const options='<option value="">請選擇選手</option>'+top.map(row=>
         `<option value="${escape(String(row.id).toLowerCase())}">${escape(labelFor(row))}</option>`).join('');
-      $('historyKnockoutForm').innerHTML=names.map((name,i)=>
+      if($('historyKnockoutForm'))$('historyKnockoutForm').innerHTML=names.map((name,i)=>
         `<label for="historyKnockout_${name}">${labels[i]}<select class="search-input" id="historyKnockout_${name}">${options}</select></label>`).join('');
       names.forEach((name,i)=>{
         const select=$('historyKnockout_'+name);
+        if(!select)return;
         select.value=initial[i];
         select.addEventListener('change',drawPreview);
       });
@@ -246,13 +267,14 @@
       bracketWinners=Object.fromEntries(bracketKeys.map(k=>[
         k,String(archive.knockout?.podium?.bracket?.winners?.[k]||'').toLowerCase()
       ]));
+      bracketBase={...bracketWinners};bracketConflict=archive.knockout?.podium?.bracket?.conflict||null;
       bracketDirty=false;bracketStage='qf';bracketBusy=false;
       panel.dataset.ready='1';panel.hidden=false;
-      drawPreview();drawBracket();
+      if($('historyKnockoutForm')&&eventId)drawPreview();drawBracket();
       if(!bracketCount()&&configured.length===8)
         bracketStatus('已保留原本登錄的冠亞軍名次，但缺少逐場勝負；請從八強開始手動確認，系統不會倒推。');
       else bracketStatus('戰況已載入：目前確認 '+bracketCount()+' / 7 場。');
-      if(match.results?.length){
+      if(match?.results?.length){
         status('官方正式成績已公布：試算一律使用官方資料，這裡的複賽名次僅供歷史紀錄。');
       }else if(configured.length===8){
         status('已載入先前儲存的複賽成績，可修改後重新儲存。');
@@ -292,6 +314,46 @@
     if(!e.detail?.allowed){generation++;current=null;eventId='';
       const el=$('historyKnockoutPanel');if(el)el.hidden=true;}
   });
+  // Both pages refresh the same narrow endpoint. Realtime is backed by a 5s
+  // fallback (including after the watch stops at preliminary final ranking).
+  let liveTid='',liveBusy=false,liveChannel=null,liveUser='',liveTimer=null;
+  async function refreshLive(){
+    if(!pairingAuthorized||!pairingSession?.access_token||liveBusy||bracketBusy||bracketDirty)return;
+    if(!isLive()&&!current?.event?.tid)return;
+    let tid=isLive()?liveTid:String(current.event.tid);
+    if(isLive()){
+      const raw=$('pairingSourceUrl')?.value||'';
+      try{if(raw){const url=new URL(raw);if(url.hostname==='tcg.sfc-jpn.jp')tid=url.searchParams.get('tid')||tid;}}catch(_){}
+    }
+    const user=pairingSession.user?.id;
+    liveBusy=true;
+    try{
+      const response=await fetch(ENDPOINT,{method:'POST',cache:'no-store',headers:{Authorization:'Bearer '+pairingSession.access_token,'Content-Type':'application/json'},body:JSON.stringify({action:'top8-live',tid})});
+      const data=await response.json();
+      if(!pairingAuthorized||pairingSession?.user?.id!==user)return;
+      if(!response.ok||!data.ok)throw Error(data.error||'讀取 TOP8 失敗');
+      if(isLive()&&data.tid)liveTid=data.tid;
+      if(data.archive)await render(data.archive,String(data.tid));
+      else if(isLive()){$('historyKnockoutPanel').hidden=true;current=null;eventId='';}
+    }catch(error){if(isLive()&&current&&String(current.event.tid)!==tid){$('historyKnockoutPanel').hidden=true;current=null;eventId='';}console.warn('TOP8 同步',error);}
+    finally{liveBusy=false;}
+  }
+  function startLive(){
+    const user=pairingAuthorized?pairingSession?.user?.id:'';
+    if(user===liveUser)return;
+    if(liveChannel&&typeof pairingClient!=='undefined')void pairingClient?.removeChannel(liveChannel);
+    liveChannel=null;liveUser=user||'';liveTid='';
+    clearInterval(liveTimer);liveTimer=null;
+    if(!user)return;
+    if(typeof pairingClient!=='undefined'&&pairingClient?.channel){
+      liveChannel=pairingClient.channel('top8-shared-'+user).on('postgres_changes',{event:'*',schema:'public',table:'pairing_top8_changes'},event=>{if(String(event.new?.tid)===String(current?.event?.tid||liveTid))void refreshLive();}).subscribe();
+    }
+    liveTimer=setInterval(()=>{if(!document.hidden)void refreshLive();},5000);
+    void refreshLive();
+  }
+  document.addEventListener('pairing:auth-ready',startLive);
+  for(const event of ['pairing:tracking-started','pairing:history-mode','pairing:tracking-stopped'])document.addEventListener(event,e=>{if(!isLive())return;liveTid=String(e.detail?.parsed?.tid||e.detail?.watch?.tid||liveTid);void refreshLive();});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refreshLive();});
   document.addEventListener('DOMContentLoaded',()=>{
     $('historyKnockoutSave')?.addEventListener('click',()=>{void save();});
     $('historyBracketSave')?.addEventListener('click',()=>{void saveBracket();});
@@ -301,6 +363,7 @@
       if(button.dataset.bracketStage){
         bracketStage=button.dataset.bracketStage;drawBracket();return;
       }
+      if(button.dataset.bracketResolve){void saveBracket(button.dataset.bracketResolve);return;}
       if(button.dataset.bracketPick)updateBracketWinner(button.dataset.bracketPick,button.dataset.playerId);
     });
   },{once:true});

@@ -83,6 +83,7 @@ jobs:
           node tests/mobile-site-nav.test.cjs
           node tests/history-auth-stability.test.cjs
           node tests/history-bracket.test.cjs
+          node tests/top8-shared.test.cjs
           node tests/pairing-match-archive.test.cjs
           node tests/history-archive-speed.test.cjs
           python -m unittest discover -s tests -p 'test_sync_knockout.py'

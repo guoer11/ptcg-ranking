@@ -224,11 +224,10 @@
     try{return await refreshPromise;}finally{refreshPromise=null;}
   }
   async function registerFromTracking(ev) {
-    if(typeof pairingAccessRole!=='undefined'&&pairingAccessRole==='guest')return;
     const source=ev.detail?.parsed?.url||ev.detail?.watch?.source_url;
     if(!source)return;
     try {
-      await api("register",{url:source});
+      await api("register-tracked",{url:source});
       message("已啟動整場賽事封存；每 5 分鐘檢查新配對與最終排名。");
       if($("matchArchive"))await refresh();
     }catch(e){message("追蹤通知已啟動，但封存登記失敗："+String(e.message||e),true);}

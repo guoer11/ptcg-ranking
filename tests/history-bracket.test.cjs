@@ -24,7 +24,7 @@ assert.match(backend,/action==="save-knockout-bracket"/);
 assert.match(backend,/const complete=BRACKET_KEYS\.every/);
 assert.match(backend,/if\(complete\)\{/);
 assert.match(backend,/await requireMember\(req\)/);
-assert.match(backend,/bracket:\{version:1,winners,updated_at:now\(\)\}/);
+assert.match(backend,/bracket:\{version:2,winners,updated_at:now\(\)/);
 
 const elements={};
 const eventCallbacks={};

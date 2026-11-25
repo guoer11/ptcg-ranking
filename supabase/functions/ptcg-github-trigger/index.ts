@@ -235,6 +235,9 @@ Deno.serve(async (req: Request) => {
         .from("ptcg_match_archive_knockouts")
         .select("tid,event_id,podium").eq("event_id",eventId).maybeSingle();
       if(verifiedError)throw verifiedError;
+      const bracket=verified?.podium?.bracket;
+      if(bracket&&(bracket.conflict||!["qf1","qf2","qf3","qf4","sf1","sf2","final"].every(k=>Boolean(bracket.winners?.[k]))))
+        return json({error:"Top 8 conflict or incomplete bracket"},409);
       if(!verified?.tid||!Array.isArray(verified.podium?.results)||verified.podium.results.length!==8)
         return json({error:"verified Top 8 not found"},404);
       const {data:archived,error:archivedError}=await service
