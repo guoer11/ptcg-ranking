@@ -36,7 +36,7 @@ const tournamentJS=read('tournaments.js');
 const tournamentHTML=read('tournaments.html');
 assert.match(tournamentJS,/existing\.hidden = false;/,'reuse the existing private pairing link');
 assert.match(tournamentJS,/a\[href="pairing\.html"\]:not\(\[data-pairing-nav\]\)/,'no extra pairing link');
-assert.equal((tournamentHTML.match(/href="pairing\.html"/g)||[]).length,1,'one pairing link per page');
+assert.equal((tournamentHTML.match(/<a\b[^>]*href="pairing\.html"/g)||[]).length,1,'one actual pairing link per page');
 assert.match(tournamentHTML,/tournaments\.js\?v=2\.12\.0-r2/,'bust the cached legacy dynamic nav');
 const mapped=JSON.parse(read('data/preliminary_sources.json')).sources.find(s=>s.tid==='5865462');
 assert.equal(mapped?.event_id,'66990','verified 11/21 archived tournament mapping must be present');
@@ -55,6 +55,9 @@ for(const file of ['index.html','tournaments.html','pairing.html','history.html'
  listener(ev);
  assert.match(assigned,/history\.html\?nav=\d+$/);
  assert.equal(prevented,1);
+ link.href='https://example.test/ptcg-ranking/pairing.html';listener(ev);
+ assert.match(assigned,/pairing\.html\?nav=\d+$/);
+ link.href='https://example.test/ptcg-ranking/history.html';
  assigned=null;link.hidden=true;listener(ev);assert.equal(assigned,null,'hidden private nav must not navigate');
  link.hidden=false;listener({...ev,ctrlKey:true});assert.equal(assigned,null,'preserve modified-click behavior');
  listener({...ev,defaultPrevented:true});assert.equal(assigned,null);
