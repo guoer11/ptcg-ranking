@@ -76,6 +76,7 @@ jobs:
           node --check family-notify.js
           node --check family-round-query.js
           node tests/family-device-routing.test.cjs
+          node tests/pairing-watch-latency.test.cjs
           node tests/default-tracking-players.test.cjs
           node tests/mobile-site-nav.test.cjs
           node tests/history-auth-stability.test.cjs

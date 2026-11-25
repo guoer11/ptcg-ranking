@@ -68,6 +68,7 @@ async function fetchPairing(sourceUrl: string, playerId: string | string[]) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(Array.isArray(playerId) ? { url: sourceUrl, players: playerId } : { url: sourceUrl, player: playerId }),
+    signal:AbortSignal.timeout(12000),
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok || !data?.ok) throw new Error(data?.error || `配對讀取失敗 HTTP ${response.status}`);
@@ -181,6 +182,33 @@ async function loadVapid() {
   return { subject: data.subject, publicKey: data.public_key, privateKey: data.private_key };
 }
 
+// Bounded retry: retry each rejected delivery independently; never resend successful targets.
+const RETRY_DELAYS_MS = [500, 1500];
+const delay = (ms:number) => new Promise<void>(resolve=>setTimeout(resolve,ms));
+function deliveryStatus(error:any):number {
+  return Number(error?.statusCode || error?.status || error?.response?.status || 0);
+}
+function trace(stage:string, values:Record<string,unknown>) {
+  // No names, player IDs, endpoints, secrets, or message text in logs.
+  console.log(JSON.stringify({event:"pairing-monitor",stage,at:new Date().toISOString(),...values}));
+}
+async function retryDelivery<T>(channel:string, task:()=>Promise<T>, shouldRetry:(error:any)=>boolean) {
+  const started=Date.now();
+  for(let attempt=1;;attempt++){
+    try{
+      const value=await task();
+      trace("delivery-accepted",{channel,attempt,elapsed_ms:Date.now()-started});
+      return value;
+    }catch(error:any){
+      const status=deliveryStatus(error);
+      const retry=attempt<=RETRY_DELAYS_MS.length && shouldRetry(error);
+      trace(retry?"delivery-retry":"delivery-failed",{channel,attempt,status,elapsed_ms:Date.now()-started});
+      if(!retry)throw error;
+      await delay(RETRY_DELAYS_MS[attempt-1]);
+    }
+  }
+}
+
 type FamilyPayload = {title:string,body:string,url:string,tag:string};
 type FamilyRoute = (ids:string[])=>FamilyPayload|null;
 async function sendWebPush(userId: string, title: string, body: string, familyUrl = "", familyRoute?:FamilyRoute) {
@@ -198,63 +226,81 @@ async function sendWebPush(userId: string, title: string, body: string, familyUr
   if (!rows?.length) return { sent: 0 };
   const familyEndpoints = new Map((familyRows || []).map((row: any) => [String(row.endpoint || ""),row]));
   const vapid = await loadVapid();
-  let sent = 0;
-  for (const row of rows) {
+  let sent = 0, failed=0;
+  // Each recipient starts independently, so a slow phone cannot block another.
+  await Promise.all(rows.map(async (row:any) => {
     try {
       const family:any = familyEndpoints.get(String(row.endpoint || ""));
-      if(family && !family.active)continue;
+      if(family && !family.active)return;
       let payload:FamilyPayload|null = family && familyUrl
         ? { title, body, url: familyUrl, tag: "ptcg-family-pairing" }
         : { title, body, url: "/ptcg-ranking/pairing.html", tag: "ptcg-pairing" };
       if(family?.player_filter_mode==="custom"){
         payload=familyRoute?familyRoute(family.allowed_player_ids||[]):null;
-        if(!payload)continue;
+        if(!payload)return;
       }
-      await sendNotification(
+      const channel=family?"family-push":"personal-push";
+      await retryDelivery(channel,()=>sendNotification(
         { endpoint: row.endpoint, keys: { p256dh: row.p256dh, auth: row.auth } },
         JSON.stringify(payload),
         { vapidDetails: vapid, TTL: 300 },
-      );
+      ),err=>{
+        // Web Push has no LINE-style idempotency key. Retry explicit temporary HTTP rejection,
+        // not ambiguous connection failures where the provider might already have accepted it.
+        const code=deliveryStatus(err);
+        return code===429 || code===503;
+      });
       sent += 1;
     } catch (error: any) {
-      const code = Number(error?.statusCode || 0);
+      failed++;
+      const code = deliveryStatus(error);
       if (code === 404 || code === 410) {
-        await service.from("push_subscriptions").delete().eq("endpoint", row.endpoint).eq("user_id",userId);
-        await service.from("family_push_subscriptions").update({active:false}).eq("endpoint",row.endpoint).eq("owner_user_id",userId);
+        await Promise.allSettled([
+          service.from("push_subscriptions").delete().eq("endpoint", row.endpoint).eq("user_id",userId),
+          service.from("family_push_subscriptions").update({active:false}).eq("endpoint",row.endpoint).eq("owner_user_id",userId)
+        ]);
       }
     }
-  }
-  return { sent };
+  }));
+  return { sent, failed };
 }
 
 async function sendLine(title: string, body: string) {
   if (!LINE_CHANNEL_ACCESS_TOKEN || !LINE_USER_ID) return { sent: false, reason: "not_configured" };
   const text = [`🔔 ${title}`, body].filter(Boolean).join("\n");
-  const response = await fetch("https://api.line.me/v2/bot/message/push", {
-    method: "POST",
-    headers: { "Authorization": `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ to: LINE_USER_ID, messages: [{ type: "text", text }] }),
-  });
-  if (!response.ok) throw new Error(`LINE API HTTP ${response.status}: ${(await response.text()).slice(0, 200)}`);
-  return { sent: true };
+  const retryKey=crypto.randomUUID();
+  return await retryDelivery("line",async()=>{
+    const response = await fetch("https://api.line.me/v2/bot/message/push", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`, "Content-Type": "application/json", "X-Line-Retry-Key":retryKey },
+      body: JSON.stringify({ to: LINE_USER_ID, messages: [{ type: "text", text }] }),
+      signal:AbortSignal.timeout(8000),
+    });
+    if(response.ok || (response.status===409 && response.headers.has("x-line-accepted-request-id")))return {sent:true};
+    throw Object.assign(new Error("LINE API HTTP "+response.status),{status:response.status});
+  },err=>deliveryStatus(err)===0 || deliveryStatus(err)>=500);
 }
 
 async function sendBoth(userId: string, title: string, lineBody: string, pushBody = lineBody, familyUrl = "", familyRoute?:FamilyRoute) {
+  const started=Date.now();
   const [line, push] = await Promise.allSettled([sendLine(title, lineBody), sendWebPush(userId, title, pushBody, familyUrl, familyRoute)]);
-  return {
+  const result={
     line: line.status === "fulfilled" ? line.value : { sent: false, error: String(line.reason) },
     push: push.status === "fulfilled" ? push.value : { sent: 0, error: String(push.reason) },
   };
+  trace("notice-delivery-summary",{elapsed_ms:Date.now()-started,line_accepted:result.line.sent,push_accepted:result.push.sent,push_failed:"failed" in result.push?result.push.failed:push.status==="rejected"?1:0});
+  return result;
 }
 
-async function notifyMatch(userId: string, pairing: any, test = false) {
+async function prepareMatch(userId:string,pairing:any) {
+  const match=pairing?.match;
+  if(!match)throw new Error("找不到指定玩家配對");
+  return await Promise.all([resolveName(match.player),resolveName(match.opponent),resolveDeckKnowledge(userId,pairing.tid,match.opponent)]);
+}
+async function notifyMatch(userId: string, pairing: any, test = false, prepared?:Awaited<ReturnType<typeof prepareMatch>>) {
   const match = pairing?.match;
   if (!match) throw new Error("找不到指定玩家配對");
-  const [playerName, opponentName, deckKnowledge] = await Promise.all([
-    resolveName(match.player),
-    resolveName(match.opponent),
-    resolveDeckKnowledge(userId, pairing.tid, match.opponent),
-  ]);
+  const [playerName, opponentName, deckKnowledge] = prepared || await prepareMatch(userId,pairing);
   const title = `${test ? "[測試] " : ""}Round ${pairing.round} 配對已公布`;
   const playerLabel = playerName ? `${playerName} (${match.player})` : match.player;
   const opponentLabel = opponentName ? `${opponentName} (${match.opponent})` : match.opponent;
@@ -289,10 +335,10 @@ async function notifyMatch(userId: string, pairing: any, test = false) {
   };
 }
 
-async function notifyFinalRank(userId: string, ranking: any, test = false) {
+async function notifyFinalRank(userId: string, ranking: any, test = false, preparedName?:string) {
   const standing = ranking?.standing_match;
   if (!standing) throw new Error("找不到指定玩家最終排名");
-  const playerName = await resolveName(standing.player);
+  const playerName = preparedName ?? await resolveName(standing.player);
   const playerLabel = playerName ? `${playerName} (${standing.player})` : standing.player;
   const title = `${test ? "[測試] " : ""}最終排名已公布`;
   const officialUrl = String(ranking.source_url || officialFinalRankUrl(ranking.tid));
@@ -477,40 +523,71 @@ async function startMulti(userId:string,source:string,ids:string[]) {
   if(error)throw error;
   return data;
 }
-// Compare-and-set progress before sending, so overlapping 10-second jobs
+// Compare-and-set progress before sending, so overlapping 5-second jobs
 // cannot both notify the same Round. No private player payload in poll output.
 async function claimMulti(watch:any,patch:any) {
-  const {data,error}=await service.from("pairing_watches").update({...patch,updated_at:new Date().toISOString()})
+  // A no-result heartbeat must not invalidate a concurrent successful lookup.
+  const heartbeat=Object.keys(patch).length===1 && "last_checked_at" in patch;
+  const {data,error}=await service.from("pairing_watches").update(heartbeat?patch:{...patch,updated_at:new Date().toISOString()})
     .eq("id",watch.id).eq("updated_at",watch.updated_at).eq("active",true).select("id").maybeSingle();
   if(error)throw error;
   return Boolean(data);
 }
+// Both requests begin together. A failure on either path does not block the other.
+// The normal final-ranking precedence is preserved when the rank is available.
+async function parallelWatchLookup(watch:any,players:string|string[]) {
+  const started=Date.now();
+  const timed=async(label:string,fn:()=>Promise<any>)=>{
+    const begin=Date.now();
+    try{return {ok:true,data:await fn(),ms:Date.now()-begin};}
+    catch(_){trace("lookup-error",{watch_id:watch.id,round:watch.next_round,source:label,elapsed_ms:Date.now()-begin});return {ok:false,data:null,ms:Date.now()-begin};}
+  };
+  type LookupResult={ok:boolean,data:any,ms:number};
+  let rankResult:LookupResult|undefined;
+  const rankPromise=(watch.final_notified?Promise.resolve({ok:true,data:null,ms:0}):timed("rank",()=>readCurrentRank(watch.source_url,players))).then(r=>{rankResult=r;return r;});
+  const pairingPromise=timed("round",()=>fetchPairing(roundUrl(watch.source_url,Number(watch.next_round)),players));
+  const pairing=await pairingPromise;
+  const found=Boolean(pairing.data?.available&&(pairing.data?.match||pairing.data?.results?.some((r:any)=>r.match)));
+  // If a confirmed pairing is ready, give final results a short grace period,
+  // then send the round without waiting for slower interim-ranking discovery.
+  // Any deferred final result is checked again on the next scheduled poll.
+  const rank=rankResult || (found?await Promise.race([rankPromise,delay(250).then(()=>rankResult)]):await rankPromise);
+  const final=Boolean(rank?.data?.available&&rank.data?.is_final);
+  if(found||final||!rank?.ok||!pairing.ok||Date.now()-started>=3000)trace("lookup-finished",{watch_id:watch.id,round:watch.next_round,rank_ms:rank?.ms??null,rank_deferred:!rank,round_ms:pairing.ms,elapsed_ms:Date.now()-started,found,final,rank_ok:rank?.ok??null,round_ok:pairing.ok});
+  if(rank&&!rank.ok&&!pairing.ok)throw new Error("配對與排名查詢均失敗，下一次排程重試");
+  return {rank:rank?.data||{results:[]},batch:pairing.data||{results:[]}};
+}
 async function pollMulti(watch:any) {
   const ids=validatePlayerIds(trackedIds(watch)),now=new Date().toISOString();
   const state=watch.multi_state||{}, oldFinals=state.finals||{};
-  const rank=await readCurrentRank(watch.source_url,ids);
+  const {rank,batch}=await parallelWatchLookup(watch,ids);
   const finals=rankingFinals(rank,ids,oldFinals);
   const remaining=ids.filter(id=>!finals[id]);
   if(ids.some(id=>finals[id]&&!oldFinals[id])){
+    const detected=Date.now();
     const cards=await multiCards(watch.user_id,rank,ids,finals);
+    trace("notice-prepared",{watch_id:watch.id,round:watch.next_round,type:"final",elapsed_ms:Date.now()-detected});
     const claimed=await claimMulti(watch,{multi_state:{...state,finals},active:remaining.length>0,
       final_notified:remaining.length===0,final_result:finals[ids[0]]||null,last_checked_at:now});
     if(!claimed)return {id:watch.id,skipped:true};
     const notice=await notifyMulti(watch.user_id,rank,cards,"final");
+    trace("notice-finished",{watch_id:watch.id,round:watch.next_round,type:"final",elapsed_ms:Date.now()-detected,line_accepted:notice.line.sent,push_accepted:notice.push.sent});
     return {id:watch.id,final_count:ids.length-remaining.length,line_sent:notice.line.sent,push_sent:notice.push.sent};
   }
   if(!remaining.length){await claimMulti(watch,{active:false,final_notified:true,last_checked_at:now});return {id:watch.id,completed:true};}
   const next=Number(watch.next_round);
-  const batch=await fetchPairing(roundUrl(watch.source_url,next),ids);
   const byId=indexedResults(batch);
   if(batch.available && remaining.some(id=>byId.get(id)?.match)){
+    const detected=Date.now();
     const cards=await multiCards(watch.user_id,batch,ids,finals);
+    trace("notice-prepared",{watch_id:watch.id,round:next,type:"round",elapsed_ms:Date.now()-detected});
     const missing=remaining.filter(id=>!byId.get(id)?.match);
     const claimed=await claimMulti(watch,{current_round:next,next_round:next+1,last_notified_round:next,
       last_match:byId.get(ids[0])?.match||null,
       multi_state:{...state,finals,pending_round:missing.length?next:null,pending_ids:missing},last_checked_at:now});
     if(!claimed)return {id:watch.id,skipped:true};
     const notice=await notifyMulti(watch.user_id,batch,cards,"round");
+    trace("notice-finished",{watch_id:watch.id,round:next,type:"round",elapsed_ms:Date.now()-detected,line_accepted:notice.line.sent,push_accepted:notice.push.sent});
     return {id:watch.id,round:next,matched_count:remaining.length-missing.length,line_sent:notice.line.sent,push_sent:notice.push.sent};
   }
   // An individual player may appear slightly after others. Supplement the last
@@ -521,9 +598,12 @@ async function pollMulti(watch:any) {
     const previous=indexedResults(prior);
     const missing=pending.filter((id:string)=>!previous.get(id)?.match);
     if(missing.length<pending.length){
+      const detected=Date.now();
       const cards=await multiCards(watch.user_id,prior,ids,finals);
+      trace("notice-prepared",{watch_id:watch.id,round:next-1,type:"supplement",elapsed_ms:Date.now()-detected});
       if(await claimMulti(watch,{multi_state:{...state,finals,pending_round:missing.length?next-1:null,pending_ids:missing},last_checked_at:now})){
         const notice=await notifyMulti(watch.user_id,prior,cards,"round");
+        trace("notice-finished",{watch_id:watch.id,round:next-1,type:"supplement",elapsed_ms:Date.now()-detected,line_accepted:notice.line.sent,push_accepted:notice.push.sent});
         return {id:watch.id,round:next-1,supplement:true,line_sent:notice.line.sent,push_sent:notice.push.sent};
       }
       return {id:watch.id,skipped:true};
@@ -536,42 +616,38 @@ async function pollMulti(watch:any) {
 async function pollOne(watch: any) {
   if(trackedIds(watch).length>1)return await pollMulti(watch);
   const now = new Date().toISOString();
+  const {rank:finalRanking,batch:pairing}=await parallelWatchLookup(watch,watch.player_id);
 
-  if (!watch.final_notified) {
-    const finalRanking = await readCurrentRank(watch.source_url, watch.player_id);
-    if (finalRanking.available && finalRanking.is_final && finalRanking.standing_match) {
-      const notice = await notifyFinalRank(watch.user_id, finalRanking, false);
-      await service.from("pairing_watches").update({
-        final_notified: true,
-        final_result: {
-          rank: finalRanking.standing_match.rank,
-          player: finalRanking.standing_match.player,
-          player_name: notice.player_name,
-        },
-        active: false,
-        last_checked_at: now,
-        updated_at: now,
-      }).eq("id", watch.id);
-      return { id: watch.id, final_rank: true, standing: { rank: finalRanking.standing_match.rank, player: finalRanking.standing_match.player }, notice };
-    }
+  if (!watch.final_notified && finalRanking.available && finalRanking.is_final && finalRanking.standing_match) {
+    const detected=Date.now();
+    const name=await resolveName(finalRanking.standing_match.player);
+    trace("notice-prepared",{watch_id:watch.id,round:watch.next_round,type:"final",elapsed_ms:Date.now()-detected});
+    const claimed=await claimMulti(watch,{
+      final_notified:true,
+      final_result:{rank:finalRanking.standing_match.rank,player:finalRanking.standing_match.player,player_name:name},
+      active:false,last_checked_at:now
+    });
+    if(!claimed)return {id:watch.id,skipped:true};
+    const notice=await notifyFinalRank(watch.user_id,finalRanking,false,name);
+    trace("notice-finished",{watch_id:watch.id,round:watch.next_round,type:"final",elapsed_ms:Date.now()-detected,line_accepted:notice.line.sent,push_accepted:notice.push.sent});
+    return {id:watch.id,final_rank:true,standing:{rank:finalRanking.standing_match.rank,player:finalRanking.standing_match.player},notice};
   }
 
-  const pairing = await fetchPairing(roundUrl(watch.source_url, Number(watch.next_round)), watch.player_id);
   if (!pairing.available || !pairing.match) {
-    await service.from("pairing_watches").update({ last_checked_at: now, updated_at: now }).eq("id", watch.id);
-    return { id: watch.id, round: watch.next_round, available: Boolean(pairing.available), matched: false };
+    await claimMulti(watch,{last_checked_at:now});
+    return {id:watch.id,round:watch.next_round,available:Boolean(pairing.available),matched:false};
   }
-
-  const notice = await notifyMatch(watch.user_id, pairing, false);
-  await service.from("pairing_watches").update({
-    current_round: watch.next_round,
-    next_round: Number(watch.next_round) + 1,
-    last_notified_round: watch.next_round,
-    last_match: { ...pairing.match, player_name: notice.player_name, opponent_name: notice.opponent_name },
-    last_checked_at: now,
-    updated_at: now,
-  }).eq("id", watch.id);
-  return { id: watch.id, round: watch.next_round, available: true, matched: true, notice };
+  const detected=Date.now();
+  const prepared=await prepareMatch(watch.user_id,pairing);
+  trace("notice-prepared",{watch_id:watch.id,round:watch.next_round,type:"round",elapsed_ms:Date.now()-detected});
+  const claimed=await claimMulti(watch,{
+    current_round:watch.next_round,next_round:Number(watch.next_round)+1,last_notified_round:watch.next_round,
+    last_match:{...pairing.match,player_name:prepared[0],opponent_name:prepared[1]},last_checked_at:now
+  });
+  if(!claimed)return {id:watch.id,skipped:true};
+  const notice=await notifyMatch(watch.user_id,pairing,false,prepared);
+  trace("notice-finished",{watch_id:watch.id,round:watch.next_round,type:"round",elapsed_ms:Date.now()-detected,line_accepted:notice.line.sent,push_accepted:notice.push.sent});
+  return {id:watch.id,round:watch.next_round,available:true,matched:true,notice};
 }
 
 async function pollAll() {
@@ -580,7 +656,7 @@ async function pollAll() {
   const results: unknown[] = [];
   for (const watch of watches || []) {
     try { results.push(await pollOne(watch)); }
-    catch (error: any) { results.push({ id: watch.id, error: String(error?.message || error) }); }
+    catch (error: any) { trace("poll-error",{watch_id:watch.id,round:watch.next_round});results.push({ id: watch.id, error: String(error?.message || error) }); }
   }
   return results;
 }
