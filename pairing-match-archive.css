@@ -10,7 +10,7 @@
 #matchArchiveRows{min-height:48px}
 .archive-subtitle{font-size:12px;color:#53677a;margin:10px 0}
 .archive-scroll{max-height:430px;overflow:auto;border:1px solid #dce5ed;border-radius:9px}
-.archive-scroll table{width:100%;border-collapse:collapse;font-size:12px;min-width:400px}
+.archive-scroll table{width:100%;border-collapse:collapse;font-size:12px;min-width:0;table-layout:fixed}
 .archive-scroll th{background:#f1f5f9;color:#475467;position:sticky;top:0;z-index:1;text-align:left;padding:9px}
 .archive-scroll td{padding:9px;border-top:1px solid #edf1f5;vertical-align:top}
 .archive-scroll td strong,.archive-scroll td small{display:block}
@@ -29,9 +29,10 @@
 #matchArchive .archive-deck-history{color:#825b14;background:#fff6df}
 #matchArchive .archive-pair-observation{margin-top:8px;padding:5px 6px;border-radius:6px;background:#f3f6fb;color:#44566d;font-size:10px;line-height:1.5;max-width:200px;overflow-wrap:anywhere}
 #matchArchive .archive-pair-observation small{color:#687789;margin-top:2px}
-#matchArchive .archive-scroll table{min-width:630px}
-#matchArchive .archive-scroll td:nth-child(2),#matchArchive .archive-scroll td:nth-child(3){min-width:155px}
-#matchArchive .archive-scroll td:last-child{min-width:95px}
+#matchArchive .archive-scroll table{min-width:0;table-layout:fixed}
+#matchArchive .archive-scroll th,#matchArchive .archive-scroll td{min-width:0;white-space:normal;overflow-wrap:anywhere}
+#matchArchive .archive-standings-scroll th:last-child,#matchArchive .archive-standings-scroll td:last-child{text-align:right}
+#matchArchive .archive-deck{width:fit-content;max-width:100%;box-sizing:border-box}
 
 /* Mobile archive: fit every column in the available width; preserve all data. */
 #matchArchive .archive-score-mobile{display:none}
@@ -41,16 +42,12 @@
   #matchArchive .archive-scroll th,#matchArchive .archive-scroll td{min-width:0;padding:8px 5px;white-space:normal;overflow-wrap:anywhere;word-break:normal}
   #matchArchive .archive-scroll td:nth-child(2),#matchArchive .archive-scroll td:nth-child(3),#matchArchive .archive-scroll td:last-child{min-width:0}
   #matchArchive .archive-scroll th{font-size:11px;line-height:1.4}
-  #matchArchive .archive-standings-scroll th:first-child{width:42px}
-  #matchArchive .archive-standings-scroll th:last-child{width:62px}
-  #matchArchive .archive-matches-scroll th:first-child{width:32px}
-  #matchArchive .archive-matches-scroll th:last-child{width:58px}
   #matchArchive .archive-scroll td:first-child,#matchArchive .archive-standings-scroll td:last-child{font-weight:750}
   #matchArchive .archive-standings-scroll th:last-child,#matchArchive .archive-standings-scroll td:last-child{text-align:right}
   #matchArchive .archive-scroll td strong{font-size:13px;line-height:1.45}
   #matchArchive .archive-scroll td small{font-size:11px;line-height:1.45}
   #matchArchive .archive-matches-scroll td small{font-size:10px}
-  #matchArchive .archive-deck{margin-top:5px;padding:5px;font-size:12px;line-height:1.45;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+  #matchArchive .archive-deck{margin-top:5px;padding:5px;font-size:12px;line-height:1.45;width:fit-content;max-width:100%;white-space:normal;overflow-wrap:anywhere}
   #matchArchive .archive-deck b{font-size:10px}
   #matchArchive .archive-deck small{font-size:10px;margin-top:3px}
   #matchArchive .archive-pair-observation{max-width:100%;padding:4px;font-size:10px}
