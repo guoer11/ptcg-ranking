@@ -74,9 +74,16 @@ assert.match(css,/archive-standings-table \.archive-deck\{margin:0 auto;[^}]*tex
 assert.doesNotMatch(css,/archive-standings[^{}]*\{text-align:right\}/);
 assert.match(page,/archive-standings-scroll \{ max-width:min\(100%,760px\); margin-inline:0 auto; \}/);
 
-assert.match(css,/archive-standings-scroll\{width:100%;max-width:320px;margin-inline:auto\}/);
+assert.match(css,/archive-standings-scroll\{width:100%;max-width:100%;margin-inline:0;box-sizing:border-box\}/);
 assert.match(css,/archive-standings-table td\{padding:6px 3px;text-align:center;vertical-align:middle\}/);
 assert.match(page,/text-align:center !important; vertical-align:middle/);
-assert.match(page,/archive-standings-scroll \{ max-width:min\(100%,320px\); margin-inline:auto; \}/);
+assert.match(page,/archive-standings-scroll \{ width:100%; max-width:100%; margin-inline:0; box-sizing:border-box; \}/);
 assert.match(page,/archive-standings-table col:nth-child\(4\) \{ width:20% !important; \}/);
 assert.match(deploy,/cp pairing-match-archive\.css _site\/pairing-match-archive-2\.17\.2-r1\.css/);
+
+const mobileStandings=css.slice(css.lastIndexOf('@media(max-width:720px)'));
+assert.match(mobileStandings,/archive-standings-table td strong\{font-size:14px\}/);
+assert.match(mobileStandings,/archive-player-identity small\{font-size:12px\}/);
+assert.match(mobileStandings,/archive-deck\{padding:4px 4px;font-size:13px/);
+assert.match(mobileStandings,/td:last-child\{font-size:14px\}/);
+assert.doesNotMatch(mobileStandings,/max-width:320px/);
