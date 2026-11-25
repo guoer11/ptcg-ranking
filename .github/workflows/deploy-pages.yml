@@ -114,6 +114,12 @@ jobs:
           # Fresh document URL for installed clients retaining a cached history.html.
           cp history.html _site/history-2.17.2-r4.html
           cmp history.html _site/history-2.17.2-r4.html
+          cp pairing-match-archive.js _site/pairing-match-archive-2.17.2-r5.js
+          cp pairing-match-archive.css _site/pairing-match-archive-2.17.2-r5.css
+          cmp pairing-match-archive.js _site/pairing-match-archive-2.17.2-r5.js
+          cmp pairing-match-archive.css _site/pairing-match-archive-2.17.2-r5.css
+          cp history.html _site/history-2.17.2-r5.html
+          cmp history.html _site/history-2.17.2-r5.html
           cp baseball-reference-ui.css baseball-3d.css baseball-3d.js _site/
           cp -R pitching-app _site/pitching-app
           cp assets/q-icons/*.webp _site/assets/q-icons/

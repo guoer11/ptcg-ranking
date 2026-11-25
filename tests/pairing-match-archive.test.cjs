@@ -81,7 +81,7 @@ assert.match(page,/#matchArchive #matchArchiveRows > \.archive-standings-scroll 
 assert.match(page,/archive-standings-table col:nth-child\(4\) \{ width:20% !important; \}/);
 assert.match(deploy,/cp pairing-match-archive\.css _site\/pairing-match-archive-2\.17\.2-r1\.css/);
 
-const mobileStandings=css.slice(css.lastIndexOf('@media(max-width:720px)'));
+const mobileStandings=css.slice(css.lastIndexOf('@media(max-width:720px)',css.indexOf('/* Round pairing table:')) ,css.indexOf('/* Round pairing table:'));
 assert.match(mobileStandings,/archive-standings-table td strong\{font-size:14px\}/);
 assert.match(mobileStandings,/archive-player-identity small\{font-size:12px\}/);
 assert.match(mobileStandings,/archive-deck\{padding:4px 4px;font-size:13px/);
@@ -92,3 +92,10 @@ assert.match(deploy,/cp history\.html _site\/history-2\.17\.2-r4\.html/);
 assert.match(page,/id="historyProtectedMain" hidden/,'fresh document must retain private gate');
 assert.match(page,/archive-standings-table td \{ text-align:center !important; vertical-align:middle; \}/);
 assert.match(css,/archive-standings-scroll\{width:100%;max-width:760px;margin-inline:0 auto\}/,'desktop remains left aligned');
+
+for(const source of [css,page]){
+ assert.match(source,/archive-matches-scroll col:first-child\{width:44px !important\}/);
+ assert.match(source,/archive-matches-scroll td:first-child\{padding-inline:3px;white-space:nowrap !important;overflow-wrap:normal !important;word-break:keep-all;text-align:center/);
+ assert.match(source,/archive-matches-scroll td:first-child\{font-size:12px\}/);
+}
+assert.match(deploy,/cp history\.html _site\/history-2\.17\.2-r5\.html/);
