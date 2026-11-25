@@ -42,3 +42,21 @@ const mapped=JSON.parse(read('data/preliminary_sources.json')).sources.find(s=>s
 assert.equal(mapped?.event_id,'66990','verified 11/21 archived tournament mapping must be present');
 assert.match(read('site-version.js'),/const SITE_VERSION = 'v\d+\.\d+\.\d+';/,'version format must be valid without pinning an obsolete release');
 console.log('PASS: owner-only history route, private knockout editing, background archiving and TtlScore');
+
+for(const file of ['index.html','tournaments.html','pairing.html','history.html']){
+ const doc=read(file);
+ const script=doc.match(/<script id="historyFreshNavigation">([\s\S]*?)<\/script>/)?.[1];
+ assert(script,file+' must bypass stale history documents on explicit click');
+ const vm=require('node:vm');
+ let listener, assigned=null, prevented=0;
+ vm.runInNewContext(script,{URL,Date,document:{addEventListener(type,fn){assert.equal(type,'click');listener=fn;}},window:{location:{assign(url){assigned=url;}}}});
+ const link={href:'https://example.test/ptcg-ranking/history.html',hidden:false,closest(){return null}};
+ const ev={button:0,target:{closest(){return link}},preventDefault(){prevented++;}};
+ listener(ev);
+ assert.match(assigned,/history\.html\?nav=\d+$/);
+ assert.equal(prevented,1);
+ assigned=null;link.hidden=true;listener(ev);assert.equal(assigned,null,'hidden private nav must not navigate');
+ link.hidden=false;listener({...ev,ctrlKey:true});assert.equal(assigned,null,'preserve modified-click behavior');
+ listener({...ev,defaultPrevented:true});assert.equal(assigned,null);
+}
+assert.match(workflow,/cp history\.html _site\/history-2\.17\.3-r1\.html/);

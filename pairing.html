@@ -315,5 +315,18 @@
       setTimeout(() => scheduleFirstTable(true), 700);
     });
   </script>
+<script id="historyFreshNavigation">
+/* Only explicit navigation to history bypasses a cached document.
+   Keep existing href attributes for the authorization selectors. */
+document.addEventListener('click', function(event) {
+  if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const link = event.target.closest?.('.site-nav a[href="history.html"], .pairing-history-moved a[href="history.html"]');
+  if (!link || link.hidden || link.closest('[hidden]')) return;
+  const url = new URL(link.href);
+  url.searchParams.set('nav', String(Date.now()));
+  event.preventDefault();
+  window.location.assign(url.href);
+});
+</script>
 </body>
 </html>

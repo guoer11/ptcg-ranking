@@ -93,5 +93,18 @@
       if (updateEl) { const normalizeUpdateText = () => { const text = updateEl.textContent.trim(); if (text === '尚未有排名更新紀錄') updateEl.textContent = '最後資料更新：尚未有更新'; else if (text.startsWith('資料更新：')) updateEl.textContent = `最後資料更新：${text.slice('資料更新：'.length)}`; }; new MutationObserver(normalizeUpdateText).observe(updateEl, { childList: true, subtree: true, characterData: true }); normalizeUpdateText(); }
     })();
   </script>
+<script id="historyFreshNavigation">
+/* Only explicit navigation to history bypasses a cached document.
+   Keep existing href attributes for the authorization selectors. */
+document.addEventListener('click', function(event) {
+  if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const link = event.target.closest?.('.site-nav a[href="history.html"], .pairing-history-moved a[href="history.html"]');
+  if (!link || link.hidden || link.closest('[hidden]')) return;
+  const url = new URL(link.href);
+  url.searchParams.set('nav', String(Date.now()));
+  event.preventDefault();
+  window.location.assign(url.href);
+});
+</script>
 </body>
 </html>
