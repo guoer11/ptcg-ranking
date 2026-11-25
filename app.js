@@ -255,18 +255,12 @@ async function loadData(options = {}) {
       }
     }
 
-    const [rankingResponse, identityResponse] = await Promise.all([
-      fetch(`data/ranking.json?v=${Date.now()}`, { cache: 'no-store' }),
-      fetch(`data/player_identity.json?v=${Date.now()}`, { cache: 'no-store' })
-    ]);
+    // Real names are private and loaded exclusively by auth-ui.js after authorization.
+    const rankingResponse = await fetch(`data/ranking.json?v=${Date.now()}`, { cache: 'no-store' });
 
     if (!rankingResponse.ok) throw new Error(`ranking HTTP ${rankingResponse.status}`);
     const raw = await rankingResponse.json();
     rankingData = { ...raw, groups: normalizeGroups(raw) };
-
-    if (identityResponse.ok) {
-      identityData = await identityResponse.json();
-    }
 
     statusText.textContent = '資料讀取正常';
     updatedAt.textContent = formatTime(raw.updated_at);

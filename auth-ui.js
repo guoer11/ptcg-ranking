@@ -8,6 +8,9 @@ let identityAccessRole = 'none';
 let identityClient = null;
 let pairingNavRequestId = 0;
 let identityLoadRequestId = 0;
+let identityLoadedUserId = '';
+let identityLoadingUserId = '';
+let identityLoadState = 'idle';
 
 const IDENTITY_ACCOUNT_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm0 2C5.91 13 3 14.79 3 17v2h10.1a5.9 5.9 0 0 1-.1-1c0-1.96.95-3.7 2.42-4.79A11.2 11.2 0 0 0 9.5 13Zm9.25-2.5a1.25 1.25 0 0 0-2.5 0v.55A3.75 3.75 0 0 0 14 14.5V17l-1 1v.75h7.5V18l-1-1v-2.5a3.75 3.75 0 0 0-2.25-3.45v-.55Zm-1.25 10.25a1.25 1.25 0 0 0 1.2-1h-2.4a1.25 1.25 0 0 0 1.2 1Z"/></svg>';
 
@@ -56,6 +59,8 @@ hidePairingNav();
 
 function clearPrivateIdentities() {
   identityAccessRole = 'none';
+  identityLoadedUserId = '';
+  identityLoadState = 'idle';
   identityData = { updated_at: null, count: 0, players: {} };
   identityAuthorized = false;
 }
@@ -141,7 +146,7 @@ function updateIdentityTextUI() {
     if (lookupDescription) lookupDescription.textContent = '輸入真實姓名、暱稱或 PTCG ID。';
     if (lookupInput) lookupInput.placeholder = '姓名 / 暱稱 / PTCG ID';
     if (lookupHint) lookupHint.textContent = '真實姓名搜尋已啟用；若有同名玩家會先列出候選結果。';
-    if (noticeText) noticeText.textContent = '排名、積分、暱稱與 PTCG ID 維持公開；真實姓名僅由目前授權帳號讀取。';
+    if (noticeText) noticeText.textContent = identityLoadState==='loading'?'正在載入授權姓名資料…':`排名、積分、暱稱與 PTCG ID 維持公開；已載入 ${identityData.count} 筆授權姓名。`;
     return;
   }
 
@@ -149,7 +154,7 @@ function updateIdentityTextUI() {
   if (lookupDescription) lookupDescription.textContent = '輸入暱稱或 PTCG ID。';
   if (lookupInput) lookupInput.placeholder = '暱稱 / PTCG ID';
   if (lookupHint) lookupHint.textContent = '若有多筆相符玩家會先列出候選結果。';
-  if (noticeText) noticeText.textContent = '排名、積分、暱稱與 PTCG ID 維持公開。';
+  if (noticeText) noticeText.textContent = identityLoadState==='error'?'真實姓名讀取失敗，請重新整理後再試。':'排名、積分、暱稱與 PTCG ID 維持公開。';
 }
 
 function refreshPushAuthUI() {
@@ -176,6 +181,7 @@ async function loadPrivateIdentities() {
   const requestId = ++identityLoadRequestId;
   const userId = currentIdentityUserId();
   clearPrivateIdentities();
+  identityLoadingUserId = userId;
 
   if (!userId || !identityClient) {
     updateIdentityAuthUI();
@@ -196,11 +202,15 @@ async function loadPrivateIdentities() {
     identityAccessRole = role.data || 'none';
     if (!['admin','guest'].includes(identityAccessRole)) {
       identityAuthorized = false;
+      identityLoadingUserId = '';
       updateIdentityAuthUI();
       await refreshPairingNavAccess();
       renderRanking();
       return;
     }
+    identityAuthorized = true;
+    identityLoadState = 'loading';
+    updateIdentityAuthUI('已確認授權，正在載入真實姓名…');
     while (true) {
       const { data, error } = await identityClient
         .from('player_identities')
@@ -214,6 +224,8 @@ async function loadPrivateIdentities() {
         if (!row.player_id || !row.real_name) continue;
         players[String(row.player_id).toLowerCase()] = { real_name: row.real_name };
       }
+      identityData = { updated_at: new Date().toISOString(), count: Object.keys(players).length, players: {...players} };
+      renderRanking();
       if (!data || data.length < pageSize) break;
       from += pageSize;
     }
@@ -222,15 +234,19 @@ async function loadPrivateIdentities() {
     const count = Object.keys(players).length;
     identityData = { updated_at: new Date().toISOString(), count, players };
     identityAuthorized = ['admin','guest'].includes(identityAccessRole);
+    identityLoadedUserId = userId;
+    identityLoadState = 'ready';
     updateIdentityAuthUI();
   } catch (error) {
     if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
     console.error('私人資料讀取失敗', error);
     clearPrivateIdentities();
+    identityLoadState = 'error';
     updateIdentityAuthUI('登入資料讀取失敗，請稍後再試。');
   }
 
   if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
+  identityLoadingUserId = '';
   await refreshPairingNavAccess();
   renderRanking();
 }
@@ -291,8 +307,12 @@ async function startIdentityAuth() {
     // Do not await Supabase queries inside the auth callback. Supabase holds an
     // internal auth lock while this callback runs; querying here can leave the
     // authorized UI stuck after Google sign-in/token refresh.
+    const sameUser=Boolean(session?.user?.id&&session.user.id===currentIdentityUserId());
+    // INITIAL_SESSION and redundant SIGNED_IN events must not reset a loaded or in-flight map.
+    if(sameUser&&['INITIAL_SESSION','SIGNED_IN'].includes(event)&&(identityLoadedUserId===session.user.id||identityLoadingUserId===session.user.id)){identitySession=session;return;}
     invalidatePairingNavAccess();
     identityLoadRequestId += 1;
+    identityLoadingUserId = '';
     identitySession = session || null;
 
     if (event === 'SIGNED_OUT' || !session) {

@@ -8,7 +8,7 @@ const client={rpc:async()=>({data:role,error:null}),from(table){assert.equal(tab
 const nav=['pairing.html','history.html'].map(href=>({hidden:true,getAttribute:()=>href}));
 const elements={};
 const document={querySelectorAll:()=>nav,dispatchEvent(){},getElementById:id=>elements[id]||(elements[id]={textContent:'',placeholder:''})};
-const context=vm.createContext({identityAuthorized:false,identityAccessRole:'none',identitySession:{user:{id:'test'}},identityClient:client,pairingNavRequestId:0,identityLoadRequestId:0,identityData:{},document,searchInput:{},console,CustomEvent:class{},renderRanking(){rendered++},updateIdentityAuthUI(){}});
+const context=vm.createContext({identityAuthorized:false,identityLoadedUserId:'',identityLoadingUserId:'',identityLoadState:'idle',identityAccessRole:'none',identitySession:{user:{id:'test'}},identityClient:client,pairingNavRequestId:0,identityLoadRequestId:0,identityData:{},document,searchInput:{},console,CustomEvent:class{},renderRanking(){rendered++},updateIdentityAuthUI(){}});
 vm.runInContext(extract(auth,'function currentIdentityUserId()','hidePairingNav();\n\nfunction clearPrivateIdentities')+'\n'+extract(auth,'function clearPrivateIdentities()','function identityAuthButton()')+'\n'+extract(auth,'function updateIdentityTextUI()','function refreshPushAuthUI()')+'\n'+extract(auth,'async function loadPrivateIdentities()','async function handleAccountAuthAction()'),context);
 const run=code=>vm.runInContext(code,context);
 (async()=>{
@@ -28,8 +28,10 @@ const run=code=>vm.runInContext(code,context);
   assert.equal(queries-before,['guest','admin'].includes(r)?1:0);
   assert.equal(vm.runInContext("tournamentRealName('tw00000001')",t),['guest','admin'].includes(r)?'測試姓名':'');
  }
+ assert.doesNotMatch(read('app.js'),/fetch\(`data\/player_identity\.json/);
+ assert.match(auth,/identityLoadState = 'ready'/);
  assert.match(read('history-center.js'),/rpc\('can_use_pairing'\)/);
- assert.match(read('index.html'),/auth-ui\.js\?v=3\.0\.0-name-r1/);
+ assert.match(read('index.html'),/auth-ui\.js\?v=3\.0\.0-name-r2/);
  assert.match(read('tournaments.html'),/tournaments\.js\?v=3\.0\.0-name-r1/);
  console.log('PASS: authorized guest real names on ranking and tournament pages; unauthorized/sign-out cleared; history admin-only');
 })().catch(e=>{console.error(e);process.exitCode=1});
