@@ -19,5 +19,5 @@ vm.runInContext('pairingFormEdited=true;syncPairingWatchForm(null)',ctx);
 assert.deepEqual(extras,['tw22222222'],'manual edits retained during status refresh');
 assert.match(source,/function initPairingPage\(\)[\s\S]*?resetDefaultTrackingPlayers\(\)/);
 assert.match(source,/if \(reopened && !data\.watch\?\.active\) \{[\s\S]*?resetDefaultTrackingPlayers\(\)/);
-assert.match(fs.readFileSync('pairing.html','utf8'),/src="pairing-2\.18\.1-r1\.js"/);
+assert.match(fs.readFileSync('pairing.html','utf8'),/src="pairing-2\.19\.1\.js"/);
 console.log('PASS: two default players, saved active watches preserved, manual selection retained');

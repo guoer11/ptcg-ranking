@@ -421,7 +421,7 @@ function renderWatchStatus(watch) {
   status.classList.add('active');
   status.innerHTML = '<span class="pairing-watch-dot"></span>追蹤中';
   const checked = watch.last_checked_at ? new Date(watch.last_checked_at).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '尚未檢查';
-  copy.innerHTML = `活動 <strong>${escPairing(watch.tid)}</strong> · 玩家 <strong>${escPairing(watch.player_id)}</strong><br>正在等待 <strong>Round ${escPairing(watch.next_round)}</strong> 或最終排名，每 10 秒由後端檢查。最後檢查：${escPairing(checked)}`;
+  copy.innerHTML = `活動 <strong>${escPairing(watch.tid)}</strong> · 玩家 <strong>${escPairing(watch.player_id)}</strong><br>正在等待 <strong>Round ${escPairing(watch.next_round)}</strong> 或最終排名，每 5 秒由後端檢查。最後檢查：${escPairing(checked)}`;
 }
 
 async function refreshWatchStatus({ reopened = false } = {}) {

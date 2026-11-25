@@ -157,6 +157,8 @@ jobs:
           cmp pairing.html _site/pairing-2.18.1.html
           cp pairing.js _site/pairing-2.18.1-r1.js
           cmp pairing.js _site/pairing-2.18.1-r1.js
+          cp pairing.js _site/pairing-2.19.1.js
+          cmp pairing.js _site/pairing-2.19.1.js
           cp pairing.html _site/pairing-2.18.1-r1.html
           cmp pairing.html _site/pairing-2.18.1-r1.html
           cp family-notify.js _site/family-notify-2.4.1.js
