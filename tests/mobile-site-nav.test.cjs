@@ -21,6 +21,12 @@ assert.match(css,/\.site-nav \.site-mobile-label \{ display:none; \}/,'desktop k
 assert.match(css,/@media \(max-width: 720px\)/);
 assert.match(css,/padding-bottom: calc\(112px \+ env\(safe-area-inset-bottom/);
 assert.match(css,/position:fixed/);
+const footerSurface=css.match(/body\.site-bottom-nav-page::after\s*\{([^}]+)\}/)?.[1];
+assert(footerSurface,'opaque full-width footer surface is required');
+for(const rule of [/position:fixed/,/z-index:89/,/left:0/,/right:0/,/bottom:0/,/height:calc\(88px \+ env\(safe-area-inset-bottom, 0px\)\)/,/background:#f4f7fb/])
+  assert.match(footerSurface,rule,'footer must cover the screen bottom and safe area');
+assert.match(css,/body\.site-bottom-nav-page\.modal-open::after \{ display:none; \}/);
+
 assert.match(css,/\.site-bottom-nav-page \.site-nav > a\[hidden\] \{ display:none !important;/);
 assert.match(css,/#identityAuthButton::after \{ content:"我的"/);
 assert.match(css,/modal-open \.site-nav \{ visibility:hidden; \}/);

@@ -84,6 +84,19 @@
   body.site-bottom-nav-page {
     padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px));
   }
+  /* An opaque, full-width footer surface blocks scrolling page content
+     behind the floating bar, including the iPhone home-indicator area. */
+  body.site-bottom-nav-page::after {
+    content:"";
+    position:fixed;
+    z-index:89;
+    left:0;
+    right:0;
+    bottom:0;
+    height:calc(88px + env(safe-area-inset-bottom, 0px));
+    background:#f4f7fb;
+    pointer-events:auto;
+  }
   .site-bottom-nav-page .site-nav {
     position:fixed;
     z-index:90;
@@ -207,4 +220,5 @@
   }
   /* The existing account/player dialogs must stay above the navigation. */
   body.site-bottom-nav-page.modal-open .site-nav { visibility:hidden; }
+  body.site-bottom-nav-page.modal-open::after { display:none; }
 }

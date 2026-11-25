@@ -228,7 +228,7 @@ function siteAccountLoadScript(src, initName) {
 }
 
 function siteAccountInit() {
-  siteAccountEnsureStylesheet('site-nav.css?v=2.17.0', 'nav');
+  siteAccountEnsureStylesheet('site-nav.css?v=2.17.0-r1', 'nav');
   siteAccountEnsureStylesheet('auth-ui.css?v=0.13.1-r1', 'auth');
   siteAccountEnsureStylesheet('push-ui.css?v=0.13.1-r1', 'push');
   siteAccountEnsureControls();
