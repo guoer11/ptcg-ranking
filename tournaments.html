@@ -63,7 +63,7 @@
   <div id="tournamentModal" class="modal" aria-hidden="true"><div class="modal-backdrop" data-close-tournament-modal></div><section class="modal-card tournament-modal-card" role="dialog" aria-modal="true" aria-labelledby="tournamentModalTitle"><header class="modal-header"><div><h2 id="tournamentModalTitle">賽事詳情</h2><small id="tournamentModalSubtitle">—</small></div><button class="modal-close" type="button" aria-label="關閉" data-close-tournament-modal>×</button></header><div id="tournamentModalBody" class="modal-body"></div></section></div>
   <footer class="footer"><div class="wrap">非官方網站。本頁僅整理公開賽事資訊，Pokémon 相關商標屬原權利人所有。</div></footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>\n  <script src="site-version.js?v=2.17.3" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>\n  <script src="site-version.js?v=2.17.4" defer></script>
   <script src="tournaments.js?v=2.12.0-r2" defer></script>
   <script src="site-account-ui.js?v=2.17.0-r4" defer></script>
   <script>
@@ -99,7 +99,7 @@
    Keep existing href attributes for the authorization selectors. */
 document.addEventListener('click', function(event) {
   if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-  const link = event.target.closest?.('.site-nav a[href="history.html"], .pairing-history-moved a[href="history.html"]');
+  const link = event.target.closest?.('.site-nav a[href="history.html"], .site-nav a[href="pairing.html"], .pairing-history-moved a[href="history.html"]');
   if (!link || link.hidden || link.closest('[hidden]')) return;
   const url = new URL(link.href);
   url.searchParams.set('nav', String(Date.now()));

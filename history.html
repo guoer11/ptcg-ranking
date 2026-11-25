@@ -113,7 +113,7 @@
 <a class="primary-btn" href="index.html">回玩家排行登入</a></section></main>
 <footer class="footer"><div class="wrap">賽事封存資料僅限授權帳號存取，正式名次與積分仍依 Pokémon Asia 公告。</div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="site-version.js?v=2.17.3" defer></script>
+<script src="site-version.js?v=2.17.4" defer></script>
 <script src="history-center.js?v=2.14.0" defer></script>
 <script src="pairing-history.js?v=2.17.2" defer></script>
 <script src="pairing-match-archive-2.17.2-r7.js" defer></script>
@@ -124,7 +124,7 @@
    Keep existing href attributes for the authorization selectors. */
 document.addEventListener('click', function(event) {
   if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-  const link = event.target.closest?.('.site-nav a[href="history.html"], .pairing-history-moved a[href="history.html"]');
+  const link = event.target.closest?.('.site-nav a[href="history.html"], .site-nav a[href="pairing.html"], .pairing-history-moved a[href="history.html"]');
   if (!link || link.hidden || link.closest('[hidden]')) return;
   const url = new URL(link.href);
   url.searchParams.set('nav', String(Date.now()));

@@ -38,6 +38,18 @@
       #pairingScoutStats .pairing-scout-donut::after{inset:26px}
     }
   </style>
+  <style id="pairingFeatureCollapseStyle">
+    .pairing-feature-collapse{min-width:0}
+    .pairing-feature-collapse>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none;font-size:17px;font-weight:800;color:#283548;min-height:32px}
+    .pairing-feature-collapse>summary::-webkit-details-marker{display:none}
+    .pairing-feature-collapse>summary::after{content:'＋';display:grid;place-items:center;flex:0 0 28px;width:28px;height:28px;border-radius:50%;background:#eaf2ff;color:#245fc7;font-size:18px}
+    .pairing-feature-collapse[open]>summary::after{content:'−'}
+    .pairing-feature-collapse[open]>summary{margin-bottom:12px}
+    .pairing-feature-collapse:not([open])> :not(summary){display:none}
+    #pairingOdds>.pairing-feature-collapse{margin:0;border:0;padding:0}
+    .pairing-feature-notice{display:block}
+    @media(max-width:600px){.pairing-feature-collapse>summary{font-size:16px}.pairing-feature-collapse>summary .odds-badge{font-size:10px;padding:3px 5px;margin-left:4px}}
+  </style>
 </head>
 <body class="site-bottom-nav-page">
   <header class="site-header pairing-header">
@@ -55,7 +67,8 @@
   <main class="wrap pairing-main" hidden>
     <div class="pairing-grid">
       <section class="panel pairing-panel">
-        <h2>配對追蹤</h2>
+        <details id="pairingTrackingCollapse" class="pairing-feature-collapse" open>
+        <summary>配對追蹤</summary>
         <p class="section-note">貼上活動或 Round 配對網址，輸入玩家 PTCG ID 與 Round 後按「開始追蹤」。進行中的賽事會自動追蹤後續配對到最終排名；已結束賽事會自動改為歷史查詢模式，不啟動通知。牌組偵察會沿用同一場賽事與 Round。</p>
         <div class="pairing-form">
           <div class="pairing-field"><label for="pairingSourceUrl">活動網址 / Round 配對網址</label><input id="pairingSourceUrl" class="search-input" type="url" inputmode="url" placeholder="https://tcg.sfc-jpn.jp/tour.asp?tid=..." autocomplete="off" /></div>
@@ -66,13 +79,16 @@
         <div id="pairingResult" class="pairing-result is-waiting"><div class="pairing-result-title"><strong>尚未開始追蹤</strong><span class="pairing-round-badge">等待輸入</span></div><div class="pairing-watch-copy">貼上目前賽事網址並選擇 Round，按「開始追蹤」即可查詢配對、啟動監控並使用牌組偵察。</div></div>
         <section class="pairing-watch-card pairing-watch-inline"><div class="pairing-watch-head"><strong>追蹤狀態</strong><span id="pairingWatchStatus" class="pairing-watch-status"><span class="pairing-watch-dot"></span>未追蹤</span></div><div id="pairingWatchCopy" class="pairing-watch-copy">按上方「開始追蹤」後，系統會先查詢目前 Round，再自動監控後續配對與最終排名。</div><div id="pairingStopActions" class="pairing-actions" style="margin-top:14px;" hidden><button id="pairingStopButton" class="secondary-btn" type="button">停止追蹤</button></div></section>
         <div id="pairingMessage" class="pairing-message"></div>
-        <details class="pairing-history-panel pairing-advanced-tools">
+        </details>
+        <details id="pairingAdvancedCollapse" class="pairing-history-panel pairing-advanced-tools pairing-feature-collapse">
           <summary>進階 / 測試工具</summary>
           <p class="pairing-watch-copy" style="margin:10px 0 12px;">正式比賽平常可保持收合；需要測試通知時再展開。</p>
           <div class="pairing-actions"><button id="pairingTestButton" class="secondary-btn pairing-test-btn" type="button">測試 Round 通知</button><button id="pairingFinalTestButton" class="secondary-btn pairing-test-btn" type="button">測試最終排名通知</button></div>
         </details>
         <section id="pairingDeckScout" class="pairing-scout-panel pairing-scout-card" aria-labelledby="pairingScoutHeading">
-          <div class="pairing-scout-head"><div><h2 id="pairingScoutHeading">牌組偵察</h2><p>開始追蹤後會沿用上方活動網址與 Round，可直接查桌號、PTCG ID 或本輪玩家姓名、查看玩家與對手並記錄牌組；停止自動追蹤後仍可繼續使用。</p></div></div>
+          <details id="pairingScoutCollapse" class="pairing-feature-collapse">
+          <summary id="pairingScoutHeading">牌組偵察</summary>
+          <div class="pairing-scout-head"><div><p>開始追蹤後會沿用上方活動網址與 Round，可直接查桌號、PTCG ID 或本輪玩家姓名、查看玩家與對手並記錄牌組；停止自動追蹤後仍可繼續使用。</p></div></div>
           <div class="pairing-scout-tabs" role="group" aria-label="牌組偵察查詢方式"><button type="button" data-pairing-scout-mode="table" class="active" aria-pressed="true">桌號</button><button type="button" data-pairing-scout-mode="player" aria-pressed="false">PTCG ID</button><button type="button" data-pairing-scout-mode="name" aria-pressed="false">姓名</button></div>
           <div class="pairing-scout-controls"><label for="pairingScoutTable"><span id="pairingScoutValueLabel">桌號</span><input id="pairingScoutTable" class="search-input" type="text" value="" inputmode="numeric" placeholder="自動判斷起始桌號" autocomplete="off" autocapitalize="none"></label><button id="pairingScoutLoad" class="primary-btn" type="button">查詢配對</button></div>
           <div class="pairing-scout-navigation"><button id="pairingScoutPrev" class="secondary-btn" type="button">← 上一桌</button><button id="pairingScoutNext" class="secondary-btn" type="button">下一桌 →</button></div>
@@ -80,13 +96,15 @@
           <div id="pairingScoutMessage" class="pairing-scout-message" role="status" aria-live="polite"></div>
           <div id="pairingScoutStats" class="pairing-scout-stats"><div class="pairing-scout-stats-empty">查詢後會顯示這場比賽的牌組分布。</div></div>
           <div class="pairing-history-moved"><a class="secondary-btn" href="history.html">查看賽事歷史中心（歷史牌組、官方對戰與排名封存）</a></div>
+          </details>
         </section>
       </section>
-      <aside><section class="pairing-watch-card"><div class="pairing-watch-head"><strong>通知與姓名</strong></div><div id="pairingAuthCopy" class="pairing-watch-copy">正在確認登入狀態…</div><div class="pairing-watch-copy" style="margin-top:8px;">配對頁本身只提供 PTCG ID。登入你目前網站的授權帳號後，系統會用現有私人資料補上玩家真實姓名。</div></section></aside>
+      <aside><section class="pairing-watch-card"><details id="pairingNoticeCollapse" class="pairing-feature-collapse"><summary>通知與姓名</summary><div id="pairingAuthCopy" class="pairing-watch-copy">正在確認登入狀態…</div><div class="pairing-watch-copy" style="margin-top:8px;">配對頁本身只提供 PTCG ID。登入你目前網站的授權帳號後，系統會用現有私人資料補上玩家真實姓名。</div></details></section></aside>
     </div>
-    <section class="notice" style="margin-top:20px;"><strong>使用提醒</strong><span>正式比賽配對與最終排名仍以現場主辦與 TCG マイスター頁面為準。</span></section>
+    <section class="notice pairing-feature-notice" style="margin-top:20px;"><details id="pairingReminderCollapse" class="pairing-feature-collapse"><summary>使用提醒</summary><span>正式比賽配對與最終排名仍以現場主辦與 TCG マイスター頁面為準。</span></details></section>
     <section id="pairingOdds" class="panel odds-panel" aria-labelledby="oddsHeading">
-      <h2 id="oddsHeading">晉級與名次預估<span class="odds-badge">現場賽事可用</span></h2>
+      <details id="pairingOddsCollapse" class="pairing-feature-collapse">
+      <summary id="oddsHeading"><span>晉級與名次預估<span class="odds-badge">現場賽事可用</span></span></summary>
       <p class="odds-intro">使用上方活動網址與追蹤玩家，讀取完整配對後估算各種戰績的晉級機會。總輪數與取幾名請依現場公告填寫；最終名次以官方小分排序為準。</p>
       <div class="odds-controls">
         <input id="oddsMode" type="hidden" value="live">
@@ -101,12 +119,13 @@
       <div id="oddsPending" class="odds-pending" hidden></div>
       <div id="oddsResult" class="odds-result" role="status" aria-live="polite">先在上方貼活動網址，確認總輪數與晉級名額後，按「更新配對並估算」。</div>
       <details id="oddsActual" hidden><summary>查看官方最終成績</summary><button id="oddsReadActual" class="secondary-btn" type="button">讀取官方最終結果</button><p id="oddsActualResult"></p></details>
+      </details>
     </section>
   </main>
 
   <footer class="footer"><div class="wrap">非官方網站。本頁僅協助整理公開配對資訊，Pokémon 相關商標屬原權利人所有。</div></footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="site-version.js?v=2.17.3" defer></script>
+  <script src="site-version.js?v=2.17.4" defer></script>
   <script src="pairing-auth-stability.js?v=1.11.2-r1" defer></script>
   <script src="pairing.js?v=2.10.1-r2" defer></script>
   <script src="pairing-odds-engine.js?v=1.11.0-r1" defer></script>
@@ -320,7 +339,7 @@
    Keep existing href attributes for the authorization selectors. */
 document.addEventListener('click', function(event) {
   if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-  const link = event.target.closest?.('.site-nav a[href="history.html"], .pairing-history-moved a[href="history.html"]');
+  const link = event.target.closest?.('.site-nav a[href="history.html"], .site-nav a[href="pairing.html"], .pairing-history-moved a[href="history.html"]');
   if (!link || link.hidden || link.closest('[hidden]')) return;
   const url = new URL(link.href);
   url.searchParams.set('nav', String(Date.now()));
