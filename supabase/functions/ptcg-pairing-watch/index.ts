@@ -415,15 +415,17 @@ function buildMultiNotice(batch:any,cards:any[],type:"round"|"final",test=false)
     return c.player+"\n桌號："+c.table+"\n對手："+c.opponent+deck+(c.ttl_score!==""?"\nTtlScore："+c.ttl_score:"");
   }).join("\n\n");
   const lineBody=text+"\n\n官方"+(type==="final"?"排名":"配對")+"："+official;
-  const pushBody=cards.map(c=>c.player+"｜"+(c.final?"第 "+c.rank+" 名":c.waiting?"等待公布":"桌號 "+c.table)).join("\n");
+  const compactPush=cards.map(c=>c.player+"｜"+(c.final?"第 "+c.rank+" 名":c.waiting?"等待公布":"桌號 "+c.table)).join("\n");
+  let pushBody=text;
   const makeUrl=(items:any[])=>{
     const params=new URLSearchParams({type,round:String(batch.round||""),official,players:encodeCards(items),mv:"2180"});
     // A versioned multi-player page prevents an installed single-player UI from
     // interpreting the first player as the whole notification.
-    return "/ptcg-ranking/family-notify-multi.html?"+params.toString();
+    return "/ptcg-ranking/family-notify.html?"+params.toString();
   };
   let familyUrl=makeUrl(cards);
   const length=()=>new TextEncoder().encode(JSON.stringify({title,body:pushBody,url:familyUrl,tag:"ptcg-family-pairing"})).length;
+  if(length()>3500)pushBody=compactPush;
   if(length()>3500)familyUrl=makeUrl(cards.map(c=>({...c,possible_deck:shortText(c.possible_deck,24),previous_deck:shortText(c.previous_deck,24),deck:shortText(c.deck,24)})));
   if(length()>3500)familyUrl=makeUrl(cards.map(c=>({...c,possible_deck:"",previous_deck:"",deck:shortText(c.deck,20),opponent:shortText(c.opponent,38)})));
   return {title,lineBody,pushBody,familyUrl};
@@ -439,8 +441,9 @@ async function startMulti(userId:string,source:string,ids:string[]) {
   if(batch.available && ids.some(id=>!results.get(id)?.match))
     throw new Error("本輪已公布，但找不到部分追蹤玩家，請確認所有 ID 與 Round");
   const rank=await readCurrentRank(source,ids);
-  if(rank.is_final)throw new Error("此賽事已公布正式最終排名，請使用歷史查詢");
+  if(rank.available&&rank.is_final)throw new Error("此賽事已公布正式最終排名，請使用歷史查詢");
   const same=old?.active && String(old.tid)===parsed.tid;
+  if(same&&JSON.stringify(trackedIds(old))===JSON.stringify(ids))return old;
   const completed=batch.available?parsed.round:Math.max(parsed.round-1,0);
   const next=Math.max(completed+1,same?Number(old.next_round)||1:1);
   const state={finals:{},pending_round:null,pending_ids:[]};

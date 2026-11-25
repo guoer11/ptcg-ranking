@@ -67,3 +67,5 @@
   .family-round-query-row button { padding-left: 8px; padding-right: 8px; font-size: 12px; }
   .family-round-query-actions { grid-template-columns: 1fr; }
 }
+
+.family-multi-player h3{margin:0 0 10px;color:#233b57;font-size:17px;overflow-wrap:anywhere}.family-multi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.family-multi-grid>div{background:#f1f7fc;border-radius:8px;padding:9px;min-width:0}.family-multi-grid strong{font-size:15px}.family-multi-grid span{font-size:11px}

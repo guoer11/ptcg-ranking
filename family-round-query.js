@@ -88,6 +88,7 @@
     return merged;
   }
 
+  function multiSummaryActive(){return new URLSearchParams(window.location.search).has('players')||Array.isArray(readJson(SUMMARY_KEY,null)?.players);}
   function latestSummary() {
     const fromUrl = summaryFromUrl();
     const stored = readJson(SUMMARY_KEY, null);
@@ -278,6 +279,7 @@
   }
 
   function renderRound(summary, context) {
+    if(multiSummaryActive())return;
     const grid = byId('familyMatchGrid');
     const box = byId('familyMatchSummary');
     if (!grid || !box) return;
@@ -318,6 +320,7 @@
   }
 
   async function queryRound(roundValue, options = {}) {
+    if(multiSummaryActive())return;
     const { silent = false, updateUrl = true } = options;
     const context = currentContext();
     if (!context) {
@@ -385,6 +388,7 @@
 
       const nextContext = rememberSummary(summary) || context;
       if (updateUrl) updateAddress(summary);
+      if(multiSummaryActive())return;
       renderRound(summary, nextContext);
       syncControls(nextContext, round);
       if (!silent) setMessage(`Round ${round} 查詢完成。`, 'success');
@@ -398,6 +402,7 @@
   }
 
   function ingestNotificationUrl(urlValue) {
+    if(new URL(urlValue,window.location.origin).searchParams.has('players')||multiSummaryActive()){const panel=byId('familyRoundQuery');if(panel)panel.hidden=true;return;}
     const incoming = summaryFromUrl(urlValue);
     if (!incoming) return;
     const stored = readJson(SUMMARY_KEY, null);
@@ -413,6 +418,7 @@
   }
 
   function refreshFromCurrentState({ autoFill = true } = {}) {
+    if(multiSummaryActive()){const panel=byId('familyRoundQuery');if(panel)panel.hidden=true;return;}
     const summary = latestSummary();
     if (summary) rememberSummary(summary);
     const context = currentContext();
@@ -462,7 +468,7 @@
     window.addEventListener('pageshow', () => refreshFromCurrentState({ autoFill: true }));
 
     const version = document.querySelector('.family-notify-version strong');
-    if (version) version.textContent = '目前版本 v2.3.0';
+    if (version) version.textContent = '目前版本 v2.4.0';
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true });

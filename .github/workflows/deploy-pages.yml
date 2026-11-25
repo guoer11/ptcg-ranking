@@ -139,6 +139,8 @@ jobs:
           cmp history.html _site/history-2.17.3-r1.html
           cp pairing.html _site/pairing-2.17.4.html
           cmp pairing.html _site/pairing-2.17.4.html
+          cp pairing.html _site/pairing-2.18.0.html
+          cmp pairing.html _site/pairing-2.18.0.html
           cp baseball-reference-ui.css baseball-3d.css baseball-3d.js _site/
           cp -R pitching-app _site/pitching-app
           cp assets/q-icons/*.webp _site/assets/q-icons/

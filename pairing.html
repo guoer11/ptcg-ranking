@@ -50,6 +50,25 @@
     .pairing-feature-notice{display:block}
     @media(max-width:600px){.pairing-feature-collapse>summary{font-size:16px}.pairing-feature-collapse>summary .odds-badge{font-size:10px;padding:3px 5px;margin-left:4px}}
   </style>
+  <style id="pairingMultiStyles">
+    .pairing-extra-players:empty{display:none}
+    .pairing-extra-players{display:grid;gap:8px}
+    .pairing-extra-player{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end}
+    .pairing-extra-player .pairing-field{min-width:0}
+    .pairing-extra-player input{width:100%;min-width:0}
+    .pairing-extra-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .pairing-extra-actions small{font-size:11px;color:#667085}
+    #pairingMultiResults:not([hidden]){display:grid;gap:10px;margin-top:14px}
+    .pairing-multi-card{border:1px solid #dce5ee;border-radius:12px;padding:12px;background:#f8faff}
+    .pairing-multi-heading{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:9px}
+    .pairing-multi-heading strong{font-size:15px;overflow-wrap:anywhere}
+    .pairing-multi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+    .pairing-multi-grid>div{padding:9px;border-radius:8px;background:white;min-width:0}
+    .pairing-multi-grid span,.pairing-multi-grid b{display:block;overflow-wrap:anywhere}
+    .pairing-multi-grid span{color:#667085;font-size:11px;margin-bottom:3px}
+    .pairing-multi-grid b{font-size:14px}
+    .pairing-multi-status{display:grid;gap:4px;margin-top:7px}
+  </style>
 </head>
 <body class="site-bottom-nav-page">
   <header class="site-header pairing-header">
@@ -73,10 +92,13 @@
         <div class="pairing-form">
           <div class="pairing-field"><label for="pairingSourceUrl">活動網址 / Round 配對網址</label><input id="pairingSourceUrl" class="search-input" type="url" inputmode="url" placeholder="https://tcg.sfc-jpn.jp/tour.asp?tid=..." autocomplete="off" /></div>
           <div class="pairing-row"><div class="pairing-field"><label for="pairingPlayerId">追蹤玩家 PTCG ID</label><input id="pairingPlayerId" class="search-input" type="text" value="tw39371632" autocomplete="off" autocapitalize="none" /></div><div class="pairing-field"><label for="pairingRound">Round</label><input id="pairingRound" class="search-input" type="number" min="1" step="1" value="1" inputmode="numeric" /></div></div>
+          <div id="pairingExtraPlayers" class="pairing-extra-players"></div>
+          <div class="pairing-extra-actions"><button id="pairingAddPlayer" type="button" class="secondary-btn">＋ 新增追蹤玩家</button><small>同一場賽事最多 5 人，每輪合併通知</small></div>
           <div class="pairing-actions"><button id="pairingLookupButton" class="primary-btn" type="button">開始追蹤</button><button id="pairingOpenOfficialButton" class="secondary-btn" type="button">開官方配對頁</button></div>
           <p class="section-note" style="margin:0;">按一次即可查詢本輪；進行中賽事自動監控，已結束賽事則只查指定 Round，不會發送追蹤通知。</p>
         </div>
         <div id="pairingResult" class="pairing-result is-waiting"><div class="pairing-result-title"><strong>尚未開始追蹤</strong><span class="pairing-round-badge">等待輸入</span></div><div class="pairing-watch-copy">貼上目前賽事網址並選擇 Round，按「開始追蹤」即可查詢配對、啟動監控並使用牌組偵察。</div></div>
+        <div id="pairingMultiResults" hidden></div>
         <section class="pairing-watch-card pairing-watch-inline"><div class="pairing-watch-head"><strong>追蹤狀態</strong><span id="pairingWatchStatus" class="pairing-watch-status"><span class="pairing-watch-dot"></span>未追蹤</span></div><div id="pairingWatchCopy" class="pairing-watch-copy">按上方「開始追蹤」後，系統會先查詢目前 Round，再自動監控後續配對與最終排名。</div><div id="pairingStopActions" class="pairing-actions" style="margin-top:14px;" hidden><button id="pairingStopButton" class="secondary-btn" type="button">停止追蹤</button></div></section>
         <div id="pairingMessage" class="pairing-message"></div>
         </details>
@@ -125,9 +147,9 @@
 
   <footer class="footer"><div class="wrap">非官方網站。本頁僅協助整理公開配對資訊，Pokémon 相關商標屬原權利人所有。</div></footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="site-version.js?v=2.17.4" defer></script>
+  <script src="site-version.js?v=2.18.0" defer></script>
   <script src="pairing-auth-stability.js?v=1.11.2-r1" defer></script>
-  <script src="pairing.js?v=2.10.1-r2" defer></script>
+  <script src="pairing.js?v=2.18.0" defer></script>
   <script src="pairing-odds-engine.js?v=1.11.0-r1" defer></script>
   <script src="pairing-odds.js?v=2.10.1-r2" defer></script>
   <script id="ptcgPlayerBadgesJs" src="player-badges.js?v=2.15.0" defer></script>
@@ -143,6 +165,7 @@
       event.preventDefault();
       event.stopImmediatePropagation();
       if (!pairingAuthorized) return;
+      if (hasExtraTrackingPlayers()) { await handleMultiWatch(); return; }
 
       setPairingBusy(true);
       setPairingMessage('正在查詢目前 Round 與賽事狀態…');
@@ -193,7 +216,7 @@
             return;
           }
         }
-        const started = await authorizedWatchRequest('start', { url: parsed.url, player_id: playerId });
+        const started = await authorizedWatchRequest('start', { url: parsed.url, player_id: playerId, player_ids:[playerId] });
         clearSavedPairingWatchForm();
         pairingFormEdited = false;
         syncPairingWatchForm(started.watch);

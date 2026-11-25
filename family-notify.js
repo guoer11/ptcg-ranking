@@ -22,6 +22,16 @@ function familyEscape(value = '') {
 function familySummaryFromParams(params) {
   const type = params.get('type') || '';
   if (type !== 'round' && type !== 'final') return null;
+  if(params.has('players')){
+    try{
+      const encoded=params.get('players');
+      if(!encoded||encoded.length>12000)return null;
+      const bytes=Uint8Array.from(atob(encoded.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
+      const players=JSON.parse(new TextDecoder().decode(bytes));
+      if(!Array.isArray(players)||players.length<2||players.length>5||players.some(c=>!c||!/^tw\d{1,16}$/.test(c.player_id))||new Set(players.map(c=>c.player_id)).size!==players.length)return null;
+      return {type,round:params.get('round')||'—',players,official:params.get('official')||'',saved_at:new Date().toISOString()};
+    }catch(_){return null;}
+  }
 
   if (type === 'final') {
     return {
@@ -90,6 +100,22 @@ function familyRenderMatchSummary() {
 
   const player = data.player || '—';
   const official = data.official || '';
+
+  if(Array.isArray(data.players)&&data.players.length>1){
+    eyebrow.textContent=data.type==='final'?'多位玩家成績':'多位玩家配對';
+    title.textContent=data.type==='final'?'最終排名':'Round '+data.round;
+    badge.textContent=data.players.length+' 位玩家';
+    const cell=(label,value)=>'<div><span>'+familyEscape(label)+'</span><strong>'+familyEscape(value||'—')+'</strong></div>';
+    grid.innerHTML=data.players.map(c=>{
+      const deckLabel=c.deck?'已記錄牌組':c.possible_deck?'可能牌組':c.previous_deck?'上次比賽牌組':'對手牌組';
+      const detail=c.final?cell('最終排名','第 '+c.rank+' 名'):c.waiting?cell('狀態',data.type==='final'?'等待最終排名':'本輪尚未找到配對'):cell('桌號',c.table)+cell('TtlScore',c.ttl_score)+cell('對手',c.opponent)+cell(deckLabel,c.deck||c.possible_deck||c.previous_deck||'尚未記錄');
+      return '<article class="family-match-wide family-multi-player"><h3>'+familyEscape(c.player)+'</h3><div class="family-multi-grid">'+detail+'</div></article>';
+    }).join('');
+    officialLink.textContent=data.type==='final'?'開啟官方排名':'開啟官方配對';
+    const roundPanel=document.getElementById('familyRoundQuery');if(roundPanel)roundPanel.hidden=true;
+    if(official&&/^https:\/\/tcg\.sfc-jpn\.jp\//i.test(official)){officialLink.href=official;officialLink.hidden=false;}else officialLink.hidden=true;
+    summary.hidden=false;return true;
+  }
 
   if (data.type === 'final') {
     const rank = data.rank || '—';

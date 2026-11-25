@@ -100,7 +100,7 @@ function setPairingMessage(text, type = '') {
 }
 
 function setPairingBusy(busy) {
-  [lookupButton(), testButton(), finalTestButton(), startButton(), stopButton(), document.getElementById('pairingLoadTestButton')]
+  [lookupButton(), testButton(), finalTestButton(), startButton(), stopButton(), document.getElementById('pairingLoadTestButton'),document.getElementById('pairingAddPlayer'),...extraPlayerInputs(),...(extraPlayersRoot()?.querySelectorAll('button')||[])]
     .filter(Boolean)
     .forEach(button => { button.disabled = busy; });
 }
@@ -173,6 +173,7 @@ function syncPairingWatchForm(watch) {
   if (pairingFormOwner && pairingFormOwner !== userId) {
     if (sourceInput()) sourceInput().value = '';
     if (playerInput()) playerInput().value = DEFAULT_PLAYER_ID;
+    restoreExtraPlayers();clearMultiResults();
     if (roundInput()) roundInput().value = '1';
     pairingFormEdited = false;
   }
@@ -198,6 +199,7 @@ function syncPairingWatchForm(watch) {
 
     if (sourceInput()) sourceInput().value = parsed.url;
     if (playerInput()) playerInput().value = watch.player_id;
+    restoreExtraPlayers(watch.player_ids||[watch.player_id]);
     if (roundInput()) roundInput().value = String(parsed.round);
     savePairingWatchForm();
   } catch (error) {
@@ -243,6 +245,7 @@ async function lookupRealNames(ids) {
 async function renderPairing(data) {
   const box = resultBox();
   if (!box) return;
+  box.hidden=false;clearMultiResults();
   lastPairing = data;
 
   if (!data?.available) {
@@ -310,6 +313,7 @@ async function renderPairing(data) {
 async function renderFinalRank(ranking, notification = null) {
   const box = resultBox();
   if (!box) return;
+  box.hidden=false;clearMultiResults();
   const standing = ranking?.standing_match;
   const isInterim = Boolean(ranking?.is_interim);
   const rankTitle = isInterim ? `Round ${ranking.round || '—'} 暫定排名` : '最終排名';
@@ -388,6 +392,15 @@ function renderWatchStatus(watch) {
 
   const primary = lookupButton();
   const stopRow = stopActions();
+  if(Array.isArray(watch?.player_ids)&&watch.player_ids.length>1){
+    const finals=watch.multi_state?.finals||{};
+    if(primary)primary.textContent=watch.active?'更新追蹤':'開始新的追蹤';
+    if(stopRow)stopRow.hidden=!watch.active;
+    status.classList.toggle('active',Boolean(watch.active));
+    status.textContent=watch.active?'多人追蹤中':watch.final_notified?'已完成':'已停止';
+    copy.innerHTML='活動 <strong>'+escPairing(watch.tid)+'</strong> · '+watch.player_ids.length+' 位玩家'+(watch.active?' · 等待 Round '+escPairing(watch.next_round):'')+'<div class="pairing-multi-status">'+watch.player_ids.map(id=>'<div><b>'+escPairing(id)+'</b>：'+(finals[id]?'最終第 '+escPairing(finals[id].rank)+' 名':watch.active?'追蹤中':'未追蹤')+'</div>').join('')+'</div>';
+    return;
+  }
 
   if (!watch?.active) {
     if (primary) primary.textContent = watch?.final_notified ? '開始新的追蹤' : '開始追蹤';
@@ -423,6 +436,7 @@ async function refreshWatchStatus({ reopened = false } = {}) {
     if (reopened && !data.watch?.active) {
       if (sourceInput()) sourceInput().value = '';
       if (playerInput()) playerInput().value = DEFAULT_PLAYER_ID;
+      restoreExtraPlayers();clearMultiResults();
       if (roundInput()) roundInput().value = '1';
       pairingFormEdited = false;
     }
@@ -448,6 +462,7 @@ async function handleLookup() {
 }
 
 async function handleTestNotification() {
+  if(hasExtraTrackingPlayers())return handleMultiNotificationTest(false);
   setPairingBusy(true);
   setPairingMessage('正在用這一輪的真實配對發送 LINE / 網站推播測試…');
   try {
@@ -465,6 +480,7 @@ async function handleTestNotification() {
 }
 
 async function handleFinalTestNotification() {
+  if(hasExtraTrackingPlayers())return handleMultiNotificationTest(true);
   setPairingBusy(true);
   setPairingMessage('正在讀取歷史最終排名並發送 LINE / 網站推播測試…');
   try {
@@ -484,12 +500,13 @@ async function handleFinalTestNotification() {
 }
 
 async function handleStartWatch() {
+  if(hasExtraTrackingPlayers())return handleMultiWatch();
   setPairingBusy(true);
   setPairingMessage('正在查詢目前 Round 並啟動追蹤…');
   try {
     const { data: pairingData, parsed, playerId } = await lookupCurrentPairing();
     if (parsed.tid === TEST_TID) throw new Error('這是歷史測試場，為避免 Round 2、3、4…連續洗版，請使用進階 / 測試工具，不要啟動連續追蹤。');
-    const data = await authorizedWatchRequest('start', { url: parsed.url, player_id: playerId });
+    const data = await authorizedWatchRequest('start', { url: parsed.url, player_id: playerId, player_ids:[playerId] });
     clearSavedPairingWatchForm();
     pairingFormEdited = false;
     syncPairingWatchForm(data.watch);
@@ -551,6 +568,7 @@ async function refreshPairingAuthorization() {
     : '請先回玩家排行登入你的授權 Google 帳號，再使用即時配對。');
 
   if (!allowed) {
+    restoreExtraPlayers();clearMultiResults();
     if (authCopy()) authCopy().textContent = '目前帳號未授權使用即時配對。';
     document.dispatchEvent(new CustomEvent('pairing:auth-ready', { detail: { allowed: false } }));
     return;
@@ -577,7 +595,111 @@ async function initPairingAuth() {
   });
 }
 
+
+const extraPlayersRoot=()=>document.getElementById('pairingExtraPlayers');
+function extraPlayerInputs(){return [...(extraPlayersRoot()?.querySelectorAll('input')||[])];}
+function hasExtraTrackingPlayers(){return extraPlayerInputs().length>0;}
+function updateExtraPlayerButtons(){
+  const add=document.getElementById('pairingAddPlayer');
+  if(add){add.hidden=extraPlayerInputs().length>=4;}
+  extraPlayerInputs().forEach((input,i)=>{const label=input.closest('.pairing-field')?.querySelector('label');if(label)label.textContent='追蹤玩家 '+(i+2)+' PTCG ID';});
+}
+function addTrackingPlayer(value='',edited=true){
+  const root=extraPlayersRoot();if(!root||extraPlayerInputs().length>=4)return;
+  const row=document.createElement('div');row.className='pairing-extra-player';
+  const field=document.createElement('div');field.className='pairing-field';
+  const label=document.createElement('label'),input=document.createElement('input'),remove=document.createElement('button');
+  input.type='text';input.className='search-input';input.value=value;input.placeholder='輸入 PTCG ID';input.autocomplete='off';input.autocapitalize='none';input.setAttribute('aria-label','新增追蹤玩家 PTCG ID');
+  remove.type='button';remove.className='secondary-btn';remove.textContent='移除';
+  input.addEventListener('input',()=>{pairingFormEdited=true;});
+  remove.addEventListener('click',()=>{row.remove();pairingFormEdited=true;updateExtraPlayerButtons();});
+  field.append(label,input);row.append(field,remove);root.append(row);
+  if(edited)pairingFormEdited=true;
+  updateExtraPlayerButtons();
+  if(edited)input.focus();
+}
+function restoreExtraPlayers(ids=[]){
+  const root=extraPlayersRoot();if(!root)return;
+  root.replaceChildren();
+  ids.slice(1,5).forEach(id=>addTrackingPlayer(id,false));
+  updateExtraPlayerButtons();
+}
+function trackingIds(){
+  const ids=[playerInput()?.value,...extraPlayerInputs().map(input=>input.value)].map(normalizePlayerId);
+  if(ids.some(id=>!/^tw\d{1,16}$/.test(id)))throw new Error('請填妥所有 PTCG ID，或移除不使用的輸入欄位');
+  if(new Set(ids).size!==ids.length)throw new Error('追蹤玩家 PTCG ID 不可重複');
+  return ids;
+}
+function clearMultiResults(){
+  const root=document.getElementById('pairingMultiResults');if(root){root.hidden=true;root.innerHTML='';}
+}
+function renderMultiCards(batch,cards,mode='round'){
+  const root=document.getElementById('pairingMultiResults');if(!root)return;
+  if(resultBox())resultBox().hidden=true;
+  root.hidden=false;
+  const cell=(label,value)=>'<div><span>'+escPairing(label)+'</span><b>'+escPairing(value||'—')+'</b></div>';
+  const interim=new Map((batch?.results||[]).map(r=>[r.player_id,r.standing_match]));
+  root.innerHTML=(cards||[]).map(c=>{
+    const deckLabel=c.deck?'已記錄牌組':c.possible_deck?'可能牌組':c.previous_deck?'上次比賽牌組':'對手牌組';
+    const provisional=mode==='interim'?interim.get(c.player_id):null;
+    const status=c.final?'最終排名':mode==='interim'?'暫定排名':mode==='final'?'等待最終排名':'Round '+(batch?.round||'—');
+    const content=c.final?cell('最終排名','第 '+c.rank+' 名')
+      :provisional?cell('暫定排名','第 '+provisional.rank+' 名')
+      :c.waiting||mode!=='round'?cell('狀態',mode==='round'?'本輪尚未找到配對':'尚未取得排名')
+      :cell('桌號',c.table)+cell('TtlScore',c.ttl_score||'—')+cell('對手',c.opponent)+cell(deckLabel,c.deck||c.possible_deck||c.previous_deck||'尚未記錄');
+    return '<article class="pairing-multi-card"><div class="pairing-multi-heading"><strong>'+escPairing(c.player)+'</strong><span class="pairing-round-badge">'+escPairing(status)+'</span></div><div class="pairing-multi-grid">'+content+'</div></article>';
+  }).join('');
+}
+async function handleMultiWatch(){
+  setPairingBusy(true);setPairingMessage('正在查詢多位玩家及賽事狀態…');
+  try{
+    const ids=trackingIds(),parsed=normalizeRoundUrl(sourceInput()?.value,Number(roundInput()?.value||1));
+    if(parsed.tid===TEST_TID)throw new Error('這是歷史測試場，請使用進階 / 測試工具，不要啟動連續追蹤。');
+    sourceInput().value=parsed.url;roundInput().value=String(parsed.round);
+    const payload={url:parsed.url,player_ids:ids};
+    const [lookup,rank]=await Promise.all([authorizedWatchRequest('lookup-multi',payload),authorizedWatchRequest('final-multi',payload)]);
+    const first=lookup.batch?.results?.[0];
+    if(first){await renderPairing(first);}
+    const finished=rank.batch?.available&&rank.batch?.is_final;
+    const viewingRanking=new URL(parsed.url).searchParams.get('znt')==='1';
+    if(finished){
+      renderMultiCards(viewingRanking?rank.batch:lookup.batch,viewingRanking?rank.cards:lookup.cards,viewingRanking?'final':'round');
+      const existing=(await authorizedWatchRequest('status')).watch;
+      if(existing?.active){renderWatchStatus(existing);}
+      else{
+        if(lookupButton())lookupButton().textContent='查詢這一輪';
+        if(stopActions())stopActions().hidden=true;
+        if(watchStatus()){watchStatus().classList.remove('active');watchStatus().textContent='歷史查詢';}
+        if(watchCopy())watchCopy().textContent='此賽事已公布最終排名，僅查詢歷史資料，不發送通知。';
+      }
+      document.dispatchEvent(new CustomEvent('pairing:history-mode',{detail:{parsed,playerId:ids[0],playerIds:ids,pairing:first,ranking:rank.batch}}));
+      setPairingMessage('已讀取多位玩家歷史資料，不啟動自動監控。','success');return;
+    }
+    if(rank.batch?.is_interim&&activePairingWatch?.active&&String(activePairingWatch.tid)===parsed.tid&&JSON.stringify(activePairingWatch.player_ids||[activePairingWatch.player_id])===JSON.stringify(ids)){
+      renderMultiCards(rank.batch,rank.cards,'interim');renderWatchStatus(activePairingWatch);
+      setPairingMessage('暫定排名已更新；原本追蹤繼續，不重發通知。','success');return;
+    }
+    renderMultiCards(lookup.batch,lookup.cards);
+    const started=await authorizedWatchRequest('start-multi',payload);
+    clearSavedPairingWatchForm();pairingFormEdited=false;syncPairingWatchForm(started.watch);renderWatchStatus(started.watch);
+    document.dispatchEvent(new CustomEvent('pairing:tracking-started',{detail:{watch:started.watch,parsed,playerId:ids[0],playerIds:ids,pairing:first}}));
+    if(rank.batch?.is_interim)renderMultiCards(rank.batch,rank.cards,'interim');
+    setPairingMessage('已開始追蹤 '+ids.length+' 位玩家；每輪合併 LINE、網站推播與家庭通知。','success');
+  }catch(error){setPairingMessage(error?.message||String(error),'error');}finally{setPairingBusy(false);}
+}
+async function handleMultiNotificationTest(final=false){
+  setPairingBusy(true);setPairingMessage('正在讀取多位玩家並發送合併測試通知…');
+  try{
+    const ids=trackingIds(),parsed=normalizeRoundUrl(sourceInput()?.value,Number(roundInput()?.value||1));
+    const data=await authorizedWatchRequest(final?'test-final-multi':'test-multi',{url:parsed.url,player_ids:ids});
+    renderMultiCards(data.batch,data.cards,final?'final':'round');
+    const line=Boolean(data.notification?.line?.sent),push=Number(data.notification?.push?.sent||0);
+    setPairingMessage('合併測試完成：'+(line?'LINE 已送出':'LINE 未送出')+'；網站推播 '+push+' 支裝置。',line||push?'success':'error');
+  }catch(error){setPairingMessage(error?.message||String(error),'error');}finally{setPairingBusy(false);}
+}
+
 function initPairingPage() {
+  document.getElementById('pairingAddPlayer')?.addEventListener('click',()=>addTrackingPlayer());
   [sourceInput(), playerInput(), roundInput()].filter(Boolean).forEach(input => {
     const saveEdit = () => {
       pairingFormEdited = true;

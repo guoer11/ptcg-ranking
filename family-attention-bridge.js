@@ -48,6 +48,7 @@
 
   function isRoundSummary() {
     const params = currentParams();
+    if(params.has('players')||Array.isArray(storedSummary()?.players))return false;
     const type = params.get('type') || storedSummary()?.type || '';
     return type === 'round';
   }
@@ -71,6 +72,7 @@
   }
 
   async function refreshFamilyAttention() {
+    if(!isRoundSummary())return;
     const playerId = currentOpponentId();
     if (!playerId) return;
     const endpoint = await familySubscriptionEndpoint();
@@ -181,7 +183,7 @@
 
   function updateFamilyVersion() {
     const version = document.querySelector('.family-notify-version strong');
-    if (version) version.textContent = '目前版本 v2.3.0';
+    if (version) version.textContent = '目前版本 v2.4.0';
   }
 
   function scheduleRefresh(delay = 250) {
