@@ -7,7 +7,9 @@
 .history-panel #matchArchive>summary,.history-panel #pairingHistory>summary{font-size:17px;font-weight:800;padding:4px 0 9px}
 .pairing-history-moved{margin-top:15px}
 .history-knockout{margin:20px 0 6px;border-top:1px solid #dae4ee;padding-top:18px}
-.history-knockout h3{font-size:16px;color:#183150;margin:0 0 6px}
+.history-knockout[hidden]{display:none!important}
+.history-panel #historyKnockoutPanel>summary{font-size:17px;font-weight:800;color:#183150;padding:4px 0 9px}
+.history-panel #historyKnockoutPanel:not([open])>summary{padding-bottom:0}
 .history-knockout-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
 .history-knockout-form label{display:grid;gap:5px;color:#52637a;font-size:12px;font-weight:750}
 .history-knockout-form select{width:100%;min-width:0;box-sizing:border-box}
