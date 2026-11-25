@@ -36,7 +36,7 @@ function archive(tid,round){
   return {event:{tid,title:'2026/11/21 UBL 孩童組',status:'completed',final_seen_at:'2026-11-21T08:00:00Z'},
     rounds:[{round_no:1,table_count:12},{round_no:7,table_count:6}],
     final:{standings,source_status:'official',captured_at:'2026-11-21T09:00:00Z'},
-    selected:round?{round_no:round,matches:[],captured_at:'2026-11-21T07:00:00Z'}:null,
+    selected:round?{round_no:round,matches:[{table:601,a:{id:'tw33000082',name:'選手A',record:{points:3}},b:{id:'tw00000002',name:'選手B',record:{points:3}}},{table:1602,a:null,b:null}],captured_at:'2026-11-21T07:00:00Z'}:null,
     interim:null,context:{real_names:{},decks:{tw33000082:{current:{deck:'測試牌組',round:1}}},observations:{}}};
 }
 const fetch=async (_url,options)=>{
@@ -78,6 +78,14 @@ const getCalls=()=>calls.filter(call=>call.action==='get').length;
   await settle();
   assert.equal(getCalls(),2,'first viewing a new round fetches one record');
   assert.equal(calls.filter(c=>c.action==='get').at(-1).round,1,'numeric round must remain a number');
+  const pairing=el('matchArchiveRows').innerHTML;
+  assert.match(pairing,/<col style="width:clamp\(46px,8vw,70px\)">/);
+  for(const number of ['601','1602']){
+    const cell=pairing.match(new RegExp('<td style="([^"]+)"><span class="archive-table-number" style="([^"]+)">'+number+'</span></td>'));
+    assert(cell,'render intact table number '+number);
+    for(const style of cell.slice(1))assert.match(style,/white-space:nowrap!important/);
+  }
+
 
   el('matchArchiveRound').value='final';
   el('matchArchiveRound').handlers.change();
