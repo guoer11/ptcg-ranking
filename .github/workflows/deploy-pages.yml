@@ -71,6 +71,7 @@ jobs:
           node tests/pairing-collapse.test.cjs
           node tests/multi-player-watch.test.cjs
           node tests/multi-player-badges.test.cjs
+          node tests/default-tracking-players.test.cjs
           node tests/mobile-site-nav.test.cjs
           node tests/history-auth-stability.test.cjs
           node tests/history-bracket.test.cjs
@@ -149,6 +150,10 @@ jobs:
           cmp player-badges.js _site/player-badges-2.18.1.js
           cp pairing.html _site/pairing-2.18.1.html
           cmp pairing.html _site/pairing-2.18.1.html
+          cp pairing.js _site/pairing-2.18.1-r1.js
+          cmp pairing.js _site/pairing-2.18.1-r1.js
+          cp pairing.html _site/pairing-2.18.1-r1.html
+          cmp pairing.html _site/pairing-2.18.1-r1.html
           cp baseball-reference-ui.css baseball-3d.css baseball-3d.js _site/
           cp -R pitching-app _site/pitching-app
           cp assets/q-icons/*.webp _site/assets/q-icons/

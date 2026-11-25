@@ -92,7 +92,7 @@
         <p class="section-note">貼上活動或 Round 配對網址，輸入玩家 PTCG ID 與 Round 後按「開始追蹤」。進行中的賽事會自動追蹤後續配對到最終排名；已結束賽事會自動改為歷史查詢模式，不啟動通知。牌組偵察會沿用同一場賽事與 Round。</p>
         <div class="pairing-form">
           <div class="pairing-field"><label for="pairingSourceUrl">活動網址 / Round 配對網址</label><input id="pairingSourceUrl" class="search-input" type="url" inputmode="url" placeholder="https://tcg.sfc-jpn.jp/tour.asp?tid=..." autocomplete="off" /></div>
-          <div class="pairing-row"><div class="pairing-field"><label for="pairingPlayerId">追蹤玩家 PTCG ID</label><input id="pairingPlayerId" class="search-input" type="text" value="tw39371632" autocomplete="off" autocapitalize="none" /></div><div class="pairing-field"><label for="pairingRound">Round</label><input id="pairingRound" class="search-input" type="number" min="1" step="1" value="1" inputmode="numeric" /></div></div>
+          <div class="pairing-row"><div class="pairing-field"><label for="pairingPlayerId">追蹤玩家 1 PTCG ID</label><input id="pairingPlayerId" class="search-input" type="text" value="tw39371632" autocomplete="off" autocapitalize="none" /></div><div class="pairing-field"><label for="pairingRound">Round</label><input id="pairingRound" class="search-input" type="number" min="1" step="1" value="1" inputmode="numeric" /></div></div>
           <div id="pairingExtraPlayers" class="pairing-extra-players"></div>
           <div class="pairing-extra-actions"><button id="pairingAddPlayer" type="button" class="secondary-btn">＋ 新增追蹤玩家</button><small>同一場賽事最多 5 人，每輪合併通知</small></div>
           <div class="pairing-actions"><button id="pairingLookupButton" class="primary-btn" type="button">開始追蹤</button><button id="pairingOpenOfficialButton" class="secondary-btn" type="button">開官方配對頁</button></div>
@@ -150,7 +150,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script src="site-version.js?v=2.18.1" defer></script>
   <script src="pairing-auth-stability.js?v=1.11.2-r1" defer></script>
-  <script src="pairing-2.18.1.js" defer></script>
+  <script src="pairing-2.18.1-r1.js" defer></script>
   <script src="pairing-odds-engine.js?v=1.11.0-r1" defer></script>
   <script src="pairing-odds.js?v=2.10.1-r2" defer></script>
   <script id="ptcgPlayerBadgesJs" src="player-badges-2.18.1.js" defer></script>

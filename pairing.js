@@ -3,6 +3,7 @@ const PAIRING_SUPABASE_KEY = 'sb_publishable_6uVBALI1T3lMZoFEUiLK4g__R7gv0fz';
 const PAIRING_FUNCTION_URL = `${PAIRING_SUPABASE_URL}/functions/v1/ptcg-pairing`;
 const PAIRING_WATCH_URL = `${PAIRING_SUPABASE_URL}/functions/v1/ptcg-pairing-watch`;
 const DEFAULT_PLAYER_ID = 'tw39371632';
+const DEFAULT_TRACKING_IDS = Object.freeze([DEFAULT_PLAYER_ID, 'tw69121729']);
 const TEST_TOURNAMENT_URL = 'https://tcg.sfc-jpn.jp/tour.asp?tid=3000442';
 const TEST_TID = '3000442';
 
@@ -172,8 +173,7 @@ function syncPairingWatchForm(watch) {
 
   if (pairingFormOwner && pairingFormOwner !== userId) {
     if (sourceInput()) sourceInput().value = '';
-    if (playerInput()) playerInput().value = DEFAULT_PLAYER_ID;
-    restoreExtraPlayers();clearMultiResults();
+    resetDefaultTrackingPlayers();clearMultiResults();
     if (roundInput()) roundInput().value = '1';
     pairingFormEdited = false;
   }
@@ -435,8 +435,7 @@ async function refreshWatchStatus({ reopened = false } = {}) {
     if (!pairingAuthorized || pairingSession?.user?.id !== userId) return;
     if (reopened && !data.watch?.active) {
       if (sourceInput()) sourceInput().value = '';
-      if (playerInput()) playerInput().value = DEFAULT_PLAYER_ID;
-      restoreExtraPlayers();clearMultiResults();
+      resetDefaultTrackingPlayers();clearMultiResults();
       if (roundInput()) roundInput().value = '1';
       pairingFormEdited = false;
     }
@@ -568,7 +567,7 @@ async function refreshPairingAuthorization() {
     : '請先回玩家排行登入你的授權 Google 帳號，再使用即時配對。');
 
   if (!allowed) {
-    restoreExtraPlayers();clearMultiResults();
+    resetDefaultTrackingPlayers();clearMultiResults();
     if (authCopy()) authCopy().textContent = '目前帳號未授權使用即時配對。';
     document.dispatchEvent(new CustomEvent('pairing:auth-ready', { detail: { allowed: false } }));
     return;
@@ -623,6 +622,10 @@ function restoreExtraPlayers(ids=[]){
   root.replaceChildren();
   ids.slice(1,5).forEach(id=>addTrackingPlayer(id,false));
   updateExtraPlayerButtons();
+}
+function resetDefaultTrackingPlayers(){
+  if(playerInput())playerInput().value=DEFAULT_TRACKING_IDS[0];
+  restoreExtraPlayers(DEFAULT_TRACKING_IDS);
 }
 function trackingIds(){
   const ids=[playerInput()?.value,...extraPlayerInputs().map(input=>input.value)].map(normalizePlayerId);
@@ -717,7 +720,7 @@ function initPairingPage() {
   window.addEventListener('pageshow', event => {
     if (event.persisted) refreshWatchStatus({ reopened: true });
   });
-  if (playerInput() && !playerInput().value) playerInput().value = DEFAULT_PLAYER_ID;
+  resetDefaultTrackingPlayers();
   document.getElementById('pairingLoadTestButton')?.addEventListener('click', loadHistoricalTest);
   lookupButton()?.addEventListener('click', handleStartWatch);
   testButton()?.addEventListener('click', handleTestNotification);
