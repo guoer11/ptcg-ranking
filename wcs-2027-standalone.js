@@ -85,8 +85,17 @@
     else body.prepend(box);
   }
 
+  function decorateFamilyCards(){
+    const root=document.getElementById('familyMatchSummary');if(!root||root.hidden)return;
+    for(const host of root.querySelectorAll('[data-family-badge-id]')){
+      const id=normalize(host.dataset.familyBadgeId),existing=host.querySelector('.wcs2027-independent-icon');
+      if(!invitees[id]){existing?.remove();continue;}
+      if(!existing)host.append(badge());
+    }
+  }
   function render() {
     scheduled = false;
+    decorateFamilyCards();
     decorateRanking();
     decorateModal();
   }
@@ -98,6 +107,8 @@
   function start() {
     const ranking = document.getElementById('rankingContainer');
     const modalBody = document.getElementById('playerModalBody');
+    const family=document.getElementById('familyMatchSummary');
+    if(family)new MutationObserver(schedule).observe(family,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','data-family-badge-id']});
     // Observe only child additions. Our own nodes are stable, so this settles after one refresh.
     if (ranking) new MutationObserver(schedule).observe(ranking, { childList: true, subtree: true });
     if (modalBody) new MutationObserver(schedule).observe(modalBody, { childList: true, subtree: true });

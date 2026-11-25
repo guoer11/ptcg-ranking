@@ -71,29 +71,40 @@
     }
   }
 
-  async function refreshFamilyAttention() {
-    if(!isRoundSummary())return;
-    const playerId = currentOpponentId();
-    if (!playerId) return;
-    const endpoint = await familySubscriptionEndpoint();
-    if (!endpoint) return;
-
-    try {
-      const response = await fetch(MARK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ endpoint, player_id: playerId })
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok || !data?.ok) throw new Error('attention lookup failed');
-      const url = new URL(window.location.href);
-      if (data.attention) url.searchParams.set('opponent_attention', '1');
-      else url.searchParams.delete('opponent_attention');
-      history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
-      window.PTCGPlayerBadges?.refresh?.();
-    } catch (error) {
-      console.warn('家庭注意標記讀取失敗', error);
-    }
+  let markGeneration=0, lastHostKey='', marksTimer=0;
+  function familyHostIds(){
+    return [...new Set([...document.querySelectorAll('#familyMatchSummary:not([hidden]) [data-family-badge-id]')].map(host=>String(host.dataset.familyBadgeId||'').toLowerCase()).filter(id=>/^tw\d{1,16}$/.test(id)))].sort();
+  }
+  async function refreshFamilyAttention(){
+    const generation=++markGeneration;
+    const ids=familyHostIds(),key=ids.join(',');
+    lastHostKey=key;
+    const clear=()=>{if(generation===markGeneration)window.PTCGPlayerBadges?.setFamilyMarks({});};
+    if(!ids.length||!('serviceWorker' in navigator)||!('PushManager' in window)){clear();return;}
+    try{
+      const registration=await navigator.serviceWorker.ready;
+      const subscription=await registration.pushManager.getSubscription();
+      const credentials=subscription?.toJSON?.();
+      if(!credentials?.endpoint||!credentials?.keys?.auth){clear();return;}
+      const response=await fetch(MARK_URL,{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({action:'family-marks',endpoint:credentials.endpoint,auth:credentials.keys.auth,player_ids:ids})});
+      const data=await response.json().catch(()=>({}));
+      if(generation!==markGeneration||familyHostIds().join(',')!==key)return;
+      if(!response.ok||!data?.ok){clear();return;}
+      const marks=Object.fromEntries(ids.map(id=>[id,{attention:data.marks?.[id]?.attention===true,note:String(data.marks?.[id]?.note||'')}]));
+      window.PTCGPlayerBadges?.setFamilyMarks(marks);
+    }catch(error){clear();console.warn('家庭注意標記讀取失敗',error);}
+  }
+  function watchFamilyBadgeHosts(){
+    const root=document.getElementById('familyMatchSummary');if(!root)return;
+    new MutationObserver(()=>{
+      const key=familyHostIds().join(',');
+      if(key===lastHostKey)return;
+      lastHostKey=key;
+      ++markGeneration;
+      window.PTCGPlayerBadges?.setFamilyMarks({});
+      clearTimeout(marksTimer);
+      marksTimer=window.setTimeout(refreshFamilyAttention,100);
+    }).observe(root,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','data-family-badge-id']});
   }
 
   function setDeckCard(label, deck, state = '') {
@@ -183,7 +194,7 @@
 
   function updateFamilyVersion() {
     const version = document.querySelector('.family-notify-version strong');
-    if (version) version.textContent = '目前版本 v2.4.0';
+    if (version) version.textContent = '目前版本 v2.4.1';
   }
 
   function scheduleRefresh(delay = 250) {
@@ -204,11 +215,13 @@
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       updateFamilyVersion();
+      watchFamilyBadgeHosts();
       scheduleRefresh(500);
       scheduleRefresh(1400);
     }, { once: true });
   } else {
     updateFamilyVersion();
+    watchFamilyBadgeHosts();
     scheduleRefresh(500);
     scheduleRefresh(1400);
   }

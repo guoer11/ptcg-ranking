@@ -296,9 +296,9 @@
 
     grid.innerHTML = `
       <article class="family-match-wide family-table-card"><span>桌號</span><strong>${esc(summary.table || '—')}</strong></article>
-      <article class="family-player-card"><span>玩家</span><strong>${esc(summary.player || context.player_id)}</strong></article>
+      <article class="family-player-card"${familyBadgeAttr(context.player_id||summary.player)}><span>玩家</span><strong>${esc(summary.player || context.player_id)}</strong></article>
       <article class="family-score-card"><span>TtlScore</span><strong>${esc(summary.ttl_score || '—')}</strong></article>
-      <article class="family-opponent-card"><span>對手</span><strong>${esc(summary.opponent || summary.opponent_id || '—')}</strong></article>
+      <article class="family-opponent-card"${familyBadgeAttr(summary.opponent_id||summary.opponent)}><span>對手</span><strong>${esc(summary.opponent || summary.opponent_id || '—')}</strong></article>
       <article class="family-deck-card"><span>${esc(deckLabel)}</span><strong>${esc(deckValue)}</strong></article>`;
 
     const link = byId('familyOfficialLink');
@@ -468,7 +468,7 @@
     window.addEventListener('pageshow', () => refreshFromCurrentState({ autoFill: true }));
 
     const version = document.querySelector('.family-notify-version strong');
-    if (version) version.textContent = '目前版本 v2.4.0';
+    if (version) version.textContent = '目前版本 v2.4.1';
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true });

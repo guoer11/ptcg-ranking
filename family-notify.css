@@ -69,3 +69,11 @@
 }
 
 .family-multi-player h3{margin:0 0 10px;color:#233b57;font-size:17px;overflow-wrap:anywhere}.family-multi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.family-multi-grid>div{background:#f1f7fc;border-radius:8px;padding:9px;min-width:0}.family-multi-grid strong{font-size:15px}.family-multi-grid span{font-size:11px}
+
+/* Keep family badge glyphs and private notes readable in every card. */
+.family-match-grid .player-badge-row{justify-content:flex-start;align-items:center;gap:5px;flex-wrap:wrap}
+.family-match-grid .player-badge-row span{margin-bottom:0}
+.family-match-grid .player-badge-row .player-badge-wcs,.family-match-grid .player-badge-row .player-ball-badge,.family-match-grid .player-badge-row .player-ball-icon,.family-match-grid .player-badge-row .player-ball-rank,.family-match-grid .player-badge-row .player-attention-star{display:inline-flex;align-items:center}
+.family-match-grid .player-badge-row .player-attention-star.is-active{color:#d92d20;font-size:20px}
+.family-match-grid .player-badge-row .player-attention-note{color:#9a3412;font-size:11px;font-weight:700;white-space:normal;overflow-wrap:anywhere}
+.family-multi-name h3{margin-bottom:3px}.family-multi-name{margin-bottom:10px}.family-match-grid .wcs2027-independent-icon{display:inline-flex}

@@ -19,6 +19,10 @@ function familyEscape(value = '') {
     .replaceAll("'", '&#039;');
 }
 
+function familyBadgeAttr(value){
+  const id=String(value||'').match(/tw\d{1,16}\b/i)?.[0]?.toLowerCase();
+  return id?' data-family-badge-id="'+familyEscape(id)+'"':'';
+}
 function familySummaryFromParams(params) {
   const type = params.get('type') || '';
   if (type !== 'round' && type !== 'final') return null;
@@ -47,6 +51,8 @@ function familySummaryFromParams(params) {
     type: 'round',
     round: params.get('round') || '—',
     player: params.get('player') || '—',
+    player_id: params.get('player_id') || '',
+    opponent_id: params.get('opponent_id') || '',
     table: params.get('table') || '—',
     opponent: params.get('opponent') || '—',
     deck: params.get('deck') || '',
@@ -105,11 +111,11 @@ function familyRenderMatchSummary() {
     eyebrow.textContent=data.type==='final'?'多位玩家成績':'多位玩家配對';
     title.textContent=data.type==='final'?'最終排名':'Round '+data.round;
     badge.textContent=data.players.length+' 位玩家';
-    const cell=(label,value)=>'<div><span>'+familyEscape(label)+'</span><strong>'+familyEscape(value||'—')+'</strong></div>';
+    const cell=(label,value,id='')=>'<div'+familyBadgeAttr(id)+'><span>'+familyEscape(label)+'</span><strong>'+familyEscape(value||'—')+'</strong></div>';
     grid.innerHTML=data.players.map(c=>{
       const deckLabel=c.deck?'已記錄牌組':c.possible_deck?'可能牌組':c.previous_deck?'上次比賽牌組':'對手牌組';
-      const detail=c.final?cell('最終排名','第 '+c.rank+' 名'):c.waiting?cell('狀態',data.type==='final'?'等待最終排名':'本輪尚未找到配對'):cell('桌號',c.table)+cell('TtlScore',c.ttl_score)+cell('對手',c.opponent)+cell(deckLabel,c.deck||c.possible_deck||c.previous_deck||'尚未記錄');
-      return '<article class="family-match-wide family-multi-player"><h3>'+familyEscape(c.player)+'</h3><div class="family-multi-grid">'+detail+'</div></article>';
+      const detail=c.final?cell('最終排名','第 '+c.rank+' 名'):c.waiting?cell('狀態',data.type==='final'?'等待最終排名':'本輪尚未找到配對'):cell('桌號',c.table)+cell('TtlScore',c.ttl_score)+cell('對手',c.opponent,c.opponent_id||c.opponent)+cell(deckLabel,c.deck||c.possible_deck||c.previous_deck||'尚未記錄');
+      return '<article class="family-match-wide family-multi-player"><div class="family-multi-name"'+familyBadgeAttr(c.player_id)+'><h3>'+familyEscape(c.player)+'</h3></div><div class="family-multi-grid">'+detail+'</div></article>';
     }).join('');
     officialLink.textContent=data.type==='final'?'開啟官方排名':'開啟官方配對';
     const roundPanel=document.getElementById('familyRoundQuery');if(roundPanel)roundPanel.hidden=true;
@@ -123,7 +129,7 @@ function familyRenderMatchSummary() {
     title.textContent = '最終排名';
     badge.textContent = 'Final rank';
     grid.innerHTML = `
-      <article><span>玩家</span><strong>${familyEscape(player)}</strong></article>
+      <article${familyBadgeAttr(data.player_id||player)}><span>玩家</span><strong>${familyEscape(player)}</strong></article>
       <article><span>最終排名</span><strong>第 ${familyEscape(rank)} 名</strong></article>`;
     officialLink.textContent = '開啟官方排名';
   } else {
@@ -142,9 +148,9 @@ function familyRenderMatchSummary() {
     badge.textContent = `Round ${round}`;
     grid.innerHTML = `
       <article class="family-match-wide family-table-card"><span>桌號</span><strong>${familyEscape(table)}</strong></article>
-      <article class="family-player-card"><span>玩家</span><strong>${familyEscape(player)}</strong></article>
+      <article class="family-player-card"${familyBadgeAttr(data.player_id||player)}><span>玩家</span><strong>${familyEscape(player)}</strong></article>
       <article class="family-score-card"><span>TtlScore</span><strong>${familyEscape(ttlScore)}</strong></article>
-      <article class="family-opponent-card"><span>對手</span><strong>${familyEscape(opponent)}</strong></article>
+      <article class="family-opponent-card"${familyBadgeAttr(data.opponent_id||opponent)}><span>對手</span><strong>${familyEscape(opponent)}</strong></article>
       <article class="family-deck-card"><span>${familyEscape(deckLabel)}</span><strong>${familyEscape(deckValue)}</strong></article>
       <article class="family-match-wide family-source-card"><span>來源</span><strong>TCG マイスター</strong></article>`;
     officialLink.textContent = '開啟官方配對';

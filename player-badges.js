@@ -6,6 +6,7 @@
 
   let badgeData = { season: '2026-27', great_window_days: 60, players: {} };
   let attentionSet = new Set();
+  let familyMarks = new Map();
   let attentionNotes = new Map();
   let attentionGeneration = 0;
   const NOTE_LIMIT = 10;
@@ -412,6 +413,29 @@
   function decorateFamily() {
     const summary = document.getElementById('familyMatchSummary');
     if (!summary || summary.hidden) return;
+    const hosts=summary.querySelectorAll('[data-family-badge-id]');
+    if(hosts.length){
+      for(const host of hosts){
+        const id=normalizeId(host.dataset.familyBadgeId);
+        if(!/^tw\d{1,16}$/.test(id))continue;
+        const mark=familyMarks.get(id);
+        renderArticleBadges(host,id,{attentionOverride:mark?.attention===true});
+        // Only the verified family-device response may supply a private note.
+        // The shared badge engine does not read the account's private notes here.
+        const row=host.querySelector('.player-badge-row');
+        const previous=row?.querySelector('.family-private-attention-note');
+        const note=mark?.attention===true?String(mark.note||''):'';
+        if(!note){previous?.remove();continue;}
+        if(!row)continue;
+        if(previous?.textContent===note)continue;
+        const node=previous||document.createElement('span');
+        node.className='player-attention-note family-private-attention-note';
+        node.title='私人注意備註';node.textContent=note;
+        if(!previous)row.appendChild(node);
+      }
+      ensureLegend('familyBadgeLegend',summary,'afterend');
+      return;
+    }
     const context = readFamilyContext();
     if (!context) return;
     const playerArticle = findFamilyArticle('玩家');
@@ -528,6 +552,7 @@
     legendHtml,
     isAttention: playerId => attentionSet.has(normalizeId(playerId)),
     refreshAttention: refreshAttentionMarks,
+    setFamilyMarks(marks){familyMarks=new Map(Object.entries(marks||{}));scheduleDecorate();},
     toggleAttention,
     refresh: scheduleDecorate
   };
