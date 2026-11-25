@@ -9,6 +9,8 @@ for(const id of ids){
 }
 assert.match(html,/<\/details>\s*<details id="pairingAdvancedCollapse"/);
 assert.match(html,/<\/details>\s*<section id="pairingDeckScout"/);
+assert.match(html,/<section id="pairingDeckScout" class="pairing-scout-panel pairing-history-panel"/);
+assert.match(html,/#pairingDeckScout,#historyKnockoutPanel\{margin:16px 0 0;border:0;border-top:1px solid #dce4ee;border-radius:0;background:transparent;padding:14px 0 0\}/);
 for(const id of ['pairingLookupButton','pairingStopButton','pairingTestButton','pairingScoutLoad','pairingAuthCopy','oddsRun','oddsActual']){
  assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id+' original control must remain');
 }
