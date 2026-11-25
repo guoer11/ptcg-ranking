@@ -31,7 +31,7 @@
 #matchArchive .archive-pair-observation small{color:#687789;margin-top:2px}
 #matchArchive .archive-scroll table{min-width:0;table-layout:fixed}
 #matchArchive .archive-scroll th,#matchArchive .archive-scroll td{min-width:0;white-space:normal;overflow-wrap:anywhere}
-#matchArchive .archive-standings-scroll th:last-child,#matchArchive .archive-standings-scroll td:last-child{text-align:right}
+#matchArchive .archive-standings-scroll th:last-child,#matchArchive .archive-standings-scroll td:last-child{text-align:center}
 #matchArchive .archive-deck{width:fit-content;max-width:100%;box-sizing:border-box}
 
 /* Mobile archive: fit every column in the available width; preserve all data. */
@@ -43,7 +43,7 @@
   #matchArchive .archive-scroll td:nth-child(2),#matchArchive .archive-scroll td:nth-child(3),#matchArchive .archive-scroll td:last-child{min-width:0}
   #matchArchive .archive-scroll th{font-size:11px;line-height:1.4}
   #matchArchive .archive-scroll td:first-child,#matchArchive .archive-standings-scroll td:last-child{font-weight:750}
-  #matchArchive .archive-standings-scroll th:last-child,#matchArchive .archive-standings-scroll td:last-child{text-align:right}
+  #matchArchive .archive-standings-scroll th:last-child,#matchArchive .archive-standings-scroll td:last-child{text-align:center}
   #matchArchive .archive-scroll td strong{font-size:13px;line-height:1.45}
   #matchArchive .archive-scroll td small{font-size:11px;line-height:1.45}
   #matchArchive .archive-matches-scroll td small{font-size:10px}
@@ -57,12 +57,12 @@
 }
 /* Real four-column standings for every viewport. Limit desktop table width,
    so points stay near the player and deck rather than across an empty screen. */
-#matchArchive .archive-standings-scroll{width:100%;max-width:760px}
-#matchArchive .archive-standings-table th,#matchArchive .archive-standings-table td{vertical-align:middle;padding:7px 8px}
+#matchArchive .archive-standings-scroll{width:100%;max-width:760px;margin-inline:auto}
+#matchArchive .archive-standings-table th,#matchArchive .archive-standings-table td{vertical-align:middle;padding:7px 8px;text-align:center}
 #matchArchive .archive-standings-table td:first-child,#matchArchive .archive-standings-table td:last-child{font-weight:750}
-#matchArchive .archive-standings-table th:last-child,#matchArchive .archive-standings-table td:last-child{text-align:right}
+#matchArchive .archive-standings-table th:last-child,#matchArchive .archive-standings-table td:last-child{text-align:center}
 #matchArchive .archive-standings-table .archive-player-identity{min-width:0;overflow-wrap:anywhere}
-#matchArchive .archive-standings-table .archive-deck{margin:0;line-height:1.35;width:fit-content;max-width:100%}
+#matchArchive .archive-standings-table .archive-deck{margin:0 auto;line-height:1.35;width:fit-content;max-width:100%;text-align:center}
 #matchArchive .archive-standings-table .archive-deck b{margin-bottom:1px;line-height:1.3}
 #matchArchive .archive-standings-table .archive-deck small{margin-top:2px;line-height:1.3}
 @media(max-width:720px){

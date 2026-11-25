@@ -46,7 +46,7 @@ assert.match(ui,/記錄於 Round/);
 assert.match(ui,/<th>名次<\/th><th>選手<\/th><th>牌組<\/th><th>TtlScore<\/th>/);
 assert.match(ui,/<td>\$\{playerHTML\(p,false\)\}<\/td><td>\$\{deckHTML\(p\)\|\|"—"\}<\/td>/);
 assert.match(ui,/class="archive-standings-table"/);
-assert.match(css,/archive-standings-scroll\{width:100%;max-width:760px\}/);
+assert.match(css,/archive-standings-scroll\{width:100%;max-width:760px;margin-inline:auto\}/);
 assert.match(ui,/archive-matches-scroll/);
 const mobile=css.slice(css.indexOf('@media(max-width:720px)'));
 assert.match(mobile,/width:100%;min-width:0;table-layout:fixed/);
@@ -68,3 +68,8 @@ assert.match(css,/archive-standings-table th,#matchArchive \.archive-standings-t
 assert.match(css,/archive-standings-table \.archive-deck\{margin:0/);
 assert.match(ui,/<col style="width:11%"><col style="width:32%"><col style="width:39%"><col style="width:18%">/);
 assert.doesNotMatch(css,/archive-standings-scroll \.archive-player\.has-deck/);
+
+assert.match(css,/archive-standings-table th,#matchArchive \.archive-standings-table td\{vertical-align:middle;padding:7px 8px;text-align:center\}/);
+assert.match(css,/archive-standings-table \.archive-deck\{margin:0 auto;[^}]*text-align:center\}/);
+assert.doesNotMatch(css,/archive-standings[^{}]*\{text-align:right\}/);
+assert.match(page,/archive-standings-scroll \{ max-width:min\(100%,760px\); margin-inline:auto; \}/);
