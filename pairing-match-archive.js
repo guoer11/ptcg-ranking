@@ -79,10 +79,11 @@
     if(!p)return "<span>輪空／未公布</span>";
     const id=normalizedId(p),real=realName(p),official=String(p.name||"");
     const primary=real||official||id;
-    return `<strong>${escape(primary)}</strong>
+    const deckMarkup=deckHTML(p);
+    return `<div class="archive-player${deckMarkup?" has-deck":""}"><div class="archive-player-identity"><strong>${escape(primary)}</strong>
       ${primary!==id?`<small>${escape(id)}</small>`:""}
       ${real&&official&&real!==official?`<small>官方名稱：${escape(official)}</small>`:""}
-      ${deckHTML(p)}`;
+      </div>${deckMarkup}</div>`;
   };
   const score=p=>{
     const r=p?.record;

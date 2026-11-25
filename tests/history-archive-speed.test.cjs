@@ -37,7 +37,7 @@ function archive(tid,round){
     rounds:[{round_no:1,table_count:12},{round_no:7,table_count:6}],
     final:{standings,source_status:'official',captured_at:'2026-11-21T09:00:00Z'},
     selected:round?{round_no:round,matches:[],captured_at:'2026-11-21T07:00:00Z'}:null,
-    interim:null,context:{real_names:{},decks:{},observations:{}}};
+    interim:null,context:{real_names:{},decks:{tw33000082:{current:{deck:'測試牌組',round:1}}},observations:{}}};
 }
 const fetch=async (_url,options)=>{
   const input=JSON.parse(options.body);calls.push(input);
@@ -60,6 +60,11 @@ const getCalls=()=>calls.filter(call=>call.action==='get').length;
   assert.equal(getCalls(),1,'first event needs only ONE GET, not two');
   assert.equal(calls.find(c=>c.action==='get').round,null,'finished event defaults to final ranking');
 
+  const rendered=el('matchArchiveRows').innerHTML;
+  assert.match(rendered,/class="archive-player has-deck"><div class="archive-player-identity"><strong>選手A<\/strong>[\s\S]*tw33000082[\s\S]*<\/div><span class="archive-deck archive-deck-current">/);
+  assert.match(rendered,/測試牌組/);
+  assert.match(rendered,/記錄於 Round 1/);
+  assert.match(rendered,/<td>18<\/td>/,'preserve points');
   el('matchArchiveRound').value='1';
   el('matchArchiveRound').handlers.change();
   await settle();
