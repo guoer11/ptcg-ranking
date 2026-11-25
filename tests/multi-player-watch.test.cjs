@@ -53,6 +53,7 @@ async function main(){
  assert.equal(vm.runInContext('familyRenderMatchSummary()',ctx),true);
  assert.match(el('familyMatchGrid').innerHTML,/玩家甲[\s\S]*601[\s\S]*玩家乙[\s\S]*615/);
  assert.equal((el('familyMatchGrid').innerHTML.match(/family-multi-player/g)||[]).length,2);
+ assert.deepEqual([...el('familyMatchGrid').innerHTML.matchAll(/data-family-badge-id="(tw\d+)"/g)].map(m=>m[1]),['tw10000001','tw20000001','tw10000002','tw20000002']);
  ctx.window.location.search='?type=round&round=3&player=tw10000001&table=601&opponent=tw20000001';
  assert.equal(vm.runInContext('familyRenderMatchSummary()',ctx),true);assert.match(el('familyMatchGrid').innerHTML,/family-table-card/);
  assert.doesNotMatch(el('familyMatchGrid').innerHTML,/family-multi-player/);

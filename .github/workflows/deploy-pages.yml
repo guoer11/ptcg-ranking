@@ -71,6 +71,7 @@ jobs:
           node tests/pairing-collapse.test.cjs
           node tests/multi-player-watch.test.cjs
           node tests/multi-player-badges.test.cjs
+          node tests/family-badges.test.cjs
           node tests/default-tracking-players.test.cjs
           node tests/mobile-site-nav.test.cjs
           node tests/history-auth-stability.test.cjs
