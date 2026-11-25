@@ -8,6 +8,9 @@
   let lastMatchDetail = null;
   let refreshTimer = null;
   let deckSearchObserver = null;
+  let historyPending = null, historyLoadedUser = '', historyLoadedAt = 0, historyGeneration = 0;
+  const HISTORY_CACHE_MS = 90*1000;
+  const historyDateFormatter = new Intl.DateTimeFormat('en-CA', {timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'});
 
   function esc(value = '') {
     return String(value)
@@ -29,12 +32,7 @@
   function dateParts(value) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return null;
-    const parts = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'Asia/Taipei',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).formatToParts(date);
+    const parts = historyDateFormatter.formatToParts(date);
     return Object.fromEntries(parts.filter(part => part.type !== 'literal').map(part => [part.type, part.value]));
   }
 
@@ -289,7 +287,17 @@
       </article>`;
   }
 
-  async function loadHistory() {
+  async function loadHistory(force = false) {
+    const user = currentUserId();
+    if (!pairingAuthorized || !user || !$('pairingHistory')?.open) return;
+    if (historyPending?.user === user) return historyPending.promise;
+    if (!force && historyLoadedUser === user && Date.now()-historyLoadedAt < HISTORY_CACHE_MS) return;
+    const generation = ++historyGeneration;
+    const promise = readHistory(user,generation);
+    historyPending = {user,promise};
+    try { await promise; } finally { if(historyPending?.promise===promise)historyPending=null; }
+  }
+  async function readHistory(user,generation) {
     const list = $('pairingHistoryList');
     const legacyDetail = $('pairingHistoryDetail');
     if (!list || !pairingAuthorized || !currentUserId()) return;
@@ -298,15 +306,20 @@
 
     try {
       const [allExact, allPairs] = await Promise.all([exactRows(), pairRows()]);
-      const tids = [...new Set([...allExact.map(row => String(row.tid)), ...allPairs.map(row => String(row.tid))].filter(Boolean))];
-      const events = tids.map(tid => {
-        const exact = allExact.filter(row => String(row.tid) === tid);
-        const pairs = allPairs.filter(row => String(row.tid) === tid);
+      if (generation!==historyGeneration || !pairingAuthorized || currentUserId()!==user) return;
+      const byTid = new Map();
+      for (const [rows,key] of [[allExact,'exact'],[allPairs,'pairs']]) for(const row of rows){
+        const tid=String(row.tid||'');if(!tid)continue;
+        if(!byTid.has(tid))byTid.set(tid,{exact:[],pairs:[]});
+        byTid.get(tid)[key].push(row);
+      }
+      const events = [...byTid].map(([tid,{exact,pairs}]) => {
         const seen = firstSeen([...exact, ...pairs]);
         const distribution = buildDistribution(exact, pairs);
         return { tid, exact, pairs, seen, total: distribution.total, season: seasonInfo(seen) };
       }).filter(event => event.seen).sort((a, b) => b.seen - a.seen);
 
+      historyLoadedUser=user;historyLoadedAt=Date.now();
       if (!events.length) {
         list.innerHTML = '<div class="pairing-history-empty">目前還沒有歷史賽事牌組紀錄。</div>';
         return;
@@ -351,6 +364,7 @@
         });
       });
     } catch (error) {
+      if (generation!==historyGeneration || !pairingAuthorized || currentUserId()!==user) return;
       console.warn('歷史賽事讀取失敗', error);
       list.innerHTML = `<div class="pairing-history-empty">歷史賽事讀取失敗：${esc(error?.message || error)}</div>`;
     }
@@ -470,7 +484,8 @@
     clearTimeout(refreshTimer);
     refreshTimer = setTimeout(() => {
       if (lastMatchDetail) decoratePreviousDeck(lastMatchDetail);
-      if ($('pairingHistory')?.open) loadHistory();
+      historyLoadedAt=0;
+      if ($('pairingHistory')?.open) loadHistory(true);
     }, 800);
   }
 
@@ -480,7 +495,11 @@
   });
 
   document.addEventListener('pairing:auth-ready', event => {
-    if (!event.detail?.allowed) return;
+    if (!event.detail?.allowed) {
+      ++historyGeneration;historyPending=null;historyLoadedUser='';historyLoadedAt=0;
+      const list=$('pairingHistoryList');if(list)list.innerHTML='<div class="pairing-history-empty">展開後讀取歷史賽事。</div>';
+      return;
+    }
     if ($('pairingHistory')?.open) loadHistory();
   });
 

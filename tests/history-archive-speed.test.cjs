@@ -105,3 +105,16 @@ const getCalls=()=>calls.filter(call=>call.action==='get').length;
   assert.equal(getCalls(),5,'sign-out clears private cached event data');
   console.log('PASS: single initial archive GET, numeric round, in-memory revisit, explicit refresh, logout invalidation');
 })().catch(e=>{console.error(e);process.exitCode=1;});
+
+assert.match(source,/COMPLETED_CACHE_MS=5\*60\*1000/);
+assert.match(source,/cached\.archive\?\.event\?\.status==='completed'\?COMPLETED_CACHE_MS:CACHE_MS/);
+const history=fs.readFileSync('history.html','utf8'),historyJS=fs.readFileSync('pairing-history.js','utf8');
+assert.doesNotMatch(history,/<details id="pairingHistory"[^>]*\bopen\b/,'secondary history must load only when opened');
+assert.match(historyJS,/historyPending\?\.user === user/);
+assert.match(historyJS,/generation!==historyGeneration \|\| !pairingAuthorized \|\| currentUserId\(\)!==user/);
+assert.match(historyJS,/historyLoadedAt=0/);
+assert.match(historyJS,/const byTid = new Map\(\)/);
+const bracket=fs.readFileSync('history-knockout.js','utf8');
+assert.match(bracket,/publicRequests\.get\(path\)/);
+assert.match(bracket,/fetch\(path,\{cache:'no-cache'\}\)/);
+assert.doesNotMatch(bracket,/fetch\(path\+'\?v='\+Date\.now/);

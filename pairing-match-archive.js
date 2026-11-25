@@ -10,6 +10,7 @@
   // context in localStorage or share cached data across sign-ins.
   const archiveCache=new Map(),lastRoundByTid=new Map();
   const CACHE_MS=90*1000;
+  const COMPLETED_CACHE_MS=5*60*1000;
   let archiveGeneration=0,loadedForUser="",refreshPromise=null;
   const token=()=>typeof pairingSession!=="undefined"&&pairingAuthorized?pairingSession?.access_token:null;
   async function api(action,extra={}) {
@@ -28,7 +29,7 @@
     const user=accountId();
     const key=user+":"+tid+":"+(round??"final");
     const cached=archiveCache.get(key);
-    if(!force&&cached&&Date.now()-cached.at<CACHE_MS)return cached.archive;
+    if(!force&&cached&&Date.now()-cached.at<(cached.archive?.event?.status==='completed'?COMPLETED_CACHE_MS:CACHE_MS))return cached.archive;
     const result=await api("get",{tid,round});
     // A response returned after sign-out must not populate another user's cache.
     if(user&&user===accountId()&&token())archiveCache.set(key,{at:Date.now(),archive:result.archive});
@@ -37,8 +38,8 @@
   function useArchive(data,tid,round){
     view=data;
     selectedRound=String(round||"final");
-    if(data)document.dispatchEvent(new CustomEvent("archive:loaded",{detail:{archive:data,tid}}));
     renderRows();
+    if(data)document.dispatchEvent(new CustomEvent("archive:loaded",{detail:{archive:data,tid}}));
     message(data?.event?.last_error
       ?"部分備份曾讀取失敗；已取得的資料仍保留。"
       :"顯示本站封存資料（不需官方網站仍開放）。");
@@ -251,8 +252,7 @@
   }
   function init() {
     document.addEventListener("pairing:tracking-started",registerFromTracking);
-    // A private knockout save must invalidate its cached podium, otherwise
-    // returning to the event within 90 seconds would show stale results.
+    // A private knockout save must invalidate its cached podium immediately.
     document.addEventListener("archive:invalidate",event=>{
       const tid=String(event.detail?.tid||"");
       if(!tid)return;

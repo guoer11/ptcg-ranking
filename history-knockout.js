@@ -9,11 +9,19 @@
   const labels=['冠軍 · 100 LP','亞軍 · 75 LP','四強 · 50 LP','四強 · 50 LP'];
   let current=null,eventId='',mapped=null,generation=0;
   let tournamentsCache=null,knockoutCache=null;
+  const publicRequests=new Map();
+  const PUBLIC_CACHE_MS=60*1000;
 
   async function publicJson(path){
-    const response=await fetch(path+'?v='+Date.now(),{cache:'no-store'});
-    if(!response.ok)throw new Error('無法讀取 '+path);
-    return response.json();
+    const existing=publicRequests.get(path);
+    if(existing && Date.now()-existing.at<PUBLIC_CACHE_MS)return existing.promise;
+    const promise=(async()=>{
+      const response=await fetch(path,{cache:'no-cache'});
+      if(!response.ok)throw new Error('無法讀取 '+path);
+      return response.json();
+    })();
+    publicRequests.set(path,{at:Date.now(),promise});
+    try{return await promise;}catch(error){if(publicRequests.get(path)?.promise===promise)publicRequests.delete(path);throw error;}
   }
   function status(message,failed=false){
     const el=$('historyKnockoutStatus');
