@@ -19,19 +19,13 @@ for(const page of ['index.html','tournaments.html','pairing.html','history.html'
 const css=read('site-nav.css'),account=read('site-account-ui.js');
 assert.match(css,/\.site-nav \.site-mobile-label \{ display:none; \}/,'desktop keeps original labels');
 assert.match(css,/@media \(max-width: 720px\)/);
-assert.match(css,/--site-nav-bottom: max\(0px, calc\(env\(safe-area-inset-bottom, 0px\) - 20px\)\);/,'trial lowers the bar up to 20px without negative bottom inset');
-assert.match(css,/padding-bottom: calc\(102px \+ var\(--site-nav-bottom\)\)/);
-assert.match(css,/position:fixed/);
+assert.match(css,/--site-nav-safe-bottom: max\(0px, calc\(env\(safe-area-inset-bottom, 0px\) - 20px\)\);/);
+assert.match(css,/padding-bottom: calc\(102px \+ var\(--site-nav-safe-bottom\)\)/);
 const navRule=css.match(/\.site-bottom-nav-page \.site-nav\s*\{([^}]+)\}/)?.[1];
 assert(navRule,'mobile nav rule required');
-assert.match(navRule,/bottom:var\(--site-nav-bottom\);/,'nav uses adjusted safe-area inset');
-
-const footerSurface=css.match(/body\.site-bottom-nav-page::after\s*\{([^}]+)\}/)?.[1];
-assert(footerSurface,'opaque full-width footer surface is required');
-for(const rule of [/position:fixed/,/z-index:89/,/left:0/,/right:0/,/bottom:0/,/height:calc\(78px \+ var\(--site-nav-bottom\)\)/,/background:#f4f7fb/])
-  assert.match(footerSurface,rule,'footer must cover the screen bottom and safe area');
-assert.match(css,/body\.site-bottom-nav-page\.modal-open::after \{ display:none; \}/);
-
+for(const rule of [/position:fixed/,/z-index:90/,/left:0;/,/right:0;/,/bottom:0;/,/width:100%;/,/max-width:none;/,/margin:0;/,/background:#fff;/,/border-radius:18px 18px 0 0;/,/calc\(6px \+ var\(--site-nav-safe-bottom\)\)/])
+  assert.match(navRule,rule,'one opaque white edge-to-edge bar must cover the bottom');
+assert.doesNotMatch(css,/body\.site-bottom-nav-page::after/,'no separate gray floating-card mask');
 assert.match(css,/\.site-bottom-nav-page \.site-nav > a\[hidden\] \{ display:none !important;/);
 assert.match(css,/#identityAuthButton::after \{ content:"我的"/);
 assert.match(css,/modal-open \.site-nav \{ visibility:hidden; \}/);
