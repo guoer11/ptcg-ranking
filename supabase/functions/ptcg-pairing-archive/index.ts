@@ -494,7 +494,8 @@ async function liveKnockout(body:any,userId:string){
   return {ok:true,tid,archive:{event:{tid,title:state.event.title,final_seen_at:state.event.final_seen_at},final:{standings:[...top,{rank:9}]},knockout,context}};
 }
 async function writeKnockout(tid:string,eventId:string,podium:any,existing:any){
-  const row={tid,event_id:eventId,podium,updated_at:now()};
+  const revision=new Date(Math.max(Date.now(),(existing?Date.parse(existing.updated_at):0)+1)).toISOString();
+  const row={tid,event_id:eventId,podium,updated_at:revision};
   if(existing){
     const r=await db.from("ptcg_match_archive_knockouts").update(row).eq("tid",tid).eq("updated_at",existing.updated_at).select("event_id,podium,updated_at").maybeSingle();
     if(r.error)throw r.error;

@@ -22,7 +22,7 @@ assert.match(css,/@media\(max-width:760px\)/);
 assert.match(backend,/async function saveKnockoutBracket/);
 assert.match(backend,/action==="save-knockout-bracket"/);
 assert.match(backend,/const complete=BRACKET_KEYS\.every/);
-assert.match(backend,/if\(complete\)\{/);
+assert.match(backend,/if\(complete&&!conflict\)\{/);
 assert.match(backend,/await requireMember\(req\)/);
 assert.match(backend,/bracket:\{version:2,winners,updated_at:now\(\)/);
 
