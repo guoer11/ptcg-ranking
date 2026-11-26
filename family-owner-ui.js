@@ -316,12 +316,13 @@ async function initFamilyOwnerUI() {
   familyOwnerEnsureStyle();
   if (!familyOwnerEnsureCard() || !window.supabase?.createClient) return false;
 
-  if (!familyOwnerClient) familyOwnerClient = window.supabase.createClient(FAMILY_OWNER_SUPABASE_URL, FAMILY_OWNER_SUPABASE_KEY);
+  if (!familyOwnerClient) familyOwnerClient = (typeof identityClient!=='undefined'&&identityClient)||(typeof pairingClient!=='undefined'&&pairingClient)||null;
+  if(!familyOwnerClient)return false;
   if (!familyOwnerAuthBound) {
     familyOwnerAuthBound = true;
-    familyOwnerClient.auth.onAuthStateChange(() => setTimeout(refreshFamilyOwnerAuth, 0));
+    familyOwnerClient.auth.onAuthStateChange(() => setTimeout(()=>{if(!document.querySelector('[data-account-view="family"]')?.hidden)void refreshFamilyOwnerAuth();}, 0));
   }
-  await refreshFamilyOwnerAuth();
+  if(!document.querySelector('[data-account-view="family"]')?.hidden)await refreshFamilyOwnerAuth();
   return true;
 }
 
@@ -329,15 +330,15 @@ function familyOwnerBoot() {
   familyOwnerEnsureStyle();
   if(document.getElementById('familyDeviceTest'))return;
   let tries = 0;
+  let pending=false;
   const timer = setInterval(async () => {
-    tries += 1;
-    if (await initFamilyOwnerUI() || tries > 100) clearInterval(timer);
-  }, 60);
-  initFamilyOwnerUI();
+    if(pending)return;pending=true;tries += 1;
+    try{if(await initFamilyOwnerUI()||tries>100)clearInterval(timer);}finally{pending=false;}
+  }, 150);
 }
 
 document.addEventListener('account-family-view-ready', () => initFamilyOwnerUI());
-document.addEventListener('account-family-opened', () => refreshFamilyOwnerAuth());
+document.addEventListener('account-family-opened', () => initFamilyOwnerUI());
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', familyOwnerBoot, { once: true });
 else familyOwnerBoot();
 

@@ -227,28 +227,29 @@
     ensureStyle();
     if (!ensureCard() || !window.supabase?.createClient) return false;
 
-    if (!client) client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    if (!client) client = (typeof identityClient!=='undefined'&&identityClient)||(typeof pairingClient!=='undefined'&&pairingClient)||null;
+    if(!client)return false;
     if (!authBound) {
       authBound = true;
-      client.auth.onAuthStateChange(() => setTimeout(refreshSession, 0));
+      client.auth.onAuthStateChange(() => setTimeout(()=>{if(!document.querySelector('[data-account-view="deck"]')?.hidden)void refreshSession();}, 0));
     }
-    await refreshSession();
+    if(!document.querySelector('[data-account-view="deck"]')?.hidden)await refreshSession();
     return true;
   }
 
   function boot() {
     ensureStyle();
     let tries = 0;
+    let pending=false;
     const timer = setInterval(async () => {
-      tries += 1;
-      if (await init() || tries > 100) clearInterval(timer);
-    }, 60);
-    init();
+      if(pending)return;pending=true;tries += 1;
+      try{if(await init()||tries>100)clearInterval(timer);}finally{pending=false;}
+    }, 150);
   }
 
   document.addEventListener('account-deck-view-ready', () => init());
   document.addEventListener('account-hub-ready', () => init());
-  document.addEventListener('deck-settings-opened', () => refreshSession());
+  document.addEventListener('deck-settings-opened', () => init());
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
   else boot();
 })();

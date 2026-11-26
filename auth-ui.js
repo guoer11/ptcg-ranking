@@ -32,27 +32,14 @@ function invalidatePairingNavAccess() {
   hidePairingNav();
 }
 
+function identityDeadline(promise,ms=12000){
+  let timer;
+  return Promise.race([Promise.resolve(promise),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('登入驗證逾時')),ms);})]).finally(()=>clearTimeout(timer));
+}
 async function refreshPairingNavAccess() {
-  const link = pairingNavLink();
-  if (!link?.length) return;
-
-  const requestId = ++pairingNavRequestId;
-  const userId = currentIdentityUserId();
-  link.forEach(item => { item.hidden = true; });
-  if (!userId || !identityClient) return;
-
-  try {
-    const { data, error } = await identityClient.rpc('pairing_access_role');
-    if (requestId !== pairingNavRequestId || currentIdentityUserId() !== userId) return;
-    if (error) throw error;
-    identityAccessRole = data || 'none';
-    link.forEach(item => { item.hidden = item.getAttribute('href') === 'history.html' ? data !== 'admin' : !['admin','guest'].includes(data); });
-    document.dispatchEvent(new CustomEvent('pairing:role-changed',{detail:{role:identityAccessRole}}));
-  } catch (error) {
-    if (requestId !== pairingNavRequestId || currentIdentityUserId() !== userId) return;
-    console.warn('即時配對權限確認失敗', error);
-    link.forEach(item => { item.hidden = true; });
-  }
+  const role=identitySession&&identityAuthorized?identityAccessRole:'none';
+  pairingNavLink()?.forEach(item=>{item.hidden=item.getAttribute('href')==='history.html'?role!=='admin':!['admin','guest'].includes(role);});
+  document.dispatchEvent(new CustomEvent('pairing:role-changed',{detail:{role}}));
 }
 
 hidePairingNav();
@@ -118,6 +105,9 @@ function updateAccountPanel(message = '') {
   const text = document.getElementById('accountStatusText');
   const action = accountAuthActionButton();
   if (!title || !text || !action) return;
+  let retry=document.getElementById('identityRetryButton');
+  if(!retry&&text.parentNode){retry=document.createElement('button');retry.id='identityRetryButton';retry.type='button';retry.className='secondary-btn';retry.textContent='重新確認權限';retry.onclick=()=>void loadPrivateIdentities();text.parentNode.appendChild(retry);}
+  if(retry)retry.hidden=!(identitySession&&identityLoadState==='error');
 
   if (!identitySession) {
     title.textContent = '尚未登入';
@@ -174,7 +164,6 @@ function updateIdentityAuthUI(message = '') {
   updateAccountPanel(message);
   updateIdentityTextUI();
   refreshPushAuthUI();
-  refreshPairingNavAccess();
 }
 
 async function loadPrivateIdentities() {
@@ -184,19 +173,23 @@ async function loadPrivateIdentities() {
   identityLoadingUserId = userId;
 
   if (!userId || !identityClient) {
+    identityLoadingUserId='';
     updateIdentityAuthUI();
     await refreshPairingNavAccess();
     renderRanking();
     return;
   }
 
+  hidePairingNav();
+  renderRanking();
+  document.dispatchEvent(new CustomEvent('pairing:role-changed',{detail:{role:'none'}}));
   updateIdentityAuthUI('正在確認登入資料…');
   const players = {};
   const pageSize = 1000;
   let from = 0;
 
   try {
-    const role = await identityClient.rpc('pairing_access_role');
+    const role = await identityDeadline(identityClient.rpc('pairing_access_role'));
     if (role.error) throw role.error;
     if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
     identityAccessRole = role.data || 'none';
@@ -210,13 +203,14 @@ async function loadPrivateIdentities() {
     }
     identityAuthorized = true;
     identityLoadState = 'loading';
+    await refreshPairingNavAccess();
     updateIdentityAuthUI('已確認授權，正在載入真實姓名…');
     while (true) {
-      const { data, error } = await identityClient
+      const { data, error } = await identityDeadline(identityClient
         .from('player_identities')
         .select('player_id, real_name')
         .order('player_id', { ascending: true })
-        .range(from, from + pageSize - 1);
+        .range(from, from + pageSize - 1));
 
       if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
       if (error) throw error;
@@ -240,9 +234,10 @@ async function loadPrivateIdentities() {
   } catch (error) {
     if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
     console.error('私人資料讀取失敗', error);
-    clearPrivateIdentities();
+    const verified=identityAuthorized&&['admin','guest'].includes(identityAccessRole);
+    if(!verified)clearPrivateIdentities();
     identityLoadState = 'error';
-    updateIdentityAuthUI('登入資料讀取失敗，請稍後再試。');
+    updateIdentityAuthUI(verified?'帳號已授權，姓名載入逾時。可重試。':'登入權限確認逾時或失敗，請重試。');
   }
 
   if (requestId !== identityLoadRequestId || currentIdentityUserId() !== userId) return;
@@ -299,10 +294,6 @@ async function startIdentityAuth() {
 
   identityClient = window.supabase.createClient(IDENTITY_SUPABASE_URL, IDENTITY_SUPABASE_KEY);
 
-  const { data } = await identityClient.auth.getSession();
-  identitySession = data?.session || null;
-  await loadPrivateIdentities();
-
   identityClient.auth.onAuthStateChange((event, session) => {
     // Do not await Supabase queries inside the auth callback. Supabase holds an
     // internal auth lock while this callback runs; querying here can leave the
@@ -310,23 +301,31 @@ async function startIdentityAuth() {
     const sameUser=Boolean(session?.user?.id&&session.user.id===currentIdentityUserId());
     // INITIAL_SESSION and redundant SIGNED_IN events must not reset a loaded or in-flight map.
     if(sameUser&&['INITIAL_SESSION','SIGNED_IN'].includes(event)&&(identityLoadedUserId===session.user.id||identityLoadingUserId===session.user.id)){identitySession=session;return;}
+    if(sameUser&&event==='TOKEN_REFRESHED'&&identityLoadingUserId===session.user.id){identitySession=session;return;}
+    if(event==='TOKEN_REFRESHED')identityLoadedUserId='';
     invalidatePairingNavAccess();
     identityLoadRequestId += 1;
     identityLoadingUserId = '';
     identitySession = session || null;
+    if(!sameUser)clearPrivateIdentities();
 
     if (event === 'SIGNED_OUT' || !session) {
       clearPrivateIdentities();
-      updateIdentityAuthUI();
-      renderRanking();
-      setTimeout(() => refreshPairingNavAccess(), 0);
+      setTimeout(()=>{updateIdentityAuthUI();renderRanking();void refreshPairingNavAccess();},0);
       return;
     }
 
     if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
-      setTimeout(() => loadPrivateIdentities(), 0);
+      setTimeout(() => {if(currentIdentityUserId()===session.user.id&&!identityLoadingUserId&&identityLoadedUserId!==session.user.id)void loadPrivateIdentities();}, 0);
     }
   });
+  try{
+    const {data,error}=await identityDeadline(identityClient.auth.getSession());
+    if(error)throw error;
+    if(!identitySession&&identityLoadRequestId===0)identitySession=data?.session||null;
+    if(identitySession&&!identityLoadingUserId&&identityLoadedUserId!==currentIdentityUserId())await loadPrivateIdentities();
+    else if(!identitySession)updateIdentityAuthUI();
+  }catch(error){if(!identityAuthorized&&!identityLoadingUserId){identityLoadState='error';updateIdentityAuthUI('登入狀態確認失敗，請重新整理。');}}
 }
 
 document.addEventListener('DOMContentLoaded', startIdentityAuth);
