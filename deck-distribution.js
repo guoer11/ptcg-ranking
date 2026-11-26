@@ -77,7 +77,7 @@ function workbook(d,tid,meta={}){
  const n=(ref,value,style,formula='')=>'<c r="'+ref+'" s="'+style+'">'+(formula?'<f>'+escape(formula)+'</f>':'')+'<v>'+value+'</v></c>';
  const row=(i,cells,height=23)=>'<row r="'+i+'" ht="'+height+'" customHeight="1">'+cells+'</row>';
  const rows=[row(1,s('A1',title,1)+s('B1','',1)+s('C1','',1),34),row(2,s('A2','牌組名稱',2)+s('B2','數量',2)+s('C2','佔比（百分比）',2),26)];
- v.rows.forEach(([name,count],i)=>{const r=i+3,k=i%2?5:3,isMissing=v.known&&i===v.rows.length-1;rows.push(row(r,s('A'+r,name,k)+n('B'+r,count,k+1,isMissing?'MAX(0,'+v.total+'-'+knownSum+')':'')+n('C'+r,v.total?count/v.total:0,(i%2?8:7),'IFERROR(B'+r+'/$B
+ v.rows.forEach(([name,count],i)=>{const r=i+3,k=i%2?5:3,isMissing=v.known&&i===v.rows.length-1;rows.push(row(r,s('A'+r,name,k)+n('B'+r,count,k+1,isMissing?'MAX(0,'+v.total+'-'+knownSum+')':'')+n('C'+r,v.total?count/v.total:0,(i%2?8:7),'IFERROR(B'+r+'/$B$'+end+',0)')));});
  rows.push(row(end,s('A'+end,v.known?'合計':'合計（實際紀錄人數）',9)+n('B'+end,v.total,9,v.rows.length?'SUM(B3:B'+(end-1)+')':'0')+n('C'+end,v.total?1:0,10,v.rows.length?'SUM(C3:C'+(end-1)+')':'0'),27));
  const completionRow=end+1;
  rows.push(row(completionRow,s('A'+completionRow,'牌組紀錄完成率',9)+n('B'+completionRow,v.recorded,9,knownSum)+(v.known?n('C'+completionRow,v.rate,10,'IFERROR(B'+completionRow+'/B'+end+',0)'):s('C'+completionRow,'待確認',9)),27));
@@ -96,22 +96,4 @@ function workbook(d,tid,meta={}){
 }
 function download(d,tid,meta){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([workbook(d,tid,meta)],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.href=url;a.download=titleFor(tid,meta).name.replace(/[\\/:*?"<>|]/g,'-')+'_牌組分布.xlsx';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 root.PTCGDistribution={build,titleFor,metadata,coverage,render,workbook};
-})();
-+end+',0)')));});
- rows.push(row(end,s('A'+end,'合計（實際紀錄人數）',9)+n('B'+end,d.total,9,'SUM(B3:B'+(end-1)+')')+n('C'+end,d.total?1:0,10,'SUM(C3:C'+(end-1)+')'),27));
- const note=noteFor(d);if(note)rows.push(row(end+1,s('A'+(end+1),note,3)));
- const fonts='<fonts count="3"><font><sz val="12"/><name val="Microsoft JhengHei"/><color rgb="FF173650"/></font><font><b/><sz val="16"/><name val="Microsoft JhengHei"/><color rgb="FFFFFFFF"/></font><font><b/><sz val="12"/><name val="Microsoft JhengHei"/><color rgb="FF173650"/></font></fonts>';
- const fills='<fills count="5"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>'+['173650','DCE8F2','EEF4FA'].map(x=>'<fill><patternFill patternType="solid"><fgColor rgb="FF'+x+'"/><bgColor indexed="64"/></patternFill></fill>').join('')+'</fills>';
- const xf=(font,fill,num=0,align='left')=>'<xf numFmtId="'+num+'" fontId="'+font+'" fillId="'+fill+'" borderId="0" xfId="0" applyAlignment="1" applyFill="1" applyFont="1" applyNumberFormat="1"><alignment horizontal="'+align+'" vertical="center" wrapText="1"/></xf>';
- const styles=xml+'<styleSheet xmlns="'+ns+'"><numFmts count="1"><numFmt numFmtId="164" formatCode="0.0%"/></numFmts>'+fonts+fills+'<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="11">'+[xf(0,0),xf(1,2,0,'center'),xf(2,3,0,'center'),xf(0,0,0,'center'),xf(0,0,0,'center'),xf(0,4,0,'center'),xf(0,4,0,'center'),xf(0,0,164,'center'),xf(0,4,164,'center'),xf(2,3,0,'center'),xf(2,3,164,'center')].join('')+'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
- // Percent styles: white 7, tinted 8.
- const sheet=xml+'<worksheet xmlns="'+ns+'"><sheetViews><sheetView showGridLines="0" workbookViewId="0"><pane ySplit="2" topLeftCell="A3" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="32" customWidth="1"/><col min="2" max="2" width="14" customWidth="1"/><col min="3" max="3" width="23" customWidth="1"/></cols><sheetData>'+rows.join('')+'</sheetData><mergeCells count="'+(note?2:1)+'"><mergeCell ref="A1:C1"/>'+(note?'<mergeCell ref="A'+(end+1)+':C'+(end+1)+'"/>':'')+'</mergeCells></worksheet>';
- return zip({'[Content_Types].xml':xml+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>',
- '_rels/.rels':xml+'<Relationships xmlns="'+rel+'"><Relationship Id="rId1" Type="'+od+'/officeDocument" Target="xl/workbook.xml"/></Relationships>',
- 'xl/workbook.xml':xml+'<workbook xmlns="'+ns+'" xmlns:r="'+od+'"><sheets><sheet name="牌組分布" sheetId="1" r:id="rId1"/></sheets><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>',
- 'xl/_rels/workbook.xml.rels':xml+'<Relationships xmlns="'+rel+'"><Relationship Id="rId1" Type="'+od+'/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+od+'/styles" Target="styles.xml"/></Relationships>',
- 'xl/styles.xml':styles,'xl/worksheets/sheet1.xml':sheet});
-}
-function download(d,tid,meta){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([workbook(d,tid,meta)],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.href=url;a.download=titleFor(tid,meta).name.replace(/[\\/:*?"<>|]/g,'-')+'_牌組分布.xlsx';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-root.PTCGDistribution={build,titleFor,metadata,render,workbook};
 })();
