@@ -18,14 +18,14 @@ const document={
   addEventListener:(name,callback)=>{listeners[name]=callback;},
   dispatchEvent:event=>{if(event.type==='pairing:auth-ready')notices.push(event.detail);}
 };
-let authChange=null;
+let authChange=null,role='admin';
 const owner={user:{id:'authorized-owner'},access_token:'initial'};
 const client={
   auth:{
     getSession:async()=>({data:{session:owner}}),
     onAuthStateChange:callback=>{authChange=callback;}
   },
-  rpc:async()=>({data:true,error:null})
+  rpc:async()=>({data:role,error:null})
 };
 const window={supabase:{createClient:()=>client}};
 class CustomEvent{
@@ -55,10 +55,12 @@ const delay=()=>new Promise(resolve=>setTimeout(resolve,15));
   assert.equal(element('historyProtectedMain').hidden,false);
   assert.equal(notices.length,1);
 
+  role='guest';authChange('TOKEN_REFRESHED',{user:{id:'authorized-owner'},access_token:'guest'});await delay();
+  assert.equal(element('historyProtectedMain').hidden,false);assert.equal(notices.at(-1).role,'guest');assert.equal(notices.length,2);
   // An actual sign-out must still revoke access immediately.
   authChange('SIGNED_OUT',null);
   assert.equal(element('historyProtectedMain').hidden,true);
-  assert.equal(notices.length,2);
+  assert.equal(notices.length,3);
   assert.equal(notices.at(-1).allowed,false);
   console.log('PASS: same-account auth refresh preserves history; sign-out revokes private page');
 })().catch(err=>{console.error(err);process.exitCode=1;});

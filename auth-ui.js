@@ -38,7 +38,7 @@ function identityDeadline(promise,ms=12000){
 }
 async function refreshPairingNavAccess() {
   const role=identitySession&&identityAuthorized?identityAccessRole:'none';
-  pairingNavLink()?.forEach(item=>{item.hidden=item.getAttribute('href')==='history.html'?role!=='admin':!['admin','guest'].includes(role);});
+  pairingNavLink()?.forEach(item=>{item.hidden=!['admin','guest'].includes(role);});
   document.dispatchEvent(new CustomEvent('pairing:role-changed',{detail:{role}}));
 }
 

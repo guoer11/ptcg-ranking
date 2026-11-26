@@ -78,13 +78,13 @@
   };
   function editableDeckHTML(p){
     const id=normalizedId(p),markup=deckHTML(p);
-    if(!/^tw\d+$/.test(id)||!pairingAuthorized)return markup||"—";
+    if(!/^tw\d+$/.test(id)||!pairingAuthorized||pairingAccessRole!=="admin")return markup||"—";
     return '<button class="archive-deck-edit" type="button" data-archive-edit-player="'+escape(id)+'" aria-label="修改本場牌組">'+(markup||'<span class="archive-deck archive-deck-empty">尚未記錄牌組</span>')+'<small class="archive-deck-edit-label"><span aria-hidden="true">✎</span><span class="archive-deck-edit-text">'+(deckInfo(p)?.current?.deck?'修改':'補登')+'</span></small></button>';
   }
   let editor=null;
   function closeDeckEditor(){if(editor){editor.close();editor.remove();editor=null;}}
   async function openDeckEditor(id){
-    if(!token()||!activeTid||String(view?.event?.tid)!==activeTid||!/^tw\d+$/.test(id)||!pairingClient||!["final","interim"].includes(selectedRound))return;
+    if(pairingAccessRole!=="admin"||!token()||!activeTid||String(view?.event?.tid)!==activeTid||!/^tw\d+$/.test(id)||!pairingClient||!["final","interim"].includes(selectedRound))return;
     const tid=activeTid,uid=accountId(),p=(selectedRound==="final"?view?.final:view?.interim)?.standings?.find(row=>normalizedId(row)===id);
     if(!p)return;
     closeDeckEditor();
@@ -93,7 +93,7 @@
     document.body.append(dialog);dialog.showModal();
     const msg=dialog.querySelector("[data-editor-message]"),select=dialog.querySelector("[data-editor-select]"),controls=dialog.querySelector("[data-editor-controls]"),save=dialog.querySelector("[data-editor-save]"),clear=dialog.querySelector("[data-editor-clear]"),cancel=dialog.querySelector("[data-editor-close]");
     let busy=false,revision="",pairCount=0;
-    const valid=()=>editor===dialog&&token()&&accountId()===uid&&activeTid===tid;
+    const valid=()=>pairingAccessRole==="admin"&&editor===dialog&&token()&&accountId()===uid&&activeTid===tid;
     cancel.onclick=()=>{if(!busy)closeDeckEditor();};
     dialog.addEventListener("cancel",e=>{e.preventDefault();if(!busy)closeDeckEditor();});
     const rpc=async(action,deck=null)=>{const {data,error}=await pairingClient.rpc("edit_archived_player_deck",{p_tid:tid,p_player_id:id,p_action:action,p_deck:deck,p_revision:revision||null});if(error)throw error;return data;};
@@ -280,6 +280,7 @@
     }catch(e){message("追蹤通知已啟動，但封存登記失敗："+String(e.message||e),true);}
   }
   async function configureRounds() {
+    if(pairingAccessRole!=="admin")return;
     const input=$("matchArchiveExpectedRounds");
     const number=Number(input?.value);
     if(!activeTid||!Number.isInteger(number)||number<1||number>40) {
@@ -292,6 +293,7 @@
     }catch(e){message(String(e.message||e),true);}
   }
   async function linkDay1() {
+    if(pairingAccessRole!=="admin")return;
     const parent=$("matchArchiveLinkDay1").value;
     if(!activeTid||!parent)return;
     try {await api("link",{tid:activeTid,day1_tid:parent});message("已將目前 TID 設為 Day 2，並與 Day 1 封存關聯。");await refresh();}
@@ -321,8 +323,11 @@
       if(!ev.detail?.allowed){
         closeDeckEditor();++archiveGeneration;archiveCache.clear();lastRoundByTid.clear();
         archives=[];view=null;activeTid="";loadedForUser="";
+        if($("matchArchiveRows"))$("matchArchiveRows").textContent="目前尚未載入封存賽事。";if($("matchArchiveEvent"))$("matchArchiveEvent").innerHTML="";
         return;
       }
+      if(pairingAccessRole!=="admin")closeDeckEditor();
+      if(view)renderRows();
       if($("matchArchive")?.open&&(!archives.length||loadedForUser!==accountId()))void refresh();
     });
   }

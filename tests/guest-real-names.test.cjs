@@ -16,7 +16,7 @@ const run=code=>vm.runInContext(code,context);
   role=r;const before=queries;await run('loadPrivateIdentities()');run('updateIdentityTextUI()');
   assert.equal(queries-before,r==='none'?0:1);
   assert.equal(run("identityData.players.tw00000001?.real_name"),r==='none'?undefined:'測試姓名');
-  assert.equal(nav[0].hidden,r==='none');assert.equal(nav[1].hidden,r!=='admin');
+  assert.equal(nav[0].hidden,r==='none');assert.equal(nav[1].hidden,r==='none');
   assert.equal(run("searchInput.placeholder.includes('真實姓名')"),r!=='none');
  }
  const t=vm.createContext({tournamentIdentityMap:{},tournamentIdentityGeneration:0,tournamentPairingClient:client,tournamentModal:{classList:{contains:()=>true},dataset:{eventId:'1'}},window:{supabase:{createClient(){return client}}},ensureTournamentSupabase:async()=>{},removeTournamentPairingNav(){},insertTournamentPairingNav(){},openTournamentModal(){rendered++},console});
@@ -30,8 +30,8 @@ const run=code=>vm.runInContext(code,context);
  }
  assert.doesNotMatch(read('app.js'),/fetch\(`data\/player_identity\.json/);
  assert.match(auth,/identityLoadState = 'ready'/);
- assert.match(read('history-center.js'),/rpc\('can_use_pairing'\)/);
- assert.match(read('index.html'),/auth-ui\.js\?v=3\.2\.2/);
+ assert.match(read('history-center.js'),/rpc\('pairing_access_role'\)/);
+ assert.match(read('index.html'),/auth-ui\.js\?v=3\.3\.0/);
  assert.match(read('tournaments.html'),/tournaments\.js\?v=3\.0\.0-name-r1/);
- console.log('PASS: authorized guest real names on ranking and tournament pages; unauthorized/sign-out cleared; history admin-only');
+ console.log('PASS: authorized guest real names on ranking and tournament pages; unauthorized/sign-out cleared; history member-readable');
 })().catch(e=>{console.error(e);process.exitCode=1});

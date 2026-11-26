@@ -89,7 +89,8 @@
   const bracketKeys=bracketGames.map(game=>game.key);
   let bracketWinners={},bracketBase={},bracketConflict=null,bracketDirty=false,bracketStage='qf',bracketBusy=false;
   const isLive=()=>typeof location!=='undefined'&&location.pathname.endsWith('pairing.html');
-  const isAdmin=()=>typeof pairingAccessRole==='undefined'||pairingAccessRole==='admin';
+  const isAdmin=()=>typeof pairingAccessRole!=='undefined'&&pairingAccessRole==='admin';
+  const canEdit=()=>pairingAuthorized&&(isLive()||isAdmin());
   function bracketCount(){return bracketKeys.filter(key=>Boolean(bracketWinners[key])).length;}
   function bracketPlayer(id){
     const row=(getTop(current)||[]).find(p=>String(p.id).toLowerCase()===id);
@@ -116,11 +117,11 @@
     const cls='history-bracket-pick'+(selected?' is-winner':'')+(eliminated?' is-eliminated':'')+
       (!player?' is-unavailable':'');
     // Text stays outside buttons so Chrome and iOS can select just the name or PTCG ID.
-    const action=player
+    const action=player&&canEdit()
       ?'<button type="button" class="history-bracket-result" data-bracket-pick="'+game.key+
        '" data-player-id="'+escape(slot.id)+'" aria-pressed="'+String(selected)+'">'+
        (selected?'✓ 晉級':(eliminated?'淘汰':'選為勝者'))+'</button>'
-      :'<span class="history-bracket-result is-pending">待確認</span>';
+      :'<span class="history-bracket-result is-pending">'+(selected?'✓ 晉級':eliminated?'淘汰':'待確認')+'</span>';
     return '<div class="'+cls+'">'+
       '<div class="history-bracket-pick-main">'+
       '<span class="history-bracket-seed">'+escape(slot.hint)+'</span>'+
@@ -147,7 +148,7 @@
     const count=bracketCount(),winner=bracketPlayer(bracketWinners.final||'');
     root.innerHTML=
       '<div class="history-bracket-head"><strong class="history-bracket-progress">'+escape(current.event.title||'')+' · 已確認 '+count+' / 7 場</strong>'+
-      '<span class="history-bracket-notice">姓名與 PTCG ID 可直接選取複製；按「選為勝者」確認戰況，再按一次取消。變更上一輪會清除不符合的後續結果。</span></div>'+
+      '<span class="history-bracket-notice">'+(canEdit()?'姓名與 PTCG ID 可直接選取複製；按「選為勝者」確認戰況，再按一次取消。變更上一輪會清除不符合的後續結果。':'歷史複賽戰況（唯讀）；未登記的場次不推測勝負。')+'</span></div>'+
       '<div class="history-bracket-tabs" aria-label="切換複賽輪次">'+stages.map(stage=>
         '<button type="button" class="history-bracket-tab'+(bracketStage===stage[0]?' active':'')+
         '" data-bracket-stage="'+stage[0]+'" aria-pressed="'+String(bracketStage===stage[0])+'">'+stage[1]+'</button>'
@@ -160,19 +161,19 @@
       ).join('')+'</div>'+
       (winner?'<div class="history-bracket-champion">🏆 冠軍：'+escape(winner.name)+'（預賽第'+winner.rank+'名）</div>':'');
     const legacy=$('historyKnockoutLegacy');
-    if(legacy)legacy.hidden=count>0||!!current?.knockout?.podium?.bracket||isLive()||!eventId;
+    if(legacy)legacy.hidden=!isAdmin()||count>0||!!current?.knockout?.podium?.bracket||isLive()||!eventId;
     if(bracketConflict){
       const names=bracketConflict.games.map(key=>bracketGames.find(g=>g.key===key)?.label||key);
       root.innerHTML+='<div class="history-bracket-champion" role="alert">戰況衝突：'+escape(names.join('、'))+'。暫停 LP 更新。'+(isAdmin()?'<p>現有紀錄與另一份登記均已保存，請選擇採用的完整戰況。</p><div>'+bracketConflict.games.map(key=>escape((bracketGames.find(g=>g.key===key)?.label||key)+'：現有 '+(bracketPlayer(bracketConflict.stored[key])?.name||'未確認')+' ／另一份 '+(bracketPlayer(bracketConflict.incoming[key])?.name||'未確認'))).join('<br>')+'</div><button type="button" class="secondary-btn" data-bracket-resolve="keep">保留現有戰況</button> <button type="button" class="secondary-btn" data-bracket-resolve="adopt">採用另一份戰況</button>':' 等待管理者裁決。')+'</div>';
     }
-    if(saveBtn){saveBtn.disabled=bracketBusy||!bracketDirty||!!bracketConflict;saveBtn.textContent=bracketBusy?'儲存中…':'儲存目前戰況';}
+    if(saveBtn){saveBtn.hidden=!canEdit();saveBtn.disabled=!canEdit()||bracketBusy||!bracketDirty||!!bracketConflict;saveBtn.textContent=bracketBusy?'儲存中…':'儲存目前戰況';}
     if(bracketDirty&&$('historyBracketStatus')?.dataset.error!=='1')bracketStatus(count===7
       ?'尚未儲存：七場已填完，儲存後會同步冠亞軍、四強與 LP。'
       :'尚未儲存：已確認 '+count+' / 7 場；不完整戰況只會保存，不會更新 LP。');
   }
   function updateBracketWinner(key,id){
     const game=bracketGames.find(g=>g.key===key);
-    if(!game||bracketBusy||bracketConflict||!id||!bracketSlots(game).some(slot=>slot.id===id))return;
+    if(!canEdit()||!game||bracketBusy||bracketConflict||!id||!bracketSlots(game).some(slot=>slot.id===id))return;
     bracketWinners[key]=bracketWinners[key]===id?'':id;
     // 上游勝者改變時，只清空受影響的四強或決賽結果。
     for(const later of bracketGames.slice(4)){
@@ -185,7 +186,7 @@
     drawBracket();
   }
   async function saveBracket(resolve=''){
-    if(bracketBusy||(!bracketDirty&&!resolve)||(!resolve&&bracketConflict)||!pairingAuthorized||!pairingSession?.access_token||!current)return;
+    if(!canEdit()||bracketBusy||(!bracketDirty&&!resolve)||(!resolve&&bracketConflict)||!pairingAuthorized||!pairingSession?.access_token||!current)return;
     if(resolve&&(!isAdmin()||!bracketConflict))return;
     const targetTid=String(current.event.tid),targetEvent=eventId;
     if(isLive()){try{const input=$('pairingSourceUrl')?.value;if(input&&new URL(input).searchParams.get('tid')!==targetTid){bracketStatus('賽事網址已變更，請先切回原賽事再儲存。',true);return;}}catch(_){return;}}
@@ -285,7 +286,7 @@
     }
   }
   async function save(){
-    if(!pairingAuthorized||!pairingSession?.access_token||!current||!eventId)return;
+    if(!isAdmin()||!pairingAuthorized||!pairingSession?.access_token||!current||!eventId)return;
     const [champion,runner_up,semi_one,semi_two]=selected();
     const valid=[champion,runner_up,semi_one,semi_two].every(Boolean)
       &&new Set([champion,runner_up,semi_one,semi_two]).size===4;
@@ -312,6 +313,7 @@
     if(archive&&tid)void render(archive,tid);
   });
   document.addEventListener('pairing:auth-ready',e=>{
+    if(!isLive()&&e.detail?.allowed&&!isAdmin()){bracketDirty=false;if(current){bracketWinners={...bracketBase};drawBracket();}}
     if(!e.detail?.allowed){if(isLive())showLiveEmpty('目前尚無複賽資料');else{generation++;current=null;eventId='';
       const el=$('historyKnockoutPanel');if(el)el.hidden=true;}}
   });
@@ -342,7 +344,7 @@
     const user=pairingSession.user?.id;
     liveBusy=true;
     try{
-      const response=await fetch(ENDPOINT,{method:'POST',cache:'no-store',headers:{Authorization:'Bearer '+pairingSession.access_token,'Content-Type':'application/json'},body:JSON.stringify({action:'top8-live',tid})});
+      const response=await fetch(ENDPOINT,{method:'POST',cache:'no-store',headers:{Authorization:'Bearer '+pairingSession.access_token,'Content-Type':'application/json'},body:JSON.stringify({action:isLive()?'top8-live':'top8-history',tid})});
       const data=await response.json();
       if(!pairingAuthorized||pairingSession?.user?.id!==user||(isLive()?selectedLiveTid()!==tid:String(current?.event?.tid)!==tid))return;
       if(!response.ok||!data.ok)throw Error(data.error||'讀取 TOP8 失敗');

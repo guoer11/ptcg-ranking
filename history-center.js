@@ -2,25 +2,30 @@
 const PAIRING_SUPABASE_URL='https://ceobnyikrudlxasyjukg.supabase.co';
 const PAIRING_SUPABASE_KEY='sb_publishable_6uVBALI1T3lMZoFEUiLK4g__R7gv0fz';
 let pairingClient=null,pairingSession=null,pairingAuthorized=false;
+let pairingAccessRole='none';
 let historyAuthRequest=0;
 let historyLastNotifiedUser='';
-function historyDisplayAuth(allowed,message=''){
+function historyDisplayAuth(allowed,message='',role='none'){
   pairingAuthorized=Boolean(allowed);
+  pairingAccessRole=pairingAuthorized?role:'none';
+  const admin=pairingAccessRole==='admin';
+  document.querySelectorAll('[data-history-admin-only]').forEach(el=>{el.hidden=!admin;});
   const main=document.getElementById('historyProtectedMain');
   const denied=document.getElementById('historyAccessDenied');
-  if(main)main.hidden=!pairingAuthorized;
+  if(main){main.hidden=!pairingAuthorized;if(main.dataset)main.dataset.historyRole=pairingAccessRole;}
   if(denied)denied.hidden=pairingAuthorized;
   const deniedText=document.getElementById('historyAccessDeniedText');
-  if(deniedText&&!pairingAuthorized)deniedText.textContent=message||'請回玩家排行登入唯一授權的 Google 帳號。';
+  if(deniedText&&!pairingAuthorized)deniedText.textContent=message||'請回玩家排行登入授權的 Google 帳號。';
   document.querySelectorAll('.site-nav a[href="pairing.html"],.site-nav a[href="history.html"]')
     .forEach(a=>{a.hidden=!pairingAuthorized;});
   // Only notify feature modules when account authorization actually changes.
   // Background token refresh/SIGNED_IN events must not erase the open event,
   // round selection, or unsaved knockout picks.
-  const notifiedUser=pairingAuthorized?String(pairingSession?.user?.id||''):'';
+  const notifiedUser=pairingAuthorized?String(pairingSession?.user?.id||'')+':'+pairingAccessRole:'';
   if(notifiedUser!==historyLastNotifiedUser){
     historyLastNotifiedUser=notifiedUser;
-    document.dispatchEvent(new CustomEvent('pairing:auth-ready',{detail:{allowed:pairingAuthorized}}));
+    document.dispatchEvent(new CustomEvent('pairing:role-changed',{detail:{role:pairingAccessRole}}));
+    document.dispatchEvent(new CustomEvent('pairing:auth-ready',{detail:{allowed:pairingAuthorized,role:pairingAccessRole}}));
   }
 }
 async function historyVerifyAuth(){
@@ -28,10 +33,10 @@ async function historyVerifyAuth(){
   // Revalidate permissions without unmounting an already authorized page.
   if(!uid||!pairingClient){historyDisplayAuth(false,'請先回玩家排行登入授權 Google 帳號。');return;}
   try{
-    const {data,error}=await pairingClient.rpc('can_use_pairing');
+    const {data,error}=await pairingClient.rpc('pairing_access_role');
     if(error)throw error;
     if(generation!==historyAuthRequest||pairingSession?.user?.id!==uid)return;
-    historyDisplayAuth(data===true,'此帳號未獲授權查看歷史賽事。');
+    historyDisplayAuth(['admin','guest'].includes(data),'此帳號未獲授權查看歷史賽事。',data);
   }catch(e){
     if(generation===historyAuthRequest)historyDisplayAuth(false,'權限驗證失敗，請稍後重新整理。');
   }

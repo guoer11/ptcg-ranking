@@ -148,7 +148,7 @@ function siteAccountHidePrivateNav() {
 }
 function siteAccountTogglePrivateNav(allowed, role='none') {
   document.querySelectorAll('.site-nav a[href="pairing.html"], .site-nav a[href="history.html"]')
-    .forEach(link => { link.hidden = !allowed || (link.getAttribute('href') === 'history.html' && role !== 'admin'); });
+    .forEach(link => { link.hidden = !allowed || !['admin','guest'].includes(role); });
 }
 async function siteAccountRefreshAuthorization() {
   const generation = ++siteAccountAuthGeneration;

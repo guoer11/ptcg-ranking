@@ -47,7 +47,7 @@ const fetch=async (_url,options)=>{
   return {ok:true,json:async()=>data};
 };
 const context={window:{},document,CustomEvent,fetch,
-  pairingSession:{user:{id:'owner'},access_token:'token'},pairingAuthorized:true,
+  pairingSession:{user:{id:'owner'},access_token:'token'},pairingAuthorized:true,pairingAccessRole:"admin",
   console,Date,Map,Set,Array,Number,String,Object};
 vm.runInNewContext(source,context,{filename:'pairing-match-archive.js'});
 listeners.DOMContentLoaded();

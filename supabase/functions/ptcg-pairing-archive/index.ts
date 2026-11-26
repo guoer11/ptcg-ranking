@@ -449,17 +449,17 @@ async function currentKnockout(tid:string){
   for(const r of [event,final,knockout])if(r.error)throw r.error;
   return {event:event.data,final:final.data,knockout:knockout.data};
 }
-async function liveKnockout(body:any,userId:string){
+async function liveKnockout(body:any,userId:string,readOnly=false){
   let tid=String(body?.tid||"");
-  const watch=await db.from("pairing_watches").select("tid,source_url,final_notified").eq("user_id",userId).maybeSingle();
+  const watch=readOnly?{data:null,error:null}:await db.from("pairing_watches").select("tid,source_url,final_notified").eq("user_id",userId).maybeSingle();
   if(watch.error)throw watch.error;
   if(!tid)tid=String(watch.data?.tid||"");
   if(!validTid(tid))return {ok:true,archive:null};
-  await memberEvent(userId,tid);
+  if(!readOnly)await memberEvent(userId,tid);
   let state=await currentKnockout(tid);
   // Final notification can precede the five-minute archive job. Confirm against the
   // official standings directly, never infer a final from the user's selection.
-  if(watch.data?.tid===tid&&watch.data.final_notified&&!state.event?.final_seen_at){
+  if(!readOnly&&watch.data?.tid===tid&&watch.data.final_notified&&!state.event?.final_seen_at){
     if(!state.event&&sourceTid(String(watch.data.source_url))===tid)await insertArchive(tid,String(watch.data.source_url));
     const lock=await db.from("ptcg_match_archives").update({last_checked_at:now()}).eq("tid",tid).is("final_seen_at",null)
       .or("last_checked_at.is.null,last_checked_at.lt."+new Date(Date.now()-30000).toISOString()).select("tid,expected_rounds").maybeSingle();
@@ -710,10 +710,28 @@ Deno.serve(async(req:Request)=>{
       try{await retryTop8Sync();}catch(e){console.warn("top8-sync",String(e).slice(0,120));}
       return json({ok:true,...results});
     }
+    if(action==="top8-history") {const member=await requireMember(req,true);return json(await liveKnockout(body,member.id,true));}
     if(action==="top8-live") {const member=await requireMember(req,true);return json(await liveKnockout(body,member.id));}
     if(action==="save-knockout-bracket") {const member=await requireMember(req,true);return json(await saveKnockoutBracket(body,member.id));}
     if(action==="register-tracked") {const member=await requireMember(req,true);const tid=sourceTid(String(body?.url||""));const watch=await db.from("pairing_watches").select("source_url").eq("user_id",member.id).eq("tid",tid).maybeSingle();if(watch.error||!watch.data)throw new Error("只能封存自己的追蹤賽事");await insertArchive(tid,watch.data.source_url);return json({ok:true,tid});}
     if(action==="scout-roster") {await requireMember(req,true);return json(await scoutRoster(String(body?.tid||""),Number(body?.round)));}
+    // History reads have their own narrow member authorization; all archive management remains admin-only.
+    if(action==="list"||action==="get") {
+      const reader=await requireMember(req,true);
+      const {data:admin,error}=await db.rpc("is_pairing_authorized",{target_user:reader.id});
+      if(error)throw error;
+      if(action==="list"){
+        const archives=await listArchives();
+        return json({ok:true,archives:admin===true?archives:archives.map(({last_error,...safe})=>safe)});
+      }
+      const archive=await readArchive(String(body?.tid||""),body?.round==null?undefined:Number(body.round),reader.id);
+      if(archive&&admin!==true){
+        const {last_error,...event}=archive.event;archive.event=event;
+        const bracket=archive.knockout?.podium?.bracket;
+        if(bracket){delete bracket.audit;delete bracket.updated_by;if(bracket.conflict)delete bracket.conflict.reported_by;}
+      }
+      return json({ok:true,archive});
+    }
     const member=await requireMember(req);
     if(action==="register") {
       const tid=sourceTid(String(body?.url||""));
@@ -740,8 +758,7 @@ Deno.serve(async(req:Request)=>{
 
     if(action==="save-knockout")return json(await saveKnockout(body));
 
-    if(action==="list")return json({ok:true,archives:await listArchives()});
-    if(action==="get")return json({ok:true,archive:await readArchive(String(body?.tid||""),body?.round==null?undefined:Number(body.round),member.id)});
+
     if(action==="link") {
       const tid=String(body?.tid||""),parent=String(body?.day1_tid||"");
       if(!validTid(tid)||!validTid(parent)||tid===parent)throw new Error("Day 1 / Day 2 TID 不正確");

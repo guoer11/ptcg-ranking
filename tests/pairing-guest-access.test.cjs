@@ -21,10 +21,10 @@ vm.runInContext("sendLine=async()=>{recordLine();return {sent:true}};sendWebPush
   assert.match(scout,/postgres_changes/);
   assert.match(scout,/row\.conflict/);
   assert.match(history,/from\('pairing_shared_scouts'\)/);
-  assert.match(read('history-center.js'),/rpc\('can_use_pairing'\)/);
+  assert.match(read('history-center.js'),/rpc\('pairing_access_role'\)/);
   assert.match(read('supabase/functions/ptcg-pairing-archive/index.ts'),/const member=await requireMember\(req\)/);
   assert.match(read('supabase/functions/ptcg-line/index.ts'),/is_pairing_authorized/);
   assert.match(read('pairing-guest-admin.js'),/pairing_guest_grants/);
-  assert.match(read('index.html'),/pairing-guest-admin\.js\?v=3\.0\.0/);
-  console.log('PASS: guest LINE isolation, revoked delivery blocked, shared reads, Realtime and admin-only archive');
+  assert.match(read('index.html'),/pairing-guest-admin\.js\?v=3\.3\.0/);
+  console.log('PASS: guest LINE isolation, revoked delivery blocked, shared reads, Realtime and admin-only archive mutations');
 })().catch(e=>{console.error(e);process.exitCode=1});

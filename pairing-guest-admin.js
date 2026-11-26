@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const byId=id=>document.getElementById(id);
-  const role=()=>typeof pairingAccessRole!=='undefined'&&location.pathname.endsWith('pairing.html')?pairingAccessRole:(typeof identityAccessRole!=='undefined'?identityAccessRole:'none');
+  const role=()=>typeof pairingAccessRole!=='undefined'&&/\/(pairing|history)\.html$/.test(location.pathname)?pairingAccessRole:(typeof identityAccessRole!=='undefined'?identityAccessRole:'none');
   const client=()=>typeof identityClient!=='undefined'?identityClient:null;
   const session=()=>typeof identitySession!=='undefined'?identitySession:null;
   let generation=0,busy=false;
@@ -11,8 +11,8 @@
   function applyRole(){
     const guest=role()==='guest';
     document.querySelectorAll('[data-app-target="line"],[data-app-target="deck"],.push-preferences').forEach(node=>{if(guest){if(!node.hidden)node.dataset.guestHidden='1';node.hidden=true;}else if(node.dataset.guestHidden==='1'){delete node.dataset.guestHidden;node.hidden=false;}});
-    document.querySelectorAll('.pairing-history-moved').forEach(node=>node.hidden=role()!=='admin');
-    document.querySelectorAll('.site-nav a[href="history.html"]').forEach(link=>{if(role()!=='admin')link.hidden=true;});
+    document.querySelectorAll('.pairing-history-moved').forEach(node=>node.hidden=!['admin','guest'].includes(role()));
+    document.querySelectorAll('.site-nav a[href="history.html"]').forEach(link=>{link.hidden=!['admin','guest'].includes(role());});
     const copy=document.querySelector('.status-card small:last-child');
     if(copy&&location.pathname.endsWith('pairing.html'))copy.textContent=guest?'網站推播 + 家庭裝置':'LINE + 網站推播';
     const section=byId('pairingGuestAdmin');
@@ -23,7 +23,7 @@
     if(!host)return;
     if(!byId('pairingGuestAdmin')){
       const section=el('section','','push-status-box');section.id='pairingGuestAdmin';section.hidden=true;
-      section.innerHTML='<strong>即時配對授權管理</strong><small>只授權即時配對與共用牌組，私人資料與 LINE 不開放。停用不會刪除已貢獻的牌組。</small><label>家長名稱<input id="pairingGuestName" class="search-input" maxlength="80" placeholder="方便辨識"></label><label>Google 帳號<input id="pairingGuestEmail" class="search-input" type="email" maxlength="254" autocomplete="off" placeholder="example@gmail.com"></label><div class="push-actions"><button id="pairingGuestAdd" class="primary-btn" type="button">新增授權</button><button id="pairingGuestRefresh" class="secondary-btn" type="button">重新讀取</button></div><p id="pairingGuestMessage" role="status" aria-live="polite"></p><div id="pairingGuestList"></div>';
+      section.innerHTML='<strong>即時配對授權管理</strong><small>授權即時配對、共用牌組與賽事歷史唯讀查詢，私人備註與 LINE 不開放。停用不會刪除已貢獻的牌組。</small><label>家長名稱<input id="pairingGuestName" class="search-input" maxlength="80" placeholder="方便辨識"></label><label>Google 帳號<input id="pairingGuestEmail" class="search-input" type="email" maxlength="254" autocomplete="off" placeholder="example@gmail.com"></label><div class="push-actions"><button id="pairingGuestAdd" class="primary-btn" type="button">新增授權</button><button id="pairingGuestRefresh" class="secondary-btn" type="button">重新讀取</button></div><p id="pairingGuestMessage" role="status" aria-live="polite"></p><div id="pairingGuestList"></div>';
       host.append(section);
       byId('pairingGuestAdd').onclick=async()=>{
         if(busy||role()!=='admin'||!session())return;

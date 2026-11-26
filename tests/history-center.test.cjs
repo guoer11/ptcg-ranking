@@ -11,7 +11,7 @@ for(const id of ['matchArchive','matchArchiveEvent','matchArchiveRound','matchAr
 for(const id of ['matchArchive','pairingHistory'])assert.doesNotMatch(live,new RegExp('id="'+id+'"'),id+' must leave pairing');
 assert.match(live,/pairing-match-archive\.js/);
 assert.match(archiveUi,/document\.addEventListener\("pairing:tracking-started",registerFromTracking\)/);
-assert.match(gate,/can_use_pairing/);assert.match(gate,/if\(main\)main\.hidden=!pairingAuthorized/);
+assert.match(gate,/pairing_access_role/);assert.match(gate,/if\(main\)\{main\.hidden=!pairingAuthorized/);
 assert.match(history,/id="historyProtectedMain" hidden/);
 assert.match(history,/href="pairing-deck-scout\.css\?v=[^"]+"/,'history donut chart requires its base stylesheet');
 assert.ok(history.indexOf('pairing-deck-scout.css')<history.indexOf('pairing-history.css'),'load base donut styling before history overrides');
@@ -41,7 +41,7 @@ assert.match(tournamentHTML,/tournaments\.js\?v=3\.0\.0/,'bust the cached legacy
 const mapped=JSON.parse(read('data/preliminary_sources.json')).sources.find(s=>s.tid==='5865462');
 assert.equal(mapped?.event_id,'66990','verified 11/21 archived tournament mapping must be present');
 assert.match(read('site-version.js'),/const SITE_VERSION = 'v\d+\.\d+\.\d+';/,'version format must be valid without pinning an obsolete release');
-console.log('PASS: owner-only history route, private knockout editing, background archiving and TtlScore');
+console.log('PASS: member-readable history route, private knockout editing, background archiving and TtlScore');
 
 for(const file of ['index.html','tournaments.html','pairing.html','history.html']){
  const doc=read(file);

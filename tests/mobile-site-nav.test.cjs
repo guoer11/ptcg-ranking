@@ -32,5 +32,5 @@ assert.match(css,/modal-open \.site-nav \{ visibility:hidden; \}/);
 assert.match(account,/siteAccountEnsureControls/);
 assert.match(account,/button\.addEventListener\('click', siteAccountOpenPanel\)/);
 assert.match(account,/pairing_access_role/);
-assert.match(account,/link\.hidden = !allowed/);assert.match(account,/role !== 'admin'/);
+assert.match(account,/link\.hidden = !allowed/);assert.match(account,/!\['admin','guest'\]\.includes\(role\)/);
 console.log('PASS: mobile fixed nav, safe area, unique links, unchanged private gating and account action');

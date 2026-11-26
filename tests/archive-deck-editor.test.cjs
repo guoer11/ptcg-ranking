@@ -2,13 +2,13 @@
 const fs=require('node:fs'),assert=require('node:assert/strict'),vm=require('node:vm');
 const source=fs.readFileSync('pairing-match-archive.js','utf8');
 const code=source.slice(source.indexOf('  function editableDeckHTML('),source.indexOf('  let editor=null;'));
-const ctx=vm.createContext({normalizedId:p=>p.id,deckHTML:p=>p.markup||'',deckInfo:p=>p.deck?{current:{deck:p.deck}}:{},pairingAuthorized:true,escape:s=>String(s)});
+const ctx=vm.createContext({normalizedId:p=>p.id,deckHTML:p=>p.markup||'',deckInfo:p=>p.deck?{current:{deck:p.deck}}:{},pairingAuthorized:true,pairingAccessRole:'admin',escape:s=>String(s)});
 vm.runInContext(code,ctx);
 ctx.p={id:'tw12345678',markup:'<span>原牌組</span>',deck:'原牌組'};
 assert.match(vm.runInContext('editableDeckHTML(p)',ctx),/data-archive-edit-player="tw12345678"/);
 assert.match(vm.runInContext('editableDeckHTML(p)',ctx),/原牌組/);
 ctx.p={id:'tw12345678'};assert.match(vm.runInContext('editableDeckHTML(p)',ctx),/尚未記錄牌組/);
-ctx.pairingAuthorized=false;assert.equal(vm.runInContext('editableDeckHTML(p)',ctx),'—');
+ctx.pairingAccessRole='guest';assert.equal(vm.runInContext('editableDeckHTML(p)',ctx),'—');ctx.pairingAccessRole='admin';ctx.pairingAuthorized=false;assert.equal(vm.runInContext('editableDeckHTML(p)',ctx),'—');
 const css=fs.readFileSync('pairing-match-archive.css','utf8');
 assert.match(css,/\.archive-deck-edit\{display:grid;grid-template-columns:/);
 assert.match(css,/\.archive-deck-edit-label\{grid-column:3;grid-row:1/);
