@@ -76,6 +76,53 @@
       <small>${escape(shortDate(deck.previous.date))} · TID ${escape(deck.previous.tid)}（非本場確認）</small></span>`;
     return "";
   };
+  function editableDeckHTML(p){
+    const id=normalizedId(p),markup=deckHTML(p);
+    if(!/^tw\d+$/.test(id)||!pairingAuthorized)return markup||"—";
+    return '<button class="archive-deck-edit" type="button" data-archive-edit-player="'+escape(id)+'" aria-label="修改本場牌組">'+(markup||'<span class="archive-deck archive-deck-empty">尚未記錄牌組</span>')+'<small class="archive-deck-edit-label">✎ '+(deckInfo(p)?.current?.deck?'修改':'補登／修改')+'</small></button>';
+  }
+  let editor=null;
+  function closeDeckEditor(){if(editor){editor.close();editor.remove();editor=null;}}
+  async function openDeckEditor(id){
+    if(!token()||!activeTid||String(view?.event?.tid)!==activeTid||!/^tw\d+$/.test(id)||!pairingClient||!["final","interim"].includes(selectedRound))return;
+    const tid=activeTid,uid=accountId(),p=(selectedRound==="final"?view?.final:view?.interim)?.standings?.find(row=>normalizedId(row)===id);
+    if(!p)return;
+    closeDeckEditor();
+    const dialog=document.createElement("dialog");editor=dialog;dialog.className="archive-deck-dialog";
+    dialog.innerHTML='<h3>修改本場牌組</h3><p>'+escape(realName(p)||p.name||id)+' · '+escape(id)+'</p><p class="archive-deck-editor-event">'+escape(view.event?.title||tid)+'</p><p data-editor-message role="status">正在讀取牌組清單…</p><div data-editor-controls hidden><label>牌組名稱<select class="search-input" data-editor-select></select></label><div class="archive-deck-dialog-actions"><button class="secondary-btn" type="button" data-editor-clear>清除本場牌組</button><button class="primary-btn" type="button" data-editor-save>儲存</button></div></div><button class="secondary-btn" type="button" data-editor-close>取消</button>';
+    document.body.append(dialog);dialog.showModal();
+    const msg=dialog.querySelector("[data-editor-message]"),select=dialog.querySelector("[data-editor-select]"),controls=dialog.querySelector("[data-editor-controls]"),save=dialog.querySelector("[data-editor-save]"),clear=dialog.querySelector("[data-editor-clear]"),cancel=dialog.querySelector("[data-editor-close]");
+    let busy=false,revision="",pairCount=0;
+    const valid=()=>editor===dialog&&token()&&accountId()===uid&&activeTid===tid;
+    cancel.onclick=()=>{if(!busy)closeDeckEditor();};
+    dialog.addEventListener("cancel",e=>{e.preventDefault();if(!busy)closeDeckEditor();});
+    const rpc=async(action,deck=null)=>{const {data,error}=await pairingClient.rpc("edit_archived_player_deck",{p_tid:tid,p_player_id:id,p_action:action,p_deck:deck,p_revision:revision||null});if(error)throw error;return data;};
+    async function submit(action){
+      if(!valid()||busy)return;
+      if(action==="save"&&!select.value){msg.textContent="請選擇牌組名稱。";return;}
+      if(action==="clear"&&!confirm("確定清除這位玩家在本場的牌組？"+(pairCount?"另有 "+pairCount+" 桌相關雙牌組推估紀錄也會清除；其他玩家已確認的牌組不變。":"")+"（歷史異動仍保留）"))return;
+      busy=true;save.disabled=clear.disabled=cancel.disabled=select.disabled=true;msg.textContent="正在儲存…";
+      try{
+        await rpc(action,action==="save"?select.value:null);
+        archiveCache.clear();
+        if(!valid())return;
+        closeDeckEditor();
+        document.dispatchEvent(new CustomEvent("archive:deck-updated",{detail:{tid,player_id:id}}));
+        await choose(tid,true);
+        if(accountId()===uid&&activeTid===tid)message(action==="clear"?"已清除本場牌組。":"已儲存本場牌組，統計與共用紀錄已更新。");
+      }catch(e){if(valid())msg.textContent="操作失敗："+String(e.message||e);}
+      finally{busy=false;save.disabled=clear.disabled=cancel.disabled=select.disabled=false;}
+    }
+    try{
+      const data=await rpc("read");if(!valid())return;
+      revision=data.revision;pairCount=Number(data.pair_count||0);
+      const catalog=[...new Set(data.catalog||[])];
+      select.innerHTML='<option value="">請選擇牌組</option>'+catalog.map(name=>'<option value="'+escape(name)+'">'+escape(name)+'</option>').join("");
+      if(catalog.includes(data.deck))select.value=data.deck;
+      msg.textContent=data.conflict?"目前有牌組衝突："+(data.alternatives||[]).join("／")+"，儲存將採用你選擇的牌組。":data.deck?"目前牌組："+data.deck:"尚未確認本場牌組。";
+      controls.hidden=false;clear.disabled=!data.deck&&!pairCount;save.onclick=()=>submit("save");clear.onclick=()=>submit("clear");
+    }catch(e){if(valid())msg.textContent="讀取失敗："+String(e.message||e);}
+  }
   const playerHTML=(p,includeDeck=true)=>{
     if(!p)return "<span>輪空／未公布</span>";
     const id=normalizedId(p),real=realName(p),official=String(p.name||"");
@@ -119,7 +166,7 @@
       root.innerHTML=`<p class="archive-subtitle">${escape(title)} · ${rows.length} 位${term?"（篩選結果）":""} · ${escape(source.captured_at||"")}</p>
         ${fallbackCount?`<p class="archive-empty">最終排名的 TtlScore 尚未全部取得；標示 R${escape(roundBefore)} 前的數字是最後一輪開始前的積分，<strong>不是最終分數</strong>。</p>`:""}
         <div class="archive-scroll archive-standings-scroll"><table class="archive-standings-table" style="width:100%;min-width:0;table-layout:fixed"><colgroup><col style="width:11%"><col style="width:32%"><col style="width:39%"><col style="width:18%"></colgroup><thead><tr><th>名次</th><th>選手</th><th>牌組</th><th>TtlScore</th></tr></thead><tbody>
-        ${rows.map(p=>`<tr><td>${escape(p.rank)}</td><td>${playerHTML(p,false)}</td><td>${deckHTML(p)||"—"}</td>
+        ${rows.map(p=>`<tr><td>${escape(p.rank)}</td><td>${playerHTML(p,false)}</td><td>${editableDeckHTML(p)}</td>
           <td>${p.points!=null?escape(p.points):!provisional&&reference?.points?.[normalizedId(p)]!=null
             ?`${escape(reference.points[normalizedId(p)])} <small>R${escape(roundBefore)} 前</small>`:"—"}</td></tr>`).join("")}
         </tbody></table></div>
@@ -260,9 +307,10 @@
       for(const key of archiveCache.keys())if(key.startsWith(prefix))archiveCache.delete(key);
     });
     if(!$("matchArchive"))return;
-    $("matchArchiveEvent")?.addEventListener("change",e=>{activeTid=e.target.value;void choose(activeTid);});
-    $("matchArchiveRound")?.addEventListener("change",()=>{void loadSelected();});
+    $("matchArchiveEvent")?.addEventListener("change",e=>{closeDeckEditor();activeTid=e.target.value;void choose(activeTid);});
+    $("matchArchiveRound")?.addEventListener("change",()=>{closeDeckEditor();void loadSelected();});
     $("matchArchiveSearch")?.addEventListener("input",renderRows);
+    $("matchArchiveRows")?.addEventListener("click",event=>{const button=event.target.closest?.("[data-archive-edit-player]");if(button)void openDeckEditor(button.dataset.archiveEditPlayer);});
     $("matchArchiveRefresh")?.addEventListener("click",()=>{void refresh(true);});
     $("matchArchiveLinkButton")?.addEventListener("click",()=>{void linkDay1();});
     $("matchArchiveSetRounds")?.addEventListener("click",()=>{void configureRounds();});
@@ -271,7 +319,7 @@
     });
     document.addEventListener("pairing:auth-ready",ev=>{
       if(!ev.detail?.allowed){
-        ++archiveGeneration;archiveCache.clear();lastRoundByTid.clear();
+        closeDeckEditor();++archiveGeneration;archiveCache.clear();lastRoundByTid.clear();
         archives=[];view=null;activeTid="";loadedForUser="";
         return;
       }

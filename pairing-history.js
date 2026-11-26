@@ -408,6 +408,7 @@
     }, 800);
   }
 
+  document.addEventListener('archive:deck-updated',scheduleRefresh);
   document.addEventListener('pairing:match-rendered', event => {
     lastMatchDetail = event.detail || null;
     decoratePreviousDeck(lastMatchDetail);

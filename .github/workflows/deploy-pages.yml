@@ -87,6 +87,7 @@ jobs:
           node tests/top8-shared.test.cjs
           node tests/top8-current-event.test.cjs
           node tests/pairing-match-archive.test.cjs
+          node tests/archive-deck-editor.test.cjs
           node tests/history-archive-speed.test.cjs
           python -m unittest discover -s tests -p 'test_sync_knockout.py'
           node tests/pairing-interim-ranking.test.cjs
@@ -147,6 +148,8 @@ jobs:
           cmp pairing-match-archive.css _site/pairing-match-archive-2.17.2-r6.css
           cp history.html _site/history-2.17.2-r6.html
           cmp history.html _site/history-2.17.2-r6.html
+          cp pairing-match-archive.js _site/pairing-match-archive-3.2.1-r1.js
+          cp pairing-match-archive.css _site/pairing-match-archive-3.2.1-r1.css
           cp pairing-match-archive.js _site/pairing-match-archive-2.17.2-r7.js
           cp pairing-match-archive.css _site/pairing-match-archive-2.17.2-r7.css
           cmp pairing-match-archive.js _site/pairing-match-archive-2.17.2-r7.js

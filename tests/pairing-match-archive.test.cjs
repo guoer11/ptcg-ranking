@@ -44,7 +44,7 @@ const css=fs.readFileSync('pairing-match-archive.css','utf8');
 assert.doesNotMatch(ui,/不代表每輪都使用相同牌組/);
 assert.match(ui,/記錄於 Round/);
 assert.match(ui,/<th>名次<\/th><th>選手<\/th><th>牌組<\/th><th>TtlScore<\/th>/);
-assert.match(ui,/<td>\$\{playerHTML\(p,false\)\}<\/td><td>\$\{deckHTML\(p\)\|\|"—"\}<\/td>/);
+assert.match(ui,/<td>\$\{playerHTML\(p,false\)\}<\/td><td>\$\{editableDeckHTML\(p\)\}<\/td>/);
 assert.match(ui,/class="archive-standings-table"/);
 assert.match(css,/archive-standings-scroll\{width:100%;max-width:760px;margin-inline:0 auto\}/);
 assert.match(ui,/archive-matches-scroll/);
