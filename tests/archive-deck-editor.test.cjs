@@ -9,6 +9,10 @@ assert.match(vm.runInContext('editableDeckHTML(p)',ctx),/data-archive-edit-playe
 assert.match(vm.runInContext('editableDeckHTML(p)',ctx),/原牌組/);
 ctx.p={id:'tw12345678'};assert.match(vm.runInContext('editableDeckHTML(p)',ctx),/尚未記錄牌組/);
 ctx.pairingAuthorized=false;assert.equal(vm.runInContext('editableDeckHTML(p)',ctx),'—');
+const css=fs.readFileSync('pairing-match-archive.css','utf8');
+assert.match(css,/\.archive-deck-edit\{display:grid;grid-template-columns:/);
+assert.match(css,/\.archive-deck-edit-label\{grid-column:3;grid-row:1/);
+assert.match(css,/\.archive-deck-edit-text\{display:none\}/);
 assert.match(source,/p_revision:revision\|\|null/);
 assert.match(source,/String\(view\?\.event\?\.tid\)!==activeTid/);
 assert.match(source,/archiveCache\.clear\(\)/);

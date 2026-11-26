@@ -79,7 +79,7 @@
   function editableDeckHTML(p){
     const id=normalizedId(p),markup=deckHTML(p);
     if(!/^tw\d+$/.test(id)||!pairingAuthorized)return markup||"—";
-    return '<button class="archive-deck-edit" type="button" data-archive-edit-player="'+escape(id)+'" aria-label="修改本場牌組">'+(markup||'<span class="archive-deck archive-deck-empty">尚未記錄牌組</span>')+'<small class="archive-deck-edit-label">✎ '+(deckInfo(p)?.current?.deck?'修改':'補登／修改')+'</small></button>';
+    return '<button class="archive-deck-edit" type="button" data-archive-edit-player="'+escape(id)+'" aria-label="修改本場牌組">'+(markup||'<span class="archive-deck archive-deck-empty">尚未記錄牌組</span>')+'<small class="archive-deck-edit-label"><span aria-hidden="true">✎</span><span class="archive-deck-edit-text">'+(deckInfo(p)?.current?.deck?'修改':'補登')+'</span></small></button>';
   }
   let editor=null;
   function closeDeckEditor(){if(editor){editor.close();editor.remove();editor=null;}}
