@@ -9,15 +9,23 @@ const d=api.build(exact,pairs);assert.equal(d.total,5);assert.equal(d.ambiguousP
 const meta={title:'2026/11/21-2 2026-27 UBL 1-4 孩童組',player_count:80};
 assert.equal(api.titleFor('5865462',meta).title,'11/21 高級球孩童組（比賽人數80人）');assert.match(api.titleFor('123',{}).title,/待確認/);
 let clicked=false;const box={innerHTML:'',querySelector(){return {addEventListener(type,fn){clicked=type==='click';}}}};
-api.render(box,d,'5865462',meta);assert(clicked);assert.match(box.innerHTML,/匯出 Excel/);assert.match(box.innerHTML,/40\.0%/);assert.match(box.innerHTML,/100\.0%/);
+api.render(box,d,'5865462',meta);assert(clicked);assert.match(box.innerHTML,/匯出 Excel/);assert.match(box.innerHTML,/2\.5%/);assert.match(box.innerHTML,/未紀錄牌組<\/td><td>75<\/td><td>93\.8%/);assert.match(box.innerHTML,/已紀錄 5 人 \/ 參賽 80 人/);assert.match(box.innerHTML,/aria-valuenow="6\.3"/);assert.match(box.innerHTML,/100\.0%/);
 const bytes=Buffer.from(api.workbook(d,'5865462',meta));fs.writeFileSync('/tmp/deck-distribution-test.xlsx',bytes);
 assert.equal(bytes.readUInt32LE(0),0x04034b50);
 const files={};let pos=0;while(bytes.readUInt32LE(pos)===0x04034b50){const size=bytes.readUInt32LE(pos+18),nl=bytes.readUInt16LE(pos+26),el=bytes.readUInt16LE(pos+28),name=bytes.subarray(pos+30,pos+30+nl).toString(),start=pos+30+nl+el;files[name]=bytes.subarray(start,start+size).toString();pos=start+size;}
-const sheet=files['xl/worksheets/sheet1.xml'];assert.match(sheet,/11\/21 高級球孩童組（比賽人數80人）/);assert.match(sheet,/<mergeCell ref="A1:C1"\/>/);assert.match(sheet,/<f>IFERROR\(B3\/\$B\$6,0\)<\/f><v>0.4<\/v>/);assert.match(sheet,/<f>SUM\(B3:B5\)<\/f><v>5<\/v>/);assert.match(sheet,/<f>SUM\(C3:C5\)<\/f><v>1<\/v>/);assert.match(files['xl/styles.xml'],/formatCode="0.0%"/);
+const sheet=files['xl/worksheets/sheet1.xml'];assert.match(sheet,/11\/21 高級球孩童組（比賽人數80人）/);assert.match(sheet,/<mergeCell ref="A1:C1"\/>/);assert.match(sheet,/<f>IFERROR\(B3\/\$B\$7,0\)<\/f><v>0.025<\/v>/);assert.match(sheet,/<f>MAX\(0,80-SUM\(B3:B5\)\)<\/f><v>75<\/v>/);assert.match(sheet,/<f>SUM\(B3:B6\)<\/f><v>80<\/v>/);assert.match(sheet,/<f>SUM\(C3:C6\)<\/f><v>1<\/v>/);assert.match(sheet,/<f>IFERROR\(B8\/B7,0\)<\/f><v>0.0625<\/v>/);assert.match(sheet,/<conditionalFormatting sqref="C8">/);assert.match(files['xl/styles.xml'],/formatCode="0.0%"/);
 const styles=[...files['xl/styles.xml'].match(/<cellXfs[^>]*>([\s\S]*?)<\/cellXfs>/)[1].matchAll(/<xf\b[\s\S]*?<\/xf>/g)].map(m=>m[0]);
 for(const i of [3,5,9])assert.match(styles[i],/horizontal="center"/,'deck names and total centered');
 assert.match(fs.readFileSync('deck-distribution.css','utf8'),/\.deck-distribution-table tbody td,\.deck-distribution-table tfoot td\{text-align:center/);
+const sample={sorted:[['牌組A',63]],total:63};
+api.render(box,sample,'5865462',meta);assert.match(box.innerHTML,/未紀錄牌組<\/td><td>17<\/td><td>21\.3%/);assert.match(box.innerHTML,/78\.8%/);
+assert.equal(api.coverage(sample,meta).missing,17);
+api.render(box,sample,'5865462',{});assert.doesNotMatch(box.innerHTML,/未紀錄牌組<\/td>/);assert.match(box.innerHTML,/參賽人數待確認/);assert.match(box.innerHTML,/合計（實際紀錄人數）/);
+api.render(box,sample,'5865462',{player_count:62});assert.match(box.innerHTML,/封存參賽人數少於已紀錄人數/);assert.doesNotMatch(box.innerHTML,/未紀錄牌組<\/td>/);
+api.render(box,{sorted:[],total:0},'5865462',meta);assert.match(box.innerHTML,/未紀錄牌組<\/td><td>80<\/td><td>100\.0%/);assert.match(box.innerHTML,/aria-valuenow="0\.0"/);
+api.render(box,sample,'5865462',{player_count:63});assert.match(box.innerHTML,/未紀錄牌組<\/td><td>0<\/td><td>0\.0%/);
+assert.equal(api.coverage(sample,{player_count:63}).rate,1);
 const malicious=api.workbook({sorted:[['=1+1 & <test>',1]],total:1},'1',{});assert(Buffer.from(malicious).includes(Buffer.from('=1+1 &amp; &lt;test&gt;')));
-for(const path of ['pairing.html','history.html']){const h=fs.readFileSync(path,'utf8');assert.match(h,/deck-distribution\.js\?v=3\.2\.0-r1/);assert.match(h,/deck-distribution\.css\?v=3\.2\.0-r1/);}
+for(const path of ['pairing.html','history.html']){const h=fs.readFileSync(path,'utf8');assert.match(h,/deck-distribution\.js\?v=3\.3\.1/);assert.match(h,/deck-distribution\.css\?v=3\.3\.1/);}
 assert.match(fs.readFileSync('pairing-history.js','utf8'),/PTCGDistribution\.render/);assert.match(fs.readFileSync('pairing-deck-scout.js','utf8'),/PTCGDistribution\.render/);
 console.log('PASS: identical distribution rules, conflict exclusions, official event title, numeric percent formulas and genuine XLSX export');

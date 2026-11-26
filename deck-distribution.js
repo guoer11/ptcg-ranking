@@ -30,11 +30,25 @@ function titleFor(tid,meta={}){
 }
 async function metadata(client,tid){try{const {data,error}=await client.rpc('pairing_distribution_event',{p_tid:String(tid)});if(error)throw error;return data||{};}catch(e){console.warn('牌組分布賽事資料讀取失敗',e);return {};}}
 function noteFor(d){return [d.blockedPlayers?d.blockedPlayers+' 位玩家牌組衝突，暫不計入':'',d.ambiguousPairs?'含 '+d.ambiguousPairs+' 桌未辨識':'',d.conflictingPairs?d.conflictingPairs+' 桌牌組紀錄有衝突，已排除推估':''].filter(Boolean).join('；');}
+// A reported roster smaller than the recorded count is not a usable denominator.
+function coverage(d,meta={}){
+ const recorded=d.total,reported=Number(meta.player_count);
+ const known=Number.isSafeInteger(reported)&&reported>0&&reported>=recorded;
+ const mismatch=Number.isSafeInteger(reported)&&reported>0&&reported<recorded;
+ const total=known?reported:recorded;
+ const missing=known?reported-recorded:null;
+ const rate=known?recorded/reported:null;
+ return {recorded,known,total,missing,rate,rows:known?[...d.sorted,['未紀錄牌組',missing]]:d.sorted,
+  note:mismatch?'封存參賽人數少於已紀錄人數，暫以實際紀錄人數計算佔比，完成率待確認。':!known?'比賽總人數尚未確認，暫以實際紀錄人數計算佔比。':''};
+}
+const percent=v=>(v*100).toFixed(1)+'%';
 function render(box,d,tid,meta={}){
  if(!box)return;
- if(!d.total){box.innerHTML='<div class="pairing-scout-stats-empty">'+escape(noteFor(d)||'這場比賽還沒有牌組紀錄。')+'</div>';return;}
- const t=titleFor(tid,meta),note=noteFor(d);
- box.innerHTML='<div class="deck-distribution-toolbar"><strong>牌組分布</strong><button class="secondary-btn" type="button" data-distribution-export>匯出 Excel</button></div><div class="deck-distribution-scroll"><table class="deck-distribution-table"><colgroup><col style="width:44%"><col style="width:20%"><col style="width:36%"></colgroup><thead><tr><th colspan="3" class="deck-distribution-title">'+escape(t.title)+'</th></tr><tr><th scope="col">牌組名稱</th><th scope="col">數量</th><th scope="col">佔比（百分比）</th></tr></thead><tbody>'+d.sorted.map(([name,n])=>'<tr><td>'+escape(name)+'</td><td>'+n+'</td><td>'+(n/d.total*100).toFixed(1)+'%</td></tr>').join('')+'</tbody><tfoot><tr><th scope="row">合計（實際紀錄人數）</th><td>'+d.total+'</td><td>100.0%</td></tr></tfoot></table></div>'+(note?'<p class="deck-distribution-note">'+escape(note)+'</p>':'');
+ const v=coverage(d,meta);
+ if(!v.total){box.innerHTML='<div class="pairing-scout-stats-empty">'+escape(noteFor(d)||'這場比賽還沒有牌組紀錄。')+'<p>比賽總人數及牌組紀錄完成率待確認。</p></div>';return;}
+ const t=titleFor(tid,meta),note=[noteFor(d),v.note].filter(Boolean).join('；');
+ const completion=v.known?'<section class="deck-distribution-coverage"><div class="deck-distribution-coverage-heading"><strong>牌組紀錄完成率</strong><strong class="deck-distribution-rate">'+percent(v.rate)+'</strong></div><div class="deck-distribution-progress" role="progressbar" aria-label="牌組紀錄完成率" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+(v.rate*100).toFixed(1)+'"><span style="width:'+v.rate*100+'%"></span></div><p>已紀錄 '+v.recorded+' 人 / 參賽 '+v.total+' 人</p></section>':'<section class="deck-distribution-coverage"><div class="deck-distribution-coverage-heading"><strong>牌組紀錄完成率</strong><strong>待確認</strong></div><p>已紀錄 '+v.recorded+' 人 / 參賽人數待確認</p></section>';
+ box.innerHTML='<div class="deck-distribution-toolbar"><strong>牌組分布</strong><button class="secondary-btn" type="button" data-distribution-export>匯出 Excel</button></div><div class="deck-distribution-scroll"><table class="deck-distribution-table"><colgroup><col style="width:44%"><col style="width:20%"><col style="width:36%"></colgroup><thead><tr><th colspan="3" class="deck-distribution-title">'+escape(t.title)+'</th></tr><tr><th scope="col">牌組名稱</th><th scope="col">數量</th><th scope="col">佔比（百分比）</th></tr></thead><tbody>'+v.rows.map(([name,n],i)=>'<tr'+(v.known&&i===v.rows.length-1?' class="deck-distribution-unrecorded"':'')+'><td>'+escape(name)+'</td><td>'+n+'</td><td>'+percent(n/v.total)+'</td></tr>').join('')+'</tbody><tfoot><tr><th scope="row">'+(v.known?'合計':'合計（實際紀錄人數）')+'</th><td>'+v.total+'</td><td>100.0%</td></tr></tfoot></table></div>'+completion+(note?'<p class="deck-distribution-note">'+escape(note)+'</p>':'');
  box.querySelector('[data-distribution-export]').addEventListener('click',()=>download(d,tid,meta));
 }
 // Small, dependency-free OOXML writer. ZIP STORE avoids external CDN and works offline.
@@ -57,12 +71,33 @@ const ns='http://schemas.openxmlformats.org/spreadsheetml/2006/main';
 const rel='http://schemas.openxmlformats.org/package/2006/relationships';
 const od='http://schemas.openxmlformats.org/officeDocument/2006/relationships';
 function workbook(d,tid,meta={}){
- const title=titleFor(tid,meta).title,end=d.sorted.length+3;
+ const v=coverage(d,meta),title=titleFor(tid,meta).title,end=v.rows.length+3;
+ const knownSum=d.sorted.length?'SUM(B3:B'+(d.sorted.length+2)+')':'0';
  const s=(ref,value,style)=>'<c r="'+ref+'" s="'+style+'" t="inlineStr"><is><t xml:space="preserve">'+escape(value)+'</t></is></c>';
  const n=(ref,value,style,formula='')=>'<c r="'+ref+'" s="'+style+'">'+(formula?'<f>'+escape(formula)+'</f>':'')+'<v>'+value+'</v></c>';
  const row=(i,cells,height=23)=>'<row r="'+i+'" ht="'+height+'" customHeight="1">'+cells+'</row>';
  const rows=[row(1,s('A1',title,1)+s('B1','',1)+s('C1','',1),34),row(2,s('A2','牌組名稱',2)+s('B2','數量',2)+s('C2','佔比（百分比）',2),26)];
- d.sorted.forEach(([name,count],i)=>{const r=i+3,k=i%2?5:3;rows.push(row(r,s('A'+r,name,k)+n('B'+r,count,k+1)+n('C'+r,count/d.total,(i%2?8:7),'IFERROR(B'+r+'/$B$'+end+',0)')));});
+ v.rows.forEach(([name,count],i)=>{const r=i+3,k=i%2?5:3,isMissing=v.known&&i===v.rows.length-1;rows.push(row(r,s('A'+r,name,k)+n('B'+r,count,k+1,isMissing?'MAX(0,'+v.total+'-'+knownSum+')':'')+n('C'+r,v.total?count/v.total:0,(i%2?8:7),'IFERROR(B'+r+'/$B
+ rows.push(row(end,s('A'+end,v.known?'合計':'合計（實際紀錄人數）',9)+n('B'+end,v.total,9,v.rows.length?'SUM(B3:B'+(end-1)+')':'0')+n('C'+end,v.total?1:0,10,v.rows.length?'SUM(C3:C'+(end-1)+')':'0'),27));
+ const completionRow=end+1;
+ rows.push(row(completionRow,s('A'+completionRow,'牌組紀錄完成率',9)+n('B'+completionRow,v.recorded,9,knownSum)+(v.known?n('C'+completionRow,v.rate,10,'IFERROR(B'+completionRow+'/B'+end+',0)'):s('C'+completionRow,'待確認',9)),27));
+ const note=[noteFor(d),v.note].filter(Boolean).join('；');if(note)rows.push(row(end+2,s('A'+(end+2),note,3),36));
+ const fonts='<fonts count="3"><font><sz val="12"/><name val="Microsoft JhengHei"/><color rgb="FF173650"/></font><font><b/><sz val="16"/><name val="Microsoft JhengHei"/><color rgb="FFFFFFFF"/></font><font><b/><sz val="12"/><name val="Microsoft JhengHei"/><color rgb="FF173650"/></font></fonts>';
+ const fills='<fills count="5"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>'+['173650','DCE8F2','EEF4FA'].map(x=>'<fill><patternFill patternType="solid"><fgColor rgb="FF'+x+'"/><bgColor indexed="64"/></patternFill></fill>').join('')+'</fills>';
+ const xf=(font,fill,num=0,align='left')=>'<xf numFmtId="'+num+'" fontId="'+font+'" fillId="'+fill+'" borderId="0" xfId="0" applyAlignment="1" applyFill="1" applyFont="1" applyNumberFormat="1"><alignment horizontal="'+align+'" vertical="center" wrapText="1"/></xf>';
+ const styles=xml+'<styleSheet xmlns="'+ns+'"><numFmts count="1"><numFmt numFmtId="164" formatCode="0.0%"/></numFmts>'+fonts+fills+'<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="11">'+[xf(0,0),xf(1,2,0,'center'),xf(2,3,0,'center'),xf(0,0,0,'center'),xf(0,0,0,'center'),xf(0,4,0,'center'),xf(0,4,0,'center'),xf(0,0,164,'center'),xf(0,4,164,'center'),xf(2,3,0,'center'),xf(2,3,164,'center')].join('')+'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+ // Percent styles: white 7, tinted 8.
+ const sheet=xml+'<worksheet xmlns="'+ns+'"><sheetViews><sheetView showGridLines="0" workbookViewId="0"><pane ySplit="2" topLeftCell="A3" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="32" customWidth="1"/><col min="2" max="2" width="14" customWidth="1"/><col min="3" max="3" width="23" customWidth="1"/></cols><sheetData>'+rows.join('')+'</sheetData><mergeCells count="'+(note?2:1)+'"><mergeCell ref="A1:C1"/>'+(note?'<mergeCell ref="A'+(end+2)+':C'+(end+2)+'"/>':'')+'</mergeCells>'+(v.known?'<conditionalFormatting sqref="C'+completionRow+'"><cfRule type="dataBar" priority="1"><dataBar><cfvo type="num" val="0"/><cfvo type="num" val="1"/><color rgb="FF26976B"/></dataBar></cfRule></conditionalFormatting>':'')+'</worksheet>';
+ return zip({'[Content_Types].xml':xml+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>',
+ '_rels/.rels':xml+'<Relationships xmlns="'+rel+'"><Relationship Id="rId1" Type="'+od+'/officeDocument" Target="xl/workbook.xml"/></Relationships>',
+ 'xl/workbook.xml':xml+'<workbook xmlns="'+ns+'" xmlns:r="'+od+'"><sheets><sheet name="牌組分布" sheetId="1" r:id="rId1"/></sheets><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>',
+ 'xl/_rels/workbook.xml.rels':xml+'<Relationships xmlns="'+rel+'"><Relationship Id="rId1" Type="'+od+'/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+od+'/styles" Target="styles.xml"/></Relationships>',
+ 'xl/styles.xml':styles,'xl/worksheets/sheet1.xml':sheet});
+}
+function download(d,tid,meta){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([workbook(d,tid,meta)],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.href=url;a.download=titleFor(tid,meta).name.replace(/[\\/:*?"<>|]/g,'-')+'_牌組分布.xlsx';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+root.PTCGDistribution={build,titleFor,metadata,coverage,render,workbook};
+})();
++end+',0)')));});
  rows.push(row(end,s('A'+end,'合計（實際紀錄人數）',9)+n('B'+end,d.total,9,'SUM(B3:B'+(end-1)+')')+n('C'+end,d.total?1:0,10,'SUM(C3:C'+(end-1)+')'),27));
  const note=noteFor(d);if(note)rows.push(row(end+1,s('A'+(end+1),note,3)));
  const fonts='<fonts count="3"><font><sz val="12"/><name val="Microsoft JhengHei"/><color rgb="FF173650"/></font><font><b/><sz val="16"/><name val="Microsoft JhengHei"/><color rgb="FFFFFFFF"/></font><font><b/><sz val="12"/><name val="Microsoft JhengHei"/><color rgb="FF173650"/></font></fonts>';
