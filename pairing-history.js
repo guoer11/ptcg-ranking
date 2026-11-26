@@ -72,8 +72,7 @@
     if (!pairingClient || !pairingAuthorized || !currentUserId()) return [];
     let query = pairingClient
       .from('pairing_shared_scouts')
-      .select('tid,player_id,deck_name,observed_round,table_no,created_at,updated_at')
-      .eq('conflict', false);
+      .select('tid,player_id,deck_name,observed_round,table_no,created_at,updated_at,conflict');
     if (tid) query = query.eq('tid', String(tid));
     const { data, error } = await query;
     if (error) throw error;
@@ -84,8 +83,7 @@
     if (!pairingClient || !pairingAuthorized || !currentUserId()) return [];
     let query = pairingClient
       .from('pairing_shared_pairs')
-      .select('tid,round_no,table_no,player_a_id,player_b_id,deck_a,deck_b,created_at,updated_at')
-      .eq('conflict', false);
+      .select('tid,round_no,table_no,player_a_id,player_b_id,deck_a,deck_b,created_at,updated_at,conflict');
     if (tid) query = query.eq('tid', String(tid));
     const { data, error } = await query;
     if (error) throw error;
@@ -176,90 +174,8 @@
     }
   }
 
-  function buildDistribution(exact, pairs) {
-    const counts = new Map();
-    const countedPlayers = new Set();
-    let ambiguousPairs = 0;
-    const exactMap = new Map();
-    const add = deck => {
-      if (!deck) return;
-      counts.set(deck, (counts.get(deck) || 0) + 1);
-    };
-
-    for (const row of exact) {
-      const id = normalizePlayerId(row.player_id);
-      if (!id) continue;
-      exactMap.set(id, row.deck_name);
-      if (countedPlayers.has(id)) continue;
-      countedPlayers.add(id);
-      add(row.deck_name);
-    }
-
-    for (const row of pairs) {
-      const a = normalizePlayerId(row.player_a_id);
-      const b = normalizePlayerId(row.player_b_id);
-      if (!a || !b) continue;
-      const aKnown = exactMap.get(a) || '';
-      const bKnown = exactMap.get(b) || '';
-      if (aKnown && bKnown) continue;
-
-      if (aKnown && !bKnown && !countedPlayers.has(b)) {
-        const decks = [row.deck_a, row.deck_b].filter(Boolean);
-        const inferred = row.deck_a === row.deck_b ? row.deck_a : (decks.includes(aKnown) ? decks.find(deck => deck !== aKnown) : '');
-        if (inferred) {
-          add(inferred);
-          countedPlayers.add(b);
-          continue;
-        }
-      }
-
-      if (bKnown && !aKnown && !countedPlayers.has(a)) {
-        const decks = [row.deck_a, row.deck_b].filter(Boolean);
-        const inferred = row.deck_a === row.deck_b ? row.deck_a : (decks.includes(bKnown) ? decks.find(deck => deck !== bKnown) : '');
-        if (inferred) {
-          add(inferred);
-          countedPlayers.add(a);
-          continue;
-        }
-      }
-
-      if (!aKnown && !bKnown && !countedPlayers.has(a) && !countedPlayers.has(b)) {
-        add(row.deck_a);
-        add(row.deck_b);
-        countedPlayers.add(a);
-        countedPlayers.add(b);
-        ambiguousPairs += 1;
-      }
-    }
-
-    return {
-      total: [...counts.values()].reduce((sum, value) => sum + value, 0),
-      sorted: [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-Hant')),
-      ambiguousPairs
-    };
-  }
-
-  function distributionHtml(exact, pairs) {
-    const distribution = buildDistribution(exact, pairs);
-    if (!distribution.total) return '<div class="pairing-scout-stats-empty">這場比賽沒有可顯示的牌組紀錄。</div>';
-
-    let cursor = 0;
-    const segments = distribution.sorted.map(([name, count], index) => {
-      const start = cursor;
-      cursor += count / distribution.total * 100;
-      return `hsl(${(index * 67 + 210) % 360} 65% 56%) ${start.toFixed(2)}% ${cursor.toFixed(2)}%`;
-    });
-    const legend = distribution.sorted.map(([name, count], index) => {
-      const pct = Math.round(count / distribution.total * 100);
-      return `<div><i style="--dot:hsl(${(index * 67 + 210) % 360} 65% 56%)"></i><span>${esc(name)}</span><b>${count} · ${pct}%</b></div>`;
-    }).join('');
-    const note = distribution.ambiguousPairs ? `（含 ${distribution.ambiguousPairs} 桌未辨識）` : '';
-    return `
-      <div class="pairing-scout-stats-head"><strong>牌組分布</strong><span>已記錄 ${distribution.total} 位玩家${note}</span></div>
-      <div class="pairing-scout-chart-wrap">
-        <div class="pairing-scout-donut" style="background:conic-gradient(${segments.join(',')})"><span>${distribution.total}<small>人</small></span></div>
-        <div class="pairing-scout-legend">${legend}</div>
-      </div>`;
+  function buildDistribution(exact,pairs) {
+    return window.PTCGDistribution.build(exact,pairs);
   }
 
   function firstSeen(rows) {
@@ -342,7 +258,7 @@
         </details>`).join('');
 
       list.querySelectorAll('[data-history-tid]').forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
           const event = events.find(item => item.tid === button.dataset.historyTid);
           const article = button.closest('.pairing-history-event');
           const detail = article?.querySelector('[data-history-detail]');
@@ -358,9 +274,12 @@
           });
           if (wasOpen) return;
 
-          detail.innerHTML = `<div class="pairing-scout-stats pairing-history-stats">${distributionHtml(event.exact, event.pairs)}</div>`;
-          detail.hidden = false;
-          button.textContent = '收合分布';
+          const box=document.createElement('div');box.className='pairing-scout-stats pairing-history-stats';box.textContent='正在讀取牌組分布…';
+          detail.replaceChildren(box);detail.hidden=false;button.textContent='收合分布';
+          try{const [exact,pairs,meta]=await Promise.all([exactRows(event.tid),pairRows(event.tid),window.PTCGDistribution.metadata(pairingClient,event.tid)]);
+            if(!pairingAuthorized||currentUserId()!==user||!box.isConnected||detail.hidden)return;
+            window.PTCGDistribution.render(box,buildDistribution(exact,pairs),event.tid,meta);
+          }catch(error){if(box.isConnected)box.textContent='牌組分布讀取失敗：'+(error?.message||error);}
         });
       });
     } catch (error) {

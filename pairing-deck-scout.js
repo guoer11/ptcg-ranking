@@ -69,6 +69,8 @@
 
   function invalidateScoutContext() {
     scoutRevision++;
+    statsGeneration++;
+    const stats=$('pairingScoutStats');if(stats)stats.innerHTML='<div class="pairing-scout-stats-empty">查詢後會顯示這場比賽的牌組分布。</div>';
     if (!currentContext && !queryBusy && !nameCandidates) return;
     currentContext = null;
     nameCandidates = null;
@@ -592,94 +594,14 @@
     loadSelection(String(next), 'table');
   }
 
+  let statsGeneration=0;
   async function refreshStats(tid) {
     const box = $('pairingScoutStats');
     if (!box || !tid) return;
-    const [exactRows, pairRows] = await Promise.all([scoutRows(tid), pairObservationRows(tid)]);
-    const counts = new Map();
-    const countedPlayers = new Set();
-    const blockedPlayers=new Set(exactRows.filter(r=>r.conflict).map(r=>normalizePlayerId(r.player_id)));
-    const exactMap = new Map(exactRows.filter(r=>!r.conflict).map(row => [normalizePlayerId(row.player_id), row.deck_name]));
-    let ambiguousPairs = 0;
-    let conflictingPairs = 0;
-
-    const add = deck => counts.set(deck, (counts.get(deck) || 0) + 1);
-    for (const row of exactRows) {
-      const id = normalizePlayerId(row.player_id);
-      if (!id || row.conflict || countedPlayers.has(id)) continue;
-      countedPlayers.add(id);
-      add(row.deck_name);
-    }
-
-    for (const row of pairRows) {
-      if (row.conflict || blockedPlayers.has(normalizePlayerId(row.player_a_id)) || blockedPlayers.has(normalizePlayerId(row.player_b_id)) || !pairDeckConsistent(row, exactMap)) { conflictingPairs++; continue; }
-      const a = normalizePlayerId(row.player_a_id);
-      const b = normalizePlayerId(row.player_b_id);
-      if (!a || !b) continue;
-      const aKnown = exactRows.find(item => normalizePlayerId(item.player_id) === a)?.deck_name || '';
-      const bKnown = exactRows.find(item => normalizePlayerId(item.player_id) === b)?.deck_name || '';
-
-      if (aKnown && bKnown) continue;
-
-      if (aKnown && !bKnown && !countedPlayers.has(b)) {
-        const inferred = row.deck_a === row.deck_b
-          ? row.deck_a
-          : ([row.deck_a, row.deck_b].includes(aKnown) ? [row.deck_a, row.deck_b].find(deck => deck !== aKnown) : '');
-        if (inferred) {
-          add(inferred);
-          countedPlayers.add(b);
-          continue;
-        }
-      }
-
-      if (bKnown && !aKnown && !countedPlayers.has(a)) {
-        const inferred = row.deck_a === row.deck_b
-          ? row.deck_a
-          : ([row.deck_a, row.deck_b].includes(bKnown) ? [row.deck_a, row.deck_b].find(deck => deck !== bKnown) : '');
-        if (inferred) {
-          add(inferred);
-          countedPlayers.add(a);
-          continue;
-        }
-      }
-
-      if (!aKnown && !bKnown && !countedPlayers.has(a) && !countedPlayers.has(b)) {
-        add(row.deck_a);
-        add(row.deck_b);
-        countedPlayers.add(a);
-        countedPlayers.add(b);
-        ambiguousPairs += 1;
-      }
-    }
-
-    const sorted = [...counts.entries()].sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-Hant'));
-    if (!sorted.length) {
-      box.innerHTML = '<div class="pairing-scout-stats-empty">'+(blockedPlayers.size||conflictingPairs?'牌組紀錄有衝突，暫無可確認統計。':'這場比賽還沒有牌組紀錄。')+'</div>';
-      return;
-    }
-
-    const total = [...counts.values()].reduce((sum, value) => sum + value, 0);
-    let cursor = 0;
-    const segments = sorted.map(([name, count], index) => {
-      const start = cursor;
-      cursor += count / total * 100;
-      return `hsl(${(index * 67 + 210) % 360} 65% 56%) ${start.toFixed(2)}% ${cursor.toFixed(2)}%`;
-    });
-    const legend = sorted.map(([name, count], index) => {
-      const pct = Math.round(count / total * 100);
-      return `<div><i style="--dot:hsl(${(index * 67 + 210) % 360} 65% 56%)"></i><span>${esc(name)}</span><b>${count} · ${pct}%</b></div>`;
-    }).join('');
-    const notes = [];
-    if(blockedPlayers.size)notes.push(blockedPlayers.size+' 位玩家牌組衝突，暫不計入');
-    if (ambiguousPairs) notes.push(`含 ${ambiguousPairs} 桌未辨識`);
-    if (conflictingPairs) notes.push(`${conflictingPairs} 桌牌組紀錄有衝突，已排除推估`);
-    const note = notes.length ? `（${notes.join('；')}）` : '';
-    box.innerHTML = `
-      <div class="pairing-scout-stats-head"><strong>牌組分布</strong><span>已記錄 ${total} 位玩家${note}</span></div>
-      <div class="pairing-scout-chart-wrap">
-        <div class="pairing-scout-donut" style="background:conic-gradient(${segments.join(',')})"><span>${total}<small>人</small></span></div>
-        <div class="pairing-scout-legend">${legend}</div>
-      </div>`;
+    const generation=++statsGeneration,uid=currentUserId();
+    const [exactRows,pairRows,meta]=await Promise.all([scoutRows(tid),pairObservationRows(tid),window.PTCGDistribution.metadata(pairingClient,tid)]);
+    if(generation!==statsGeneration||!pairingAuthorized||currentUserId()!==uid||String(currentContext?.data?.tid)!==String(tid))return;
+    window.PTCGDistribution.render(box,window.PTCGDistribution.build(exactRows,pairRows),tid,meta);
   }
 
   async function decorateMainPairing(detail) {

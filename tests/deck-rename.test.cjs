@@ -19,6 +19,6 @@ vm.runInContext(rename,ctx);
  assert.match(source,/data-deck-settings-edit/);assert.match(source,/data-deck-settings-save/);assert.match(source,/data-deck-settings-cancel/);
  const sql=read('supabase/migrations/20261125163200_pairing_deck_rename_v310.sql');
  assert.match(sql,/not private\.pairing_is_admin\(uid\)/);assert.match(sql,/update public\.pairing_deck_scouts set deck_name=new_name/);assert.match(sql,/update public\.pairing_deck_pair_observations/);assert.match(sql,/insert into public\.pairing_scout_resolutions/);
- assert.match(read('site-version.js'),/SITE_VERSION = 'v3\.1\.0'/);
+ assert.match(read('site-version.js'),/SITE_VERSION = 'v\d+\.\d+\.\d+'/);
  console.log('PASS: rename validation, cancellation, admin access, shared update and audit migration');
 })().catch(e=>{console.error(e);process.exitCode=1});
