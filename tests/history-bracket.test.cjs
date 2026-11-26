@@ -54,7 +54,7 @@ async function fetchMock(url,options={}){
 }
 const context={
   window:{},document,fetch:fetchMock,console,
-  pairingAuthorized:true,pairingSession:{access_token:'mock-session'},
+  pairingAuthorized:true,pairingAccessRole:'admin',pairingSession:{access_token:'mock-session'},
   Date,Set,Map,Object,Number,String,Array,
 };
 vm.runInNewContext(frontend,context,{filename:'history-knockout.js'});
@@ -107,5 +107,8 @@ const settle=()=>new Promise(resolve=>setTimeout(resolve,10));
   assert.equal(calls[1].winners.sf1,'');
   assert.equal(calls[1].winners.final,'');
   assert.equal(calls[1].winners.sf2,id(2));
+  context.pairingAccessRole='guest';eventCallbacks['archive:loaded']({detail:{archive,tid:'5865462'}});await settle();
+  assert.equal(elements.historyBracketSave.hidden,true);assert.doesNotMatch(elements.historyKnockoutBracket.innerHTML,/data-bracket-pick=/);
+  click('qf1',id(1));elements.historyBracketSave.handlers.click();await settle();assert.equal(calls.length,2,'guest history cannot write');
   console.log('PASS: TOP8 seeds, partial results, complete sync, downstream correction and private archive controls');
 })().catch(e=>{console.error(e);process.exitCode=1;});
