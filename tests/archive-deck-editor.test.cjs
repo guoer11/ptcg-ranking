@@ -12,7 +12,9 @@ ctx.pairingAuthorized=false;assert.equal(vm.runInContext('editableDeckHTML(p)',c
 const css=fs.readFileSync('pairing-match-archive.css','utf8');
 assert.match(css,/\.archive-deck-edit\{display:grid;grid-template-columns:/);
 assert.match(css,/\.archive-deck-edit-label\{grid-column:3;grid-row:1/);
-assert.match(css,/\.archive-deck-edit-text\{display:none\}/);
+assert.match(css,/\.archive-deck-edit-text\{display:inline;white-space:nowrap\}/);
+assert.match(css,/@media\(max-width:600px\)\{\.archive-deck-edit\{grid-template-columns:minmax\(0,1fr\) auto/);
+assert.match(css,/\.archive-deck-edit-label\{grid-column:2;justify-self:end/);
 assert.match(source,/p_revision:revision\|\|null/);
 assert.match(source,/String\(view\?\.event\?\.tid\)!==activeTid/);
 assert.match(source,/archiveCache\.clear\(\)/);
