@@ -4,7 +4,7 @@ if(window.PTCGOfficialDecks)return;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const validCode=s=>/^[A-Za-z0-9]{6}-[A-Za-z0-9]{6}-[A-Za-z0-9]{6}$/.test(s||'');
 const validId=s=>/^tw\d{1,16}$/.test(s||'');
-const columns='event_id,player_id,code,event_date,title,league,division,image_path,captured_at,deck_name,label_source,override_catalog_id';
+const columns='event_id,player_id,code,event_date,title,league,division,image_path,preview_path,captured_at,deck_name,label_source,override_catalog_id';
 const tournamentAccess=()=>typeof tournamentDeckAccess==='function'?tournamentDeckAccess():null;
 const client=()=>tournamentAccess()?.client||(typeof pairingClient!=='undefined'?pairingClient:null);
 const uid=()=>{const t=tournamentAccess();if(t)return ['admin','guest'].includes(t.role)?t.user:'';return typeof pairingSession!=='undefined'&&typeof pairingAuthorized!=='undefined'&&pairingAuthorized?String(pairingSession?.user?.id||''):'';};
@@ -24,7 +24,7 @@ function ensureUser(){const u=uid();if(u!==cacheUser){reset();cacheUser=u;}retur
 function closeDialog(){if(dialog){const d=dialog;dialog=null;d.close();d.remove();}}
 function ensureCss(){
  if(document.getElementById('officialDeckCss'))return;
- const link=document.createElement('link');link.id='officialDeckCss';link.rel='stylesheet';link.href='official-decks.css?v=3.4.1';document.head.append(link);
+ const link=document.createElement('link');link.id='officialDeckCss';link.rel='stylesheet';link.href='official-decks.css?v=3.5.0';document.head.append(link);
 }
 function fetchCached(map,key,fn){
  const old=map.get(key);if(old&&Date.now()-old.at<60000)return old.promise;
@@ -67,11 +67,11 @@ async function latestRow(tid,title,id,c){
  return {row:rows[0]||null};
 }
 async function imageUrl(row,c,user){
- if(!validCode(row.code)||row.image_path!==row.code+'.png')return '';
+ if(!validCode(row.code)||row.preview_path!==row.code+'.jpg')return '';
  const key=user+':'+row.code;
  if(imageCache.has(key))return await imageCache.get(key);
  const pending=(async()=>{
-  const blob=check(await c.storage.from('official-deck-images').download(row.image_path));
+  const blob=check(await c.storage.from('official-deck-images').download(row.preview_path));
   if(uid()!==user||!blob||!blob.size)return '';
   const url=URL.createObjectURL(blob);
   if(imageCache.get(key)!==pending){URL.revokeObjectURL(url);return '';}
@@ -121,7 +121,7 @@ async function showHistory(host,id,tid,title){
   if(!r){panel.innerHTML='<strong>歷史官方牌組</strong><small>'+ (data.unknownDate?'賽事日期待確認':'尚無已封存的官方牌組紀錄')+'</small>';return;}
   panel.innerHTML='<strong>歷史官方牌組</strong><b>'+esc(name(r))+'</b><small>'+esc(dateLabel(r))+'</small>';
   const button=deckButton(r,()=>openDeck(r,c,user,admin()));button.querySelector('strong')?.remove();panel.append(button);
-  if(r.image_path){
+  if(r.preview_path){
    try{const url=await imageUrl(r,c,user);if(!valid()||!url)return;
     const img=document.createElement('img');img.src=url;img.alt='官方完整牌組縮圖';img.loading='lazy';img.decoding='async';button.prepend(img);
     button.querySelector('small').textContent='點擊圖片查看完整牌組 ›';
@@ -141,20 +141,28 @@ async function openDeck(row,c,user,canEdit){
  body.innerHTML='<p><b>'+esc(name(row))+'</b> · '+esc(dateLabel(row))+'</p><p>'+esc(row.player_id)+'</p><p data-msg role="status">正在讀取伺服器封存牌表…</p><div data-picture></div><div data-cards></div><p><a href="https://asia.pokemon-card.com/tw/deck-build/recipe/'+esc(row.code)+'/" target="_blank" rel="noopener noreferrer">前往官方原始牌組</a></p><div data-admin></div>';
  const msg=body.querySelector('[data-msg]');
  try{
-  const recipe=check(await c.from('official_deck_recipes').select('cards,image_path,captured_at').eq('code',row.code).maybeSingle());
+  const recipe=check(await c.from('official_deck_recipes').select('cards,image_path,preview_path,captured_at').eq('code',row.code).maybeSingle());
   if(!valid())return;
   const cards=Array.isArray(recipe?.cards)?recipe.cards:[];
-  msg.textContent=recipe?.captured_at?'已保存至本站伺服器':'尚未完成伺服器封存，官方連結可能仍可開啟。';
+  msg.textContent=cards.length?'牌組明細已保存，完整圖片由官網提供。':'尚未完成伺服器封存，官方連結可能仍可開啟。';
   if(cards.length){
    const list=document.createElement('details');list.className='official-deck-cardlist';list.innerHTML='<summary>卡牌明細（'+cards.reduce((s,x)=>s+Number(x.count||0),0)+' 張）</summary><table><thead><tr><th>卡牌</th><th>編號</th><th>張數</th></tr></thead><tbody>'+cards.map(x=>'<tr><td>'+esc(x.name)+'</td><td>'+esc([x.expansion,x.number].filter(Boolean).join(' '))+'</td><td>'+esc(x.count)+'</td></tr>').join('')+'</tbody></table>';body.querySelector('[data-cards]').append(list);
   }
-  if(recipe?.image_path){
-   try{const url=await imageUrl({...row,image_path:recipe.image_path},c,user);if(!valid()||!url)return;
-    const picture=body.querySelector('[data-picture]');picture.className='official-deck-picture';
-    const img=document.createElement('img');img.src=url;img.alt='官方原始完整牌表';img.onclick=()=>picture.classList.toggle('zoomed');picture.append(img);
-    const zoom=document.createElement('button');zoom.type='button';zoom.className='secondary-btn';zoom.textContent='放大／縮小';zoom.onclick=()=>picture.classList.toggle('zoomed');picture.after(zoom);
-   }catch(e){if(valid())msg.textContent='牌表已讀取，圖片暫時無法載入。';}
-  }
+  const picture=body.querySelector('[data-picture]');picture.className='official-deck-picture';
+  const img=document.createElement('img');img.alt='官方完整牌表';img.decoding='async';img.referrerPolicy='no-referrer';
+  img.onclick=()=>picture.classList.toggle('zoomed');picture.append(img);
+  const zoom=document.createElement('button');zoom.type='button';zoom.className='secondary-btn';zoom.textContent='放大／縮小';zoom.onclick=()=>picture.classList.toggle('zoomed');picture.after(zoom);
+  img.onerror=async()=>{
+   img.onerror=null;
+   if(!valid())return;
+   try{
+    const url=await imageUrl({...row,preview_path:recipe?.preview_path},c,user);
+    if(!valid())return;
+    if(url){img.onerror=()=>{if(valid()){img.remove();zoom.remove();msg.textContent='圖片無法載入，仍可查看保存的卡牌明細。';body.querySelector('[data-cards] details')?.setAttribute('open','');}};img.src=url;img.alt='官方牌組 JPG 預覽圖';msg.textContent='官網原圖暫時無法讀取，顯示本站預覽圖。';return;}
+   }catch(e){}
+   if(valid()){img.remove();zoom.remove();msg.textContent='官網圖片已失效或暫時無法讀取，仍可查看保存的卡牌明細。';body.querySelector('[data-cards] details')?.setAttribute('open','');}
+  };
+  img.src='https://asia.pokemon-card.com/tw/deck-img/'+row.code+'.png';
   if(canEdit&&admin()&&valid()){
    const catalog=check(await c.from('pairing_deck_catalog').select('id,name').eq('user_id',user).order('sort_order'))||[];
    if(!valid())return;

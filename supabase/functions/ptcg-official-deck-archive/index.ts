@@ -2,6 +2,8 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import {createRemoteJWKSet,jwtVerify} from "npm:jose@5.9.6";
 import {createClient} from "npm:@supabase/supabase-js@2.117.2";
 import {ORIGIN,validEvent,validCode,parseEvent,parseRecipe,isPng} from "./source.ts";
+import {PNG} from "npm:pngjs@7.0.0";
+import jpeg from "npm:jpeg-js@0.4.4";
 const db=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,{auth:{persistSession:false,autoRefreshToken:false}});
 const bucket=db.storage.from("official-deck-images");
 const now=()=>new Date().toISOString();
@@ -66,30 +68,102 @@ async function discover(event:any){
   return {event:event.event_id,links:rows.length};
  }catch(e){console.warn("official deck discovery",event.event_id,String(e));return {event:event.event_id,error:String(e)};}
 }
-async function capture(row:any,budget:{remaining:number}){
+async function capture(row:any){
  if(!validCode(row.code))return {error:"invalid code"};
  const attempts=row.attempts+1;
  const claim=check(await db.from("official_deck_recipes").update({next_attempt_at:later(Math.min(1440,15*2**Math.min(attempts-1,6))),attempts}).eq("code",row.code).eq("next_attempt_at",row.next_attempt_at).is("captured_at",null).select("code"));
  if(!claim.length)return {skipped:true};
  try{
   const cards=Array.isArray(row.cards)?row.cards:parseRecipe(await (await get(ORIGIN+"/tw/deck-build/recipe/"+row.code+"/")).text());
-  if(!row.cards)check(await db.from("official_deck_recipes").update({cards}).eq("code",row.code));
-  if(budget.remaining<=0){check(await db.from("official_deck_recipes").update({next_attempt_at:later(1440)}).eq("code",row.code));return {code:row.code,cards:60,image_pending:"storage safety limit"};}
-  const r=await get(ORIGIN+"/tw/deck-img/"+row.code+".png");
-  const bytes=new Uint8Array(await r.arrayBuffer());
-  if(!isPng(bytes)||bytes.length>8388608)throw Error("invalid or oversized original PNG");
-  if(bytes.length>budget.remaining){check(await db.from("official_deck_recipes").update({next_attempt_at:later(1440)}).eq("code",row.code));return {code:row.code,cards:60,image_pending:"storage safety limit"};}
-  budget.remaining-=bytes.length;
-  const path=row.code+".png";
-  const upload=await bucket.upload(path,bytes,{contentType:"image/png",upsert:false});
-  if(upload.error){
-   // Recover only if the immutable object already exists and is a valid PNG.
-   const existing=await bucket.download(path);
-   if(existing.error||!existing.data||!isPng(new Uint8Array(await existing.data.arrayBuffer())))throw upload.error;
-  }
-  check(await db.from("official_deck_recipes").update({cards,image_path:path,captured_at:now()}).eq("code",row.code).is("captured_at",null));
-  return {saved:true,code:row.code,cards:cards.reduce((sum,c)=>sum+c.count,0),bytes:bytes.length};
+  if(cards.reduce((sum,c)=>sum+c.count,0)!==60)throw Error("not 60 cards");
+  check(await db.from("official_deck_recipes").update({cards,captured_at:now()}).eq("code",row.code).is("captured_at",null));
+  return {saved:true,code:row.code,cards:60};
  }catch(e){console.warn("official deck capture",row.code,String(e));return {code:row.code,error:String(e)};}
+}
+function officialImage(code:string){return ORIGIN+"/tw/deck-img/"+code+".png";}
+function toJpeg(bytes:Uint8Array){
+ if(!isPng(bytes)||bytes.length>8388608)throw Error("invalid or oversized PNG");
+ const header=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+ const w=header.getUint32(16),h=header.getUint32(20);
+ if(!w||!h||w*h>16000000)throw Error("PNG dimensions exceed memory budget");
+ const png=PNG.sync.read(bytes as any);
+ const scale=Math.min(1,960/png.width,1440/png.height);
+ const width=Math.max(1,Math.round(png.width*scale)),height=Math.max(1,Math.round(png.height*scale));
+ const data=new Uint8Array(width*height*4);
+ for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+  const src=(Math.min(png.height-1,Math.floor(y/scale))*png.width+Math.min(png.width-1,Math.floor(x/scale)))*4;
+  const dst=(y*width+x)*4,alpha=png.data[src+3]/255;
+  for(let k=0;k<3;k++)data[dst+k]=Math.round(png.data[src+k]*alpha+255*(1-alpha));
+  data[dst+3]=255;
+ }
+ return jpeg.encode({data,width,height},82).data;
+}
+async function previews(){
+ const rows=check(await db.rpc("official_deck_image_jobs",{p_mode:"preview",p_limit:3}))||[];
+ const results=[];
+ if(!rows.length)return results;
+ let used=0;
+ for(let offset=0;offset<5000;offset+=100){
+  const objects=check(await bucket.list("",{limit:100,offset,sortBy:{column:"name",order:"asc"}}))||[];
+  for(const object of objects)used+=Number(object.metadata?.size||0);
+  if(objects.length<100)break;
+ }
+ for(const row of rows){
+  if(!validCode(row.code))continue;
+  const claim=check(await db.from("official_deck_recipes").update({preview_next_attempt_at:later(360)}).eq("code",row.code).eq("preview_next_attempt_at",row.preview_next_attempt_at).is("preview_path",null).select("code"));
+  if(!claim.length)continue;
+  try{
+   const old=row.image_path===row.code+".png"?await bucket.download(row.image_path):null;
+   const bytes=new Uint8Array(await (old?.data||await get(officialImage(row.code))).arrayBuffer());
+   const jpg=toJpeg(bytes),path=row.code+".jpg";
+   if(used+jpg.length>750*1024*1024)throw Error("storage safety limit");
+   const upload=await bucket.upload(path,jpg,{contentType:"image/jpeg",upsert:false});
+   if(upload.error){
+    const existing=await bucket.download(path);
+    if(existing.error||!existing.data)throw upload.error;
+    const b=new Uint8Array(await existing.data.arrayBuffer());
+    if(b.length<4||b[0]!==255||b[1]!==216)throw Error("invalid existing JPEG");
+   }else used+=jpg.length;
+   check(await db.from("official_deck_recipes").update({preview_path:path}).eq("code",row.code).is("preview_path",null));
+   results.push({code:row.code,saved:true,bytes:jpg.length});
+  }catch(e){console.warn("official preview",row.code,String(e));results.push({code:row.code,error:String(e)});}
+ }
+ return results;
+}
+async function cleanup(){
+ const rows=check(await db.rpc("official_deck_image_jobs",{p_mode:"cleanup",p_limit:40}))||[];
+ const results=[];
+ for(let i=0;i<rows.length;i+=5){
+  results.push(...await Promise.all(rows.slice(i,i+5).map(async (row:any)=>{
+   if(!validCode(row.code))return {skipped:true};
+   try{
+    const paths:string[]=[];
+    // Recent recipes must retain a JPG and have a working official original before PNG deletion.
+    if(row.image_path===row.code+".png"){
+     if(!row.active)paths.push(row.image_path);
+     else if(row.preview_path===row.code+".jpg"){
+      const jpg=await bucket.download(row.preview_path);
+      if(jpg.error||!jpg.data||!jpg.data.size)throw Error("preview missing");
+      const r=await fetch(officialImage(row.code),{method:"HEAD",redirect:"error",signal:AbortSignal.timeout(8000)});
+      if(r.ok&&(r.headers.get("content-type")||"").toLowerCase().startsWith("image/png"))paths.push(row.image_path);
+      else throw Error("official original not verified");
+     }
+    }
+    if(!row.active&&row.preview_path===row.code+".jpg")paths.push(row.preview_path);
+    if(!paths.length)return {code:row.code,skipped:true};
+    check(await bucket.remove(paths));
+    const patch:Record<string,null>={};
+    if(paths.includes(row.image_path))patch.image_path=null;
+    if(paths.includes(row.preview_path))patch.preview_path=null;
+    let q=db.from("official_deck_recipes").update(patch).eq("code",row.code);
+    if(patch.image_path===null)q=q.eq("image_path",row.image_path);
+    if(patch.preview_path===null)q=q.eq("preview_path",row.preview_path);
+    check(await q);
+    return {code:row.code,removed:paths};
+   }catch(e){console.warn("official image cleanup",row.code,String(e));return {code:row.code,error:String(e)};}
+  })));
+ }
+ return results;
 }
 async function discoverDue(eventId="",firstOnly=false){
  let q=db.from("official_deck_events").select("event_id,event_date,next_check_at").lte("next_check_at",now()).not("first_results_at","is",null).or("result_check_pending.eq.true,event_date.gte."+cutoff()).lte("event_date",today());
@@ -125,17 +199,9 @@ async function poll(eventId:string,recipeCode:string,firstOnly=false){
   if(recipes.length<batchSize){const more=check(await due().order("next_attempt_at").limit(16));const seen=new Set(recipes.map(x=>x.code));recipes.push(...more.filter((x:any)=>!seen.has(x.code)).slice(0,batchSize-recipes.length));}
   }
  }
- // Keep a conservative 750 MiB safety ceiling for this independent archive.
- // Text data is retained even when the original image cannot be archived.
- let used=0;
- for(let offset=0;offset<5000;offset+=100){
-  const objects=check(await bucket.list("",{limit:100,offset,sortBy:{column:"name",order:"asc"}}))||[];
-  for(const object of objects)used+=Number(object.metadata?.size||0);
-  if(objects.length<100)break;
- }
- const budget={remaining:Math.max(0,750*1024*1024-used)},captures=[];
- for(let i=0;i<recipes.length;i+=3)captures.push(...await Promise.all(recipes.slice(i,i+3).map(row=>capture(row,budget))));
- return {discovery,captures};
+ const captures=[];
+ for(let i=0;i<recipes.length;i+=3)captures.push(...await Promise.all(recipes.slice(i,i+3).map(row=>capture(row))));
+ return {discovery,captures,previews:firstOnly?[]:await previews()};
 }
 Deno.serve(async req=>{
  if(req.method!=="POST")return json({ok:false},405);
@@ -152,6 +218,7 @@ Deno.serve(async req=>{
   if(!secret||req.headers.get("x-ptcg-cron-secret")!==secret)return json({ok:false,error:"unauthorized"},403);
   const body=await req.json();
   if(body.action==="sync"){const synced=await sync();return json({ok:true,...synced,...await poll("","",true)});}
+  if(body.action==="cleanup")return json({ok:true,cleanup:await cleanup()});
   if(body.action!=="poll")return json({ok:false,error:"invalid action"},400);
   const eventId=String(body.event_id||""),code=String(body.code||"");
   if(eventId&&!validEvent(eventId)||code&&!validCode(code))return json({ok:false,error:"invalid identifier"},400);
