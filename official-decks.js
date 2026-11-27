@@ -24,7 +24,7 @@ function ensureUser(){const u=uid();if(u!==cacheUser){reset();cacheUser=u;}retur
 function closeDialog(){if(dialog){const d=dialog;dialog=null;d.close();d.remove();}}
 function ensureCss(){
  if(document.getElementById('officialDeckCss'))return;
- const link=document.createElement('link');link.id='officialDeckCss';link.rel='stylesheet';link.href='official-decks.css?v=3.5.0';document.head.append(link);
+ const link=document.createElement('link');link.id='officialDeckCss';link.rel='stylesheet';link.href='official-decks.css?v=3.5.2';document.head.append(link);
 }
 function fetchCached(map,key,fn){
  const old=map.get(key);if(old&&Date.now()-old.at<60000)return old.promise;
@@ -81,6 +81,84 @@ async function imageUrl(row,c,user){
  })();
  imageCache.set(key,pending);
  try{return await pending;}catch(e){if(imageCache.get(key)===pending)imageCache.delete(key);throw e;}
+}
+// Find the visible content conservatively, keeping a safety margin around cards.
+function cropBounds(data,w,h){
+ if(!w||!h||data.length!==w*h*4)return null;
+ let left=w,top=h,right=-1,bottom=-1;
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+  const i=(y*w+x)*4,a=data[i+3]/255;
+  // Composite transparent pixels against white; ignore almost-white background.
+  if(a*(255-Math.min(data[i],data[i+1],data[i+2]))<17)continue;
+  if(x<left)left=x;if(x>right)right=x;if(y<top)top=y;if(y>bottom)bottom=y;
+ }
+ if(right<left||bottom<top)return null;
+ const bw=right-left+1,bh=bottom-top+1;
+ // Never zoom in on a tiny artifact or a partial/invalid image.
+ if(bw<w*.35||bh<h*.3)return null;
+ const px=Math.max(2,Math.ceil(w*.015)),py=Math.max(2,Math.ceil(h*.015));
+ left=Math.max(0,left-px);top=Math.max(0,top-py);
+ right=Math.min(w,right+1+px);bottom=Math.min(h,bottom+1+py);
+ if((right-left)/w>.96&&(bottom-top)/h>.96)return null;
+ return {x:left/w,y:top/h,w:(right-left)/w,h:(bottom-top)/h};
+}
+function readCrop(img){
+ try{
+  const w=img.naturalWidth,h=img.naturalHeight;if(!w||!h)return {readable:false};
+  const scale=Math.min(1,640/Math.max(w,h));
+  const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(w*scale));canvas.height=Math.max(1,Math.round(h*scale));
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});if(!ctx)return {readable:false};
+  ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  return {readable:true,bounds:cropBounds(ctx.getImageData(0,0,canvas.width,canvas.height).data,canvas.width,canvas.height)};
+ }catch(e){return {readable:false};}
+}
+function cropProbe(src,cors=false){
+ return new Promise(resolve=>{
+  const img=new Image();let timer;
+  const finish=v=>{clearTimeout(timer);img.onload=img.onerror=null;resolve(v);};
+  img.onload=()=>finish(img);img.onerror=()=>finish(null);
+  if(cors){img.crossOrigin='anonymous';img.referrerPolicy='no-referrer';}
+  timer=setTimeout(()=>finish(null),5000);img.src=src;
+ });
+}
+function compatibleCrop(img,probe){
+ if(!probe?.naturalWidth||!probe?.naturalHeight||!img.naturalWidth||!img.naturalHeight)return false;
+ return Math.abs((probe.naturalWidth/probe.naturalHeight)/(img.naturalWidth/img.naturalHeight)-1)<.015;
+}
+function applyCrop(frame,img,bounds){
+ frame.classList.remove('cropped');
+ for(const key of ['--deck-aspect','--deck-image-width','--deck-image-left','--deck-image-top'])frame.style.removeProperty(key);
+ if(!bounds)return;
+ const {x,y,w,h}=bounds;
+ frame.style.setProperty('--deck-aspect',String(img.naturalWidth*w/(img.naturalHeight*h)));
+ frame.style.setProperty('--deck-image-width',100/w+'%');
+ frame.style.setProperty('--deck-image-left',-100*x/w+'%');
+ frame.style.setProperty('--deck-image-top',-100*y/h+'%');
+ frame.classList.add('cropped');
+}
+async function fitDeckImage(img,frame,row,c,user,valid){
+ const src=img.currentSrc||img.src;
+ const current=()=>valid()&&(img.currentSrc||img.src)===src&&img.naturalWidth>0;
+ const direct=readCrop(img);
+ if(direct.readable){if(current())applyCrop(frame,img,direct.bounds);return;}
+ // The original remains a normal, full-resolution official image even if its server disallows CORS.
+ // A same-aspect JPG preview is only used to measure margins, never to replace a working original.
+ try{
+  const url=await imageUrl(row,c,user);
+  if(!current())return;
+  if(url){
+   const probe=await cropProbe(url);
+   if(!current())return;
+   if(compatibleCrop(img,probe)){
+    const result=readCrop(probe);
+    if(result.readable){applyCrop(frame,img,result.bounds);return;}
+   }
+  }
+ }catch(e){}
+ if(!current()||!src.startsWith('https://asia.pokemon-card.com/'))return;
+ const probe=await cropProbe(src,true);
+ if(!current()||!compatibleCrop(img,probe))return;
+ const result=readCrop(probe);if(result.readable)applyCrop(frame,img,result.bounds);
 }
 function deckButton(r,onOpen){
  const button=document.createElement('button');button.type='button';button.className='official-deck-button';
@@ -150,7 +228,9 @@ async function openDeck(row,c,user,canEdit){
   }
   const picture=body.querySelector('[data-picture]');picture.className='official-deck-picture';
   const img=document.createElement('img');img.alt='官方完整牌表';img.decoding='async';img.referrerPolicy='no-referrer';
-  img.onclick=()=>picture.classList.toggle('zoomed');picture.append(img);
+  const frame=document.createElement('div');frame.className='official-deck-frame';
+  img.onclick=()=>picture.classList.toggle('zoomed');frame.append(img);picture.append(frame);
+  img.onload=()=>{if(valid()){applyCrop(frame,img,null);void fitDeckImage(img,frame,{...row,preview_path:recipe?.preview_path},c,user,valid);}};
   const zoom=document.createElement('button');zoom.type='button';zoom.className='secondary-btn';zoom.textContent='放大／縮小';zoom.onclick=()=>picture.classList.toggle('zoomed');picture.after(zoom);
   img.onerror=async()=>{
    img.onerror=null;
@@ -158,9 +238,9 @@ async function openDeck(row,c,user,canEdit){
    try{
     const url=await imageUrl({...row,preview_path:recipe?.preview_path},c,user);
     if(!valid())return;
-    if(url){img.onerror=()=>{if(valid()){img.remove();zoom.remove();msg.textContent='圖片無法載入，仍可查看保存的卡牌明細。';body.querySelector('[data-cards] details')?.setAttribute('open','');}};img.src=url;img.alt='官方牌組 JPG 預覽圖';msg.textContent='官網原圖暫時無法讀取，顯示本站預覽圖。';return;}
+    if(url){img.onerror=()=>{if(valid()){frame.remove();zoom.remove();msg.textContent='圖片無法載入，仍可查看保存的卡牌明細。';body.querySelector('[data-cards] details')?.setAttribute('open','');}};img.src=url;img.alt='官方牌組 JPG 預覽圖';msg.textContent='官網原圖暫時無法讀取，顯示本站預覽圖。';return;}
    }catch(e){}
-   if(valid()){img.remove();zoom.remove();msg.textContent='官網圖片已失效或暫時無法讀取，仍可查看保存的卡牌明細。';body.querySelector('[data-cards] details')?.setAttribute('open','');}
+   if(valid()){frame.remove();zoom.remove();msg.textContent='官網圖片已失效或暫時無法讀取，仍可查看保存的卡牌明細。';body.querySelector('[data-cards] details')?.setAttribute('open','');}
   };
   img.src='https://asia.pokemon-card.com/tw/deck-img/'+row.code+'.png';
   if(canEdit&&admin()&&valid()){

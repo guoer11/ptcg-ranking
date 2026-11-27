@@ -31,8 +31,26 @@ const read=p=>fs.readFileSync(p,'utf8');
  assert.match(read('official-decks.js'),/\.lt\('event_date',date\)/);
  assert.match(read('official-decks.js'),/official-deck-images/);
  assert.match(read('deck-settings-ui.js'),/data-deck-settings-rule/);
- for(const p of ['index.html','pairing.html','history.html','tournaments.html'])assert.match(read(p),/official-decks\.js\?v=3\.5\.0/);
+ for(const p of ['index.html','pairing.html','history.html','tournaments.html'])assert.match(read(p),/official-decks\.js\?v=3\.5\.2/);
  const ui=read('official-decks.js'),sql=read('supabase/migrations/20261127012819_official_deck_simple_priority_v340.sql');
+ // Synthetic full, padded, transparent and empty images. Keep all content plus margin.
+ const cropCtx=vm.createContext({});
+ vm.runInContext(ui.slice(ui.indexOf('function cropBounds('),ui.indexOf('function readCrop(')),cropCtx);
+ const sample=(x0,y0,x1,y1,transparent=false)=>{
+  const data=new Uint8ClampedArray(100*80*4);if(!transparent)data.fill(255);
+  for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){const i=(y*100+x)*4;data[i]=60;data[i+1]=100;data[i+2]=120;data[i+3]=255;}
+  return cropCtx.cropBounds(data,100,80);
+ };
+ const crop=sample(20,10,80,70);
+ assert(crop&&crop.x<.2&&crop.y<.125&&crop.x+crop.w>.8&&crop.y+crop.h>.875);
+ assert(crop.w<.7&&crop.h<.85);
+ assert.equal(sample(0,0,100,80),null,'already full image must not be cropped');
+ assert.equal(sample(0,0,0,0),null,'empty image must not be cropped');
+ assert.equal(sample(30,30,33,33),null,'tiny artifact must not be enlarged');
+ assert.equal(JSON.stringify(sample(20,10,80,70,true)),JSON.stringify(crop),'transparent background behaves like white');
+ assert.match(ui,/compatibleCrop\(img,probe\)/);assert.match(ui,/cropProbe\(src,true\)/);
+ assert.match(ui,/img\.src='https:\/\/asia\.pokemon-card\.com\/tw\/deck-img\//);
+ assert.match(read('official-decks.css'),/\.official-deck-frame\.cropped/);
  const rules=ui.slice(ui.indexOf('async function openRules('),ui.indexOf('ensureCss();\ndocument.addEventListener'));
  for(const mode of ['auto','high','low'])assert.match(rules,new RegExp('name="official-deck-priority" value="'+mode+'"'));
  assert.doesNotMatch(rules,/優先值（1–1000）|priority:n/);
