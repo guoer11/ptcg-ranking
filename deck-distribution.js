@@ -26,7 +26,7 @@ function titleFor(tid,meta={}){
  const groupName=group?({junior:'孩童組',senior:'少年組',master:'大師組'}[group[0].toLowerCase()]||group[0]):'';
  const name=date&&league&&groupName?Number(date[1])+'/'+Number(date[2])+' '+league+groupName:raw||'賽事 TID '+tid;
  const count=Number(meta.player_count);
- return {name,title:name+'（比賽人數'+(Number.isInteger(count)&&count>0?count+'人':'待確認')+'）'};
+ return {name,title:name+'（參賽人數'+(Number.isInteger(count)&&count>0?count+'人':'待確認')+'）'};
 }
 async function metadata(client,tid){try{const {data,error}=await client.rpc('pairing_distribution_event',{p_tid:String(tid)});if(error)throw error;return data||{};}catch(e){console.warn('牌組分布賽事資料讀取失敗',e);return {};}}
 function noteFor(d){return [d.blockedPlayers?d.blockedPlayers+' 位玩家牌組衝突，暫不計入':'',d.ambiguousPairs?'含 '+d.ambiguousPairs+' 桌未辨識':'',d.conflictingPairs?d.conflictingPairs+' 桌牌組紀錄有衝突，已排除推估':''].filter(Boolean).join('；');}
@@ -39,13 +39,13 @@ function coverage(d,meta={}){
  const missing=known?reported-recorded:null;
  const rate=known?recorded/reported:null;
  return {recorded,known,total,missing,rate,rows:known?[...d.sorted,['未紀錄牌組',missing]]:d.sorted,
-  note:mismatch?'封存參賽人數少於已紀錄人數，暫以實際紀錄人數計算佔比，完成率待確認。':!known?'比賽總人數尚未確認，暫以實際紀錄人數計算佔比。':''};
+  note:mismatch?'封存參賽人數少於已紀錄人數，暫以實際紀錄人數計算佔比，完成率待確認。':!known?'參賽總人數尚未確認，暫以實際紀錄人數計算佔比。':''};
 }
 const percent=v=>(v*100).toFixed(1)+'%';
 function render(box,d,tid,meta={}){
  if(!box)return;
  const v=coverage(d,meta);
- if(!v.total){box.innerHTML='<div class="pairing-scout-stats-empty">'+escape(noteFor(d)||'這場比賽還沒有牌組紀錄。')+'<p>比賽總人數及牌組紀錄完成率待確認。</p></div>';return;}
+ if(!v.total){box.innerHTML='<div class="pairing-scout-stats-empty">'+escape(noteFor(d)||'這場比賽還沒有牌組紀錄。')+'<p>參賽總人數及牌組紀錄完成率待確認。</p></div>';return;}
  const t=titleFor(tid,meta),note=[noteFor(d),v.note].filter(Boolean).join('；');
  const completion=v.known?'<section class="deck-distribution-coverage"><div class="deck-distribution-coverage-heading"><strong>牌組紀錄完成率</strong><strong class="deck-distribution-rate">'+percent(v.rate)+'</strong></div><div class="deck-distribution-progress" role="progressbar" aria-label="牌組紀錄完成率" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+(v.rate*100).toFixed(1)+'"><span style="width:'+v.rate*100+'%"></span></div><p>已紀錄 '+v.recorded+' 人 / 參賽 '+v.total+' 人</p></section>':'<section class="deck-distribution-coverage"><div class="deck-distribution-coverage-heading"><strong>牌組紀錄完成率</strong><strong>待確認</strong></div><p>已紀錄 '+v.recorded+' 人 / 參賽人數待確認</p></section>';
  box.innerHTML='<div class="deck-distribution-toolbar"><strong>牌組分布</strong><button class="secondary-btn" type="button" data-distribution-export>匯出 Excel</button></div><div class="deck-distribution-scroll"><table class="deck-distribution-table"><colgroup><col style="width:44%"><col style="width:20%"><col style="width:36%"></colgroup><thead><tr><th colspan="3" class="deck-distribution-title">'+escape(t.title)+'</th></tr><tr><th scope="col">牌組名稱</th><th scope="col">數量</th><th scope="col">佔比（百分比）</th></tr></thead><tbody>'+v.rows.map(([name,n],i)=>'<tr'+(v.known&&i===v.rows.length-1?' class="deck-distribution-unrecorded"':'')+'><td>'+escape(name)+'</td><td>'+n+'</td><td>'+percent(n/v.total)+'</td></tr>').join('')+'</tbody><tfoot><tr><th scope="row">'+(v.known?'合計':'合計（實際紀錄人數）')+'</th><td>'+v.total+'</td><td>100.0%</td></tr></tfoot></table></div>'+completion+(note?'<p class="deck-distribution-note">'+escape(note)+'</p>':'');
