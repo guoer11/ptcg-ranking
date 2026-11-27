@@ -24,7 +24,7 @@ function ensureUser(){const u=uid();if(u!==cacheUser){reset();cacheUser=u;}retur
 function closeDialog(){if(dialog){const d=dialog;dialog=null;d.close();d.remove();}}
 function ensureCss(){
  if(document.getElementById('officialDeckCss'))return;
- const link=document.createElement('link');link.id='officialDeckCss';link.rel='stylesheet';link.href='official-decks.css?v=3.5.2-r1';document.head.append(link);
+ const link=document.createElement('link');link.id='officialDeckCss';link.rel='stylesheet';link.href='official-decks.css?v=3.5.2-r2';document.head.append(link);
 }
 function fetchCached(map,key,fn){
  const old=map.get(key);if(old&&Date.now()-old.at<60000)return old.promise;
