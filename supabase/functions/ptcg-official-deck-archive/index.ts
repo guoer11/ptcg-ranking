@@ -1,9 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import {createRemoteJWKSet,jwtVerify} from "npm:jose@5.9.6";
 import {createClient} from "npm:@supabase/supabase-js@2.117.2";
-import {ORIGIN,validEvent,validCode,parseEvent,parseRecipe,isPng} from "./source.ts";
-import {PNG} from "npm:pngjs@7.0.0";
-import jpeg from "npm:jpeg-js@0.4.4";
+import {ORIGIN,validEvent,validCode,parseEvent,parseRecipe} from "./source.ts";
 const db=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,{auth:{persistSession:false,autoRefreshToken:false}});
 const bucket=db.storage.from("official-deck-images");
 const now=()=>new Date().toISOString();
@@ -81,55 +79,6 @@ async function capture(row:any){
  }catch(e){console.warn("official deck capture",row.code,String(e));return {code:row.code,error:String(e)};}
 }
 function officialImage(code:string){return ORIGIN+"/tw/deck-img/"+code+".png";}
-function toJpeg(bytes:Uint8Array){
- if(!isPng(bytes)||bytes.length>8388608)throw Error("invalid or oversized PNG");
- const header=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
- const w=header.getUint32(16),h=header.getUint32(20);
- if(!w||!h||w*h>16000000)throw Error("PNG dimensions exceed memory budget");
- const png=PNG.sync.read(bytes as any);
- const scale=Math.min(1,960/png.width,1440/png.height);
- const width=Math.max(1,Math.round(png.width*scale)),height=Math.max(1,Math.round(png.height*scale));
- const data=new Uint8Array(width*height*4);
- for(let y=0;y<height;y++)for(let x=0;x<width;x++){
-  const src=(Math.min(png.height-1,Math.floor(y/scale))*png.width+Math.min(png.width-1,Math.floor(x/scale)))*4;
-  const dst=(y*width+x)*4,alpha=png.data[src+3]/255;
-  for(let k=0;k<3;k++)data[dst+k]=Math.round(png.data[src+k]*alpha+255*(1-alpha));
-  data[dst+3]=255;
- }
- return jpeg.encode({data,width,height},82).data;
-}
-async function previews(){
- const rows=check(await db.rpc("official_deck_image_jobs",{p_mode:"preview",p_limit:3}))||[];
- const results=[];
- if(!rows.length)return results;
- let used=0;
- for(let offset=0;offset<5000;offset+=100){
-  const objects=check(await bucket.list("",{limit:100,offset,sortBy:{column:"name",order:"asc"}}))||[];
-  for(const object of objects)used+=Number(object.metadata?.size||0);
-  if(objects.length<100)break;
- }
- for(const row of rows){
-  if(!validCode(row.code))continue;
-  const claim=check(await db.from("official_deck_recipes").update({preview_next_attempt_at:later(360)}).eq("code",row.code).eq("preview_next_attempt_at",row.preview_next_attempt_at).is("preview_path",null).select("code"));
-  if(!claim.length)continue;
-  try{
-   const old=row.image_path===row.code+".png"?await bucket.download(row.image_path):null;
-   const bytes=new Uint8Array(await (old?.data||await get(officialImage(row.code))).arrayBuffer());
-   const jpg=toJpeg(bytes),path=row.code+".jpg";
-   if(used+jpg.length>750*1024*1024)throw Error("storage safety limit");
-   const upload=await bucket.upload(path,jpg,{contentType:"image/jpeg",upsert:false});
-   if(upload.error){
-    const existing=await bucket.download(path);
-    if(existing.error||!existing.data)throw upload.error;
-    const b=new Uint8Array(await existing.data.arrayBuffer());
-    if(b.length<4||b[0]!==255||b[1]!==216)throw Error("invalid existing JPEG");
-   }else used+=jpg.length;
-   check(await db.from("official_deck_recipes").update({preview_path:path}).eq("code",row.code).is("preview_path",null));
-   results.push({code:row.code,saved:true,bytes:jpg.length});
-  }catch(e){console.warn("official preview",row.code,String(e));results.push({code:row.code,error:String(e)});}
- }
- return results;
-}
 async function cleanup(){
  const rows=check(await db.rpc("official_deck_image_jobs",{p_mode:"cleanup",p_limit:40}))||[];
  const results=[];
@@ -201,7 +150,7 @@ async function poll(eventId:string,recipeCode:string,firstOnly=false){
  }
  const captures=[];
  for(let i=0;i<recipes.length;i+=3)captures.push(...await Promise.all(recipes.slice(i,i+3).map(row=>capture(row))));
- return {discovery,captures,previews:firstOnly?[]:await previews()};
+ return {discovery,captures};
 }
 Deno.serve(async req=>{
  if(req.method!=="POST")return json({ok:false},405);
