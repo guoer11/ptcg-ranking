@@ -26,6 +26,14 @@ api.render(box,{sorted:[],total:0},'5865462',meta);assert.match(box.innerHTML,/�
 api.render(box,sample,'5865462',{player_count:63});assert.match(box.innerHTML,/未紀錄牌組<\/td><td>0<\/td><td>0\.0%/);
 assert.equal(api.coverage(sample,{player_count:63}).rate,1);
 const malicious=api.workbook({sorted:[['=1+1 & <test>',1]],total:1},'1',{});assert(Buffer.from(malicious).includes(Buffer.from('=1+1 &amp; &lt;test&gt;')));
-for(const path of ['pairing.html','history.html']){const h=fs.readFileSync(path,'utf8');assert.match(h,/deck-distribution\.js\?v=3\.3\.1-r1/);assert.match(h,/deck-distribution\.css\?v=3\.3\.1/);}
+const assetVersions=[];
+for(const path of ['pairing.html','history.html']){
+ const h=fs.readFileSync(path,'utf8');
+ const js=h.match(/deck-distribution\.js\?v=(\d+\.\d+\.\d+(?:-r\d+)?)"/);
+ const css=h.match(/deck-distribution\.css\?v=(\d+\.\d+\.\d+(?:-r\d+)?)"/);
+ assert(js&&css,'versioned distribution assets required: '+path);
+ assetVersions.push([js[1],css[1]]);
+}
+assert.deepEqual(assetVersions[0],assetVersions[1],'both pages must load identical distribution asset versions');
 assert.match(fs.readFileSync('pairing-history.js','utf8'),/PTCGDistribution\.render/);assert.match(fs.readFileSync('pairing-deck-scout.js','utf8'),/PTCGDistribution\.render/);
 console.log('PASS: identical distribution rules, conflict exclusions, official event title, numeric percent formulas and genuine XLSX export');
