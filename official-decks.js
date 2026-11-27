@@ -23,7 +23,7 @@ function ensureUser(){const u=uid();if(u!==cacheUser){reset();cacheUser=u;}retur
 function closeDialog(){if(dialog){const d=dialog;dialog=null;d.close();d.remove();}}
 function ensureCss(){
  if(document.getElementById('officialDeckCss'))return;
- const link=document.createElement('link');link.id='officialDeckCss';link.rel='stylesheet';link.href='official-decks.css?v=3.4.0';document.head.append(link);
+ const link=document.createElement('link');link.id='officialDeckCss';link.rel='stylesheet';link.href='official-decks.css?v=3.4.0-r1';document.head.append(link);
 }
 function fetchCached(map,key,fn){
  const old=map.get(key);if(old&&Date.now()-old.at<60000)return old.promise;
@@ -169,26 +169,26 @@ async function openRules(c,item){
  if(!c||!item?.id)return;
  const d=newDialog('官方牌組辨識規則'),body=d.querySelector('.official-deck-dialog-body');
  const active=()=>dialog===d;
- body.innerHTML='<p><b>'+esc(item.name)+'</b></p><p>每行輸入官方完整卡牌名稱=最低張數。全部條件必須符合。優先值較高者優先；同分不同牌組顯示尚未辨識。</p><label>辨識條件<textarea rows="6" class="search-input" placeholder="多龍巴魯托ex=2&#10;黑夜魔靈=1"></textarea></label><label>優先值（1–1000）<input class="search-input" type="number" min="1" max="1000" value="10"></label><div class="official-deck-rule-actions"><button class="secondary-btn" type="button" data-delete>刪除規則</button><button class="primary-btn" type="button" data-save>儲存規則</button></div><p data-status role="status">讀取中…</p>';
- const textarea=body.querySelector('textarea'),priority=body.querySelector('input'),save=body.querySelector('[data-save]'),del=body.querySelector('[data-delete]'),status=body.querySelector('[data-status]');
+ body.innerHTML='<p><b>'+esc(item.name)+'</b></p><p>每行輸入官方完整卡牌名稱=最低張數。全部條件必須符合，平常使用自動判斷即可。</p><label>辨識條件<textarea rows="6" class="search-input" placeholder="多龍巴魯托ex=2&#10;黑夜魔靈=1"></textarea></label><fieldset class="official-deck-priority"><legend>辨識優先順序</legend><label><input type="radio" name="official-deck-priority" value="auto" checked><span>自動判斷（預設）<small>符合多個規則時，優先選擇不同卡名條件較多的牌組。</small></span></label><label><input type="radio" name="official-deck-priority" value="high"><span>優先辨識<small>符合此規則時，優先於一般自動辨識規則。</small></span></label><label><input type="radio" name="official-deck-priority" value="low"><span>最後辨識<small>沒有符合優先辨識或自動判斷的規則時才採用。</small></span></label></fieldset><p class="official-deck-priority-note">同一優先順序、相同條件數的不同牌組同時符合時，顯示「尚未辨識」，避免誤判。單一核心也可以使用自動判斷。</p><div class="official-deck-rule-actions"><button class="secondary-btn" type="button" data-delete>刪除規則</button><button class="primary-btn" type="button" data-save>儲存規則</button></div><p data-status role="status">讀取中…</p>';
+ const textarea=body.querySelector('textarea'),priorities=[...body.querySelectorAll('input[name="official-deck-priority"]')],save=body.querySelector('[data-save]'),del=body.querySelector('[data-delete]'),status=body.querySelector('[data-status]');
  save.disabled=del.disabled=true;
  try{
-  const rule=check(await c.from('official_deck_rules').select('required,priority').eq('catalog_id',item.id).maybeSingle());
+  const rule=check(await c.from('official_deck_rules').select('required,priority_mode').eq('catalog_id',item.id).maybeSingle());
   if(!active())return;
-  textarea.value=Object.entries(rule?.required||{}).map(([key,n])=>key+'='+n).join('\n');priority.value=rule?.priority||10;
+  textarea.value=Object.entries(rule?.required||{}).map(([key,n])=>key+'='+n).join('\n');priorities.forEach(input=>{input.checked=input.value===(rule?.priority_mode||'auto');});
   status.textContent=rule?'已有辨識規則':'尚未設定辨識規則';save.disabled=false;del.disabled=!rule;
   save.onclick=async()=>{
    if(!active())return;
    const required=Object.create(null),lines=textarea.value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
    if(!lines.length||lines.length>20){status.textContent='請輸入 1 至 20 個條件。';return;}
    for(const line of lines){const m=line.match(/^(.{1,120})=([1-9][0-9]?)$/);if(!m||Number(m[2])>60||Object.prototype.hasOwnProperty.call(required,m[1].trim())){status.textContent='格式錯誤或重複卡名：'+line;return;}required[m[1].trim()]=Number(m[2]);}
-   const n=Number(priority.value);if(!Number.isInteger(n)||n<1||n>1000){status.textContent='優先值須為 1–1000 的整數。';return;}
+   const mode=priorities.find(input=>input.checked)?.value||'auto';if(!['auto','high','low'].includes(mode)){status.textContent='請選擇辨識優先順序。';return;}
    save.disabled=del.disabled=true;
-   try{check(await c.from('official_deck_rules').upsert({catalog_id:item.id,required,priority:n},{onConflict:'catalog_id'}));eventCache.clear();historyCache.clear();if(active()){status.textContent='已儲存，既有官方牌組會依新規則辨識。';del.disabled=false;}document.dispatchEvent(new CustomEvent('official-deck:changed'));}
+   try{check(await c.from('official_deck_rules').upsert({catalog_id:item.id,required,priority_mode:mode},{onConflict:'catalog_id'}));eventCache.clear();historyCache.clear();if(active()){status.textContent='已儲存，既有官方牌組會依新規則辨識。';del.disabled=false;}document.dispatchEvent(new CustomEvent('official-deck:changed'));}
    catch(e){if(active())status.textContent=String(e.message||e);}finally{save.disabled=false;}
   };
   del.onclick=async()=>{if(!active()||!confirm('刪除這個牌組的自動辨識規則？官方原始牌表與手動分類不會被刪除。'))return;
-   save.disabled=del.disabled=true;try{check(await c.from('official_deck_rules').delete().eq('catalog_id',item.id));textarea.value='';status.textContent='已刪除辨識規則';eventCache.clear();historyCache.clear();document.dispatchEvent(new CustomEvent('official-deck:changed'));}catch(e){status.textContent=String(e.message||e);del.disabled=false;}finally{save.disabled=false;}
+   save.disabled=del.disabled=true;try{check(await c.from('official_deck_rules').delete().eq('catalog_id',item.id));textarea.value='';priorities.forEach(input=>{input.checked=input.value==='auto';});status.textContent='已刪除辨識規則';eventCache.clear();historyCache.clear();document.dispatchEvent(new CustomEvent('official-deck:changed'));}catch(e){status.textContent=String(e.message||e);del.disabled=false;}finally{save.disabled=false;}
   };
  }catch(e){if(active())status.textContent='讀取失敗：'+String(e.message||e);}
 }
