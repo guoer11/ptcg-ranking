@@ -15,6 +15,8 @@ const TOURNAMENT_GROUP_LABELS = {
 const PAIRING_ACCESS_SUPABASE_URL = 'https://ceobnyikrudlxasyjukg.supabase.co';
 const PAIRING_ACCESS_SUPABASE_KEY = 'sb_publishable_6uVBALI1T3lMZoFEUiLK4g__R7gv0fz';
 let tournamentPairingClient = null;
+let tournamentDeckRole='none',tournamentDeckUser='';
+function tournamentDeckAccess(){return {client:tournamentPairingClient,role:tournamentDeckRole,user:tournamentDeckUser};}
 let tournamentIdentityMap = {};
 let tournamentIdentityGeneration = 0;
 function clearTournamentPrivateIdentities(){
@@ -102,6 +104,8 @@ function insertTournamentPairingNav() {
 
 async function refreshTournamentPairingNav() {
   const request=++tournamentIdentityGeneration;
+  tournamentDeckRole='none';tournamentDeckUser='';
+  window.PTCGOfficialDecks?.clear();
   clearTournamentPrivateIdentities();
   removeTournamentPairingNav();
   try {
@@ -119,6 +123,8 @@ async function refreshTournamentPairingNav() {
     if (request!==tournamentIdentityGeneration) return;
     if (error) throw error;
     if (['admin','guest'].includes(allowed)) {
+      tournamentDeckRole=allowed;tournamentDeckUser=String(sessionData.session.user?.id||'');
+      if(tournamentModal?.classList.contains('open')&&tournamentModal.dataset.eventId)openTournamentModal(tournamentModal.dataset.eventId);
       insertTournamentPairingNav();
       await loadTournamentPrivateIdentities(request);
     } else {
@@ -418,6 +424,7 @@ function renderTournamentResults(event) {
   if (!results.length) {
     return '<div class="empty-state compact-empty"><strong>等待官方成績</strong><span>官方公布活動結果後，自動更新排程會嘗試收錄成績。</span></div>';
   }
+  const showDeck=Boolean(tournamentDeckUser)&&['admin','guest'].includes(tournamentDeckRole);
   const rows = results.map(row => `
     <tr>
       <td>${tournamentEsc(row.rank ?? '—')}</td>
@@ -425,11 +432,12 @@ function renderTournamentResults(event) {
       <td>${tournamentEsc(row.player_id || '—')}</td>
       <td>${tournamentEsc(row.region || '—')}</td>
       <td><strong>${tournamentEsc(row.points ?? '—')} pt</strong></td>
+      ${showDeck?`<td class="official-deck-cell" data-official-player="${tournamentEsc(String(row.player_id||'').toLowerCase())}">—</td>`:''}
     </tr>`).join('');
   return `
     <div class="tournament-result-table-wrap">
-      <table class="tournament-result-table">
-        <thead><tr><th>排名</th><th>玩家</th><th>PTCG ID</th><th>地區</th><th>獲得積分</th></tr></thead>
+      <table class="tournament-result-table${showDeck?' tournament-official-decks':''}">
+        <thead><tr><th>排名</th><th>玩家</th><th>PTCG ID</th><th>地區</th><th>獲得積分</th>${showDeck?'<th>官方牌組</th>':''}</tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>`;
@@ -467,9 +475,11 @@ function openTournamentModal(eventId) {
     <h3>官方活動結果</h3>
     ${renderTournamentResults(event)}
     ${event.url ? `<a class="primary-btn tournament-result-link" href="${tournamentEsc(event.url)}" target="_blank" rel="noopener">開啟官方活動頁 ↗</a>` : ''}`;
+  if(tournamentDeckUser)void window.PTCGOfficialDecks?.renderEvent(tournamentModalBody,String(eventId));
 }
 
 function closeTournamentModal() {
+  window.PTCGOfficialDecks?.close();
   delete tournamentModal.dataset.eventId;
   tournamentModal.classList.remove('open');
   tournamentModal.setAttribute('aria-hidden', 'true');

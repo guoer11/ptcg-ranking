@@ -324,3 +324,5 @@
 .tournament-card.tournament-card-results:hover {
   box-shadow: 0 10px 26px rgba(25,40,70,.08) !important;
 }
+
+.tournament-result-table.tournament-official-decks{min-width:830px}.tournament-official-decks th:last-child,.tournament-official-decks td:last-child{text-align:center;min-width:112px;width:15%}.tournament-official-decks .official-deck-button{width:100%;max-width:160px}

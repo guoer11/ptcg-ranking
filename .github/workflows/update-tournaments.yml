@@ -23,6 +23,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 concurrency:
   group: update-ptcg-tournaments
@@ -77,6 +78,24 @@ jobs:
           git pull --rebase origin main
           git push origin HEAD:main
           echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger official deck archive after results update
+        continue-on-error: true
+        run: |
+          # The Edge Function verifies the signed GitHub Actions OIDC token.
+          # No database credentials or cron secret are exposed to the runner.
+          set -euo pipefail
+          token="$(curl --fail --silent --show-error --get \
+            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            --data-urlencode "audience=ptcg-official-deck-sync" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -er '.value')"
+          echo "::add-mask::$token"
+          revision="$(git rev-parse HEAD)"
+          jq -nc --arg revision "$revision" '{action:"results-sync",revision:$revision}' |
+            curl --fail-with-body --silent --show-error --max-time 110 \
+              -X POST "https://ceobnyikrudlxasyjukg.supabase.co/functions/v1/ptcg-official-deck-archive" \
+              -H "Content-Type: application/json" -H "x-github-oidc: $token" --data-binary @-
+          echo
 
       - name: Notify after tournament data changes
         if: steps.commit.outputs.changed == 'true'

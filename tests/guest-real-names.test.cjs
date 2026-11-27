@@ -32,6 +32,6 @@ const run=code=>vm.runInContext(code,context);
  assert.match(auth,/identityLoadState = 'ready'/);
  assert.match(read('history-center.js'),/rpc\('pairing_access_role'\)/);
  assert.match(read('index.html'),/auth-ui\.js\?v=3\.3\.0/);
- assert.match(read('tournaments.html'),/tournaments\.js\?v=3\.0\.0-name-r1/);
+ assert.match(read('tournaments.html'),/tournaments\.js\?v=3\.4\.1/);
  console.log('PASS: authorized guest real names on ranking and tournament pages; unauthorized/sign-out cleared; history member-readable');
 })().catch(e=>{console.error(e);process.exitCode=1});

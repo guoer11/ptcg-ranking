@@ -5,9 +5,10 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const validCode=s=>/^[A-Za-z0-9]{6}-[A-Za-z0-9]{6}-[A-Za-z0-9]{6}$/.test(s||'');
 const validId=s=>/^tw\d{1,16}$/.test(s||'');
 const columns='event_id,player_id,code,event_date,title,league,division,image_path,captured_at,deck_name,label_source,override_catalog_id';
-const client=()=>typeof pairingClient!=='undefined'?pairingClient:null;
-const uid=()=>typeof pairingSession!=='undefined'&&typeof pairingAuthorized!=='undefined'&&pairingAuthorized?String(pairingSession?.user?.id||''):'';
-const admin=()=>typeof pairingAccessRole!=='undefined'&&pairingAccessRole==='admin';
+const tournamentAccess=()=>typeof tournamentDeckAccess==='function'?tournamentDeckAccess():null;
+const client=()=>tournamentAccess()?.client||(typeof pairingClient!=='undefined'?pairingClient:null);
+const uid=()=>{const t=tournamentAccess();if(t)return ['admin','guest'].includes(t.role)?t.user:'';return typeof pairingSession!=='undefined'&&typeof pairingAuthorized!=='undefined'&&pairingAuthorized?String(pairingSession?.user?.id||''):'';};
+const admin=()=>tournamentAccess()?tournamentAccess().role==='admin':typeof pairingAccessRole!=='undefined'&&pairingAccessRole==='admin';
 const check=r=>{if(r.error)throw r.error;return r.data;};
 const name=r=>r.deck_name||'尚未辨識';
 const dateLabel=r=>{const date=String(r.event_date||'').slice(5).replace('-','/');const league={Ultra:'高級球',Master:'大師球',Great:'超級球',Premier:'紀念球'}[r.league]||'';const group={Junior:'孩童組',Senior:'少年組',Master:'大師組',Open:'全年齡組'}[r.division]||'';return [date,league+group].filter(Boolean).join(' ');};
@@ -23,7 +24,7 @@ function ensureUser(){const u=uid();if(u!==cacheUser){reset();cacheUser=u;}retur
 function closeDialog(){if(dialog){const d=dialog;dialog=null;d.close();d.remove();}}
 function ensureCss(){
  if(document.getElementById('officialDeckCss'))return;
- const link=document.createElement('link');link.id='officialDeckCss';link.rel='stylesheet';link.href='official-decks.css?v=3.4.0-r1';document.head.append(link);
+ const link=document.createElement('link');link.id='officialDeckCss';link.rel='stylesheet';link.href='official-decks.css?v=3.4.1';document.head.append(link);
 }
 function fetchCached(map,key,fn){
  const old=map.get(key);if(old&&Date.now()-old.at<60000)return old.promise;
@@ -46,9 +47,13 @@ function parseDate(title){
 async function archivedRows(tid,c){
  const m=await mapping(tid,c);
  if(!m)return {mapped:false,rows:[]};
+ return eventRows(m.event_id,c);
+}
+async function eventRows(eventId,c){
+ if(!/^\d{1,12}$/.test(String(eventId)))return {mapped:false,rows:[]};
  const rows=[];
  for(let from=0;from<10000;from+=500){
-  const part=check(await c.from('official_deck_index').select(columns).eq('event_id',m.event_id).order('player_id').range(from,from+499))||[];
+  const part=check(await c.from('official_deck_index').select(columns).eq('event_id',String(eventId)).order('player_id').range(from,from+499))||[];
   rows.push(...part);if(part.length<500)break;
  }
  return {mapped:true,rows};
@@ -83,14 +88,16 @@ function deckButton(r,onOpen){
  button.onclick=onOpen;
  return button;
 }
-async function renderArchive(root,tid){
+async function renderArchive(root,tid){return renderCells(root,'tid:'+tid,c=>archivedRows(tid,c));}
+async function renderEvent(root,eventId){return renderCells(root,'event:'+eventId,c=>eventRows(eventId,c));}
+async function renderCells(root,key,load){
  const user=ensureUser(),c=client();if(!user||!c||!root)return;
  const cells=[...root.querySelectorAll('[data-official-player]')];if(!cells.length)return;
  const job={};jobs.set(root,job);
  const valid=()=>uid()===user&&jobs.get(root)===job&&root.isConnected&&cells[0].isConnected;
  cells.forEach(cell=>{cell.textContent='…';});
  try{
-  const result=await fetchCached(eventCache,user+':'+tid,()=>archivedRows(tid,c));
+  const result=await fetchCached(eventCache,user+':'+key,()=>load(c));
   if(!valid())return;
   const byId=new Map(result.rows.map(r=>[r.player_id,r]));
   for(const cell of cells){
@@ -204,6 +211,6 @@ document.addEventListener('pairing:multi-official-decks',e=>{
  if(!root)return;
  root.querySelectorAll('[data-pairing-badge-role="opponent"]').forEach(el=>{const host=el.closest('.pairing-multi-card');if(host)void showHistory(host,el.dataset.pairingBadgeId,batch?.tid||batch?.results?.[0]?.tid,batch?.title||batch?.results?.[0]?.title);});
 });
-document.addEventListener('official-deck:changed',()=>{const root=document.getElementById('matchArchiveRows'),tid=document.getElementById('matchArchiveEvent')?.value;if(root&&tid)void renderArchive(root,tid);});
-window.PTCGOfficialDecks={renderArchive,showHistory,openRules,parseDate};
+document.addEventListener('official-deck:changed',()=>{const root=document.getElementById('matchArchiveRows'),tid=document.getElementById('matchArchiveEvent')?.value;if(root&&tid)void renderArchive(root,tid);const modal=document.getElementById('tournamentModal'),eventId=modal?.dataset?.eventId;if(eventId&&modal.classList.contains('open'))void renderEvent(document.getElementById('tournamentModalBody'),eventId);});
+window.PTCGOfficialDecks={renderArchive,renderEvent,showHistory,openRules,parseDate,clear:reset,close:closeDialog};
 })();
