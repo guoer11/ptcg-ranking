@@ -31,7 +31,7 @@ const read=p=>fs.readFileSync(p,'utf8');
  assert.match(read('official-decks.js'),/\.lt\('event_date',date\)/);
  assert.match(read('official-decks.js'),/official-deck-images/);
  assert.match(read('deck-settings-ui.js'),/data-deck-settings-rule/);
- for(const p of ['index.html','pairing.html','history.html','tournaments.html'])assert.match(read(p),/official-decks\.js\?v=3\.5\.2/);
+ for(const p of ['index.html','pairing.html','history.html','tournaments.html'])assert.match(read(p),/official-decks\.js\?v=3\.5\.2-r1/);
  const ui=read('official-decks.js'),sql=read('supabase/migrations/20261127012819_official_deck_simple_priority_v340.sql');
  // Synthetic full, padded, transparent and empty images. Keep all content plus margin.
  const cropCtx=vm.createContext({});
@@ -51,6 +51,8 @@ const read=p=>fs.readFileSync(p,'utf8');
  assert.match(ui,/compatibleCrop\(img,probe\)/);assert.match(ui,/cropProbe\(src,true\)/);
  assert.match(ui,/img\.src='https:\/\/asia\.pokemon-card\.com\/tw\/deck-img\//);
  assert.match(read('official-decks.css'),/\.official-deck-frame\.cropped/);
+ assert.match(read('official-decks.css'),/\.official-deck-dialog>header\{position:sticky;top:0;z-index:10;/);
+ assert.match(ui,/official-decks\.css\?v=3\.5\.2-r1/);
  const rules=ui.slice(ui.indexOf('async function openRules('),ui.indexOf('ensureCss();\ndocument.addEventListener'));
  for(const mode of ['auto','high','low'])assert.match(rules,new RegExp('name="official-deck-priority" value="'+mode+'"'));
  assert.doesNotMatch(rules,/優先值（1–1000）|priority:n/);
