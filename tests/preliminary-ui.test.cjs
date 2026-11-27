@@ -7,7 +7,9 @@ const vm = require('node:vm');
   const dataset = JSON.parse(fs.readFileSync('data/preliminary_results.json', 'utf8'));
   const knockout = JSON.parse(fs.readFileSync('data/knockout_results.json', 'utf8'));
   const official = JSON.parse(fs.readFileSync('data/tournaments.json', 'utf8'));
-  const matching = official.events.find(e => String(e.event_id) === '66987');
+  const liveEvent = official.events.find(e => String(e.event_id) === '66987');
+  // Model the pre-publication state independently of the evolving live results.
+  const matching = liveEvent && {...liveEvent, results:[]};
   const prelim = dataset.events['66987'];
   assert(matching && prelim && prelim.participants === 87, '10/17 complete 87-player ranking is required');
   const tournaments = {season: official.season, events:[matching]};
@@ -89,6 +91,16 @@ const vm = require('node:vm');
   matching.results=[{player_id:zeroRow.player_id,rank:69,points:0}];
   const zeroOfficial=await win.openPlayerModal(zeroRow.player_id);
   assert.equal(zeroOfficial.length,0,'zero-LP Pokémon Asia result must be hidden too');
+  // The actual official publication must also suppress all provisional scores.
+  if (liveEvent.results?.length) {
+    matching.results=liveEvent.results;
+    for (const id of Object.keys(winners)) {
+      const actual=liveEvent.results.find(r=>String(r.player_id).toLowerCase()===id);
+      const rows=await win.openPlayerModal(id);
+      assert.equal(rows.length,actual&&Number(actual.points)>0?1:0);
+      if(rows.length){assert.equal(rows[0].points,actual.points);assert.equal(rows[0].rank,actual.rank);assert.equal(rows[0].resultStatus,undefined);}
+    }
+  }
   matching.results=[];
   console.log('PASS: bracket joins, score estimates, pending preserved, official first, 0-LP rows hidden');
 })().catch(err=>{console.error(err);process.exitCode=1;});

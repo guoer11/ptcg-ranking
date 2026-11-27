@@ -4,7 +4,9 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 const prelim=read('data/preliminary_results.json'),knockout=read('data/knockout_results.json');
-const official=read('data/tournaments.json'),event=official.events.find(e=>String(e.event_id)==='66990');
+const official=read('data/tournaments.json'),liveEvent=official.events.find(e=>String(e.event_id)==='66990');
+// Explicit pre-publication fixture; do not depend on the live event being unpublished.
+const event=liveEvent&&{...liveEvent,results:[]};
 const result=prelim.events['66990'],bracket=knockout.events['66990'];
 assert(event&&event.date==='2026-11-21'&&event.group==='Junior'&&event.league==='Ultra');
 assert(result&&result.tid==='5865462'&&result.participants===77);
@@ -28,7 +30,10 @@ for(const [rank,points] of [[9,20],[16,20],[17,15],[32,15],[33,0],[64,0],[65,0],
  const source=fs.readFileSync('preliminary-ui.js','utf8');
  const tournaments={season:official.season,events:[event]};
  const win={
-   calculatedEventsForPlayer:()=>[],
+   calculatedEventsForPlayer:(t,id)=>t.events.flatMap(e=>{
+     const row=(e.results||[]).find(r=>String(r.player_id).toLowerCase()===id);
+     return row&&Number(row.points)>0?[{eventId:String(e.event_id),rank:row.rank,points:row.points,date:e.date}]:[];
+   }),
    calculatedTop8:rows=>({points:rows.map(x=>x.points).filter(x=>Number(x)>0),
      total:rows.reduce((s,x)=>s+(Number(x.points)||0),0)}),
    eventsHtml:()=>'<div></div>',
@@ -52,6 +57,20 @@ for(const [rank,points] of [[9,20],[16,20],[17,15],[32,15],[33,0],[64,0],[65,0],
  }
  assert.equal((await win.openPlayerModal(result.standings[32].player_id)).length,0,'77 entrants: 33rd place has 0 LP');
  assert.equal((await win.openPlayerModal(result.standings[64].player_id)).length,0,'0 LP should stay unlisted');
+ // Explicitly verify the transition to official results, even before real publication.
+ event.results=[{player_id:'tw39371632',rank:1,points:100}];
+ const confirmed=await win.openPlayerModal('tw39371632');
+ assert.equal(confirmed.length,1);assert.equal(confirmed[0].points,100);assert.equal(confirmed[0].resultStatus,undefined);
+ assert.equal((await win.openPlayerModal('tw82928313')).length,0,'official result suppresses estimated rows');
+ if(liveEvent.results?.length){
+   event.results=liveEvent.results;
+   for(const r of bracket.results){
+     const actual=liveEvent.results.find(x=>String(x.player_id).toLowerCase()===r.player_id);
+     const rows=await win.openPlayerModal(r.player_id);
+     assert.equal(rows.length,actual&&Number(actual.points)>0?1:0);
+     if(rows.length){assert.equal(rows[0].rank,actual.rank);assert.equal(rows[0].points,actual.points);assert.equal(rows[0].resultStatus,undefined);}
+   }
+ }
  const existing=knockout.events['66987'];
  assert(existing&&existing.results.length===8,'past event records untouched');
  console.log('PASS: 77 archived players, Top8 verified, LP bands, UI join and historical event preserved');
