@@ -27,7 +27,7 @@
     if (document.querySelector('link[data-deck-settings-style]')) return;
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'deck-settings-ui.css?v=3.1.0';
+    link.href = 'deck-settings-ui.css?v=3.4.0';
     link.dataset.deckSettingsStyle = 'true';
     document.head.appendChild(link);
   }
@@ -77,7 +77,7 @@
     const add = $('deckSettingsAdd');
     if (input) input.disabled = busy || !session || !admin;
     if (add) add.disabled = busy || !session || !admin;
-    document.querySelectorAll('[data-deck-settings-delete],[data-deck-settings-edit],[data-deck-settings-save],[data-deck-settings-cancel],#deckSettingsRenameName').forEach(button => {
+    document.querySelectorAll('[data-deck-settings-rule],[data-deck-settings-delete],[data-deck-settings-edit],[data-deck-settings-save],[data-deck-settings-cancel],#deckSettingsRenameName').forEach(button => {
       button.disabled = busy || !session || !admin;
     });
   }
@@ -107,9 +107,10 @@
       </div>`:`
       <div class="deck-settings-row">
         <span>${escapeHtml(item.name)}</span>
-        <div class="deck-settings-row-actions"><button type="button" data-deck-settings-edit="${item.id}" aria-label="修改 ${escapeHtml(item.name)}">修改</button><button type="button" data-deck-settings-delete="${item.id}" aria-label="刪除 ${escapeHtml(item.name)}">刪除</button></div>
+        <div class="deck-settings-row-actions"><button type="button" data-deck-settings-rule="${item.id}" aria-label="官方牌組辨識規則 ${escapeHtml(item.name)}">辨識規則</button><button type="button" data-deck-settings-edit="${item.id}" aria-label="修改 ${escapeHtml(item.name)}">修改</button><button type="button" data-deck-settings-delete="${item.id}" aria-label="刪除 ${escapeHtml(item.name)}">刪除</button></div>
       </div>`).join('');
 
+    list.querySelectorAll('[data-deck-settings-rule]').forEach(button=>button.addEventListener('click',()=>{if(busy||!admin||!session)return;const item=catalog.find(x=>String(x.id)===button.dataset.deckSettingsRule);if(item)void window.PTCGOfficialDecks?.openRules(client,item);}));
     list.querySelectorAll('[data-deck-settings-delete]').forEach(button => {
       button.addEventListener('click', () => deleteDeck(Number(button.dataset.deckSettingsDelete)));
     });

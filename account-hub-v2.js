@@ -226,7 +226,7 @@
   function ensureDeckSettingsScript() {
     if ([...document.scripts].some(script => script.src.includes('deck-settings-ui.js'))) return;
     const script = document.createElement('script');
-    script.src = 'deck-settings-ui.js?v=3.2.2';
+    script.src = 'deck-settings-ui.js?v=3.4.0';
     script.defer = true;
     document.body.appendChild(script);
   }

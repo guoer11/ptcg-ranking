@@ -7,7 +7,7 @@ const result={hidden:false},multi={hidden:true,innerHTML:''};
 const players=[{player_id:'tw10000001',player:'甲 (tw10000001)',opponent:'乙 (tw20000001)',table:'601',ttl_score:'6'},{player_id:'tw10000002',player:'丙 (tw10000002)',opponent:'丁 (tw20000002)',table:'615',ttl_score:'3'}];
 const batch={round:3,results:players.map((p,i)=>({player_id:p.player_id,match:{opponent:'tw2000000'+(i+1)}}))};
 let refreshes=0;
-const ctx={document:{getElementById:id=>id==='pairingMultiResults'?multi:null},resultBox:()=>result,normalizePlayerId:x=>String(x||'').trim().toLowerCase(),escPairing:x=>String(x||'').replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;'),window:{PTCGPlayerBadges:{refresh(){refreshes++;}}},players,batch};
+const ctx={document:{getElementById:id=>id==='pairingMultiResults'?multi:null,dispatchEvent(){}},CustomEvent:class{},resultBox:()=>result,normalizePlayerId:x=>String(x||'').trim().toLowerCase(),escPairing:x=>String(x||'').replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;'),window:{PTCGPlayerBadges:{refresh(){refreshes++;}}},players,batch};
 vm.runInNewContext(render+';renderMultiCards(batch,players);',ctx);
 assert.equal(multi.hidden,false);assert.equal(result.hidden,true);assert.equal(refreshes,1);
 const hosts=[...multi.innerHTML.matchAll(/data-pairing-badge-id="(tw\d+)" data-pairing-badge-role="(player|opponent)"/g)].map(m=>({dataset:{pairingBadgeId:m[1],pairingBadgeRole:m[2]},row:null,querySelector(){return this.row;},appendChild(row){this.row=row;row.remove=()=>{this.row=null;};}}));

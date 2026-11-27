@@ -165,13 +165,14 @@
         reference?.points?.[normalizedId(p)]!=null).length:0;
       root.innerHTML=`<p class="archive-subtitle">${escape(title)} · ${rows.length} 位${term?"（篩選結果）":""} · ${escape(source.captured_at||"")}</p>
         ${fallbackCount?`<p class="archive-empty">最終排名的 TtlScore 尚未全部取得；標示 R${escape(roundBefore)} 前的數字是最後一輪開始前的積分，<strong>不是最終分數</strong>。</p>`:""}
-        <div class="archive-scroll archive-standings-scroll"><table class="archive-standings-table" style="width:100%;min-width:0;table-layout:fixed"><colgroup><col style="width:11%"><col style="width:32%"><col style="width:39%"><col style="width:18%"></colgroup><thead><tr><th>名次</th><th>選手</th><th>牌組</th><th>TtlScore</th></tr></thead><tbody>
-        ${rows.map(p=>`<tr><td>${escape(p.rank)}</td><td>${playerHTML(p,false)}</td><td>${editableDeckHTML(p)}</td>
+        <div class="archive-scroll archive-standings-scroll"><table class="archive-standings-table official-deck-five" style="width:100%;min-width:0;table-layout:fixed"><colgroup><col style="width:9%"><col style="width:27%"><col style="width:32%"><col style="width:19%"><col style="width:13%"></colgroup><thead><tr><th>名次</th><th>選手</th><th>牌組</th><th>官方牌組</th><th>TtlScore</th></tr></thead><tbody>
+        ${rows.map(p=>`<tr><td>${escape(p.rank)}</td><td>${playerHTML(p,false)}</td><td>${editableDeckHTML(p)}</td><td class="official-deck-cell" data-official-player="${escape(normalizedId(p))}">—</td>
           <td>${p.points!=null?escape(p.points):!provisional&&reference?.points?.[normalizedId(p)]!=null
             ?`${escape(reference.points[normalizedId(p)])} <small>R${escape(roundBefore)} 前</small>`:"—"}</td></tr>`).join("")}
         </tbody></table></div>
         ${provisional?'<p class="archive-empty">這是官方各輪結束後的暫定排名，尚未確認已打完全部輪次。</p>':
       fromLastRound?'<p class="archive-empty">這場賽事的總輪數已確認完成。來源頁雖標示 interim result，本站依最後輪結果保存本場最終名次。</p>':""}`;
+      void window.PTCGOfficialDecks?.renderArchive(root,String(view.event?.tid||activeTid));
       return;
     }
     if(!view.selected){root.innerHTML='<p class="archive-empty">該輪尚無封存資料。</p>';return;}

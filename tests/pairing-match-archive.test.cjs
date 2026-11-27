@@ -43,15 +43,15 @@ console.log('Match archive UI, protected actions, crawler and deployment manifes
 const css=fs.readFileSync('pairing-match-archive.css','utf8');
 assert.doesNotMatch(ui,/不代表每輪都使用相同牌組/);
 assert.match(ui,/記錄於 Round/);
-assert.match(ui,/<th>名次<\/th><th>選手<\/th><th>牌組<\/th><th>TtlScore<\/th>/);
+assert.match(ui,/<th>名次<\/th><th>選手<\/th><th>牌組<\/th><th>官方牌組<\/th><th>TtlScore<\/th>/);
 assert.match(ui,/<td>\$\{playerHTML\(p,false\)\}<\/td><td>\$\{editableDeckHTML\(p\)\}<\/td>/);
-assert.match(ui,/class="archive-standings-table"/);
+assert.match(ui,/class="archive-standings-table official-deck-five"/);
 assert.match(css,/archive-standings-scroll\{width:100%;max-width:760px;margin-inline:0 auto\}/);
 assert.match(ui,/archive-matches-scroll/);
 const mobile=css.slice(css.indexOf('@media(max-width:720px)'));
 assert.match(mobile,/width:100%;min-width:0;table-layout:fixed/);
 assert.match(mobile,/td:last-child\{min-width:0\}/);
-assert.match(ui,/archive-standings-scroll"><table class="archive-standings-table" style="width:100%;min-width:0;table-layout:fixed"><colgroup>/);
+assert.match(ui,/archive-standings-scroll"><table class="archive-standings-table official-deck-five" style="width:100%;min-width:0;table-layout:fixed"><colgroup>/);
 assert.match(ui,/archive-matches-scroll"><table style="width:100%;min-width:0;table-layout:fixed"><colgroup><col style="width:clamp\(52px,15vw,70px\)"><col><col><col style="width:clamp\(58px,16vw,150px\)">/);
 assert.doesNotMatch(css,/min-width:(630|400|155|95)px/);
 assert.match(page,/id="archiveFitCritical"/);
@@ -66,7 +66,7 @@ assert.match(ui,/class="archive-player\$\{deckMarkup\?" has-deck":""\}"/);
 assert.match(ui,/class="archive-player-identity"/);
 assert.match(css,/archive-standings-table th,#matchArchive \.archive-standings-table td\{vertical-align:middle/);
 assert.match(css,/archive-standings-table \.archive-deck\{margin:0/);
-assert.match(ui,/<col style="width:11%"><col style="width:32%"><col style="width:39%"><col style="width:18%">/);
+assert.match(ui,/<col style="width:9%"><col style="width:27%"><col style="width:32%"><col style="width:19%"><col style="width:13%">/);
 assert.doesNotMatch(css,/archive-standings-scroll \.archive-player\.has-deck/);
 
 assert.match(css,/archive-standings-table th,#matchArchive \.archive-standings-table td\{vertical-align:middle;padding:7px 8px;text-align:center\}/);

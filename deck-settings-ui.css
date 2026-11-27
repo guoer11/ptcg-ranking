@@ -25,3 +25,5 @@
 .deck-settings-row button[data-deck-settings-edit],.deck-settings-row button[data-deck-settings-save]{background:#eaf2ff;color:#245fc7}
 .deck-settings-row button[data-deck-settings-cancel]{background:#edf0f3;color:#52637a}
 .deck-settings-row-editing input{width:100%;min-width:0;box-sizing:border-box;padding:8px;font-size:14px}
+
+.deck-settings-row button[data-deck-settings-rule]{background:#eaf2ff;color:#245fc7;font-size:12px;white-space:nowrap}@media(max-width:420px){.deck-settings-row-actions{gap:4px}.deck-settings-row-actions button{padding:7px 5px;font-size:12px}}

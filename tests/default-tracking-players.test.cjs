@@ -21,5 +21,5 @@ vm.runInContext("globalThis.pairingAccessRole='guest';resetDefaultTrackingPlayer
 assert.equal(input.value,'');assert.deepEqual(extras,[],'guest does not inherit the owner player defaults');
 assert.match(source,/function initPairingPage\(\)[\s\S]*?resetDefaultTrackingPlayers\(\)/);
 assert.match(source,/if \(reopened && !data\.watch\?\.active && !readCurrentPairingEvent\(\)\) \{[\s\S]*?resetDefaultTrackingPlayers\(\)/);
-assert.match(fs.readFileSync('pairing.html','utf8'),/src="pairing-3\.0\.0\.js\?v=event-r1"/);
+assert.match(fs.readFileSync('pairing.html','utf8'),/src="pairing-3\.0\.0\.js\?v=event-r1-official-deck"/);
 console.log('PASS: two default players, saved active watches preserved, manual selection retained');

@@ -61,7 +61,7 @@ const getCalls=()=>calls.filter(call=>call.action==='get').length;
   assert.equal(calls.find(c=>c.action==='get').round,null,'finished event defaults to final ranking');
 
   const rendered=el('matchArchiveRows').innerHTML;
-  assert.match(rendered,/<th>名次<\/th><th>選手<\/th><th>牌組<\/th><th>TtlScore<\/th>/);
+  assert.match(rendered,/<th>名次<\/th><th>選手<\/th><th>牌組<\/th><th>官方牌組<\/th><th>TtlScore<\/th>/);
   const firstRow=rendered.match(/<tbody>\s*<tr>([\s\S]*?)<\/tr>/)[1];
   const cells=[...firstRow.matchAll(/<td>([\s\S]*?)<\/td>/g)].map(x=>x[1]);
   assert.equal(cells.length,4,'standings has four actual cells on all viewports');

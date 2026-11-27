@@ -727,6 +727,7 @@ function renderMultiCards(batch,cards,mode='round'){
     return '<article class="pairing-multi-card"><div class="pairing-multi-heading"><div class="pairing-multi-player-label"'+badgeAttrs(c.player_id,'player')+'><strong>'+escPairing(c.player)+'</strong></div><span class="pairing-round-badge">'+escPairing(status)+'</span></div><div class="pairing-multi-grid">'+content+'</div></article>';
   }).join('');
   window.PTCGPlayerBadges?.refresh();
+  if(mode==='round')document.dispatchEvent(new CustomEvent('pairing:multi-official-decks',{detail:{batch}}));
 }
 async function handleMultiWatch(){
   setPairingBusy(true);setPairingMessage('正在查詢多位玩家及賽事狀態…');
