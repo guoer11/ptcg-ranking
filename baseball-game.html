@@ -2298,6 +2298,8 @@ function v400Install(){
   $('v400More').onclick=()=>{$('v400Grid').dataset.limit=String((Number($('v400Grid').dataset.limit)||36)+36);v400Render()};
 }
 v400Install();
+const v500Host=$('v20Launcher');
+if(v500Host){const a=document.createElement('a');a.id='v500Launch';a.href='baseball-online.html?v=500';a.className='primary';a.textContent='🌐 好友連線對戰（測試版）';a.style.cssText='display:block;text-align:center;width:100%;margin-top:8px;padding:12px;border-radius:10px;background:#ffd052;color:#382700;font-weight:900;text-decoration:none';v500Host.appendChild(a)}
 })();
 </script>
 <script type="module" src="baseball-3d.js?v=311"></script>
