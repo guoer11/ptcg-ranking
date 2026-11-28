@@ -756,7 +756,36 @@
     ballShadow.visible=true;ballShadow.position.set(baseball.position.x,-.01,baseball.position.z);
     return true;
   }
+  // V510: server-timed flight adapter. Only active on the online page.
+  const onlinePoint=new T.Vector3(),onlineCornerA=new T.Vector3(),onlineCornerB=new T.Vector3();
+  function onlineZonePoint(zone){
+    const z=Number(zone)||0;
+    if(z===0)return [1.22,1.13];
+    return [((z-1)%3-1)*.52,1.73-(Math.floor((z-1)/3)-1)*.32];
+  }
+  function renderOnlinePitch(pitchMode){
+    if(stage.dataset.onlineMode!=='1')return false;
+    const p=Number(stage.dataset.onlineProgress),zone=Number(stage.dataset.onlineZone),kind=stage.dataset.onlinePitch;
+    const [x,y]=onlineZonePoint(zone),[ax,ay]=onlineZonePoint(stage.dataset.onlineAim||5);
+    onlinePoint.set(ax,ay,0).project(camera);
+    onlineCornerA.set(-.78,2.21,0).project(camera);
+    onlineCornerB.set(.78,1.25,0).project(camera);
+    const px=v=>(v+1)*50,py=v=>(1-v)*50;
+    const aim=document.getElementById('v510Aim'),box=document.getElementById('v510Strike');
+    if(aim){aim.style.left=px(onlinePoint.x)+'%';aim.style.top=py(onlinePoint.y)+'%'}
+    if(box){box.style.left=Math.min(px(onlineCornerA.x),px(onlineCornerB.x))+'%';box.style.top=Math.min(py(onlineCornerA.y),py(onlineCornerB.y))+'%';box.style.width=Math.abs(px(onlineCornerA.x)-px(onlineCornerB.x))+'%';box.style.height=Math.abs(py(onlineCornerA.y)-py(onlineCornerB.y))+'%'}
+    baseball.visible=Number.isFinite(p)&&p>=0&&p<=1.10;pitchHalo.visible=baseball.visible;ballShadow.visible=baseball.visible;
+    if(!baseball.visible)return true;
+    const u=clamp(p,0,1.10),arc=Math.sin(Math.PI*clamp(u,0,1)),side=kind==='SL'?-.64:kind==='CU'?.23:0,drop=kind==='CU'?.65:kind==='CH'?.33:0;
+    baseball.position.set(.32*(1-u)+x*u+arc*side,2.24*(1-u)+y*u+arc*(.12+drop),-18.4+18.4*u);
+    baseball.scale.setScalar(pitchMode?1.65:2.2-.52*clamp(u,0,1));
+    baseball.rotation.set(simClock*13,simClock*8,simClock*11);
+    pitchHalo.position.copy(baseball.position);pitchHalo.scale.setScalar(.65);
+    ballShadow.position.set(baseball.position.x,-.012,baseball.position.z);
+    return true;
+  }
   function renderBall(pitchMode, hitMode) {
+    if(renderOnlinePitch(pitchMode))return;
     hrTrail.visible=false;
     if(renderManualField(hitMode))return;
     if(hrFlight){
