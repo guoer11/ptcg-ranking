@@ -399,7 +399,7 @@
       const handMesh=put(hand,sphere(.082,style==='batter'?piping:face,14,10),0,-.012,0);
       handMesh.scale.set(.82,1.08,.76);
       if(style==='batter'){put(elbow,cyl(.071,.070,.08,beltMat),0,-.28,0)}
-      else {
+      else if(style!=='runner') {
         const mitt=put(hand,sphere(.137,gloveMat,16,12),0,0,.056);mitt.scale.set(1.02,1.14,.55);
         const pocket=put(mitt,sphere(.10,leather,12,8),0,.015,.08);pocket.scale.set(.85,.95,.35);
         mitt.visible=side===-1;rigs.gloves.push(mitt);
@@ -472,7 +472,7 @@
   // Real 3D baserunners respond to the existing safe/occupied base state.
   const runnerSpots=[[19.4,-19.4],[0,-38.8],[-19.4,-19.4]];
   const runners=runnerSpots.map(([x,z],i)=>{
-    const rig=makePlayer(0xf08024,11+i,'fielder');
+    const rig=makePlayer(0xf08024,11+i,'runner');
     rig.root.position.set(x,0,z);
     rig.root.rotation.y=PI*.75;
     rig.root.scale.setScalar(.91);
@@ -480,6 +480,26 @@
     scene.add(rig.root);
     return rig;
   });
+  // Baserunning follows the existing official hit-runner animation, not the scoring logic.
+  const liveRunner=makePlayer(0xf08024,11,'runner');
+  liveRunner.root.scale.setScalar(.93);liveRunner.root.visible=false;scene.add(liveRunner.root);
+  const runnerFigure=document.getElementById('hitRunner');
+  const runningPath=[[0,0],[19.4,-19.4],[0,-38.8],[-19.4,-19.4],[0,0]];
+  function renderLiveRunner(hitMode,pitchMode){
+    liveRunner.root.visible=false;
+    if(!hitMode||pitchMode||!runnerFigure)return;
+    const a=runnerFigure.getAnimations()[0];
+    if(!a||a.currentTime===null||Number(getComputedStyle(runnerFigure).opacity)<.1)return;
+    const frames=a.effect.getKeyframes(),legs=Math.min(4,Math.max(1,frames.length-1));
+    const u=clamp(a.effect.getComputedTiming().progress??0,0,1)*legs;
+    const i=Math.min(legs-1,Math.floor(u)),t=u-i;
+    const p=runningPath[i],q=runningPath[i+1];
+    liveRunner.root.position.set(p[0]+(q[0]-p[0])*t,0,p[1]+(q[1]-p[1])*t);
+    liveRunner.root.rotation.y=Math.atan2(q[0]-p[0],q[1]-p[1]);
+    liveRunner.jersey.color.copy(playerBatter.jersey.color);
+    liveRunner.root.visible=true;
+    fieldPose(liveRunner,Number(a.currentTime)*.017,u<legs);
+  }
   const occupiedBaseElements=[
     document.getElementById('base1'),
     document.getElementById('base2'),
@@ -536,13 +556,16 @@
     const batterLeft=stage.classList.contains('bat-left');
     cpuPitcher.jersey.color.setHex(cpuColor);
     opponentBatter.jersey.color.setHex(cpuColor);
-    playerBatter.jersey.color.setHex(0xef842f);
+    const battingTeam=(document.getElementById('batterTeam')?.textContent||'');
+    const teamName=Object.keys(teamColors).find(k=>battingTeam.includes(k));
+    playerBatter.jersey.color.setHex(!pitchMode&&teamName?teamColors[teamName]:0xef842f);
     userPitcher.jersey.color.setHex(0xf4f3ef);
     catcher.jersey.color.setHex(pitchMode?0xffffff:cpuColor);
     fielders.forEach(f=>f.jersey.color.setHex(pitchMode?0xf2f3f2:cpuColor));
     playerBatter.root.scale.x=batterLeft?-1.1:1.1;
     playerBatter.root.position.x=batterLeft?-2.35:2.35;
     opponentBatter.root.position.x=batterLeft?-1.1:1.1;
+    opponentBatter.root.scale.x=batterLeft?-1:1;
     playerBatter.root.rotation.y=PI;
     opponentBatter.root.rotation.y=PI;
     cpuPitcher.root.visible=!pitchMode;
@@ -777,7 +800,7 @@
       const hitMode=!!hitOverlay && !hitOverlay.classList.contains('hidden');
       hrFlight=getHrFlight(hitMode);
       const mode=(pitchMode?'pitch':'bat') + (hrFlight?'-hr':hitMode?'-hit':'') +
-        (stage.classList.contains('bat-left')?'-left':'');
+        (stage.classList.contains('bat-left')?'-left':'')+'|'+(document.getElementById('batterTeam')?.textContent||'')+'|'+(document.getElementById('cpuShort')?.textContent||'');
       if (mode!==lastMode) {
         lastMode=mode;
         applyTeams(pitchMode);
@@ -812,6 +835,7 @@
       // Freeze camera while paused; the WAAPI ball animation is paused by the game.
       if(!game.classList.contains('paused'))setCameraMode(pitchMode,hitMode);
       renderBall(pitchMode,hitMode);
+      renderLiveRunner(hitMode,pitchMode);
       stage.classList.toggle('v307-hr-tracking',!!hrFlight);
       renderer.render(scene,camera);
       stage.classList.add('v310-articulated');
