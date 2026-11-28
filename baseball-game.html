@@ -1235,7 +1235,7 @@ resolveCpuPitch=function(){if(v14CpuManagerBunt()&&strikeLoc())return v14CpuSacB
 const v14ShowUserHit=showHitThen;
 showHitThen=function(result,label='',b=lastBattedBall){v14SetReplay('user',result,label,b);return v14ShowUserHit(result,label,b)};
 const v14ShowCpuHit=showCpuHitThen;
-showCpuHitThen=function(result,label,b,batter){v14SetReplay('cpu',result,label,b);v14PendingDefense=null;if(v311Prefs.field==='manual'&&b&&['OUT','DP'].includes(result))v311Pending={result,label,b,batter,pre:[...bases],phase:'approach',timeout:0,meter:null};$('userPitchBtn').disabled=true;$('tacticsBtn').disabled=true;return v14ShowCpuHit(result,label,b,batter)};
+showCpuHitThen=function(result,label,b,batter){v14SetReplay('cpu',result,label,b);v14PendingDefense=null;if(v311Prefs.field==='manual'&&b&&['OUT','DP'].includes(result))v311Pending={result,label,b,batter,pre:[...bases],phase:'approach',timeout:0,meter:null};$('userPitchBtn').disabled=true;$('tacticsBtn').disabled=true;const ret=v14ShowCpuHit(result,label,b,batter);if(v311Pending){const cam=$('hitCam');cam.dataset.fieldPhase='approach';cam.dataset.fieldDistance=String(b.distance||100);cam.dataset.fieldSpray=String(b.spray||0);cam.dataset.fieldGround=b.launch<7?'1':'0'}return ret};
 
 // PA recorders and manual-defense gate.
 const v14CompleteUserPA=completePA;
@@ -1861,7 +1861,7 @@ function v311Clear(){
   v311StopPhase();v311Pending=null;v14PendingDefense=null;
   $('v311Defense')?.classList.add('hidden');
   $('gameApp')?.classList.remove('v311-field-active');
-  const cam=$('hitCam');if(cam){delete cam.dataset.fieldPhase;delete cam.dataset.fieldX;delete cam.dataset.fieldY;delete cam.dataset.fieldTarget}
+  const cam=$('hitCam');if(cam){delete cam.dataset.fieldPhase;delete cam.dataset.fieldX;delete cam.dataset.fieldY;delete cam.dataset.fieldTarget;delete cam.dataset.fieldDistance;delete cam.dataset.fieldSpray;delete cam.dataset.fieldGround;delete cam.dataset.fieldDouble}
 }
 function v311Grade(progress){
   const pos=1-Math.abs(2*clamp(progress,0,1)-1),error=Math.abs(pos-.5);
@@ -1904,7 +1904,7 @@ function v311Press(){
     c.timeout=gameSetTimeout(()=>v311Commit('error','傳球超時・打者安全上壘'),4500);return;
   }
   const target=c.target,dp=target==='2B'&&c.result==='DP'&&outs<2&&grade==='perfect'&&c.catchGrade==='perfect';
-  c.phase='relay';$('hitCam').dataset.fieldPhase='relay';$('hitCam').dataset.fieldTarget=target;
+  c.phase='relay';$('hitCam').dataset.fieldPhase='relay';$('hitCam').dataset.fieldTarget=target;$('hitCam').dataset.fieldDouble=dp?'1':'0';
   $('v311Title').textContent=dp?'二壘封殺，再傳一壘！':'傳球成功！';$('v311Hint').textContent='守備判定中';$('v311Meter').classList.add('hidden');$('v311Action').classList.add('hidden');
   c.timeout=gameSetTimeout(()=>v311Commit(dp?'double':'out',dp?'雙殺守備！':'傳'+v311Names[target]+'出局！'),dp?900:520);
 }
@@ -1940,6 +1940,6 @@ function v311Install(){
 v311Install();
 })();
 </script>
-<script type="module" src="baseball-3d.js?v=310"></script>
+<script type="module" src="baseball-3d.js?v=311"></script>
 </body>
 </html>
