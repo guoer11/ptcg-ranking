@@ -60,7 +60,7 @@ jobs:
                 start:()=>{const p=players.find(p=>!isLikelyPitcher(p));return v309Start(p,60)},
                 active:()=>v309Run?{remaining:v309Run.remaining,score:v309Run.score,hr:v309Run.hr,combo:v309Run.combo,inFlight:v309Run.inFlight,attempts:v309Run.attempts}:null,
                 released:()=>pitching&&pitchStart>0,
-                swing(){const old=battedBallMetrics;try{pitchStart=performance.now()-.89*pitchDuration;aimX=pitchTargetX;aimY=pitchTargetY;battedBallMetrics=()=>({distance:440,fence:400,exit:110,launch:30,spray:0,targetX:50,targetY:20,hang:4});document.getElementById('swingBtn').click()}finally{battedBallMetrics=old}},
+                swing(){const old=battedBallMetrics;try{const btn=document.getElementById('swingBtn');if(!pitching||pitchStart<=0||paused||btn.disabled)throw Error('Derby pitch not actionable '+JSON.stringify({pitching,pitchStart,paused,disabled:btn.disabled}));pitchStart=performance.now()-.89*pitchDuration;aimX=pitchTargetX;aimY=pitchTargetY;battedBallMetrics=()=>({distance:440,fence:400,exit:110,launch:30,spray:0,targetX:50,targetY:20,hang:4});btn.click();return {inFlight:v309Run.inFlight,score:v309Run.score,message:document.getElementById('message').textContent,lastSwingTouch}}finally{battedBallMetrics=old}},
                 miss:()=>{clearMotion();v309Miss('QA揮空')},
                 expire:()=>{v309Run.remaining=0;v309Clock()},
                 score:(r,b)=>v309ScoreHit(r,b)
@@ -85,6 +85,8 @@ jobs:
                   webgl:!!canvas?.getContext('webgl2')};
               });
               if(!value.canvas||value.width<200||value.height<100)throw Error('Invalid canvas: '+JSON.stringify(value));
+              await page.waitForFunction(()=>document.getElementById('scene').classList.contains('v310-articulated'),null,{timeout:10000});
+              console.log('V310 ARTICULATED RENDER PASS');
               const gameplay306=await page.evaluate(()=>{
                 const q=window.__qa306;
                 if(!q)throw Error('Missing v306 test hooks');
@@ -378,6 +380,7 @@ jobs:
 
               console.log('3D PITCH VIEW PASS',JSON.stringify(pitchView));
               // Use a fresh page for the real derby lifecycle, not synthetic inning state.
+              await page.close();
               const derby=await browser.newPage({viewport:{width:844,height:390},deviceScaleFactor:1});
               await derby.route('**/baseball-game.html',async route=>{
                 const response=await route.fetch();let body=await response.text();
@@ -385,20 +388,22 @@ jobs:
                   ready:()=>players.length>0,
                   active:()=>v309Run?{remaining:v309Run.remaining,score:v309Run.score,hr:v309Run.hr,combo:v309Run.combo,inFlight:v309Run.inFlight,attempts:v309Run.attempts}:null,
                   released:()=>pitching&&pitchStart>0,
-                  swing(){const old=battedBallMetrics;try{pitchStart=performance.now()-.89*pitchDuration;aimX=pitchTargetX;aimY=pitchTargetY;battedBallMetrics=()=>({distance:440,fence:400,exit:110,launch:30,spray:0,targetX:50,targetY:20,hang:4});document.getElementById('swingBtn').click()}finally{battedBallMetrics=old}},
+                  swing(){const old=battedBallMetrics;try{const btn=document.getElementById('swingBtn');if(!pitching||pitchStart<=0||paused||btn.disabled)throw Error('Derby pitch not actionable '+JSON.stringify({pitching,pitchStart,paused,disabled:btn.disabled}));pitchStart=performance.now()-.89*pitchDuration;aimX=pitchTargetX;aimY=pitchTargetY;battedBallMetrics=()=>({distance:440,fence:400,exit:110,launch:30,spray:0,targetX:50,targetY:20,hang:4});btn.click();return {inFlight:v309Run.inFlight,score:v309Run.score,message:document.getElementById('message').textContent,lastSwingTouch}}finally{battedBallMetrics=old}},
                   miss:()=>{clearMotion();v309Miss('QA揮空')},
                   expire:()=>{v309Run.remaining=0;v309Clock()},
                   score:(r,b)=>v309ScoreHit(r,b)
                 };v309Install();`);
                 await route.fulfill({response,body});
               });
+              await derby.bringToFront();
               await derby.goto('http://127.0.0.1:8999/baseball-game.html',{waitUntil:'domcontentloaded'});
               await derby.waitForFunction(()=>window.__qa309?.ready(),null,{timeout:20000});
+              await derby.waitForFunction(()=>!!document.getElementById('v309Launch'),null,{timeout:10000});
               const before=await derby.evaluate(()=>Object.fromEntries(Object.entries(localStorage).filter(([k])=>!k.includes('HomeRunDerby309'))));
               await derby.locator('#v309Launch').click();await derby.locator('#v309Seconds').selectOption('60');await derby.locator('#v309Start').click();
               await derby.waitForFunction(()=>window.__qa309.released(),null,{timeout:12000});
-              await derby.evaluate(()=>window.__qa309.swing());
-              await derby.waitForFunction(()=>window.__qa309.active()?.inFlight,null,{timeout:5000});
+              const firstSwing=await derby.evaluate(()=>window.__qa309.swing());
+              if(!firstSwing.inFlight)throw Error('Derby swing did not resolve: '+JSON.stringify(firstSwing));
               const first=await derby.evaluate(()=>window.__qa309.active());
               if(first.score!==10||first.hr!==1||first.combo!==1)throw Error('Derby first homer scoring '+JSON.stringify(first));
               await derby.waitForFunction(()=>document.getElementById('scene').classList.contains('v307-hr-tracking'),null,{timeout:12000});
