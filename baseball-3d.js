@@ -552,13 +552,50 @@
     opponentBatter.root.visible=pitchMode;
     catcher.root.visible=pitchMode;
   }
+  // V307: cinematic home-run camera driven by the game's actual hit animation.
+  const hrTrailGeometry = new T.BufferGeometry();
+  const hrTrailPositions = new Float32Array(21*3);
+  hrTrailGeometry.setAttribute('position',new T.BufferAttribute(hrTrailPositions,3));
+  const hrTrail = new T.Line(hrTrailGeometry,new T.LineBasicMaterial({color:0xffe4a1,transparent:true,opacity:.65,depthTest:false,depthWrite:false}));
+  hrTrail.frustumCulled=false;hrTrail.renderOrder=79;hrTrail.visible=false;scene.add(hrTrail);
+  const hrPoint=new T.Vector3(),hrSample=new T.Vector3();
+  let hrFlight=null;
+  function getHrFlight(hitMode){
+    if(!hitMode||!hitOverlay.classList.contains('hrMode')||!hitOverlay.dataset.hrDistance)return null;
+    const animation=flyballFigure.getAnimations()[0];
+    if(!animation||animation.currentTime===null)return null;
+    const duration=Number(animation.effect.getTiming().duration)||2900;
+    const progress=clamp(Number(animation.currentTime)/duration,0,1);
+    const angle=clamp(Number(hitOverlay.dataset.hrSpray)||0,-48,48)*PI/180;
+    const distance=Number(hitOverlay.dataset.hrDistance)||400;
+    const fence=Number(hitOverlay.dataset.hrFence)||400;
+    const radius=86*clamp(distance/fence,1.025,1.38);
+    const height=clamp((Number(hitOverlay.dataset.hrLaunch)||28)*.72,13,34);
+    return {progress,angle,radius,height};
+  }
+  function hrPosition(out,flight,t){
+    // A continuous arc from home plate to beyond the modeled outfield wall.
+    const q=clamp(t,0,1),travel=flight.radius*q;
+    return out.set(Math.sin(flight.angle)*travel,
+      1.45+Math.sin(PI*q)*flight.height+q*5.2,
+      -Math.cos(flight.angle)*travel);
+  }
   const targetPos = new T.Vector3();
   const targetLook = new T.Vector3();
   function setCameraMode(pitching, hitMode, snap = false) {
     const isPortrait=stage.clientHeight>stage.clientWidth;
     const left=stage.classList.contains('bat-left');
     const pitchLeft=stage.classList.contains('pitch-left');
-    if (hitMode) {
+    if (hrFlight) {
+      hrPosition(hrPoint,hrFlight,hrFlight.progress);
+      const p=hrFlight.progress,a=hrFlight.angle;
+      // Follow from behind the ball, gradually rising toward the fence.
+      const back=isPortrait?38:32,side=isPortrait?9:12;
+      targetPos.set(hrPoint.x-Math.sin(a)*back+Math.cos(a)*side,
+        Math.max(9,hrPoint.y+10),hrPoint.z+Math.cos(a)*back+Math.sin(a)*side);
+      targetLook.set(hrPoint.x+Math.sin(a)*7,Math.max(3,hrPoint.y-2),
+        hrPoint.z-Math.cos(a)*7);
+    } else if (hitMode) {
       targetPos.set(0, isPortrait?45:34, isPortrait?40:29);
       targetLook.set(0, 0, -36);
     } else if (pitching) {
@@ -569,7 +606,7 @@
       targetPos.set(left?.15:-.15, isPortrait?2.8:2.2, isPortrait?11:10);
       targetLook.set(0, 1.25, -18.4);
     }
-    camera.fov = hitMode ? (isPortrait?54:51) : (isPortrait?63:57);
+    camera.fov = hrFlight ? (isPortrait?59:54) : hitMode ? (isPortrait?54:51) : (isPortrait?63:57);
     camera.updateProjectionMatrix();
     if (snap || camera.position.length() < .1) camera.position.copy(targetPos);
     else camera.position.lerp(targetPos,.12);
@@ -623,6 +660,21 @@
     }
   }
   function renderBall(pitchMode, hitMode) {
+    hrTrail.visible=false;
+    if(hrFlight){
+      hrPosition(baseball.position,hrFlight,hrFlight.progress);
+      baseball.scale.setScalar(2.6);baseball.visible=true;
+      baseball.rotation.set(simClock*13,simClock*8,simClock*11);
+      pitchHalo.visible=true;pitchHalo.position.copy(baseball.position);pitchHalo.scale.setScalar(1.2);
+      const p=hrFlight.progress;
+      for(let i=0;i<21;i++){
+        hrPosition(hrSample,hrFlight,Math.max(0,p-.15*(1-i/20)));
+        hrTrailPositions.set([hrSample.x,hrSample.y,hrSample.z],i*3);
+      }
+      hrTrailGeometry.attributes.position.needsUpdate=true;hrTrail.visible=p>.015;
+      ballShadow.visible=false;
+      return;
+    }
     if (hitMode && flyballFigure) {
       const rect=flyballFigure.getBoundingClientRect();
       const box=hitOverlay.getBoundingClientRect();
@@ -688,7 +740,8 @@
       simClock+=dt;
       const pitchMode=pitchClass();
       const hitMode=!!hitOverlay && !hitOverlay.classList.contains('hidden');
-      const mode=(pitchMode?'pitch':'bat') + (hitMode?'-hit':'') +
+      hrFlight=getHrFlight(hitMode);
+      const mode=(pitchMode?'pitch':'bat') + (hrFlight?'-hr':hitMode?'-hit':'') +
         (stage.classList.contains('bat-left')?'-left':'');
       if (mode!==lastMode) {
         lastMode=mode;
@@ -722,8 +775,10 @@
           runners[i].torso.rotation.y=Math.sin(simClock*2+i)*.065;
         }
       }
-      setCameraMode(pitchMode,hitMode);
+      // Freeze camera while paused; the WAAPI ball animation is paused by the game.
+      if(!game.classList.contains('paused'))setCameraMode(pitchMode,hitMode);
       renderBall(pitchMode,hitMode);
+      stage.classList.toggle('v307-hr-tracking',!!hrFlight);
       renderer.render(scene,camera);
       if (!game.classList.contains('baseball-3d-ready')) {
         game.classList.add('baseball-3d-ready');
