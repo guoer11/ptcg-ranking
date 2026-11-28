@@ -55,6 +55,16 @@ jobs:
                 pause(value){setGamePaused(value)}
               };v306InstallMeter();`);
               body=body.replace('v308Install();', 'window.__qa308={line:v308Line,patterns:v308Patterns,prefs:v308Prefs,atmosphere:v308Atmosphere,noise:v308NoiseBuffer,stop:v308StopAudio};v308Install();');
+              body=body.replace('v309Install();', `window.__qa309={
+                ready:()=>players.length>0,
+                start:()=>{const p=players.find(p=>!isLikelyPitcher(p));return v309Start(p,60)},
+                active:()=>v309Run?{remaining:v309Run.remaining,score:v309Run.score,hr:v309Run.hr,combo:v309Run.combo,inFlight:v309Run.inFlight,attempts:v309Run.attempts}:null,
+                released:()=>pitching&&pitchStart>0,
+                swing(){const old=battedBallMetrics;try{pitchStart=performance.now()-.89*pitchDuration;aimX=pitchTargetX;aimY=pitchTargetY;battedBallMetrics=()=>({distance:440,fence:400,exit:110,launch:30,spray:0,targetX:50,targetY:20,hang:4});document.getElementById('swingBtn').click()}finally{battedBallMetrics=old}},
+                miss:()=>{clearMotion();v309Miss('QA揮空')},
+                expire:()=>{v309Run.remaining=0;v309Clock()},
+                score:(r,b)=>v309ScoreHit(r,b)
+              };v309Install();`);
               await route.fulfill({response,body});
             });
             await page.goto('http://127.0.0.1:8999/baseball-game.html',{waitUntil:'domcontentloaded'});
@@ -367,6 +377,47 @@ jobs:
                 throw Error('Half-break cinematic swing button hidden: '+JSON.stringify(breakState));
 
               console.log('3D PITCH VIEW PASS',JSON.stringify(pitchView));
+              // Use a fresh page for the real derby lifecycle, not synthetic inning state.
+              const derby=await browser.newPage({viewport:{width:844,height:390},deviceScaleFactor:1});
+              await derby.route('**/baseball-game.html',async route=>{
+                const response=await route.fetch();let body=await response.text();
+                body=body.replace('v309Install();', `window.__qa309={
+                  ready:()=>players.length>0,
+                  active:()=>v309Run?{remaining:v309Run.remaining,score:v309Run.score,hr:v309Run.hr,combo:v309Run.combo,inFlight:v309Run.inFlight,attempts:v309Run.attempts}:null,
+                  released:()=>pitching&&pitchStart>0,
+                  swing(){const old=battedBallMetrics;try{pitchStart=performance.now()-.89*pitchDuration;aimX=pitchTargetX;aimY=pitchTargetY;battedBallMetrics=()=>({distance:440,fence:400,exit:110,launch:30,spray:0,targetX:50,targetY:20,hang:4});document.getElementById('swingBtn').click()}finally{battedBallMetrics=old}},
+                  miss:()=>{clearMotion();v309Miss('QA揮空')},
+                  expire:()=>{v309Run.remaining=0;v309Clock()},
+                  score:(r,b)=>v309ScoreHit(r,b)
+                };v309Install();`);
+                await route.fulfill({response,body});
+              });
+              await derby.goto('http://127.0.0.1:8999/baseball-game.html',{waitUntil:'domcontentloaded'});
+              await derby.waitForFunction(()=>window.__qa309?.ready(),null,{timeout:20000});
+              const before=await derby.evaluate(()=>Object.fromEntries(Object.entries(localStorage).filter(([k])=>!k.includes('HomeRunDerby309'))));
+              await derby.locator('#v309Launch').click();await derby.locator('#v309Seconds').selectOption('60');await derby.locator('#v309Start').click();
+              await derby.waitForFunction(()=>window.__qa309.released(),null,{timeout:12000});
+              await derby.evaluate(()=>window.__qa309.swing());
+              await derby.waitForFunction(()=>window.__qa309.active()?.inFlight,null,{timeout:5000});
+              const first=await derby.evaluate(()=>window.__qa309.active());
+              if(first.score!==10||first.hr!==1||first.combo!==1)throw Error('Derby first homer scoring '+JSON.stringify(first));
+              await derby.waitForFunction(()=>document.getElementById('scene').classList.contains('v307-hr-tracking'),null,{timeout:12000});
+              await derby.screenshot({path:'baseball-3d-derby.png'});
+              await derby.waitForFunction(()=>window.__qa309.released()&&!window.__qa309.active()?.inFlight,null,{timeout:15000});
+              await derby.evaluate(()=>window.__qa309.swing());
+              const second=await derby.evaluate(()=>window.__qa309.active());
+              if(second.score!==21||second.combo!==2||second.hr!==2)throw Error('Derby combo scoring '+JSON.stringify(second));
+              await derby.waitForFunction(()=>!window.__qa309.active()?.inFlight,null,{timeout:15000});
+              await derby.evaluate(()=>{window.__qa309.miss();window.__qa309.expire()});
+              const final=await derby.evaluate(()=>{
+                const rec=JSON.parse(localStorage.getItem('cpblHomeRunDerby309')||'{}');
+                return {active:window.__qa309.active(),result:document.getElementById('v309ResultStats').textContent,records:Object.values(rec),save:Object.fromEntries(Object.entries(localStorage).filter(([k])=>!k.includes('HomeRunDerby309')))};
+              });
+              if(final.active||!final.result.includes('21 分')||final.records[0]?.score!==21||final.records[0]?.bestCombo!==2)throw Error('Derby final record '+JSON.stringify(final));
+              const changed=Object.keys(before).filter(k=>/live|save|stats|db/i.test(k)&&before[k]!==final.save[k]);
+              if(changed.length)throw Error('Derby modified official save: '+changed.join(','));
+              console.log('V309 DERBY PASS',JSON.stringify({first,second,result:final.result,records:final.records,changed}));
+              await derby.close();
               console.log('3D SMOKE PASS',JSON.stringify(value));
               if(errors.length)console.log('Browser errors:',errors.join(' | ').slice(0,1500));
             } catch(e){
@@ -388,4 +439,5 @@ jobs:
             baseball-3d-half-break.png
             baseball-3d-real-half-break.png
             baseball-3d-home-run.png
+            baseball-3d-derby.png
           if-no-files-found: ignore
