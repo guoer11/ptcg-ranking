@@ -717,8 +717,48 @@
       armHint.set(sign,-.4,.3);armTo(rig,i,handTarget,armHint);
     }
   }
+  // V311: visually follow the selected fielder and relay to the chosen base.
+  let fieldVisualPhase='',fieldVisualAt=0;
+  const fieldTarget=new T.Vector3(),fieldStart=new T.Vector3(),fieldEnd=new T.Vector3();
+  const fieldBases={'1B':[19.4,0,-19.4],'2B':[0,0,-38.8],'3B':[-19.4,0,-19.4],HOME:[0,0,0]};
+  function renderManualField(hitMode){
+    const phase=hitMode&&hitOverlay?.dataset.fieldPhase||'';
+    if(!phase){if(fieldVisualPhase)fielders.forEach((f,i)=>f.root.position.set(...pos[i]));fieldVisualPhase='';return false}
+    if(phase!==fieldVisualPhase){fieldVisualPhase=phase;fieldVisualAt=simClock}
+    const angle=clamp(Number(hitOverlay.dataset.fieldSpray)||0,-46,46)*PI/180;
+    const radius=clamp((Number(hitOverlay.dataset.fieldDistance)||100)*.215,5,83);
+    fieldTarget.set(Math.sin(angle)*radius,0,-Math.cos(angle)*radius);
+    let idx=0,best=Infinity;
+    for(let i=0;i<pos.length;i++){const d=(pos[i][0]-fieldTarget.x)**2+(pos[i][2]-fieldTarget.z)**2;if(d<best){best=d;idx=i}}
+    const rig=fielders[idx],a=flyballFigure?.getAnimations()[0];
+    const p=phase==='approach'?clamp(a?.effect.getComputedTiming().progress??0,0,1):1;
+    const runP=clamp(p*1.23,0,1);
+    rig.root.position.set(pos[idx][0]+(fieldTarget.x-pos[idx][0])*runP,0,pos[idx][2]+(fieldTarget.z-pos[idx][2])*runP);
+    rig.root.rotation.y=Math.atan2(fieldTarget.x-pos[idx][0],fieldTarget.z-pos[idx][2]);
+    fieldPose(rig,simClock*12,runP<1);
+    const ground=hitOverlay.dataset.fieldGround==='1';
+    if(phase==='approach'){
+      baseball.position.set(fieldTarget.x*p,ground?.18+Math.abs(Math.sin(p*PI*5))*.25:1+Math.sin(PI*p)*Math.min(22,radius*.28),fieldTarget.z*p);
+    }else if(phase==='relay'){
+      const key=hitOverlay.dataset.fieldTarget,base=fieldBases[key]||fieldBases['1B'];
+      fieldStart.copy(fieldTarget);fieldStart.y=1.35;fieldEnd.set(...base);fieldEnd.y=1.1;
+      const dp=hitOverlay.dataset.fieldDouble==='1',elapsed=simClock-fieldVisualAt;
+      let u=clamp(elapsed/(dp?.42:.46),0,1);
+      if(dp&&elapsed>.42){fieldStart.set(...fieldBases['2B']);fieldStart.y=1.1;fieldEnd.set(...fieldBases['1B']);fieldEnd.y=1.1;u=clamp((elapsed-.42)/.42,0,1)}
+      baseball.position.copy(fieldStart).lerp(fieldEnd,u);baseball.position.y+=Math.sin(PI*u)*2.3;
+      handTarget.set(.20,1.66,.35);armHint.set(1,.3,0);armTo(rig,1,handTarget,armHint);
+    }else{
+      baseball.position.copy(fieldTarget);baseball.position.y=ground?.65:1.8;
+      handTarget.set(-.22,ground?.93:1.83,.32);armHint.set(-1,.1,0);armTo(rig,0,handTarget,armHint);
+    }
+    baseball.visible=true;baseball.scale.setScalar(2.2);
+    pitchHalo.visible=true;pitchHalo.position.copy(baseball.position);pitchHalo.scale.setScalar(.95);
+    ballShadow.visible=true;ballShadow.position.set(baseball.position.x,-.01,baseball.position.z);
+    return true;
+  }
   function renderBall(pitchMode, hitMode) {
     hrTrail.visible=false;
+    if(renderManualField(hitMode))return;
     if(hrFlight){
       hrPosition(baseball.position,hrFlight,hrFlight.progress);
       baseball.scale.setScalar(2.6);baseball.visible=true;
