@@ -215,7 +215,7 @@ jobs:
           cmp family-notify.css _site/family-notify-2.5.0.css
           cp wcs-2027-standalone.js _site/wcs-2027-family-2.5.0.js
           cmp wcs-2027-standalone.js _site/wcs-2027-family-2.5.0.js
-          cp baseball-reference-ui.css baseball-3d.css baseball-3d.js _site/
+          cp baseball-reference-ui.css baseball-3d.css baseball-3d.js baseball-online.html _site/
           cp -R pitching-app _site/pitching-app
           cp assets/q-icons/*.webp _site/assets/q-icons/
           cp data/pairing-odds-3000442*.json _site/data/
