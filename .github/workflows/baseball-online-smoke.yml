@@ -1,0 +1,104 @@
+name: Smoke test baseball online beta
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'baseball-online.html'
+      - '.github/workflows/baseball-online-smoke.yml'
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --no-package-lock --ignore-scripts playwright-core@1.58.2
+      - name: Start local site
+        run: python3 -m http.server 8998 --bind 127.0.0.1 >/tmp/baseball-online-http.log 2>&1 &
+      - name: Verify two independent browser sessions against mocked RPC transport
+        run: |
+          node <<'JS'
+          const {chromium}=require('playwright-core');
+          const assert=require('node:assert/strict');
+          const fs=require('node:fs'),vm=require('node:vm');
+          const html=fs.readFileSync('baseball-online.html','utf8');
+          for(const m of html.matchAll(/<script>([\s\S]*?)<\/script>/g))new vm.Script(m[1]);
+          (async()=>{
+            const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+            let room=null,secret=null;const backups=new Map(),errors=[];
+            function handle(uid,op,args){
+              if(op==='rank')return [];
+              if(op==='resume')return room&&room.members.includes(uid)?state(uid):null;
+              if(op==='save_get')return backups.get(uid)||{revision:0};
+              if(op==='save_put'){assert.equal(args.revision,backups.get(uid)?.revision||0);const x={revision:args.revision+1,payload:args.payload,updated_at:new Date().toISOString()};backups.set(uid,x);return x;}
+              if(op==='create'){
+                room={code:'A1B2C3D4E5F6',host_name:args.name,guest_name:null,status:'waiting',rev:0,inning:1,half:0,outs:0,balls:0,strikes:0,bases:0,home_score:0,away_score:0,phase:'pitch',last_result:'等待好友',last_pitch:null,last_zone:null,winner_side:null,members:[uid]};
+                return state(uid);
+              }
+              if(op==='join'){assert.equal(args.code,room.code);room.members.push(uid);room.guest_name=args.name;room.status='playing';room.rev++;return state(uid);}
+              assert(room.members.includes(uid));
+              assert.equal(args.code,room.code);
+              if(op==='get')return state(uid);
+              assert.equal(args.rev,room.rev);
+              if(op==='pitch'){assert.equal(uid,room.members[0]);secret={pitch:args.pitch,zone:args.zone};room.phase='swing';room.last_result='等待打擊';}
+              else if(op==='swing'){assert.equal(uid,room.members[1]);assert.equal(args.swing,'take');room.phase='pitch';room.strikes++;room.last_result='好球';room.last_pitch=secret.pitch;room.last_zone=secret.zone;}
+              else if(op==='forfeit'){room.status='finished';room.winner_side=uid===room.members[0]?'away':'home';}
+              else throw Error(op);
+              room.rev++;return state(uid);
+            }
+            function state(uid){const {members,...data}=room;return {...data,me:members[0]===uid?'home':'away'};}
+            async function page(uid){
+              const ctx=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+              const p=await ctx.newPage();
+              p.on('pageerror',e=>errors.push(e.message));
+              p.on('dialog',d=>d.accept());
+              await p.exposeFunction('qaRpc',async(op,args)=>{try{return {data:handle(uid,op,args),error:null}}catch(e){return {data:null,error:{message:e.message}}}});
+              await p.route('**/supabase.js',route=>route.fulfill({contentType:'application/javascript',body:'window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{user:{id:"'+uid+'"}}}),onAuthStateChange:()=>({})},rpc:(name,body)=>window.qaRpc(body.op,body.args)})};'}));
+              await p.goto('http://127.0.0.1:8998/baseball-online.html');
+              await p.locator('#lobby').waitFor({state:'visible'});
+              return p;
+            }
+            try{
+              const host=await page('host'),guest=await page('guest');
+              await host.locator('#nickname').fill('主隊測試');
+              await host.locator('#create').click();
+              await host.locator('#roomCode').waitFor({state:'visible'});
+              await guest.locator('#nickname').fill('客隊測試');
+              await guest.locator('#joinCode').fill('A1B2C3D4E5F6');
+              await guest.locator('#join').click();
+              await guest.waitForFunction(()=>document.getElementById('turnTitle').textContent==='等待好友投球');
+              await host.waitForFunction(()=>document.getElementById('turnTitle').textContent==='輪到你投球');
+              await host.locator('[data-pitch="SL"]').click();
+              await host.locator('[data-zone="5"]').click();
+              await host.locator('#throw').click();
+              await guest.waitForFunction(()=>document.getElementById('turnTitle').textContent==='輪到你打擊');
+              assert.equal(await guest.locator('#lastBall').textContent(),'');
+              await guest.screenshot({path:'baseball-online-mobile.png'});
+              await guest.locator('[data-swing="take"]').click();
+              await host.waitForFunction(()=>document.getElementById('count').textContent.includes('S 1'));
+              assert.equal(await host.locator('#lastBall').textContent(),'上一球：滑球・5 號區');
+              await guest.reload();
+              await guest.waitForFunction(()=>document.getElementById('roomCode').textContent==='A1B2C3D4E5F6');
+              await guest.locator('#leaveRoom').click();
+              await host.waitForFunction(()=>document.getElementById('roomStatus').textContent.includes('勝利'));
+              await host.evaluate(()=>localStorage.setItem('cpblChallenge312',JSON.stringify({'profile:玩家1':{coins:100,xp:80}})));
+              await host.locator('#cloudSave').click();
+              await host.waitForFunction(()=>document.getElementById('notice').textContent==='雲端備份成功');
+              assert.equal(backups.get('host').payload.wallet.coins,100);
+              await guest.locator('#cloudLoad').click();
+              await guest.waitForFunction(()=>document.getElementById('cloudInfo').textContent==='尚未建立備份');
+              assert.deepEqual(errors,[]);
+              console.log('ONLINE UI PASS: separate browser sessions, create/join, pitch/swing, reconnect, forfeit, cloud backup UI and isolation (mock RPC)');
+            }finally{await browser.close()}
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: baseball-online-smoke
+          path: baseball-online-mobile.png
+          if-no-files-found: ignore
