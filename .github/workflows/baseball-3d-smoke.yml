@@ -49,6 +49,7 @@ jobs:
                 'window.__qaSetHalfMode=mode=>setHalfMode(mode);function setHalfMode(mode){');
               body=body.replace('function v144BeginHalfBreak(onFinish){',
                 'window.__qaBeginHalfBreak=cb=>v144BeginHalfBreak(cb);function v144BeginHalfBreak(onFinish){');
+              body=body.replace('v306InstallMeter();', 'window.__qa306={grade:v306SwingGrade,feedback:v306SwingFeedback,meter:v306MeterValue,accuracy:v306PitchAccuracy};v306InstallMeter();');
               await route.fulfill({response,body});
             });
             await page.goto('http://127.0.0.1:8999/baseball-game.html',{waitUntil:'domcontentloaded'});
@@ -69,6 +70,17 @@ jobs:
                   webgl:!!canvas?.getContext('webgl2')};
               });
               if(!value.canvas||value.width<200||value.height<100)throw Error('Invalid canvas: '+JSON.stringify(value));
+              const gameplay306=await page.evaluate(()=>{
+                const q=window.__qa306;
+                if(!q)throw Error('Missing v306 test hooks');
+                const grades=[q.grade(.89,.1).kind,q.grade(.83,.2).kind,q.grade(.75,.2).label,q.grade(.98,.2).label,q.grade(.89,.9).label];
+                q.feedback(.89,.1);
+                return {grades,feedback:document.getElementById('v306Feedback')?.textContent,meter:!!document.getElementById('v306PrecisionToggle'),defaultAccuracy:q.accuracy()};
+              });
+              if(JSON.stringify(gameplay306.grades)!==JSON.stringify(['perfect','good','稍早','稍晚','準星偏離'])||!gameplay306.feedback?.includes('PERFECT')||!gameplay306.meter||gameplay306.defaultAccuracy!==1)
+                throw Error('v306 feedback failed '+JSON.stringify(gameplay306));
+              console.log('V306 GAMEPLAY PASS',JSON.stringify(gameplay306));
+              await page.evaluate(()=>document.getElementById('v306Feedback').classList.add('hidden'));
               await page.screenshot({path:'baseball-3d-smoke.png'});
               await page.evaluate(()=>{
                 const game=document.getElementById('gameApp');
