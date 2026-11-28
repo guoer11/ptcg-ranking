@@ -99,10 +99,16 @@ jobs:
               if(hr.distance!=='420'||hr.duration!==2900||!hr.visible||!hr.text.includes('128.0 m')||hr.done!==0)
                 throw Error('V307 HR presentation failed '+JSON.stringify(hr));
               await page.evaluate(()=>window.__qa307.pause(true));
-              const time1=await page.evaluate(()=>document.getElementById('flyball').getAnimations()[0].currentTime);
+              // Web Animations pause is asynchronous: wait for its pending task to settle.
+              const time1=await page.evaluate(async()=>{
+                const a=document.getElementById('flyball').getAnimations()[0];
+                await a.ready;
+                if(a.playState!=='paused'||a.pending)throw Error('V307 animation not paused: '+a.playState);
+                return a.currentTime;
+              });
               await page.waitForTimeout(350);
               const time2=await page.evaluate(()=>document.getElementById('flyball').getAnimations()[0].currentTime);
-              if(Math.abs(time2-time1)>2)throw Error('V307 pause did not freeze ball');
+              if(Math.abs(time2-time1)>2)throw Error('V307 pause did not freeze ball: '+time1+' -> '+time2);
               await page.evaluate(()=>window.__qa307.pause(false));
               await page.waitForTimeout(650);
               await page.screenshot({path:'baseball-3d-home-run.png'});
