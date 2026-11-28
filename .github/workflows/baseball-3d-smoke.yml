@@ -437,6 +437,12 @@ jobs:
                   expire:()=>{v309Run.remaining=0;v309Clock()},
                   score:(r,b)=>v309ScoreHit(r,b)
                 };v309Install();`);
+                body=body.replace('v312Install();', `window.__qa312={
+                  open:v312Open,start:v312Start,load:()=>v312Load().x,event:v312Event,claim:v312Claim,day:v312Day,
+                  state:()=>({active:!!v312Run,inning,halfMode,userScore,cpuScore,outs,bases:bases.map(r=>r?.player?.name||null),ks:v312Run?.ks,playing}),
+                  k:()=>completeCpuPA('K','三振'),hr:()=>completePA('HR','全壘打','hold'),out:()=>completeCpuPA('OUT','出局'),
+                  abort:v312Restore,save:()=>{saveGameState();saveDb();v14SaveMeta();v15SaveLive();v15SaveProfile()}
+                };v312Install();`);
                 await route.fulfill({response,body});
               });
               await derby.bringToFront();
@@ -466,6 +472,40 @@ jobs:
               const changed=Object.keys(before).filter(k=>/live|save|stats|db/i.test(k)&&before[k]!==final.save[k]);
               if(changed.length)throw Error('Derby modified official save: '+changed.join(','));
               console.log('V309 DERBY PASS',JSON.stringify({first,second,result:final.result,records:final.records,changed}));
+              // Real late-inning scenarios; inject deterministic PA results only.
+              await derby.locator('#v309ResultClose').click();
+              await derby.locator('#v312Launch').click();
+              const dayBoundary=await derby.evaluate(()=>[window.__qa312.day(Date.parse('2026-11-28T15:59:59Z')),window.__qa312.day(Date.parse('2026-11-28T16:00:00Z'))]);
+              if(dayBoundary.join(',')!=='2026-11-28,2026-11-29')throw Error('V312 Taiwan day boundary');
+              const beforeScenario=await derby.evaluate(()=>Object.fromEntries(Object.entries(localStorage).filter(([k])=>!k.includes('Challenge312'))));
+              await derby.locator('#v312Scenarios .v312-task').filter({hasText:'九下絕地逆轉'}).locator('button').click();
+              const walk=await derby.evaluate(()=>window.__qa312.state());
+              if(!walk.active||walk.inning!==9||walk.halfMode!=='bat'||walk.userScore!==2||walk.cpuScore!==4||walk.bases.filter(Boolean).length!==2)throw Error('V312 walkoff start '+JSON.stringify(walk));
+              await derby.evaluate(()=>{window.__qa312.save();window.__qa312.hr()});
+              await derby.waitForFunction(()=>!window.__qa312.state().active);
+              const reward=await derby.evaluate(()=>window.__qa312.load());
+              if(reward.coins!==160||reward.scenarios.walkoff.clears!==1)throw Error('V312 walkoff reward '+JSON.stringify(reward));
+              await derby.locator('#v312Back').click();
+              const claims=await derby.evaluate(()=>[window.__qa312.claim('clear'),window.__qa312.claim('clear')]);
+              if(claims.join(',')!=='true,false')throw Error('V312 duplicate claim '+claims);
+              await derby.locator('#v312Scenarios .v312-task').filter({hasText:'三振秀'}).locator('button').click();
+              await derby.evaluate(()=>{window.__qa312.k();window.__qa312.k();window.__qa312.k()});
+              await derby.waitForFunction(()=>!window.__qa312.state().active);
+              const afterK=await derby.evaluate(()=>window.__qa312.load());
+              if(afterK.coins!==480||afterK.scenarios.strike.clears!==1)throw Error('V312 strike challenge '+JSON.stringify(afterK));
+              await derby.locator('#v312Back').click();
+              await derby.locator('#v312Scenarios .v312-task').filter({hasText:'滿壘危機'}).locator('button').click();
+              const full=await derby.evaluate(()=>window.__qa312.state());
+              if(full.bases.filter(Boolean).length!==3||full.halfMode!=='pitch')throw Error('V312 full bases '+JSON.stringify(full));
+              await derby.evaluate(()=>{window.__qa312.out();window.__qa312.out();window.__qa312.out()});
+              await derby.waitForFunction(()=>!window.__qa312.state().active);
+              const after=await derby.evaluate(()=>({state:window.__qa312.load(),save:Object.fromEntries(Object.entries(localStorage).filter(([k])=>!k.includes('Challenge312')))}));
+              if(after.state.coins!==680||after.state.scenarios.hold.clears!==1)throw Error('V312 hold challenge '+JSON.stringify(after.state));
+              const scenarioChanged=[...new Set([...Object.keys(beforeScenario),...Object.keys(after.save)])].filter(k=>/live|save|stats|db|lineup|position|season|profile/i.test(k)&&beforeScenario[k]!==after.save[k]);
+              if(scenarioChanged.length)throw Error('V312 official records changed: '+scenarioChanged.join(','));
+              await derby.locator('#v312Back').click();
+              await derby.screenshot({path:'baseball-3d-challenge-center.png'});
+              console.log('V312 CHALLENGES PASS',JSON.stringify({walk,dayBoundary,claims,full,wallet:after.state.coins,scenarioChanged}));
               await derby.close();
               console.log('3D SMOKE PASS',JSON.stringify(value));
               if(errors.length)console.log('Browser errors:',errors.join(' | ').slice(0,1500));
@@ -490,4 +530,5 @@ jobs:
             baseball-3d-home-run.png
             baseball-3d-derby.png
             baseball-3d-fielding.png
+            baseball-3d-challenge-center.png
           if-no-files-found: ignore
