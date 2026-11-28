@@ -657,6 +657,19 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
   }
 }
 </style>
+<style id="v306-feedback-style">
+#gameApp .v306-feedback{position:absolute;z-index:115;left:50%;top:27%;transform:translateX(-50%);pointer-events:none;text-align:center;white-space:nowrap;padding:6px 14px;background:#102b30ed;border:1px solid #acc9c6;border-radius:12px;box-shadow:0 3px 12px #0007;color:#fff}
+#gameApp .v306-feedback b{display:block;font-size:21px;line-height:1.15}#gameApp .v306-feedback span{display:block;font-size:11px;margin-top:3px}#gameApp .v306-feedback.perfect{color:#ffe17b;border-color:#ffd56b}#gameApp .v306-feedback.good{color:#a0ffbd}#gameApp .v306-feedback.bad{color:#ffb1a7}
+#v306PitchMeter{position:absolute;z-index:114;right:10px;bottom:7px;width:140px;padding:5px;background:#102b30e8;border:1px solid #789794;border-radius:8px;text-align:center;pointer-events:auto}
+#v306PrecisionToggle{width:100%;min-height:30px;border:1px solid #779896;border-radius:6px;background:#153e42;color:white;font-size:11px;font-weight:800}
+#v306PitchMeter .v306-meter-track,#v306PitchMeter small{display:none}
+#v306PitchMeter.enabled .v306-meter-track{display:block;position:relative;height:12px;background:#ad6850;border-radius:5px;margin:6px 0;overflow:hidden}
+#v306PitchMeter .v306-meter-track i{position:absolute;left:42.5%;width:15%;height:100%;background:#70e29a}
+#v306PitchMeter .v306-meter-track b{position:absolute;left:0;width:4px;height:100%;background:white;box-shadow:0 0 2px black;transform:translateX(-50%)}
+#v306PitchMeter.enabled small{display:block;font-size:9px;color:#fff}
+@media(orientation:landscape){#v306PitchMeter{right:calc(122px + env(safe-area-inset-right));bottom:calc(20px + env(safe-area-inset-bottom));width:120px}#gameApp .v306-feedback{top:25%;}}
+@media(orientation:portrait){#v306PitchMeter{bottom:12px;right:10px}}
+</style>
 </head>
 <body>
 <div id="setupApp" class="app">
@@ -905,11 +918,11 @@ function poisson(lambda){let L=Math.exp(-lambda),k=0,p=1;do{k++;p*=Math.random()
 function simulateCpu(first=false){const off=teamOps(opponent),pr=currentPitcherRatings(userPitcher),fat=pitcherFatigue(userPitcher),def=defenseRating(),skill=(pr.control*.36+pr.break*.32+pr.velo*.20+pr.stamina*.12)/100;let exp=.48+(off-.68)*2.6+(0.72-skill)*.95+(70-def)*.012+fat*.55;exp=clamp(exp,.12,1.7);const runs=clamp(poisson(exp),0,6);cpuScore+=runs;userPitcher.pitches+=Math.round(11+rand(2,8)+runs*4);userPitcher.innings++;updateBoard();const fatNow=pitcherFatigue(userPitcher);if(inning===9&&userScore>cpuScore)return endGame('比賽勝利！');setMsg(inning+'局下',`${teams[opponent].short} 本局 ${runs} 分・${userPitcher.player.name} ${userPitcher.pitches} 球${fatNow>.6?'（投手疲勞）':''}`,'');showIntro();schedulePitch(first?950:1150)}
 function cpuBattingOrder(){const a=offensePlayers(opponent);const eligible=a.filter(p=>(num(p.stats?.PA)||0)>=20);const src=eligible.length>=9?eligible:a;return [...src].sort((x,y)=>{const xp=num(x.stats?.PA)||0,yp=num(y.stats?.PA)||0,xo=num(x.stats?.OPS)||0,yo=num(y.stats?.OPS)||0;return(yo*0.72+Math.min(yp,350)/350*.28)-(xo*0.72+Math.min(xp,350)/350*.28)}).slice(0,9)}
 function currentCpuBatter(){const a=cpuBattingOrder();return a[cpuBatIndex%Math.max(1,a.length)]}
-function setHalfMode(mode){halfMode=mode;const pitch=mode==='pitch';const sc=$('scene'),pp=$('pitchModePanel');if(pitch&&sc&&pp&&pp.parentElement!==sc)sc.appendChild(pp);$('gameApp').classList.toggle('pitch-ui-top',pitch);$('scene').classList.toggle('user-pitching',pitch);$('pitchModePanel').classList.toggle('hidden',!pitch);$('userPitchBtn').classList.toggle('hidden',!pitch);$('swingBtn').classList.toggle('hidden',pitch);$('swingBtn').disabled=pitch;$('userPitchBtn').disabled=!pitch;$('pitchInfo').textContent=pitch?'選球種並瞄準':'準備投球';if(pitch)renderUserPitchControls()}
+function setHalfMode(mode){$('v306Feedback')?.classList.add('hidden');halfMode=mode;const pitch=mode==='pitch';const sc=$('scene'),pp=$('pitchModePanel');if(pitch&&sc&&pp&&pp.parentElement!==sc)sc.appendChild(pp);$('gameApp').classList.toggle('pitch-ui-top',pitch);$('scene').classList.toggle('user-pitching',pitch);$('pitchModePanel').classList.toggle('hidden',!pitch);$('userPitchBtn').classList.toggle('hidden',!pitch);$('swingBtn').classList.toggle('hidden',pitch);$('swingBtn').disabled=pitch;$('userPitchBtn').disabled=!pitch;$('pitchInfo').textContent=pitch?'選球種並瞄準':'準備投球';if(pitch)renderUserPitchControls()}
 function renderUserPitchControls(){if(!userPitcher)return;const pr=currentPitcherRatings(userPitcher),rep=pr.repertoire||['FF'];if(!rep.includes(selectedUserPitch))selectedUserPitch=rep[0];$('pitchTypeButtons').innerHTML=rep.map(code=>{const p=basePitchTypes[code],m=pitchMastery(userPitcher.player,code);return p?`<button class="pitch-type ${selectedUserPitch===code?'active':''}" data-user-pitch="${code}"><span>${p.n}</span><b class="pitch-grade">${m.grade}</b></button>`:''}).join('');qsa('[data-user-pitch]').forEach(b=>b.onclick=()=>{selectedUserPitch=b.dataset.userPitch;renderUserPitchControls()});const read=cpuReadBonus(currentCpuBatter(),selectedUserPitch,aimX,aimY);$('userPitcherLabel').textContent=`${userPitcher.player.name}・${userPitcher.role}｜${rep.length}種球・${pr.repertoireSource||'遊戲模型'}`;$('cpuBatterLabel').textContent=`${currentCpuBatter()?.name||'—'}｜${userPitcher.pitches}球${read>.07?'・打者開始讀配球':''}`;const fat=pitcherFatigue(userPitcher);$('userPitchBtn').disabled=pitching;$('userPitchBtn').textContent=fat>.82?'投球（疲勞）':'投球！';renderPitchDefenseActions()}
 function startPitchHalf(first=false){clearMotion();offenseCall='normal';updateOffenseCallUi();setHalfMode('pitch');outs=0;balls=strikes=0;bases=[null,null,null];aimX=aimY=.5;$('aim').style.left='50%';$('aim').style.top='50%';updateBoard();showIntro();setMsg(inning+'局上','你來投球・'+userPitcher.player.name+(first?' 先發登板':''),'');renderUserPitchControls();$('userPitchBtn').disabled=false}
 function startBatHalf(){clearMotion();offenseCall='normal';setHalfMode('bat');outs=0;balls=strikes=0;bases=[null,null,null];aimX=aimY=.5;$('aim').style.left='50%';$('aim').style.top='50%';updateBoard();setMsg(inning+'局下','輪到你進攻','');showIntro();updateOffenseCallUi();saveGameState();schedulePitch(900)}
-function userThrowPitch(){if(paused||!playing||halfMode!=='pitch'||pitching||!userPitcher)return;if(maybeCpuSteal())return;const pr=currentPitcherRatings(userPitcher),fat=pitcherFatigue(userPitcher),code=selectedUserPitch,pt=basePitchTypes[code]||basePitchTypes.FF,m=pitchMastery(userPitcher.player,code);lastPitch=pt.n;const fast=136+pr.velo*.22-fat*5;lastSpeed=Math.round(fast+pt.delta+rand(-1.6,1.6)+((code==='FF'||code==='SI')?(m.score-72)*.025:0));pitchDuration=clamp(720+(150-lastSpeed)*3.5,680,930);const missBase=clamp((100-pr.control)/290+fat*.13,.018,.22),miss=missBase*clamp(1.13-(m.score-55)*.0048,.70,1.05);pitchTargetX=clamp(aimX+rand(-miss,miss),-.30,1.30);pitchTargetY=clamp(aimY+rand(-miss,miss),-.30,1.30);const breakScale=(.65+pr.break/100)*(.82+m.score/310);pitchCurve=(pitchTargetX<.5?-1:1)*pt.c*breakScale;pitchDrop=pt.drop*breakScale;currentPitchLogEntry={code,pitch:pt.n,batter:currentCpuBatter()?.name||'—',x:pitchTargetX,y:pitchTargetY,speed:lastSpeed,result:''};pitchStart=0;pitching=true;userPitcher.pitches++;$('userPitchBtn').disabled=true;$('tacticsBtn').disabled=true;$('pitchInfo').textContent=lastPitch+' '+lastSpeed+' km/h・'+m.grade+'級';const pitcher=$('pitcher');pitcher.classList.remove('windup','release');void pitcher.offsetWidth;pitcher.classList.add('windup');sfx('pitch');timer=gameSetTimeout(()=>{pitcher.classList.remove('windup');pitcher.classList.add('release');pitchStart=performance.now();$('ball').style.display='block';$('ballShadow').style.display='block';raf=requestAnimationFrame(animatePitch)},430)}
+function userThrowPitch(){if(paused||!playing||halfMode!=='pitch'||pitching||!userPitcher||outs>=3)return;if(maybeCpuSteal())return;const v306Accuracy=v306PitchAccuracy();const pr=currentPitcherRatings(userPitcher),fat=pitcherFatigue(userPitcher),code=selectedUserPitch,pt=basePitchTypes[code]||basePitchTypes.FF,m=pitchMastery(userPitcher.player,code);lastPitch=pt.n;const fast=136+pr.velo*.22-fat*5;lastSpeed=Math.round(fast+pt.delta+rand(-1.6,1.6)+((code==='FF'||code==='SI')?(m.score-72)*.025:0));pitchDuration=clamp(720+(150-lastSpeed)*3.5,680,930);const missBase=clamp((100-pr.control)/290+fat*.13,.018,.22),miss=missBase*clamp(1.13-(m.score-55)*.0048,.70,1.05)*v306Accuracy;pitchTargetX=clamp(aimX+rand(-miss,miss),-.30,1.30);pitchTargetY=clamp(aimY+rand(-miss,miss),-.30,1.30);const breakScale=(.65+pr.break/100)*(.82+m.score/310);pitchCurve=(pitchTargetX<.5?-1:1)*pt.c*breakScale;pitchDrop=pt.drop*breakScale;currentPitchLogEntry={code,pitch:pt.n,batter:currentCpuBatter()?.name||'—',x:pitchTargetX,y:pitchTargetY,speed:lastSpeed,result:''};pitchStart=0;pitching=true;userPitcher.pitches++;$('userPitchBtn').disabled=true;$('tacticsBtn').disabled=true;$('pitchInfo').textContent=lastPitch+' '+lastSpeed+' km/h・'+m.grade+'級';const pitcher=$('pitcher');pitcher.classList.remove('windup','release');void pitcher.offsetWidth;pitcher.classList.add('windup');sfx('pitch');timer=gameSetTimeout(()=>{pitcher.classList.remove('windup');pitcher.classList.add('release');pitchStart=performance.now();$('ball').style.display='block';$('ballShadow').style.display='block';raf=requestAnimationFrame(animatePitch)},430)}
 function cpuTakeOrSwing(batter){const r=gameRatings(batter),inZone=strikeLoc(),edge=Math.min(Math.abs(pitchTargetX-.5),Math.abs(pitchTargetY-.5)),eye=r.eye||65,read=cpuReadBonus(batter,selectedUserPitch,pitchTargetX,pitchTargetY);let swingProb=inZone?clamp(.70+(strikes===2?.14:0)-edge*.08+read*.55,.58,.97):clamp(.30-(eye-60)*.003+(strikes===2?.09:0)+read*.28,.10,.55);return Math.random()<swingProb}
 function cpuBattedMetrics(batter,q){const r=gameRatings(batter),pow=(r.power-55)/45;const exit=clamp(62+q*42+pow*8+rand(-5,5),48,116),launch=clamp(rand(-10,34)+pow*7+(q-.55)*12,-25,48),spray=clamp(rand(-43,43)+(pitchTargetX-.5)*10,-50,50);let distance;if(launch<=2)distance=clamp(35+exit*1.15+launch*1.5,25,175);else{const v=exit*.44704,rad=launch*Math.PI/180;distance=(v*v*Math.sin(2*rad)/9.81)*3.28084*.68*currentPark().carry+rand(-10,10);distance=clamp(distance,45,485)}const hang=launch>5?clamp(.6+launch*.06+(exit-78)*.01,.7,4.6):clamp(.45+distance/200,.45,1.5),x=clamp(50+spray/50*35,10,90),y=clamp(80-(distance/500)*69,8,76);return{exit,launch,spray,distance,hang,targetX:x,targetY:y,fence:fenceDistance(spray)}}
 function cpuBallOutcome(batter,q,b){const s=batter.stats||{},avg=num(s.AVG)??.255,slg=num(s.SLG)??.390,hr=num(s.HR)||0,pa=Math.max(1,num(s.PA)||1),def=defenseRating();if(b.launch<7&&bases[0]&&outs<2){const dp=clamp(.31+(def-68)*.006-(gameRatings(batter).speed-65)*.003,.14,.62);if(Math.random()<dp)return{result:'DP',label:'內野滾地雙殺'}}let hit=clamp(avg+(q-.55)*.18-(def-68)*.0022,.12,.47);if(Math.random()>hit)return{result:'OUT',label:b.launch<7?'內野滾地出局':b.launch>24?'外野高飛球接殺':'平飛球出局'};const hrp=clamp((hr/pa)*2.1+Math.max(0,slg-.43)*.12+Math.max(0,q-.72)*.08,.005,.17);if(b.launch>13&&b.launch<42&&b.distance>b.fence*.94&&Math.random()<Math.max(hrp,.08))return{result:'HR',label:'對手全壘打'};const extra=clamp((slg-avg)*.60+.04,.08,.30),r=Math.random();if(r<extra*.10&&gameRatings(batter).speed>75)return{result:'3B',label:'對手三壘安打'};if(r<extra)return{result:'2B',label:'對手二壘安打'};return{result:'1B',label:'對手安打'}}
@@ -972,7 +985,62 @@ raf=requestAnimationFrame(animatePitch)
 function strikeLoc(){return pitchTargetX>=0&&pitchTargetX<=1&&pitchTargetY>=0&&pitchTargetY<=1}
 function takePitch(){sfx('catch');const inZone=strikeLoc();plateReceive(inZone?'strike':'ball');if(inZone){strikes++;setMsg('好球！',lastPitch+' '+lastSpeed+' km/h','bad');if(strikes>=3)return finishPA('K')}else{balls++;setMsg('壞球',lastPitch+' '+lastSpeed+' km/h','');if(balls>=4)return finishPA('BB')}updateBoard();saveGameState();if(offenseCall==='hitrun'){const st=attemptUserSteal(true);offenseCall='normal';updateOffenseCallUi();if(st.ended)return}maybeCpuPitchChange();schedulePitch(820)}
 function buntSwing(){if(paused||halfMode!=='bat'||!playing||!pitching)return;const p=currentPlayer(),s=currentStat(),t=clamp((performance.now()-pitchStart)/pitchDuration,0,1),timingErr=Math.abs(t-.89),aimErr=Math.hypot(aimX-pitchTargetX,aimY-pitchTargetY);pitching=false;$('tacticsBtn').disabled=false;if(raf)cancelAnimationFrame(raf);$('ball').style.display='none';$('ballShadow').style.display='none';if(timingErr>.25||aimErr>.76||Math.random()<.10){plateReceive('strike');if(strikes>=2){offenseCall='normal';updateOffenseCallUi();return finishPA('K')}strikes++;setMsg('短打落空／界外','短打失敗，記一好球','bad');updateBoard();saveGameState();return schedulePitch(820)}const speed=gameRatings(p).speed,hitChance=clamp(.08+(speed-60)*.004+(aimErr<.24?.05:0),.05,.24);if(Math.random()<hitChance){offenseCall='normal';updateOffenseCallUi();lastBattedBall={exit:clamp(55+speed*.2+rand(-3,3),55,78),launch:rand(-8,2),spray:rand(-26,26),distance:rand(35,90),hang:.65,targetX:rand(37,63),targetY:rand(61,74),fence:330};sfx('bat');return showHitThen('1B','短打安打',lastBattedBall)}const pre=[...bases];let runs=0;if(pre[2])runs++;bases=[null,pre[0],pre[1]];s.PA++;if(!pre.some(Boolean))s.AB++;s.RBI+=runs;userScore+=runs;outs++;batIndex=(batIndex+1)%9;balls=strikes=0;offenseCall='normal';updateOffenseCallUi();setMsg('犧牲短打成功',`${p.name} 推進跑者${runs?'・送回 '+runs+' 分':''}`,'good');updateBoard();saveDb();saveGameState();if(inning===9&&userScore>cpuScore)return endGame('再見勝！');if(outs>=3)return endHalf();showIntro();schedulePitch(1050)}
-function swing(){if(paused||halfMode!=='bat'||!playing||!pitching)return;if(offenseCall==='bunt')return buntSwing();const wasHitRun=offenseCall==='hitrun',batter=$('batter'),bat=$('bat');batter.classList.add('swing');bat.classList.add('swing');gameSetTimeout(()=>{batter.classList.remove('swing');bat.classList.remove('swing')},240);const t=clamp((performance.now()-pitchStart)/pitchDuration,0,1),timingErr=Math.abs(t-.89),aimErr=Math.hypot(aimX-pitchTargetX,aimY-pitchTargetY);pitching=false;$('tacticsBtn').disabled=false;if(raf)cancelAnimationFrame(raf);$('ball').style.display='none';$('ballShadow').style.display='none';if(timingErr>.23||aimErr>.72){plateReceive('strike');strikes++;setMsg('揮空！','時機或準星位置沒對上','bad');sfx('out');if(wasHitRun){const st=attemptUserSteal(true);offenseCall='normal';updateOffenseCallUi();if(st.ended)return}if(strikes>=3)return finishPA('K');updateBoard();saveGameState();return schedulePitch(820)}const tq=clamp(1-timingErr/.20,0,1),aq=clamp(1-aimErr/.56,0,1),contact=tq*.58+aq*.42;resolvePhysics(contact,t,aimErr)}
+function swing(){if(paused||halfMode!=='bat'||!playing||!pitching||pitchStart<=0)return;if(offenseCall==='bunt')return buntSwing();const wasHitRun=offenseCall==='hitrun',batter=$('batter'),bat=$('bat');batter.classList.add('swing');bat.classList.add('swing');gameSetTimeout(()=>{batter.classList.remove('swing');bat.classList.remove('swing')},240);const t=clamp((performance.now()-pitchStart)/pitchDuration,0,1),timingErr=Math.abs(t-.89),aimErr=Math.hypot(aimX-pitchTargetX,aimY-pitchTargetY);v306SwingFeedback(t,aimErr);pitching=false;$('tacticsBtn').disabled=false;if(raf)cancelAnimationFrame(raf);$('ball').style.display='none';$('ballShadow').style.display='none';if(timingErr>.23||aimErr>.72){plateReceive('strike');strikes++;setMsg('揮空！','時機或準星位置沒對上','bad');sfx('out');if(wasHitRun){const st=attemptUserSteal(true);offenseCall='normal';updateOffenseCallUi();if(st.ended)return}if(strikes>=3)return finishPA('K');updateBoard();saveGameState();return schedulePitch(820)}const tq=clamp(1-timingErr/.20,0,1),aq=clamp(1-aimErr/.56,0,1),contact=tq*.58+aq*.42;resolvePhysics(contact,t,aimErr)}
+/* V306: timing feedback and optional precision pitching */
+function v306SwingGrade(t,aimErr){
+  const e=t-.89,a=Math.abs(e);
+  if(aimErr>.72)return {label:'準星偏離',sub:'沒有對準來球',kind:'bad'};
+  if(a<=.045&&aimErr<=.18)return {label:'PERFECT!',sub:'完美擊球',kind:'perfect'};
+  if(a<=.075)return {label:'GOOD',sub:aimErr>.32?'時機良好・準星略偏':'時機良好',kind:'good'};
+  if(a<=.15)return {label:e<0?'稍早':'稍晚',sub:'再調整揮棒時機',kind:'normal'};
+  return {label:e<0?'太早':'太晚',sub:'留意球進入本壘的時機',kind:'bad'};
+}
+let v306FeedbackTimer=0;
+function v306Feedback(label,sub,kind){
+  let el=$('v306Feedback');
+  if(!el){el=document.createElement('div');el.id='v306Feedback';el.setAttribute('role','status');$('gameApp').appendChild(el)}
+  el.className='v306-feedback '+kind;
+  el.replaceChildren();
+  const b=document.createElement('b'),sm=document.createElement('span');
+  b.textContent=label;sm.textContent=sub;el.append(b,sm);
+  if(v306FeedbackTimer)gameClearTimeout(v306FeedbackTimer);
+  v306FeedbackTimer=gameSetTimeout(()=>{el.classList.add('hidden');v306FeedbackTimer=0},1250);
+}
+function v306SwingFeedback(t,aimErr){
+  const g=v306SwingGrade(t,aimErr);v306Feedback(g.label,g.sub,g.kind);
+  if(g.kind==='perfect'){
+    try{tone(520,.09,'triangle',.045);tone(780,.13,'triangle',.035,.07);if(v15Prefs.haptics&&navigator.vibrate)navigator.vibrate([18,30,22])}catch{}
+  }
+}
+let v306Precision=localStorage.getItem('cpblPrecision306')==='1',v306MeterEpoch=performance.now(),v306MeterPausedAt=0;
+function v306MeterValue(now){
+  const phase=((now-v306MeterEpoch)%1500+1500)%1500/1500;
+  return 1-Math.abs(2*phase-1);
+}
+function v306PitchAccuracy(){
+  if(!v306Precision)return 1;
+  const error=Math.abs(v306MeterValue(performance.now())-.5);
+  if(error<=.075){v306Feedback('PERFECT!','精準投球', 'perfect');return .52}
+  if(error<=.18){v306Feedback('GOOD','控球良好','good');return .8}
+  v306Feedback('失準','控球誤差增加','bad');return 1.55;
+}
+function v306InstallMeter(){
+  if($('v306PitchMeter'))return;
+  const el=document.createElement('div');el.id='v306PitchMeter';
+  el.innerHTML='<button type="button" id="v306PrecisionToggle"></button><div class="v306-meter-track" aria-hidden="true"><i></i><b></b></div><small>游標進入綠區時按投球</small>';
+  $('scene').appendChild(el);
+  const toggle=$('v306PrecisionToggle'),cursor=el.querySelector('.v306-meter-track b');
+  const sync=()=>{toggle.textContent=v306Precision?'精準投球：開':'精準投球：關';toggle.setAttribute('aria-pressed',String(v306Precision));el.classList.toggle('enabled',v306Precision)};
+  toggle.addEventListener('click',()=>{if(paused||pitching||!playing||halfMode!=='pitch'||outs>=3)return;v306Precision=!v306Precision;localStorage.setItem('cpblPrecision306',v306Precision?'1':'0');v306MeterEpoch=performance.now();sync()});sync();
+  const tick=now=>{
+    const show=playing&&halfMode==='pitch'&&outs<3;
+    el.classList.toggle('hidden',!show);
+    if(paused){if(!v306MeterPausedAt)v306MeterPausedAt=now}else if(v306MeterPausedAt){v306MeterEpoch+=now-v306MeterPausedAt;v306MeterPausedAt=0}
+    if(show&&v306Precision&&!paused&&!pitching)cursor.style.left=(v306MeterValue(now)*100)+'%';
+    toggle.disabled=paused||pitching;
+    requestAnimationFrame(tick);
+  };requestAnimationFrame(tick);
+}
 function fenceDistance(spray){const p=currentPark(),x=clamp(spray,-45,45);if(x<0){const t=(x+45)/45;return p.lf+(p.cf-p.lf)*t}else{const t=x/45;return p.cf+(p.rf-p.cf)*t}}
 function battedBallMetrics(contact,timing,aimErr){const r=gameRatings(currentPlayer()),pow=(r.power-50)/50;const exit=clamp(54+contact*48+pow*8+rand(-4.5,4.5),48,119);const launch=clamp(-15+contact*45+(0.5-aimY)*19+rand(-12,12),-28,50);const spray=clamp((timing-.89)*155+(aimX-.5)*50+rand(-7,7),-58,58);let dist;if(launch<=0)dist=clamp(28+exit*1.25+launch*2,20,165);else{const v=exit*.44704,rad=launch*Math.PI/180;dist=(v*v*Math.sin(2*rad)/9.81)*3.28084*.70*currentPark().carry;dist*=clamp(1-(Math.max(0,launch-36)*.015),.75,1);dist+=rand(-10,10);dist=clamp(dist,35,510)}const hang=launch>5?clamp(.55+launch*.065+(exit-75)*.012,.7,4.8):clamp(.42+dist/185,.45,1.55);const x=clamp(50+spray/50*35,10,90),y=clamp(80-(dist/500)*69,8,76);return{exit,launch,spray,distance:dist,hang,targetX:x,targetY:y,fence:fenceDistance(spray)}}
 function physicsOutcome(b){if(Math.abs(b.spray)>49)return{result:'FOUL',label:'界外球'};if(b.launch>14&&b.launch<43&&b.distance>b.fence)return{result:'HR',label:'全壘打'};const def=cpuDefenseRating(),arm=cpuArmRating(),gap=Math.abs(Math.abs(b.spray)-23),r=Math.random();if(b.launch<7){const outProb=clamp(.79+(def-68)*.006-(b.exit-82)*.008-gap*.002,.22,.92);if(bases[0]&&outs<2&&offenseCall!=='hitrun'&&r<outProb&&Math.random()<clamp(.34+(def-68)*.005-(gameRatings(currentPlayer()).speed-65)*.0025,.16,.58))return{result:'DP',label:'滾地球形成雙殺'};if(r<outProb)return{result:'OUT',label:b.exit>98?'強勁滾地球刺殺':'內野滾地出局'};if(b.distance>150&&gameRatings(currentPlayer()).speed>82&&Math.random()<.16)return{result:'2B',label:'穿越內野形成二壘打'};return{result:'1B',label:'穿越安打'}}const catchProb=clamp(.30+(b.hang-1.5)*.19+(def-68)*.009-(b.distance-250)*.0014+(gap<8?-.10:0),.08,.91);if(r<catchProb)return{result:'OUT',label:b.launch>24?'外野高飛球接殺':'平飛球接殺'};const spd=gameRatings(currentPlayer()).speed;if(b.distance>330&&gap<13&&spd>78&&Math.random()<.24)return{result:'3B',label:'深遠三壘安打'};if(b.distance>215||b.exit>101||arm<60)return{result:'2B',label:'二壘安打'};return{result:'1B',label:'安打'}}
@@ -1428,6 +1496,8 @@ function v20WaitPlayers(n=0){if(players&&players.length){v20InjectCustomPlayers(
 v20InstallUI();v20WaitPlayers();
 
 
+
+v306InstallMeter();
 })();
 </script>
 <script type="module" src="baseball-3d.js?v=305"></script>
