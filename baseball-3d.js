@@ -334,10 +334,10 @@
       [.28,0],[.31,.08],[.30,.23],[.34,.44],
       [.38,.64],[.36,.75],[.27,.81],[.16,.85]
     ].map(([x,y])=>new T.Vector2(x,y));
-    const torsoM=mesh(new T.LatheGeometry(shirtProfile,28),jersey);
+    const torsoM=mesh(new T.LatheGeometry(shirtProfile,28),jersey);torsoM.scale.z=.78;
     put(torso,torsoM,0,.96,0);
     const chest = sphere(.34,jersey,24,16);
-    chest.scale.set(1.08,.46,.84);
+    chest.scale.set(1.08,.46,.69);
     put(torso,chest,0,1.55,.005);
     // Jersey back name and number remain readable in the batting camera.
     const numberTexture=(()=>{
@@ -351,82 +351,81 @@
     })();
     const jerseyBack=new T.Mesh(new T.PlaneGeometry(.55,.60),
       new T.MeshBasicMaterial({map:numberTexture,transparent:true,side:T.DoubleSide,depthWrite:false}));
-    jerseyBack.position.set(0,1.43,-.347);
+    jerseyBack.position.set(0,1.43,-.283);
     jerseyBack.rotation.y=PI;
     torso.add(jerseyBack);
     put(torso,cyl(.28,.30,.22,trim),0,.93,0);
     const belt = put(torso,cyl(.34,.32,.10,mat(0x273344)),0,.97,0);
     const neckline=put(torso,cyl(.175,.165,.085,trim),0,1.79,0);
     // head + nose + ears + face features
-    const head=sphere(.194,face,22,18);
-    head.scale.set(.96,1.08,1);
+    const head=sphere(.171,face,24,20);
+    head.scale.set(.94,1.16,1);
     put(torso,head,0,2.01,0);
-    put(torso,sphere(.052,face),0,1.97,.188);
+    put(torso,sphere(.039,face),0,1.98,.165);
     for (const side of [-1,1]){
       const eye=sphere(.024,mat(0x212223),8,6);
-      put(torso,eye,side*.072,2.047,.174);
+      put(torso,eye,side*.065,2.047,.151);
       const ear=sphere(.052,face,10,8);
       ear.scale.set(.60,1,.75);
-      put(torso,ear,side*.191,2.00,0);
+      put(torso,ear,side*.168,2.00,0);
     }
-    const hat=put(torso,cyl(.196,.205,.14,capMat,20),0,2.225,0);
-    hat.scale.set(1,.85,1);
-    const brim=put(torso,sphere(.26,capMat,20,10),0,2.178,.16);
+    const hat=put(torso,sphere(.185,capMat,24,16),0,2.17,-.012);
+    hat.scale.set(1,.62,1.03);
+    const brim=put(torso,sphere(.26,capMat,20,10),0,2.124,.146);
     brim.scale.set(.90,.12,.67);
     if (style==='batter') {
-      const helmet=put(torso,sphere(.207,capMat),0,2.235,-.005);
-      helmet.scale.set(1.05,.70,1.03);
-      const earGuard=put(torso,sphere(.105,capMat),-.192,2.04,.035);
+      const helmet=put(torso,sphere(.187,capMat),0,2.169,-.005);
+      helmet.scale.set(1.04,.83,1.04);
+      const earGuard=put(torso,sphere(.105,capMat),-.172,2.04,.035);
       earGuard.scale.set(.40,1,.85);
     }
-    const rigs={root,torso,arms:[],legs:[],jersey,cap:capMat,glove:null,bat:null};
-    const arms = [];
+    // V310: articulated elbows and knees, separate leg/upper body motion.
+    // Small uniform details remain procedural, no downloaded player likenesses.
+    const piping=mat(0xe9e4d3,.86),beltMat=mat(0x263141,.8);
+    put(torso,cube(.022,.58,.014,piping),0,1.40,.274);
+    for(let i=0;i<5;i++)put(torso,sphere(.014,piping,8,6),.028,1.18+i*.11,.283);
+    put(torso,cube(.115,.075,.04,piping),0,.97,.322);
+    const rigs={root,torso,arms:[],elbows:[],hands:[],legs:[],knees:[],jersey,cap:capMat,glove:null,gloves:[],bat:null,style};
     for (const side of [-1,1]) {
-      const shoulder = new T.Group();
-      shoulder.position.set(side*.39,1.60,0);
-      torso.add(shoulder);
-      const sleeve=cyl(.147,.14,.27,jersey);
-      sleeve.rotation.z=side*.1; put(shoulder,sleeve,0,-.17,0);
-      const upper=cyl(.115,.105,.37,face);
-      upper.rotation.z=side*.06; put(shoulder,upper,0,-.47,0);
-      const elbow=put(shoulder,sphere(.106,face),0,-.65,0);
-      const forearm=cyl(.104,.087,.38,face);
-      put(shoulder,forearm,0,-.84,0);
-      const hand=put(shoulder,sphere(.096,face),0,-1.05,0);
-      shoulder.rotation.z=side*.28;
-      arms.push(shoulder);
-      if (side===-1 && style!=='umpire') {
-        const mitt=put(shoulder,sphere(.165,gloveMat,20,14),0,-1.03,.09);
-        mitt.scale.set(1.08,1.25,.55);
-        const pocket=put(shoulder,sphere(.13,leather),0,-1.05,.18);
-        pocket.scale.set(.9,1,.19);
-        rigs.glove=mitt;
+      const shoulder=new T.Group();shoulder.position.set(side*.35,1.62,0);torso.add(shoulder);
+      put(shoulder,sphere(.134,jersey,16,12),0,-.055,0);
+      put(shoulder,cyl(.139,.115,.22,jersey),0,-.14,0);
+      put(shoulder,cyl(.117,.113,.045,piping),0,-.245,0);
+      put(shoulder,cyl(.103,.081,.18,face),0,-.345,0);
+      const elbow=new T.Group();elbow.position.y=-.44;shoulder.add(elbow);
+      put(elbow,sphere(.083,face,14,10),0,0,0);
+      put(elbow,cyl(.083,.062,.30,face),0,-.16,0);
+      const hand=new T.Group();hand.position.y=-.365;elbow.add(hand);
+      const handMesh=put(hand,sphere(.082,style==='batter'?piping:face,14,10),0,-.012,0);
+      handMesh.scale.set(.82,1.08,.76);
+      if(style==='batter'){put(elbow,cyl(.071,.070,.08,beltMat),0,-.28,0)}
+      else {
+        const mitt=put(hand,sphere(.137,gloveMat,16,12),0,0,.056);mitt.scale.set(1.02,1.14,.55);
+        const pocket=put(mitt,sphere(.10,leather,12,8),0,.015,.08);pocket.scale.set(.85,.95,.35);
+        mitt.visible=side===-1;rigs.gloves.push(mitt);
+        if(side===-1)rigs.glove=mitt;
       }
+      rigs.arms.push(shoulder);rigs.elbows.push(elbow);rigs.hands.push(hand);
     }
-    rigs.arms=arms;
     for (const side of [-1,1]) {
-      const leg=new T.Group();
-      leg.position.set(side*.20,.91,0);
-      torso.add(leg);
-      put(leg,cyl(.205,.17,.50,pants),0,-.26,0);
-      put(leg,sphere(.16,pants),0,-.50,0);
-      put(leg,cyl(.155,.125,.49,pants),0,-.74,.03);
-      const sock=put(leg,cyl(.13,.13,.10,trim),0,-.99,.04);
-      const boot=put(leg,cube(.28,.18,.50,shoes),0,-1.08,.14);
-      boot.position.z=.15;
-      rigs.legs.push(leg);
+      const leg=new T.Group();leg.position.set(side*.195,.95,0);root.add(leg);
+      put(leg,cyl(.167,.132,.43,pants),0,-.215,0);
+      const knee=new T.Group();knee.position.y=-.43;leg.add(knee);
+      put(knee,sphere(.133,pants,16,12),0,0,0);
+      put(knee,cyl(.133,.104,.39,pants),0,-.195,0);
+      put(knee,cyl(.105,.106,.075,trim),0,-.405,0);
+      const boot=put(knee,sphere(.145,shoes,18,12),0,-.462,.105);boot.scale.set(.80,.52,1.64);
+      put(knee,cube(.20,.035,.34,beltMat),0,-.515,.105);
+      for(let n=0;n<3;n++)put(knee,cube(.105,.012,.016,piping),0,-.41,.12+n*.035);
+      rigs.legs.push(leg);rigs.knees.push(knee);
     }
-    if (style==='batter') {
-      // Bat pivots from the hands next to the back shoulder, above the helmet.
-      const batRoot = new T.Group();
-      batRoot.position.set(.55,1.34,-.05);
-      torso.add(batRoot);
-      const grip = cyl(.044,.038,.53,mat(0x202c36,.73),14);
-      put(batRoot,grip,0,.24,0);
-      const barrel = cyl(.073,.046,.90,mat(0xb98143,.48),20);
-      put(batRoot,barrel,0,.93,0);
-      put(batRoot,sphere(.073,mat(0x976333)),0,1.40,0);
-      batRoot.rotation.set(.14,0,-.31);
+    if(style==='batter'){
+      const batRoot=new T.Group();torso.add(batRoot);
+      const grip=mat(0x26303d,.73),wood=mat(0xc49760,.48);
+      put(batRoot,cyl(.032,.034,.27,grip,14),0,.105,0);
+      put(batRoot,cyl(.066,.032,.68,wood,20),0,.56,0);
+      put(batRoot,sphere(.066,wood,16,10),0,.90,0);
+      put(batRoot,cyl(.047,.047,.034,grip),0,-.043,0);
       rigs.bat=batRoot;
     }
     root.add(torso);
@@ -621,42 +620,78 @@
     const match = /scale\(([-.\d]+)\)/.exec(ballElement?.style.transform||'');
     return match?Number(match[1]):NaN;
   };
-  let lastWindup=false,lastRelease=false,lastSwing=false,windupAt=0,releaseAt=0,swingAt=0;
+  let lastWindup=false,lastRelease=false,lastSwing=false,windupAt=0,releaseAt=0,swingAt=-10;
   let lastTick=performance.now(),simClock=0,lastMode='',lastHit=false,resizeW=0,resizeH=0;
-  function motion(rig, activeWind, activeRelease, w, r, bat=false) {
-    const t=simClock;
-    const idle = Math.sin(t*1.5)*.018;
-    rig.torso.rotation.set(idle,0,0);
-    for (const a of rig.arms) a.rotation.set(0,0,(rig.arms.indexOf(a)===0?1:-1)*.22);
-    for (const l of rig.legs) l.rotation.set(0,0,0);
-    if (activeWind) {
-      const u=clamp(w/.58,0,1);
-      const pulse=Math.sin(PI*u);
-      rig.legs[0].rotation.x=-.8*pulse;
-      rig.arms[0].rotation.x=-1.0*pulse;
-      rig.arms[1].rotation.x=.95*pulse;
-      rig.torso.rotation.y=.22*pulse;
+  // Two-bone arm solve: hand targets and elbow bend are computed in torso coordinates.
+  const down=new T.Vector3(0,-1,0),upAxis=new T.Vector3(0,1,0);
+  const ikDir=new T.Vector3(),ikBend=new T.Vector3(),ikElbow=new T.Vector3(),ikFore=new T.Vector3(),ikTarget=new T.Vector3(),ikInv=new T.Quaternion();
+  const armHint=new T.Vector3(),handTarget=new T.Vector3(),batAxis=new T.Vector3(),batGrip=new T.Vector3();
+  function armTo(rig,i,target,hint){
+    const shoulder=rig.arms[i],elbow=rig.elbows[i],a=.44,b=.365;
+    ikDir.subVectors(target,shoulder.position);
+    const d=clamp(ikDir.length(),.09,a+b-.008);ikDir.normalize();
+    ikBend.copy(hint).addScaledVector(ikDir,-hint.dot(ikDir));
+    if(ikBend.lengthSq()<.001)ikBend.set(0,0,1).addScaledVector(ikDir,-ikDir.z);
+    ikBend.normalize();
+    const along=(a*a-b*b+d*d)/(2*d),height=Math.sqrt(Math.max(0,a*a-along*along));
+    ikElbow.copy(ikDir).multiplyScalar(along).addScaledVector(ikBend,height);
+    shoulder.quaternion.setFromUnitVectors(down,ikElbow.clone().normalize());
+    ikTarget.copy(ikDir).multiplyScalar(d);
+    ikFore.subVectors(ikTarget,ikElbow).normalize().applyQuaternion(ikInv.copy(shoulder.quaternion).invert());
+    elbow.quaternion.setFromUnitVectors(down,ikFore);
+  }
+  function poseLeg(rig,i,x,z,knee){rig.legs[i].rotation.set(x,0,z);rig.knees[i].rotation.set(knee,0,0)}
+  function batterPose(rig,active){
+    const u=active?clamp((simClock-swingAt)/.38,0,1):0;
+    const swing=active?Math.sin(Math.PI*Math.min(1,u*.94)):0;
+    const turn=active?Math.sin(Math.PI*u*.82):0;
+    const sway=Math.sin(simClock*2.1)*.019;
+    rig.torso.rotation.set(-.055+sway,-.20-1.12*turn,.035);
+    rig.torso.position.y=-.055;
+    poseLeg(rig,0,-.13,.13,.27);poseLeg(rig,1,-.17-.16*swing,-.16,.31+.15*swing);
+    rig.legs[0].rotation.y=-.25*turn;rig.legs[1].rotation.y=.38*turn;
+    // Both gloved hands grip the same bat; the axis sweeps across the body.
+    batGrip.set(.19-.45*turn,1.49-.15*swing,-.36+.58*turn);
+    batAxis.set(.52-.90*turn,.83-.70*swing,-.17-.62*swing).normalize();
+    rig.bat.position.copy(batGrip);rig.bat.quaternion.setFromUnitVectors(upAxis,batAxis);
+    for(let i=0;i<2;i++){
+      handTarget.copy(batGrip).addScaledVector(batAxis,.035+i*.125);
+      armHint.set(i===0?-.8:.8,-.7,.2);
+      armTo(rig,i,handTarget,armHint);
     }
-    if (activeRelease) {
-      const u=clamp(r/.36,0,1);
-      rig.arms[1].rotation.x=-2.9*Math.sin(Math.min(1,u)*PI*.78);
-      rig.arms[0].rotation.x=.9*Math.sin(u*PI);
-      rig.legs[1].rotation.x=-.45*Math.sin(u*PI);
-      rig.torso.rotation.y=-.24*Math.sin(u*PI);
-      rig.torso.rotation.x=.22*Math.sin(u*PI);
-    }
-    if (bat) {
-      const u=clamp((simClock-swingAt)/.30,0,1);
-      const sw=Math.sin(u*PI);
-      rig.torso.rotation.y=-1.12*sw;
-      rig.arms[0].rotation.x=-.85*sw;
-      rig.arms[1].rotation.x=-1.22*sw;
-      rig.arms[1].rotation.z=-.40*sw;
-      rig.legs[0].rotation.y=.22*sw;
-      rig.legs[1].rotation.y=-.22*sw;
-      if(rig.bat)rig.bat.rotation.set(.15,-.55*sw,-.31-1.85*sw);
-    } else if(rig.bat) {
-      rig.bat.rotation.set(.14,0,-.31);
+  }
+  function pitcherPose(rig,wind,release,w,r){
+    const left=stage.classList.contains('pitch-left'),throwIndex=left?0:1,gloveIndex=1-throwIndex,sign=left?-1:1;
+    const low=stage.classList.contains('delivery-submarine'),side=stage.classList.contains('delivery-sidearm');
+    const lift=wind?Math.sin(Math.PI*clamp(w/.43,0,1)*.84):0;
+    const p=release?clamp(r/.40,0,1):0,drive=release?Math.sin(Math.PI*p):0;
+    rig.torso.position.y=-.03-(low?.15:side?.065:0)*drive;
+    rig.torso.rotation.set(.04+.36*drive,sign*(.46*lift-.72*drive),sign*(low?.58:side?.30:.10)*drive);
+    poseLeg(rig,gloveIndex,-.15-.85*lift-.42*drive,sign*.12,.18+.92*lift+.24*drive);
+    poseLeg(rig,throwIndex,.07+.40*drive,-sign*.07,.13+.22*drive);
+    if(rig.gloves.length===2){rig.gloves[0].visible=gloveIndex===0;rig.gloves[1].visible=gloveIndex===1}
+    handTarget.set(-sign*(.05+.19*drive),1.35-.22*drive,.40);
+    armHint.set(-sign,.2,0);armTo(rig,gloveIndex,handTarget,armHint);
+    if(wind)handTarget.set(sign*(.10+.48*lift),1.39+.22*lift,.38-.72*lift);
+    else if(release){
+      const q=Math.sin(Math.PI*clamp(p*1.35,0,1)),follow=Math.sin(Math.PI*p*.82);
+      handTarget.set(sign*(.36+(low?.46:side?.62:.12)*q)-sign*.50*follow,
+        1.38+(low?-.65:side?-.04:.60)*q-.44*follow,.18+.50*follow);
+    }else handTarget.set(sign*.17,1.30,.37);
+    armHint.set(sign,.22,-.20);armTo(rig,throwIndex,handTarget,armHint);
+  }
+  function motion(rig,activeWind,activeRelease,w,r,bat=false){
+    if(rig.style==='batter'){batterPose(rig,bat);return}
+    if(rig.style==='pitcher'){pitcherPose(rig,activeWind,activeRelease,w,r);return}
+  }
+  function fieldPose(rig,phase,run=false){
+    rig.torso.position.y=run?.02*Math.sin(phase*2):-.035;
+    rig.torso.rotation.set(run?.16:.07,0,0);
+    for(let i=0;i<2;i++){
+      const sign=i===0?-1:1,step=run?Math.sin(phase+i*Math.PI):0;
+      poseLeg(rig,i,-.10+step*.60,sign*.10,.18+Math.max(0,-step)*.65);
+      handTarget.set(sign*.40,run?1.12:.98,run?-.40*step:.13);
+      armHint.set(sign,-.4,.3);armTo(rig,i,handTarget,armHint);
     }
   }
   function renderBall(pitchMode, hitMode) {
@@ -756,14 +791,13 @@
       if (swinging&&!lastSwing)swingAt=simClock;
       lastWindup=windy;lastRelease=releasing;lastSwing=swinging;
       const pitcherRig=pitchMode?userPitcher:cpuPitcher;
-      motion(pitcherRig,windy,releasing,simClock-windupAt,simClock-releaseAt);
+      motion(pitcherRig,windy,releasing&&(simClock-releaseAt)<.40,simClock-windupAt,simClock-releaseAt);
       const hitterRig=pitchMode?opponentBatter:playerBatter;
-      motion(hitterRig,false,false,0,0,swinging||(simClock-swingAt)<.28);
-      catcher.torso.rotation.x=.35;
-      catcher.legs.forEach((l,i)=>{l.rotation.x=i?-.65:.65;l.rotation.z=i?-.55:.55;});
-      catcher.root.position.y=-.52;
+      motion(hitterRig,false,false,0,0,swinging||(simClock-swingAt)<.38);
+      catcher.torso.rotation.set(.24,0,0);catcher.torso.position.y=-.28;catcher.root.position.y=-.13;
+      for(let i=0;i<2;i++){poseLeg(catcher,i,-.75,i===0?.25:-.25,1.25);handTarget.set(i===0?-.22:.22,1.18,.42);armHint.set(i===0?-1:1,-.5,0);armTo(catcher,i,handTarget,armHint)}
       for (const [i,f] of fielders.entries()) {
-        f.torso.rotation.y=Math.sin(simClock*1.1+i)*.055;
+        fieldPose(f,simClock*2+i,false);
       }
       for(let i=0;i<runners.length;i++) {
         const occupied=!!occupiedBaseElements[i]?.classList.contains('runner');
@@ -772,7 +806,7 @@
           runners[i].jersey.color.setHex(pitchMode?
             (teamColors[(document.getElementById('cpuShort')?.textContent||'').trim()]||0xf0c42f):
             0xf08024);
-          runners[i].torso.rotation.y=Math.sin(simClock*2+i)*.065;
+          fieldPose(runners[i],simClock*5+i,false);
         }
       }
       // Freeze camera while paused; the WAAPI ball animation is paused by the game.
@@ -780,6 +814,7 @@
       renderBall(pitchMode,hitMode);
       stage.classList.toggle('v307-hr-tracking',!!hrFlight);
       renderer.render(scene,camera);
+      stage.classList.add('v310-articulated');
       if (!game.classList.contains('baseball-3d-ready')) {
         game.classList.add('baseball-3d-ready');
       }
