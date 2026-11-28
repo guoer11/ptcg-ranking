@@ -54,6 +54,7 @@ jobs:
                 start(){const saved={playing,halfMode,lineup,batIndex,bases,finishPA};playing=true;halfMode='bat';lineup=[{name:'QA打者',teamKey:'brothers'}];batIndex=0;bases=[null,null,null];window.__qa307Done=[];finishPA=(...args)=>window.__qa307Done.push(args);window.__qa307.restore=()=>{playing=saved.playing;halfMode=saved.halfMode;lineup=saved.lineup;batIndex=saved.batIndex;bases=saved.bases;finishPA=saved.finishPA};showHitThen('HR','全壘打',{distance:420,fence:400,exit:108,launch:30,spray:15,targetX:60,targetY:20,hang:4});},
                 pause(value){setGamePaused(value)}
               };v306InstallMeter();`);
+              body=body.replace('v308Install();', 'window.__qa308={line:v308Line,patterns:v308Patterns,prefs:v308Prefs,atmosphere:v308Atmosphere,noise:v308NoiseBuffer,stop:v308StopAudio};v308Install();');
               await route.fulfill({response,body});
             });
             await page.goto('http://127.0.0.1:8999/baseball-game.html',{waitUntil:'domcontentloaded'});
@@ -84,6 +85,29 @@ jobs:
               if(JSON.stringify(gameplay306.grades)!==JSON.stringify(['perfect','good','稍早','稍晚','準星偏離'])||!gameplay306.feedback?.includes('PERFECT')||!gameplay306.meter||gameplay306.defaultAccuracy!==1)
                 throw Error('v306 feedback failed '+JSON.stringify(gameplay306));
               console.log('V306 GAMEPLAY PASS',JSON.stringify(gameplay306));
+              const audio308=await page.evaluate(()=>{
+                const q=window.__qa308;
+                const setup=document.querySelector('[data-v308-location="setup"]');
+                const pause=document.querySelector('[data-v308-location="pause"]');
+                const check=setup.querySelector('[data-v308="crowd"]');
+                check.checked=false;check.dispatchEvent(new Event('change'));
+                const syncOff=!pause.querySelector('[data-v308="crowd"]').checked&&!q.prefs.crowd;
+                check.checked=true;check.dispatchEvent(new Event('change'));
+                const syncOn=pause.querySelector('[data-v308="crowd"]').checked&&q.prefs.crowd;
+                const ctx=new (window.AudioContext||window.webkitAudioContext)();
+                const noise=q.noise(ctx);
+                const sampled=noise.getChannelData(0).slice(0,100);
+                const noiseOK=noise.duration>1&&sampled.some(x=>Math.abs(x)>.01);
+                ctx.close();
+                return {syncOff,syncOn,noiseOK,patterns:Object.keys(q.patterns).length,
+                  distinct:new Set(Object.values(q.patterns).map(x=>JSON.stringify(x))).size,
+                  lines:['全壘打','三振出局','四壞保送','雙殺','三出局'].map(a=>q.line(a)),
+                  ordinary:q.line('準備投球'),saved:JSON.parse(localStorage.getItem('cpblAudio308')).crowd};
+              });
+              if(!audio308.syncOff||!audio308.syncOn||!audio308.noiseOK||audio308.patterns!==7||audio308.distinct!==7||audio308.lines.some(x=>!x)||audio308.ordinary!==''||!audio308.saved)
+                throw Error('V308 audio settings failed '+JSON.stringify(audio308));
+              console.log('V308 AUDIO PASS',JSON.stringify(audio308));
+
               await page.evaluate(()=>document.getElementById('v306Feedback').classList.add('hidden'));
               await page.screenshot({path:'baseball-3d-smoke.png'});
               // Real HR presentation; stub only the final scoring callback.
