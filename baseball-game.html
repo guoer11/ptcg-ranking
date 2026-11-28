@@ -1602,7 +1602,8 @@ function v308StopAudio(){v308StopCrowd();v308StopVoice();v308LastSpeech='';v308L
 function v308Line(a,b=''){
   const title=String(a||'').replace(/<[^>]*>/g,''),sub=String(b||'').replace(/<[^>]*>/g,'');
   const attack=halfMode==='bat';
-  if(/再見.*(全壘打|勝)|再見勝/.test(title))return '再見安打！比賽結束！';
+  if(/再見.*全壘打/.test(title))return '再見全壘打！比賽結束！';
+  if(/再見.*勝|再見勝/.test(title))return '再見得分！比賽結束！';
   if(/全壘打|HOME RUN/i.test(title))return attack?'這一球飛得很遠！全壘打！':'對手轟出全壘打。';
   if(/三振/.test(title))return attack?'三振出局。':'漂亮！三振出局！';
   if(/雙殺/.test(title))return '雙殺！一口氣抓下兩個出局數！';
