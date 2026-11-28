@@ -720,6 +720,27 @@ clip-path:polygon(6% 0,94% 0,76% 100%,24% 100%)}
 #gameApp.v312-scenario #tacticsBtn{display:none!important}
 @media(orientation:landscape){#v312Goal{top:calc(51px + env(safe-area-inset-top))}}
 </style>
+<style id="v400-card-style">
+.v400-modal{max-height:90dvh!important;overflow:auto!important;width:min(720px,96vw)!important}
+#v400Wallet{padding:10px;background:#183f3f;color:#ffe08c;font-weight:900;border-radius:10px}
+.v400-actions,.v400-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:8px 0}
+.v400-filters{grid-template-columns:2fr 1fr 1fr}.v400-filters input,.v400-filters select{min-width:0;width:100%;padding:8px;border:1px solid #688b83;border-radius:8px;background:#163534;color:white}
+.v400-actions button,#v400More,#v400Close,#v400RevealClose,#v400DetailClose{min-height:38px;border:1px solid #8db1a6;border-radius:8px;background:#1f514a;color:white;font-weight:800;padding:7px}
+.v400-actions button:disabled{opacity:.45}.v400-actions button.active{background:#ffd052;color:#483200}
+.v400-toggle{display:flex;align-items:center;gap:8px;font-size:13px;margin:10px 0}.v400-toggle input{width:20px;height:20px;accent-color:#69d99b}
+#v400Grid,#v400Reveal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
+.v400-card{--tier:#a7b5bf;position:relative;display:grid;align-content:start;gap:4px;min-width:0;padding:8px;border:2px solid var(--tier);border-radius:12px;background:linear-gradient(145deg,#19303a,#091b24);color:white;text-align:left;overflow:hidden;box-shadow:0 3px 10px #0004}
+.v400-card.tier-R{--tier:#72baf9;background:linear-gradient(145deg,#21425c,#101d30)}
+.v400-card.tier-SR{--tier:#bd96f5;background:linear-gradient(145deg,#4b316e,#1c1537)}
+.v400-card.tier-SSR{--tier:#ffe077;background:linear-gradient(145deg,#775326,#2e2421);box-shadow:0 0 10px #e9b34844}
+.v400-card.locked{filter:saturate(.4);opacity:.75}
+.v400-card-top{font-size:11px;font-weight:900;color:var(--tier)}.v400-card-art{height:65px;border-radius:7px;display:grid;place-items:center;background:radial-gradient(circle,#ffffff25,transparent 65%),linear-gradient(140deg,var(--v400-team),#13252c 85%);font-size:36px;font-weight:950;text-shadow:0 2px 6px #0008}
+.v400-card strong{font-size:14px;overflow-wrap:anywhere}.v400-card small{font-size:10px;line-height:1.3;color:#dbe2e5}.v400-stat{font-size:10px;position:relative;padding-bottom:5px}.v400-stat i{position:absolute;height:3px;left:0;bottom:0;border-radius:3px;background:var(--tier)}
+.v400-extra{color:#ffe077!important;font-weight:900}#v400Detail{max-width:190px;margin:auto}#v400Detail .v400-card{width:100%}
+#v400Notice{font-size:12px;color:#ffe077}#v400More,#v400Close,#v400RevealClose,#v400DetailClose{width:100%;margin-top:8px}
+#v400RevealOverlay{z-index:3000}#v400DetailOverlay{z-index:3100}
+@media(max-width:380px){#v400Grid,#v400Reveal{gap:5px}.v400-card{padding:5px}.v400-card strong{font-size:12px}}
+</style>
 </head>
 <body>
 <div id="setupApp" class="app">
@@ -887,7 +908,7 @@ function selectedIndex(p){const id=playerId(p);return lineup.findIndex(x=>player
 function renderPool(){const list=visiblePlayers();$('playerPool').innerHTML=list.length?list.map(p=>{const i=selectedIndex(p),s=p.stats,r=gameRatings(p);return`<button class="player ${i>=0?'selected':''} ${s?.AVG==null?'nodata':''}" data-pid="${playerId(p)}">${i>=0?`<span class="pickno">${i+1}</span>`:''}<strong>${p.name}</strong><div class="team">${p.teamName}${isLikelyPitcher(p)?'・投手候選':''}</div><div class="numbers"><span>AVG<b>${rate(s?.AVG)}</b></span><span>SLG<b>${rate(s?.SLG)}</b></span><span>OPS<b>${rate(s?.OPS)}</b></span></div><div class="ability-row"><span class="ability-chip">SPD ${r.speed}</span><span class="ability-chip">DEF ${r.field}</span></div></button>`}).join(''):'<div class="loading">沒有符合的球員</div>';qsa('[data-pid]').forEach(b=>b.onclick=()=>togglePlayer(b.dataset.pid))}
 function togglePlayer(id){const p=players.find(x=>playerId(x)===id);if(!p)return;const i=selectedIndex(p);$('lineupError').textContent='';if(i>=0){lineup.splice(i,1);delete positionMap[id]}else if(lineup.length<9){lineup.push(p);const used=new Set(lineup.slice(0,-1).map(x=>positionMap[playerId(x)]));positionMap[id]=POSITIONS.find(x=>!used.has(x))||'DH'}else{$('lineupError').textContent='已選滿 9 人，請先移除一位。';return}saveLineup();renderPool();renderLineup();renderConfig()}
 function posOptions(current){return POSITIONS.map(pos=>`<option value="${pos}" ${pos===current?'selected':''}>${pos} ${positionName[pos]}</option>`).join('')}
-function renderLineup(){ensurePositions();$('selectedCount').textContent=lineup.length+' / 9';$('selectedCountTop').textContent=lineup.length+' / 9';$('lineup').innerHTML=lineup.length?lineup.map((p,i)=>{const r=gameRatings(p),id=playerId(p);return`<div class="slot"><div class="slot-no">${i+1}</div><div><div class="slot-name">${p.name}</div><div class="slot-team">${p.teamName}・第 ${i+1} 棒</div><div class="slot-ratings">CON ${r.contact}・PWR ${r.power}・SPD ${r.speed}・DEF ${r.field}</div></div><select class="position-select" data-posid="${id}">${posOptions(positionMap[id])}</select><div class="actions"><button data-u="${i}" ${i===0?'disabled':''}>↑</button><button data-d="${i}" ${i===lineup.length-1?'disabled':''}>↓</button><button class="del" data-x="${i}">×</button></div></div>`}).join(''):'<div class="lineup-empty">還沒選球員。從上面球員池挑 9 個。</div>';qsa('[data-u]').forEach(b=>b.onclick=()=>move(+b.dataset.u,-1));qsa('[data-d]').forEach(b=>b.onclick=()=>move(+b.dataset.d,1));qsa('[data-x]').forEach(b=>b.onclick=()=>{const p=lineup[+b.dataset.x];delete positionMap[playerId(p)];lineup.splice(+b.dataset.x,1);saveLineup();renderPool();renderLineup();renderConfig()});qsa('[data-posid]').forEach(sel=>sel.onchange=()=>changePosition(sel.dataset.posid,sel.value));updateStartState()}
+function renderLineup(){ensurePositions();$('selectedCount').textContent=lineup.length+' / 9';$('selectedCountTop').textContent=lineup.length+' / 9';$('lineup').innerHTML=lineup.length?lineup.map((p,i)=>{const r=v400UserRatings(p),id=playerId(p);return`<div class="slot"><div class="slot-no">${i+1}</div><div><div class="slot-name">${p.name}</div><div class="slot-team">${p.teamName}・第 ${i+1} 棒</div><div class="slot-ratings">CON ${r.contact}・PWR ${r.power}・SPD ${r.speed}・DEF ${r.field}</div></div><select class="position-select" data-posid="${id}">${posOptions(positionMap[id])}</select><div class="actions"><button data-u="${i}" ${i===0?'disabled':''}>↑</button><button data-d="${i}" ${i===lineup.length-1?'disabled':''}>↓</button><button class="del" data-x="${i}">×</button></div></div>`}).join(''):'<div class="lineup-empty">還沒選球員。從上面球員池挑 9 個。</div>';qsa('[data-u]').forEach(b=>b.onclick=()=>move(+b.dataset.u,-1));qsa('[data-d]').forEach(b=>b.onclick=()=>move(+b.dataset.d,1));qsa('[data-x]').forEach(b=>b.onclick=()=>{const p=lineup[+b.dataset.x];delete positionMap[playerId(p)];lineup.splice(+b.dataset.x,1);saveLineup();renderPool();renderLineup();renderConfig()});qsa('[data-posid]').forEach(sel=>sel.onchange=()=>changePosition(sel.dataset.posid,sel.value));updateStartState()}
 function changePosition(id,newPos){const old=positionMap[id],other=lineup.find(p=>playerId(p)!==id&&positionMap[playerId(p)]===newPos);positionMap[id]=newPos;if(other)positionMap[playerId(other)]=old;saveLineup();renderLineup()}
 function move(i,d){const j=i+d;if(j<0||j>=lineup.length)return;[lineup[i],lineup[j]]=[lineup[j],lineup[i]];saveLineup();renderPool();renderLineup()}
 $('clearLineupBtn').onclick=()=>{lineup=[];positionMap={};saveLineup();renderPool();renderLineup();renderConfig()};
@@ -929,8 +950,8 @@ function roleAdjustedPitcherRatings(p,role='投手',pitches=0){const b=pitcherRa
 function makePitcherState(p){const role=staffRole(playerId(p));return{player:p,pitches:0,innings:0,role}}
 function currentPitcherRatings(state){return roleAdjustedPitcherRatings(state.player,state.role||staffRole(playerId(state.player)),state.pitches||0)}
 function pitcherFatigue(state){const r=currentPitcherRatings(state),role=state.role||'';const raw=(state.pitches-r.stamina*.82)/(r.stamina*.95),pace=role==='先發'?.82:role.startsWith('中繼')?1.05:role==='後援／終結者'?1.18:1;return clamp(raw*pace,0,1)}
-function battingAbility(p=currentPlayer()){const s=p?.stats,r=gameRatings(p);if(!s)return{contact:(r.contact-65)/35,power:(r.power-65)/35};const pa=Math.max(0,num(s.PA)||0),w=clamp(pa/100,0,1),avg=.255+((num(s.AVG)??.255)-.255)*w,slg=.380+((num(s.SLG)??.380)-.380)*w;return{contact:clamp((avg-.255)/.08+(r.contact-65)/70,-1,1),power:clamp((slg-.380)/.20+(r.power-65)/70,-1,1)}}
-function defenseRating(){const weights={C:1.2,'1B':.75,'2B':1.05,'3B':1,SS:1.3,LF:.9,CF:1.3,RF:1,DH:0};let sum=0,w=0;lineup.forEach(p=>{const pos=positionMap[playerId(p)],r=gameRatings(p),wt=weights[pos]||1;if(pos!=='DH'){sum+=(r.field*.72+r.arm*.28)*wt;w+=wt}});return w?sum/w:65}
+function battingAbility(p=currentPlayer()){const s=p?.stats,r=v400UserRatings(p);if(!s)return{contact:(r.contact-65)/35,power:(r.power-65)/35};const pa=Math.max(0,num(s.PA)||0),w=clamp(pa/100,0,1),avg=.255+((num(s.AVG)??.255)-.255)*w,slg=.380+((num(s.SLG)??.380)-.380)*w;return{contact:clamp((avg-.255)/.08+(r.contact-65)/70,-1,1),power:clamp((slg-.380)/.20+(r.power-65)/70,-1,1)}}
+function defenseRating(){const weights={C:1.2,'1B':.75,'2B':1.05,'3B':1,SS:1.3,LF:.9,CF:1.3,RF:1,DH:0};let sum=0,w=0;lineup.forEach(p=>{const pos=positionMap[playerId(p)],r=v400UserRatings(p),wt=weights[pos]||1;if(pos!=='DH'){sum+=(r.field*.72+r.arm*.28)*wt;w+=wt}});return w?sum/w:65}
 function cpuDefenseRating(){const a=offensePlayers(opponent).slice(0,20);if(!a.length)return 68;return a.reduce((s,p)=>s+gameRatings(p).field*.75+gameRatings(p).arm*.25,0)/a.length}
 function cpuArmRating(){const a=offensePlayers(opponent).slice(0,20);if(!a.length)return 68;return a.reduce((s,p)=>s+gameRatings(p).arm,0)/a.length}
 function selectCpuPitcher(force=false){if(cpuPitcher&&!force&&pitcherFatigue(cpuPitcher)<.9)return;const cands=pitcherCandidates(opponent).filter(p=>!cpuPitcherUsed.has(playerId(p)));const p=cands[0]||pitcherCandidates(opponent)[0]||players.find(x=>x.teamKey===opponent);if(!p)return;cpuPitcher=makePitcherState(p);cpuPitcherUsed.add(playerId(p));setMsg('對手換投',p.name+' 上場','')}
@@ -943,7 +964,7 @@ function cpuReadBonus(batter,code=selectedUserPitch,x=aimX,y=aimY){if(!batter)re
 function finalizeUserPitch(result){if(!currentPitchLogEntry)return;currentPitchLogEntry.x=pitchTargetX;currentPitchLogEntry.y=pitchTargetY;currentPitchLogEntry.speed=lastSpeed;currentPitchLogEntry.result=result;pitchHistory.push(currentPitchLogEntry);pitchHistory=pitchHistory.slice(-160);currentPitchLogEntry=null;saveGameState()}
 function plateReceive(kind='ball'){const c=$('catcher'),u=$('umpire');if(c){c.classList.remove('receive');void c.offsetWidth;c.classList.add('receive');gameSetTimeout(()=>c.classList.remove('receive'),300)}if(u&&kind==='strike'){u.classList.remove('callStrike');void u.offsetWidth;u.classList.add('callStrike');gameSetTimeout(()=>u.classList.remove('callStrike'),430)}}
 function updateOffenseCallUi(){if($('offenseCallStatus'))$('offenseCallStatus').textContent='目前：'+(offenseCall==='bunt'?'短打':offenseCall==='hitrun'?'打帶跑':'正常進攻');if($('swingBtn')&&halfMode==='bat'){$('swingBtn').textContent=offenseCall==='bunt'?'短打！':offenseCall==='hitrun'?'打帶跑！':'揮棒！';$('swingBtn').classList.toggle('strategy-live',offenseCall!=='normal')}}
-function catcherArmRating(){const c=lineup.find(p=>positionMap[playerId(p)]==='C');return c?gameRatings(c).arm:68}
+function catcherArmRating(){const c=lineup.find(p=>positionMap[playerId(p)]==='C');return c?v400UserRatings(c).arm:68}
 function renderPitchDefenseActions(){const box=$('pitchDefenseActions');if(!box||halfMode!=='pitch'){if(box)box.innerHTML='';return}const btn=[];if(bases[0])btn.push('<button class="pitch-mini-action pickoff" data-pickoff="0">牽制一壘</button>');if(bases[1])btn.push('<button class="pitch-mini-action pickoff" data-pickoff="1">牽制二壘</button>');box.innerHTML=btn.join('');qsa('[data-pickoff]').forEach(b=>b.onclick=()=>attemptPickoff(Number(b.dataset.pickoff)))}
 function attemptPickoff(i){if(v311Pending||!$('hitCam').classList.contains('hidden'))return;if(paused||pitching||halfMode!=='pitch'||!bases[i]||i>1)return;const r=bases[i],pr=currentPitcherRatings(userPitcher),hold=clamp(.045+(pr.control-55)*.0018+(90-r.speed)*.0012,.025,.16);if(Math.random()<hold){bases[i]=null;outs++;setMsg('牽制成功！',`${r.player.name} 回壘不及，遭觸殺`,'good');sfx('out');$('scene').classList.add('tag-flash');gameSetTimeout(()=>$('scene').classList.remove('tag-flash'),500)}else setMsg('牽制安全',`${r.player.name} 及時回壘`,'');updateBoard();renderPitchDefenseActions();saveGameState();if(outs>=3)return endHalf()}
 function maybeCpuSteal(){if(halfMode!=='pitch'||pitching)return false;let i=bases[1]&&!bases[2]?1:(bases[0]&&!bases[1]?0:-1);if(i<0)return false;const r=bases[i],chance=clamp(.025+Math.max(0,r.speed-65)*.0035+(i===1?.025:0),.02,.16);if(Math.random()>chance)return false;const pr=currentPitcherRatings(userPitcher),arm=catcherArmRating(),prob=clamp(.59+(r.speed-68)*.006-(arm-68)*.0045-(pr.control-68)*.002,.28,.90);bases[i]=null;if(Math.random()<prob){bases[i+1]=r;setMsg('對手盜壘成功',`${r.player.name} 搶下${i+2}壘`,'bad');sfx('hit')}else{outs++;setMsg('盜壘阻殺！',`捕手傳球觸殺 ${r.player.name}`,'good');sfx('out');$('scene').classList.add('tag-flash');gameSetTimeout(()=>$('scene').classList.remove('tag-flash'),500)}updateBoard();renderPitchDefenseActions();saveGameState();if(outs>=3)endHalf();return true}
@@ -1092,8 +1113,8 @@ function v306InstallMeter(){
   };requestAnimationFrame(tick);
 }
 function fenceDistance(spray){const p=currentPark(),x=clamp(spray,-45,45);if(x<0){const t=(x+45)/45;return p.lf+(p.cf-p.lf)*t}else{const t=x/45;return p.cf+(p.rf-p.cf)*t}}
-function battedBallMetrics(contact,timing,aimErr){const r=gameRatings(currentPlayer()),pow=(r.power-50)/50;const exit=clamp(54+contact*48+pow*8+rand(-4.5,4.5),48,119);const launch=clamp(-15+contact*45+(0.5-aimY)*19+rand(-12,12),-28,50);const spray=clamp((timing-.89)*155+(aimX-.5)*50+rand(-7,7),-58,58);let dist;if(launch<=0)dist=clamp(28+exit*1.25+launch*2,20,165);else{const v=exit*.44704,rad=launch*Math.PI/180;dist=(v*v*Math.sin(2*rad)/9.81)*3.28084*.70*currentPark().carry;dist*=clamp(1-(Math.max(0,launch-36)*.015),.75,1);dist+=rand(-10,10);dist=clamp(dist,35,510)}const hang=launch>5?clamp(.55+launch*.065+(exit-75)*.012,.7,4.8):clamp(.42+dist/185,.45,1.55);const x=clamp(50+spray/50*35,10,90),y=clamp(80-(dist/500)*69,8,76);return{exit,launch,spray,distance:dist,hang,targetX:x,targetY:y,fence:fenceDistance(spray)}}
-function physicsOutcome(b){if(Math.abs(b.spray)>49)return{result:'FOUL',label:'界外球'};if(b.launch>14&&b.launch<43&&b.distance>b.fence)return{result:'HR',label:'全壘打'};const def=cpuDefenseRating(),arm=cpuArmRating(),gap=Math.abs(Math.abs(b.spray)-23),r=Math.random();if(b.launch<7){const outProb=clamp(.79+(def-68)*.006-(b.exit-82)*.008-gap*.002,.22,.92);if(bases[0]&&outs<2&&offenseCall!=='hitrun'&&r<outProb&&Math.random()<clamp(.34+(def-68)*.005-(gameRatings(currentPlayer()).speed-65)*.0025,.16,.58))return{result:'DP',label:'滾地球形成雙殺'};if(r<outProb)return{result:'OUT',label:b.exit>98?'強勁滾地球刺殺':'內野滾地出局'};if(b.distance>150&&gameRatings(currentPlayer()).speed>82&&Math.random()<.16)return{result:'2B',label:'穿越內野形成二壘打'};return{result:'1B',label:'穿越安打'}}const catchProb=clamp(.30+(b.hang-1.5)*.19+(def-68)*.009-(b.distance-250)*.0014+(gap<8?-.10:0),.08,.91);if(r<catchProb)return{result:'OUT',label:b.launch>24?'外野高飛球接殺':'平飛球接殺'};const spd=gameRatings(currentPlayer()).speed;if(b.distance>330&&gap<13&&spd>78&&Math.random()<.24)return{result:'3B',label:'深遠三壘安打'};if(b.distance>215||b.exit>101||arm<60)return{result:'2B',label:'二壘安打'};return{result:'1B',label:'安打'}}
+function battedBallMetrics(contact,timing,aimErr){const r=v400UserRatings(currentPlayer()),pow=(r.power-50)/50;const exit=clamp(54+contact*48+pow*8+rand(-4.5,4.5),48,119);const launch=clamp(-15+contact*45+(0.5-aimY)*19+rand(-12,12),-28,50);const spray=clamp((timing-.89)*155+(aimX-.5)*50+rand(-7,7),-58,58);let dist;if(launch<=0)dist=clamp(28+exit*1.25+launch*2,20,165);else{const v=exit*.44704,rad=launch*Math.PI/180;dist=(v*v*Math.sin(2*rad)/9.81)*3.28084*.70*currentPark().carry;dist*=clamp(1-(Math.max(0,launch-36)*.015),.75,1);dist+=rand(-10,10);dist=clamp(dist,35,510)}const hang=launch>5?clamp(.55+launch*.065+(exit-75)*.012,.7,4.8):clamp(.42+dist/185,.45,1.55);const x=clamp(50+spray/50*35,10,90),y=clamp(80-(dist/500)*69,8,76);return{exit,launch,spray,distance:dist,hang,targetX:x,targetY:y,fence:fenceDistance(spray)}}
+function physicsOutcome(b){if(Math.abs(b.spray)>49)return{result:'FOUL',label:'界外球'};if(b.launch>14&&b.launch<43&&b.distance>b.fence)return{result:'HR',label:'全壘打'};const def=cpuDefenseRating(),arm=cpuArmRating(),gap=Math.abs(Math.abs(b.spray)-23),r=Math.random();if(b.launch<7){const outProb=clamp(.79+(def-68)*.006-(b.exit-82)*.008-gap*.002,.22,.92);if(bases[0]&&outs<2&&offenseCall!=='hitrun'&&r<outProb&&Math.random()<clamp(.34+(def-68)*.005-(v400UserRatings(currentPlayer()).speed-65)*.0025,.16,.58))return{result:'DP',label:'滾地球形成雙殺'};if(r<outProb)return{result:'OUT',label:b.exit>98?'強勁滾地球刺殺':'內野滾地出局'};if(b.distance>150&&v400UserRatings(currentPlayer()).speed>82&&Math.random()<.16)return{result:'2B',label:'穿越內野形成二壘打'};return{result:'1B',label:'穿越安打'}}const catchProb=clamp(.30+(b.hang-1.5)*.19+(def-68)*.009-(b.distance-250)*.0014+(gap<8?-.10:0),.08,.91);if(r<catchProb)return{result:'OUT',label:b.launch>24?'外野高飛球接殺':'平飛球接殺'};const spd=v400UserRatings(currentPlayer()).speed;if(b.distance>330&&gap<13&&spd>78&&Math.random()<.24)return{result:'3B',label:'深遠三壘安打'};if(b.distance>215||b.exit>101||arm<60)return{result:'2B',label:'二壘安打'};return{result:'1B',label:'安打'}}
 function resolvePhysics(contact,timing,aimErr){const a=battingAbility();if(offenseCall==='hitrun')contact+=.065;contact=clamp(contact+a.contact*.045+a.power*.025*Math.max(0,(contact-.35)/.65),0,1);if(contact<.21&&Math.random()<.55)return foul();const b=battedBallMetrics(contact,timing,aimErr),o=physicsOutcome(b);lastBattedBall=b;if(o.result==='FOUL')return foul();sfx('bat');showHitThen(o.result,o.label,b)}
 function resetHitCamera(){v307ResetHomeRun();const cam=$('hitCam'),ball=$('flyball'),runner=$('hitRunner'),shadow=$('hitBallShadow'),relay=$('relayBall');cam.classList.remove('hrMode');cam.getAnimations().forEach(a=>a.cancel());ball.getAnimations().forEach(a=>a.cancel());runner.getAnimations().forEach(a=>a.cancel());if(shadow){shadow.getAnimations().forEach(a=>a.cancel());shadow.style.opacity='.55'}if(relay){relay.getAnimations().forEach(a=>a.cancel());relay.style.opacity='0'}runner.style.opacity='0';runner.style.left='50%';runner.style.top='84%';qsa('[data-hf]').forEach(f=>{f.getAnimations().forEach(a=>a.cancel());f.style.filter=''});const flash=$('catchFlash');flash.classList.remove('pop');flash.style.opacity='0'}
 function v307ResetHomeRun(){
@@ -1121,7 +1142,7 @@ function animateRunner(result,duration){const runner=$('hitRunner');const pts={'
 function animateRelay(fromX,fromY,toX,toY,delay=0,duration=380){const r=$('relayBall');if(!r)return;r.style.left=fromX+'%';r.style.top=fromY+'%';r.style.opacity='0';gameSetTimeout(()=>{r.style.opacity='1';r.animate([{left:fromX+'%',top:fromY+'%',transform:'translate(-50%,-50%) scale(.8)'},{left:((fromX+toX)/2)+'%',top:(Math.min(fromY,toY)-7)+'%',transform:'translate(-50%,-50%) scale(1.15)'},{left:toX+'%',top:toY+'%',transform:'translate(-50%,-50%) scale(.82)'}],{duration,easing:'cubic-bezier(.2,.7,.2,1)',fill:'forwards'});gameSetTimeout(()=>r.style.opacity='0',duration-20)},delay)}
 function showHitThen(result,label='',b=lastBattedBall){resetHitCamera();const cam=$('hitCam'),ball=$('flyball'),shadow=$('hitBallShadow'),splash=$('resultSplash');cam.classList.remove('hidden');const text=result==='HR'?'HOME RUN!':result==='3B'?'三壘安打':result==='2B'?'二壘安打':result==='1B'?'安打':label||'出局';splash.textContent=text;const target=b?[b.targetX,b.targetY]:[50,50],isHr=result==='HR',ground=!!b&&b.launch<7,dur=isHr?2900:ground?clamp(720+(b?.distance||80)*2.2,780,1250):clamp((b?.hang||1)*650,900,1650);cam.classList.toggle('hrMode',isHr);if(isHr)v307PrepareHomeRun(b,currentPlayer(),'user');cam.style.setProperty('--batter-team',teamPalette[currentPlayer().teamKey]||'#e98b2d');cam.style.setProperty('--defense-team',teamPalette[opponent]||'#f4f3ed');$('metricEV').textContent=b?Math.round(b.exit)+' mph':'—';$('metricLA').textContent=b?Math.round(b.launch)+'°':'—';$('metricDist').textContent=b?Math.round(b.distance)+' ft':'—';const pan=(target[0]-50)*.045;cam.animate([{transform:'scale(1) translate(0,0)'},{transform:`scale(${isHr?1.055:1.025}) translate(${-pan}%,${isHr?'2%':'1%'})`}],{duration:dur,easing:'ease-out',fill:'forwards'});const fielder=nearestHitFielder(target[0],target[1]);let fx=target[0],fy=target[1];if(fielder&&!isHr){const rect=fielder.getBoundingClientRect(),crect=cam.getBoundingClientRect(),sx=(rect.left+rect.width/2-crect.left)/crect.width*100,sy=(rect.top+rect.height/2-crect.top)/crect.height*100;fx=target[0]+((result==='OUT'||result==='DP')?0:(target[0]>50?-4:4));fy=target[1]+4;fielder.animate([{left:sx+'%',top:sy+'%'},{offset:.68,left:fx+'%',top:fy+'%',transform:'translate(-50%,-50%) rotate(0deg)'},{left:fx+'%',top:fy+'%',transform:'translate(-50%,-50%) rotate(-7deg)'}],{duration:Math.min(1000,dur*.75),easing:'cubic-bezier(.2,.7,.2,1)',fill:'forwards'})}let ballFrames;if(isHr)ballFrames=[{left:'50%',top:'78%',transform:'scale(1)'},{left:(50+(b?.spray||0)*.12)+'%',top:'39%',transform:'scale(.74)'},{left:target[0]+'%',top:'4%',transform:'scale(.30)'}];else if(ground)ballFrames=[{left:'50%',top:'78%',transform:'scale(1)'},{offset:.28,left:((target[0]+50)*.5)+'%',top:'70%',transform:'scale(.88)'},{offset:.58,left:((target[0]*.78+50*.22))+'%',top:(target[1]+8)+'%',transform:'scale(.72)'},{left:target[0]+'%',top:target[1]+'%',transform:'scale(.64)'}];else ballFrames=[{left:'50%',top:'78%',transform:'scale(1)'},{left:((target[0]+50)/2)+'%',top:((target[1]+78)/2-14)+'%',transform:'scale(.78)'},{left:target[0]+'%',top:target[1]+'%',transform:'scale(.62)'}];ball.animate(ballFrames,{duration:dur,easing:ground?'cubic-bezier(.18,.45,.25,1)':isHr?'cubic-bezier(.18,.65,.15,1)':'cubic-bezier(.2,.7,.2,1)',fill:'forwards'});if(shadow){const sf=ground?[{left:'50%',top:'80%',opacity:.5,transform:'translate(-50%,-50%) scale(.8)'},{left:target[0]+'%',top:(target[1]+4)+'%',opacity:.65,transform:'translate(-50%,-50%) scale(.65)'}]:[{left:'50%',top:'82%',opacity:.48,transform:'translate(-50%,-50%) scale(.75)'},{left:target[0]+'%',top:(target[1]+5)+'%',opacity:.22,transform:'translate(-50%,-50%) scale(.48)'}];shadow.animate(sf,{duration:dur,easing:'linear',fill:'forwards'})}if(result!=='OUT')animateRunner(result,isHr?3150:result==='3B'?1650:result==='2B'?1380:1020);const fieldTime=Math.min(820,dur*.70);if((result==='OUT'||result==='DP')&&fielder){gameSetTimeout(()=>{if(ground){if(result==='DP'){animateRelay(target[0],target[1],50,55,0,300);animateRelay(50,55,70,71,300,360);splash.textContent='雙殺守備！'}else{animateRelay(target[0],target[1],70,71,0,360);splash.textContent='傳一壘刺殺';}gameSetTimeout(()=>{const flash=$('catchFlash');flash.style.left='70%';flash.style.top='71%';flash.style.opacity='1';flash.classList.remove('pop');void flash.offsetWidth;flash.classList.add('pop');sfx('catch')},330)}else{const flash=$('catchFlash');flash.style.left=target[0]+'%';flash.style.top=target[1]+'%';flash.style.opacity='1';flash.classList.remove('pop');void flash.offsetWidth;flash.classList.add('pop');splash.textContent=label||'接殺出局';sfx('catch')}},fieldTime)}else if(result!=='OUT'&&result!=='DP'&&!isHr&&fielder){gameSetTimeout(()=>animateRelay(fx,fy,50,69,0,420),fieldTime)}if(isHr){sfx('hr');gameSetTimeout(()=>{splash.textContent='全壘打！';sfx('cheer')},780)}else if(result!=='OUT'&&result!=='DP')sfx('hit');else sfx('out');const finishDelay=isHr?3350:ground&&(result==='OUT'||result==='DP')?Math.max(1450,dur+520):Math.max(1200,dur+220);gameSetTimeout(()=>{cam.classList.add('hidden');resetHitCamera();finishPA(result,label)},finishDelay)}
 function foul(){if(strikes<2)strikes++;setMsg('界外球','繼續這個打席','');updateBoard();saveGameState();maybeCpuPitchChange();schedulePitch(820)}
-function runnerObj(player,index){return{player,lineupIndex:index,speed:gameRatings(player).speed}}
+function runnerObj(player,index){return{player,lineupIndex:index,speed:(halfMode==='bat'?v400UserRatings(player):gameRatings(player)).speed}}
 function baserunDecision(result){if(!['1B','2B'].includes(result))return null;const arm=cpuArmRating(),b=lastBattedBall||{distance:180};if(result==='1B'&&bases[1]){const r=bases[1],prob=clamp(.55+(r.speed-65)*.006+(b.distance-180)*.0015-(arm-65)*.005,.28,.92);return{kind:'secondHome',runner:r,title:`${r.player.name} 要從二壘衝本壘嗎？`,text:'保守會停在三壘；積極跑壘失敗會增加一個出局數。',prob}}if(result==='1B'&&bases[0]){const r=bases[0],prob=clamp(.62+(r.speed-65)*.006+(b.distance-175)*.0012-(arm-65)*.004,.35,.94);return{kind:'firstThird',runner:r,title:`${r.player.name} 要從一壘拚三壘嗎？`,text:'保守會停在二壘。',prob}}if(result==='2B'&&bases[0]){const r=bases[0],prob=clamp(.58+(r.speed-65)*.006+(b.distance-230)*.0012-(arm-65)*.005,.30,.93);return{kind:'firstHome',runner:r,title:`${r.player.name} 要從一壘直接衝本壘嗎？`,text:'保守會停在三壘。',prob}}return null}
 function showRunDecision(decision,result,label){pendingRunDecision={decision,result,label};$('runDecisionTitle').textContent=decision.title;$('runDecisionText').textContent=decision.text;$('runDecisionProb').textContent=Math.round(decision.prob*100)+'%';$('runDecisionOverlay').classList.remove('hidden')}
 function applyAdvance(type,batter,choice){let runs=0,extraOut=false;const pre=[...bases],br=runnerObj(batter,batIndex%9),d=baserunDecision(type),hitRun=offenseCall==='hitrun';if(type==='BB'){if(pre[0]&&pre[1]&&pre[2])runs++;bases=[br,pre[1]||pre[0],pre[2]||(pre[1]&&pre[0])]}else if(type==='1B'){const n=[br,null,null];if(pre[2])runs++;if(pre[1]){if(d?.kind==='secondHome'){if(choice==='go'&&Math.random()<d.prob)runs++;else if(choice==='go')extraOut=true;else n[2]=pre[1]}else if(hitRun||Math.random()<.68)runs++;else n[2]=pre[1]}if(pre[0]){if(d?.kind==='firstThird'){if(choice==='go'&&Math.random()<d.prob)n[2]=pre[0];else if(choice==='go')extraOut=true;else n[1]=pre[0]}else if(hitRun&&!n[2])n[2]=pre[0];else n[1]=pre[0]}bases=n}else if(type==='2B'){const n=[null,br,null];if(pre[2])runs++;if(pre[1])runs++;if(pre[0]){if(d?.kind==='firstHome'){if(choice==='go'&&Math.random()<d.prob)runs++;else if(choice==='go')extraOut=true;else n[2]=pre[0]}else if(hitRun||Math.random()<.55)runs++;else n[2]=pre[0]}bases=n}else if(type==='3B'){runs+=pre.filter(Boolean).length;bases=[null,null,br]}else if(type==='HR'){runs=1+pre.filter(Boolean).length;bases=[null,null,null]}if(extraOut)outs++;return{runs,extraOut}}
@@ -1502,7 +1523,7 @@ function v20TeamCustomize(){const name=prompt('球隊名稱',v20.customTeam.name
 function v20CreateProfile(){const name=prompt('新增玩家名稱','玩家2');if(!name)return;const ps=v20Profiles();if(!ps[name])ps[name]={created:Date.now(),games:0,wins:0,hr:0,k:0,xp:0};v20SaveProfiles(ps);v20.activeProfile=name;v20Save();v20RenderHub('save')}
 function v20TeamMode(teamKey){const h=v20TeamPlayerPool(teamKey,false).slice(0,9);lineup.splice(0,lineup.length,...h);const ps=v20TeamPlayerPool(teamKey,true).slice(0,5);if(ps[0])config.starterPitcherId=playerId(ps[0]);config.middlePitcherIds=ps.slice(1,4).map(playerId);if(ps[4])config.closerPitcherId=playerId(ps[4]);ensurePositions();saveLineup();saveCfg();renderLineup();renderConfig();renderPool();}
 function v20RenderSources(){return`<div class="v20-source"><b>資料來源標示</b><br>・2026 打擊／投手基礎數據：遊戲載入之 CPBL 資料檔。<br>・熱區、特殊能力、天氣、傷病、成長、球探、CPU 模擬：遊戲模型。<br>・自訂球員／交易／選秀：玩家本機存檔。<br>・「每日賽」目前是依日期產生的模擬對戰，並非官方即時賽程。<br>・雲端與真正線上對戰需要後端帳號／房間服務；本版提供本機同步碼與雙人輪流模式，不冒充即時連線。</div>`}
-function v20TabContent(tab){const L=v20EnsureLeague(),prof=v20Profiles()[v20.activeProfile]||{},F=v20.franchise||{};if(tab==='league'){const ranks=v20PowerRanks(),g=v20ScheduledGame(),aw=v20Awards();return`<div class="v20-grid"><div class="v20-card v20-wide"><h3>完整聯盟賽程</h3><div class="sub">第 ${Math.min(L.day+1,L.schedule.length)} / ${L.schedule.length} 個比賽日 ${g?`・下一場 ${g.home==='star'?teams[g.away]?.short:g.away==='star'?teams[g.home]?.short:'休兵'}`:'・球季結束'}</div><button onclick="v20RenderHub('schedule')">查看賽程</button></div><div class="v20-card"><h3>戰力排行</h3>${ranks.slice(0,7).map((x,i)=>`<div class="v20-row"><span>${i+1}. ${v20Esc(x.name)}</span><b>${x.W}-${x.L}-${x.T}</b></div>`).join('')}</div><div class="v20-card"><h3>預測獎項</h3>${aw.map(x=>`<div class="v20-row"><span>${x.n}</span><b>${v20Esc(x.p.name)}</b></div>`).join('')||'<div class="sub">資料累積後顯示</div>'}</div><div class="v20-card v20-wide"><h3>先發輪值</h3>${Object.entries(teams).map(([k,t])=>`<div class="v20-row"><span>${t.short}</span><small>${(L.rotations[k]||[]).map(id=>id.split('|')[1]).join(' → ')||'尚無'}</small></div>`).join('')}</div></div>`}
+function v20TabContent(tab){if(tab==='cards')return v400LegacyLink();const L=v20EnsureLeague(),prof=v20Profiles()[v20.activeProfile]||{},F=v20.franchise||{};if(tab==='league'){const ranks=v20PowerRanks(),g=v20ScheduledGame(),aw=v20Awards();return`<div class="v20-grid"><div class="v20-card v20-wide"><h3>完整聯盟賽程</h3><div class="sub">第 ${Math.min(L.day+1,L.schedule.length)} / ${L.schedule.length} 個比賽日 ${g?`・下一場 ${g.home==='star'?teams[g.away]?.short:g.away==='star'?teams[g.home]?.short:'休兵'}`:'・球季結束'}</div><button onclick="v20RenderHub('schedule')">查看賽程</button></div><div class="v20-card"><h3>戰力排行</h3>${ranks.slice(0,7).map((x,i)=>`<div class="v20-row"><span>${i+1}. ${v20Esc(x.name)}</span><b>${x.W}-${x.L}-${x.T}</b></div>`).join('')}</div><div class="v20-card"><h3>預測獎項</h3>${aw.map(x=>`<div class="v20-row"><span>${x.n}</span><b>${v20Esc(x.p.name)}</b></div>`).join('')||'<div class="sub">資料累積後顯示</div>'}</div><div class="v20-card v20-wide"><h3>先發輪值</h3>${Object.entries(teams).map(([k,t])=>`<div class="v20-row"><span>${t.short}</span><small>${(L.rotations[k]||[]).map(id=>id.split('|')[1]).join(' → ')||'尚無'}</small></div>`).join('')}</div></div>`}
 if(tab==='schedule'){return`<div class="v20-list">${L.schedule.slice(Math.max(0,L.day-3),L.day+12).map(d=>`<div class="v20-card"><h3>比賽日 ${d.day}</h3>${d.games.map(g=>`<div class="v20-row"><span>${L.clubs[g.away]?.name} @ ${L.clubs[g.home]?.name}</span><b>${g.score?g.score.join(' : '):g.done?'完成':'待賽'}</b></div>`).join('')}</div>`).join('')}</div>`}
 if(tab==='manage'){return`<div class="v20-kpi"><div><b>${F.xp||0}</b>球團XP</div><div><b>${F.cash||0}</b>資金</div><div><b>${(F.roster||[]).length}</b>經營名單</div></div><div class="v20-grid" style="margin-top:10px"><div class="v20-card"><h3>交易市場</h3><button onclick="v20Transaction('trade')">模擬交易</button><button onclick="v20Transaction('fa')">簽自由球員（200）</button><button onclick="v20Transaction('draft')">新人選秀</button></div><div class="v20-card"><h3>一軍／二軍</h3><div class="sub">目前以經營名單與疲勞／傷病狀態管理；正式一二軍升降會保留在名單中。</div><button onclick="v15RenderStatus&&v15RenderStatus()">查看球員狀態</button></div><div class="v20-card v20-wide"><h3>近期交易／新聞</h3><div class="v20-list">${(F.news||[]).slice(0,12).map(n=>`<div class="v20-row"><span>${v20Esc(n.type)}・${v20Esc(n.text)}</span><small>${new Date(n.t).toLocaleDateString()}</small></div>`).join('')||'<div class="sub">尚無球團新聞</div>'}</div></div></div>`}
 if(tab==='career'){return v20.career?`<div class="v20-card"><h3>${v20Esc(v20.career.name)}・Lv.${v20.career.level||1}</h3><div class="v20-kpi"><div><b>${v20.career.games||0}</b>出賽</div><div><b>${v20.career.xp||0}/100</b>XP</div><div><b>${v20.career.points||0}</b>能力點</div></div><div class="v20-grid" style="margin-top:10px">${['contact','power','speed','eye','defense','arm'].map(k=>`<div class="v20-card"><h3>${k.toUpperCase()} ${v20.career[k]||65}</h3><button onclick="v20TrainCareer('${k}')">+1（消耗 1 點）</button></div>`).join('')}</div></div>`:`<div class="v20-card"><h3>建立生涯球員</h3><div class="sub">從新人開始累積 XP、升級與能力點。</div><button onclick="v20CreateCareer()">建立球員</button></div>`}
@@ -1515,7 +1536,7 @@ if(tab==='settings'){return`<div class="v20-card"><div class="v20-settings"><lab
 if(tab==='sources')return`<div class="v20-card">${v20RenderSources()}</div><div class="v20-card"><h3>2027+ 資料架構</h3><div class="sub">目前實際資料檔是 2026；v2 已把遊戲存檔與模型跟資料年份分離，未來只需增加新年度資料檔即可擴充。</div></div><div class="v20-card"><h3>真正雲端／線上對戰</h3><div class="sub">需要 Supabase 或其他後端建立登入、房間、同步、延遲處理與衝突解決。這部分目前只提供本機同步碼與同機雙人，不會顯示成「已連線」。</div></div>`;
 if(tab==='debug'){return`<div class="v20-card"><h3>測試模式</h3><button onclick="v20DebugState(9,'bat',2,'bases')">九下兩出局滿壘</button><button onclick="v20DebugState(9,'pitch',0,'empty')">九上投球</button><button onclick="v20DebugForce('HR')">下一打席提示：測試HR</button><div class="sub">僅供測試，不影響正式紀錄。</div></div>`}
 return''}
-function v20RenderHub(tab='league'){v20Style();const ov=$('v20HubOverlay');if(!ov)return;const tabs=[['league','聯盟'],['manage','經營'],['career','生涯'],['challenge','挑戰'],['cards','收藏'],['tasks','任務／紀錄'],['save','存檔／帳號'],['custom','自訂'],['settings','設定'],['sources','資料來源']];$('v20Tabs').innerHTML=tabs.map(([k,n])=>`<button data-v20tab="${k}" class="${k===tab?'active':''}">${n}</button>`).join('');$('v20HubBody').innerHTML=v20TabContent(tab);qsa('[data-v20tab]').forEach(b=>b.onclick=()=>v20RenderHub(b.dataset.v20tab));if(tab==='save'&&$('v20ProfileSel'))$('v20ProfileSel').onchange=e=>{v20.activeProfile=e.target.value;v20Save();v20RenderHub('save')};if(tab==='settings')v20BindSettings();ov.classList.remove('hidden')}
+function v20RenderHub(tab='league'){v20Style();const ov=$('v20HubOverlay');if(!ov)return;const tabs=[['league','聯盟'],['manage','經營'],['career','生涯'],['challenge','挑戰'],['cards','收藏'],['tasks','任務／紀錄'],['save','存檔／帳號'],['custom','自訂'],['settings','設定'],['sources','資料來源']];$('v20Tabs').innerHTML=tabs.map(([k,n])=>`<button data-v20tab="${k}" class="${k===tab?'active':''}">${n}</button>`).join('');$('v20HubBody').innerHTML=v20TabContent(tab);qsa('[data-v20tab]').forEach(b=>b.onclick=()=>v20RenderHub(b.dataset.v20tab));if(tab==='save'&&$('v20ProfileSel'))$('v20ProfileSel').onchange=e=>{v20.activeProfile=e.target.value;v20Save();v20RenderHub('save')};if(tab==='settings')v20BindSettings();if(tab==='cards'&&$('v400OpenFromHub'))$('v400OpenFromHub').onclick=()=>v400Open();ov.classList.remove('hidden')}
 function v20BindSettings(){const set=(id,key,cast=v=>v)=>{const e=$(id);if(!e)return;e.value=v20[key];e.onchange=()=>{v20[key]=cast(e.type==='checkbox'?e.checked:e.value);v20Save();v20ApplyA11y()}};set('v20ModeSel','mode');set('v20BatMode','batMode');set('v20BatDir','batDir');set('v20RunAgg','runAgg');set('v20DefAlign','defAlign');set('v20Speed','gameSpeed',Number);set('v20Scale','uiScale');set('v20ZoneOpacity','zoneOpacity',Number);set('v20ColorBlind','colorBlind',Boolean);set('v20Reduced','reducedMotion',Boolean);set('v20OneHand','oneHand',Boolean);set('v20Voice','voice',Boolean)}
 function v20SetMode(mode){v20.mode=mode;v20Save();v20RenderHub('challenge')}
 function v20ShowExport(){const code=v20ExportCode();prompt('複製此同步碼到另一台裝置匯入：',code)}
@@ -2093,6 +2114,190 @@ function v312Install(){
   const menu=$('menuBtn').onclick;$('menuBtn').onclick=()=>{if(v312Run){if(confirm('離開挑戰？本次不計入紀錄。')){v312Restore();v312Open()}return}return menu?.()};
 }
 v312Install();
+
+/* V400: profile-scoped virtual card album, card packs and training.
+ * Keep currency and card changes in ONE localStorage transaction (v312 wallet).
+ * Original player selection remains unlocked, no payments or cash redemption. */
+const v400Tiers=[
+  {id:'N',name:'普通',rate:.65,bonus:0,shards:10},
+  {id:'R',name:'稀有',rate:.25,bonus:1,shards:20},
+  {id:'SR',name:'明星',rate:.09,bonus:2,shards:40},
+  {id:'SSR',name:'傳奇',rate:.01,bonus:3,shards:80}
+];
+const v400Cost=100,v400Max=5;
+let v400Cache={raw:null,state:null},v400PoolCache={players:null,length:0,pool:null},v400Tab='owned',v400Selected='';
+function v400State(state){
+  const x=state.x;
+  if(!x.v400||typeof x.v400!=='object')x.v400={cards:{},shards:0,starter:false,enabled:true,imported:false,packs:0};
+  const d=x.v400;d.cards=d.cards||{};d.shards=Math.max(0,Number(d.shards)||0);d.enabled=d.enabled!==false;
+  x.coins=Math.max(0,Number(x.coins)||0);x.xp=Math.max(0,Number(x.xp)||0);
+  return d;
+}
+function v400Read(){
+  let raw;try{raw=localStorage.getItem(v312Key)||''}catch{return v400State({x:{}})}
+  const key='profile:'+String(v20.activeProfile||'玩家1');
+  if(v400Cache.raw!==raw||v400Cache.key!==key){v400Cache={raw,key,state:v400State(v312Load())}}
+  return v400Cache.state;
+}
+function v400Tier(id){return v400Tiers.find(t=>t.id===id)||v400Tiers[0]}
+function v400Pool(){
+  if(v400PoolCache.players===players&&v400PoolCache.length===players.length&&v400PoolCache.pool)return v400PoolCache.pool;
+  const unique=new Map();
+  for(const p of players){if(p&&!p.v20Custom&&teams[p.teamKey]&&p.name&&(p.pitching||!isLikelyPitcher(p)))unique.set(playerId(p),p)}
+  const pool={N:[],R:[],SR:[],SSR:[],map:new Map()};
+  // Rank hitters and pitchers independently so both positions have rare cards.
+  for(const list of [[...unique.values()].filter(p=>!p.pitching),[...unique.values()].filter(p=>p.pitching)]){
+    const score=p=>p.pitching?pitcherRatings(p).overall:(()=>{const r=gameRatings(p);return .40*r.contact+.40*r.power+.12*r.speed+.08*r.field})();
+    const ranked=list.map(p=>({p,score:score(p)})).sort((a,b)=>b.score-a.score||playerId(a.p).localeCompare(playerId(b.p)));
+    for(let i=0;i<ranked.length;i++){
+      const p=ranked[i].p,q=i/Math.max(1,ranked.length),tier=q<.035?'SSR':q<.15?'SR':q<.40?'R':'N';
+      const item={p,id:playerId(p),tier,score:ranked[i].score};pool[tier].push(item);pool.map.set(item.id,item);
+    }
+  }
+  v400PoolCache={players,length:players.length,pool};return pool;
+}
+function v400Bonus(card){return card?v400Tier(card.tier).bonus+clamp((Number(card.level)||1)-1,0,v400Max-1):0}
+function v400PlayerBonus(p){if(!p)return 0;const d=v400Read();return d.enabled?v400Bonus(d.cards[playerId(p)]):0}
+function v400UserRatings(p){
+  const r={...gameRatings(p)},b=v400PlayerBonus(p);
+  if(b)for(const k of ['contact','power','speed','field','arm'])if(Number.isFinite(r[k]))r[k]=clamp(r[k]+b,35,99);
+  return r;
+}
+const v400PitchBase=currentPitcherRatings;
+currentPitcherRatings=function(st){
+  const r={...v400PitchBase(st)},b=st&&st===userPitcher?v400PlayerBonus(st.player):0;
+  if(b){for(const k of ['velo','control','break','stamina','overall'])if(Number.isFinite(r[k]))r[k]=clamp(r[k]+b,35,99)}
+  return r;
+};
+function v400Grant(d,item,source='pack'){
+  const card=d.cards[item.id];
+  if(card){if(source!=='pack')return {item,duplicate:false,existing:true,shards:0};const shards=v400Tier(item.tier).shards;d.shards+=shards;return {item,duplicate:true,shards}}
+  d.cards[item.id]={tier:item.tier,level:1,at:Date.now(),source};return {item,duplicate:false,shards:0};
+}
+function v400Draw(free=false,random=Math.random){
+  if(playing)return {error:'比賽中無法開卡包'};
+  const state=v312Load(),d=v400State(state),pool=v400Pool();
+  if(!v400Tiers.every(t=>pool[t.id].length))return {error:'球員卡池尚未載入完成'};
+  if(free&&d.starter)return {error:'新手卡包已領取'};
+  if(!free&&state.x.coins<v400Cost)return {error:'金幣不足，請先完成任務'};
+  if(free)d.starter=true;else state.x.coins-=v400Cost;
+  const results=[];
+  for(let i=0;i<3;i++){
+    let x=random(),tier=v400Tiers[v400Tiers.length-1];
+    for(const t of v400Tiers){x-=t.rate;if(x<0){tier=t;break}}
+    const items=pool[tier.id],item=items[Math.min(items.length-1,Math.max(0,Math.floor(random()*items.length)))];
+    results.push(v400Grant(d,item));
+  }
+  d.packs=(d.packs||0)+1;
+  if(!v312Write(state))return {error:'儲存失敗，未扣除金幣'};
+  return {results,coins:state.x.coins};
+}
+function v400Train(id,useShards=false){
+  if(playing)return false;
+  const state=v312Load(),d=v400State(state),card=d.cards[id];if(!card||card.level>=v400Max)return false;
+  const cost=card.level*(useShards?20:60);
+  if(useShards){if(d.shards<cost)return false;d.shards-=cost}
+  else{if(state.x.xp<cost)return false;state.x.xp-=cost}
+  card.level++;return v312Write(state);
+}
+function v400Import(){
+  if(playing)return false;
+  const state=v312Load(),d=v400State(state);if(d.imported)return false;
+  const pool=v400Pool();if(!pool.map.size)return false;
+  for(const id of Object.keys(v20.cards||{})){const item=pool.map.get(id);if(item)v400Grant(d,item,'legacy')}
+  d.imported=true;return v312Write(state);
+}
+const v400UnlockBase=v20UnlockCards;
+v20UnlockCards=function(){
+  v400UnlockBase();
+  if(!v14Game)return;
+  const state=v312Load(),d=v400State(state),pool=v400Pool();
+  let changed=false;
+  for(const p of lineup){const id=playerId(p),s=v14Game.batters?.[id],item=pool.map.get(id);if(item&&!d.cards[id]&&s&&(s.H>=2||s.HR>=1)){v400Grant(d,item,'game');changed=true}}
+  for(const id of usedPitchers){const s=v14Game.pitchers?.[id],item=pool.map.get(id);if(item&&!d.cards[id]&&s&&s.K>=5){v400Grant(d,item,'game');changed=true}}
+  if(changed)v312Write(state);
+};
+function v400Team(){
+  if(playing)return false;
+  const d=v400Read(),pool=v400Pool(),items=Object.keys(d.cards).map(id=>pool.map.get(id)).filter(Boolean);
+  items.sort((a,b)=>(b.score+v400Bonus(d.cards[b.id]))-(a.score+v400Bonus(d.cards[a.id])));
+  const h=items.filter(i=>!i.p.pitching).slice(0,9),p=items.filter(i=>i.p.pitching).slice(0,5);
+  if(h.length!==9||p.length!==5)return false;
+  lineup=h.map(i=>i.p);positionMap=Object.fromEntries(lineup.map((p,i)=>[playerId(p),POSITIONS[i]]));
+  config.starterPitcherId=p[0].id;config.middlePitcherIds=p.slice(1,4).map(i=>i.id);config.closerPitcherId=p[4].id;
+  saveLineup();saveCfg();renderLineup();renderConfig();renderPool();return true;
+}
+function v400LegacyLink(){return '<div class="v20-card"><h3>球員卡收藏與養成 v4.0</h3><p>原本的比賽解鎖紀錄會保留。可在新圖鑑匯入舊收藏，或透過卡包和比賽獲得球員卡。</p><button id="v400OpenFromHub">進入球員卡中心</button><small>舊版收藏：'+Object.keys(v20.cards||{}).length+' 張</small></div>'}
+function v400Card(item,card,locked=false,extra=''){
+  const p=item.p,t=v400Tier(card?.tier||item.tier),el=document.createElement('button');el.type='button';el.className='v400-card tier-'+t.id+(locked?' locked':'');
+  el.style.setProperty('--v400-team',teamPalette[p.teamKey]||'#53877d');
+  const r=p.pitching?pitcherRatings(p):gameRatings(p),bonus=v400Bonus(card),stats=p.pitching?[['球威',r.velo],['控球',r.control],['變化',r.break]]:[['打擊',r.contact],['力量',r.power],['速度',r.speed]];
+  const top=document.createElement('div');top.className='v400-card-top';top.textContent=t.id+'・'+t.name;
+  const art=document.createElement('div');art.className='v400-card-art';art.textContent=locked?'?':p.pitching?'投':'打';
+  const name=document.createElement('strong');name.textContent=p.name;
+  const team=document.createElement('small');team.textContent=(teams[p.teamKey]?.short||p.teamKey)+'・'+(p.pitching?'投手':'野手')+'・'+(locked?'未收藏':'Lv.'+(card?.level||1));
+  el.append(top,art,name,team);
+  for(const [k,v] of stats){const row=document.createElement('div');row.className='v400-stat';const value=clamp(v+(locked?0:bonus),35,99);row.textContent=k+' '+value;const bar=document.createElement('i');bar.style.width=value+'%';row.appendChild(bar);el.appendChild(row)}
+  if(extra){const note=document.createElement('small');note.className='v400-extra';note.textContent=extra;el.appendChild(note)}
+  el.onclick=()=>{v400Selected=item.id;v400ShowDetail(item.id)};
+  return el;
+}
+function v400ShowDetail(id){
+  const item=v400Pool().map.get(id);if(!item)return;
+  const d=v400Read(),c=d.cards[id],state=v312Load();
+  $('v400Detail').replaceChildren();$('v400Detail').append(v400Card(item,c,!c));
+  $('v400DetailTitle').textContent=item.p.name+'・'+(c?'球員養成':'尚未收藏');
+  $('v400DetailInfo').textContent=c?'Lv.'+c.level+'｜能力加成 +'+v400Bonus(c)+'（上限 99）':'可透過卡包或正式比賽解鎖';
+  const train=$('v400Train'),shard=$('v400TrainShard'),level=c?.level||1;
+  train.textContent=level>=v400Max?'已滿級':'升級（'+level*60+' XP）';shard.textContent=level>=v400Max?'已滿級':'升級（'+level*20+' 碎片）';
+  train.disabled=!c||level>=v400Max||state.x.xp<level*60;shard.disabled=!c||level>=v400Max||d.shards<level*20;
+  $('v400DetailOverlay').classList.remove('hidden');
+}
+function v400Render(){
+  const state=v312Load(),d=v400State(state),pool=v400Pool(),all=[...pool.map.values()];
+  $('v400Wallet').textContent='金幣 '+state.x.coins+'　XP '+state.x.xp+'　碎片 '+d.shards;
+  $('v400Count').textContent='收藏 '+Object.keys(d.cards).filter(id=>pool.map.has(id)).length+' / '+all.length+' 張';
+  $('v400Starter').disabled=d.starter||!all.length;$('v400Starter').textContent=d.starter?'新手卡包已領取':'免費新手卡包（3 張）';
+  $('v400Pack').disabled=state.x.coins<v400Cost||!all.length;$('v400Pack').textContent='開卡包 100 金幣（3 張）';
+  $('v400Enable').checked=d.enabled;$('v400Import').disabled=d.imported||!Object.keys(v20.cards||{}).length;
+  const query=$('v400Search').value.trim().toLowerCase(),tier=$('v400Filter').value,role=$('v400Role').value;
+  const items=all.filter(i=>(v400Tab==='all'||d.cards[i.id])&&(!query||(i.p.name+' '+i.p.teamName).toLowerCase().includes(query))&&(tier==='all'||(d.cards[i.id]?.tier||i.tier)===tier)&&(role==='all'||(role==='pitch')===!!i.p.pitching)).sort((a,b)=>Number(!!d.cards[b.id])-Number(!!d.cards[a.id])||b.score-a.score);
+  const grid=$('v400Grid');grid.replaceChildren();
+  // A bounded page keeps older phones responsive.
+  const limit=Number(grid.dataset.limit)||36;
+  for(const item of items.slice(0,limit))grid.append(v400Card(item,d.cards[item.id],!d.cards[item.id]));
+  if(!items.length){const e=document.createElement('p');e.textContent=v400Tab==='owned'?'還沒有符合的收藏，先開啟免費新手卡包吧！':'沒有符合的球員';grid.append(e)}
+  $('v400More').classList.toggle('hidden',items.length<=limit);
+  const own=all.filter(i=>d.cards[i.id]);$('v400Team').disabled=own.filter(i=>!i.p.pitching).length<9||own.filter(i=>i.p.pitching).length<5;
+  $('v400OwnedTab').classList.toggle('active',v400Tab==='owned');$('v400AllTab').classList.toggle('active',v400Tab==='all');
+}
+function v400Open(){
+  if(playing)return;
+  $('v20HubOverlay')?.classList.add('hidden');$('v400Center').classList.remove('hidden');v400Render();
+}
+function v400OpenPack(free){
+  const r=v400Draw(free);if(r.error){$('v400Notice').textContent=r.error;return}
+  const cards=$('v400Reveal');cards.replaceChildren();
+  for(const x of r.results)cards.append(v400Card(x.item,v400Read().cards[x.item.id],false,x.duplicate?'重複卡・+'+x.shards+' 碎片':'新收藏！'));
+  $('v400RevealOverlay').classList.remove('hidden');v400Render();
+}
+function v400Install(){
+  const host=$('v20Launcher');if(host){const b=document.createElement('button');b.id='v400Launch';b.className='primary';b.style.cssText='width:100%;margin-top:8px';b.textContent='🃏 球員卡／夢幻球隊';b.onclick=v400Open;host.appendChild(b)}
+  document.body.insertAdjacentHTML('beforeend','<div id="v400Center" class="overlay hidden"><div class="modal v400-modal"><h2>🃏 球員卡中心</h2><div id="v400Wallet"></div><p id="v400Count"></p><div class="v400-actions"><button id="v400Starter">免費新手卡包</button><button id="v400Pack">開卡包</button></div><p class="sub">每包 3 張，每張獨立機率：N 65%・R 25%・SR 9%・SSR 1%。重複卡換碎片。只使用遊戲金幣，不需付費。</p><label class="v400-toggle"><input id="v400Enable" type="checkbox"> 啟用球員卡能力加成</label><div class="v400-actions"><button id="v400Team">套用收藏夢幻隊</button><button id="v400Import">匯入舊收藏（一次）</button></div><p class="sub">夢幻隊需要收藏至少 9 位野手及 5 位投手。舊版收藏原為裝置共用，匯入會加入目前玩家。</p><div id="v400Notice" role="status"></div><div class="v400-actions"><button id="v400OwnedTab">我的收藏</button><button id="v400AllTab">完整圖鑑</button></div><div class="v400-filters"><input id="v400Search" placeholder="搜尋球員／球隊"><select id="v400Filter"><option value="all">全部稀有度</option><option>N</option><option>R</option><option>SR</option><option>SSR</option></select><select id="v400Role"><option value="all">全部位置</option><option value="bat">野手</option><option value="pitch">投手</option></select></div><div id="v400Grid"></div><button id="v400More">顯示更多</button><button id="v400Close" class="primary">關閉</button></div></div><div id="v400RevealOverlay" class="overlay hidden"><div class="modal v400-modal"><h2>卡包開封！</h2><div id="v400Reveal"></div><button id="v400RevealClose" class="primary">完成</button></div></div><div id="v400DetailOverlay" class="overlay hidden"><div class="modal v400-modal"><h2 id="v400DetailTitle"></h2><div id="v400Detail"></div><p id="v400DetailInfo"></p><div class="v400-actions"><button id="v400Train">升級 XP</button><button id="v400TrainShard">升級碎片</button></div><button id="v400DetailClose" class="primary">關閉</button></div></div>');
+  $('v400Starter').onclick=()=>v400OpenPack(true);$('v400Pack').onclick=()=>v400OpenPack(false);
+  $('v400Close').onclick=()=>{$('v400Center').classList.add('hidden');renderLineup()};
+  $('v400RevealClose').onclick=()=>$('v400RevealOverlay').classList.add('hidden');$('v400DetailClose').onclick=()=>$('v400DetailOverlay').classList.add('hidden');
+  $('v400Train').onclick=()=>{if(v400Train(v400Selected)){v400Render();v400ShowDetail(v400Selected)}};
+  $('v400TrainShard').onclick=()=>{if(v400Train(v400Selected,true)){v400Render();v400ShowDetail(v400Selected)}};
+  $('v400Enable').onchange=()=>{const s=v312Load();v400State(s).enabled=$('v400Enable').checked;v312Write(s);v400Render()};
+  $('v400Import').onclick=()=>{if(confirm('將裝置的舊版收藏匯入目前玩家？原資料保留。')&&v400Import())v400Render()};
+  $('v400Team').onclick=()=>{if(confirm('以收藏球員替換目前陣容與投手群？既有正式比賽續玩紀錄不會刪除。')&&v400Team()){$('v400Notice').textContent='已套用收藏夢幻隊！';v400Render()}};
+  const filter=()=>{$('v400Grid').dataset.limit='36';v400Render()};
+  $('v400OwnedTab').onclick=()=>{v400Tab='owned';filter()};$('v400AllTab').onclick=()=>{v400Tab='all';filter()};
+  $('v400Search').oninput=filter;$('v400Filter').onchange=filter;$('v400Role').onchange=filter;
+  $('v400More').onclick=()=>{$('v400Grid').dataset.limit=String((Number($('v400Grid').dataset.limit)||36)+36);v400Render()};
+}
+v400Install();
 })();
 </script>
 <script type="module" src="baseball-3d.js?v=311"></script>
