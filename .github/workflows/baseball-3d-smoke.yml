@@ -50,6 +50,10 @@ jobs:
               body=body.replace('function v144BeginHalfBreak(onFinish){',
                 'window.__qaBeginHalfBreak=cb=>v144BeginHalfBreak(cb);function v144BeginHalfBreak(onFinish){');
               body=body.replace('v306InstallMeter();', 'window.__qa306={grade:v306SwingGrade,feedback:v306SwingFeedback,meter:v306MeterValue,accuracy:v306PitchAccuracy};v306InstallMeter();');
+              body=body.replace('v306InstallMeter();', `window.__qa307={
+                start(){const saved={playing,halfMode,lineup,batIndex,bases,finishPA};playing=true;halfMode='bat';lineup=[{name:'QA打者',teamKey:'brothers'}];batIndex=0;bases=[null,null,null];window.__qa307Done=[];finishPA=(...args)=>window.__qa307Done.push(args);window.__qa307.restore=()=>{playing=saved.playing;halfMode=saved.halfMode;lineup=saved.lineup;batIndex=saved.batIndex;bases=saved.bases;finishPA=saved.finishPA};showHitThen('HR','全壘打',{distance:420,fence:400,exit:108,launch:30,spray:15,targetX:60,targetY:20,hang:4});},
+                pause(value){setGamePaused(value)}
+              };v306InstallMeter();`);
               await route.fulfill({response,body});
             });
             await page.goto('http://127.0.0.1:8999/baseball-game.html',{waitUntil:'domcontentloaded'});
@@ -82,6 +86,31 @@ jobs:
               console.log('V306 GAMEPLAY PASS',JSON.stringify(gameplay306));
               await page.evaluate(()=>document.getElementById('v306Feedback').classList.add('hidden'));
               await page.screenshot({path:'baseball-3d-smoke.png'});
+              // Real HR presentation; stub only the final scoring callback.
+              await page.evaluate(()=>window.__qa307.start());
+              await page.waitForFunction(()=>document.getElementById('scene').classList.contains('v307-hr-tracking'),null,{timeout:12000});
+              const hr=await page.evaluate(()=>{
+                const cam=document.getElementById('hitCam'),card=document.getElementById('v307HrCard');
+                const a=document.getElementById('flyball').getAnimations()[0];
+                return {distance:cam.dataset.hrDistance,duration:a.effect.getTiming().duration,
+                  text:card.textContent,visible:getComputedStyle(card).display!=='none'&&getComputedStyle(card).opacity==='1',
+                  done:window.__qa307Done.length};
+              });
+              if(hr.distance!=='420'||hr.duration!==2900||!hr.visible||!hr.text.includes('128.0 m')||hr.done!==0)
+                throw Error('V307 HR presentation failed '+JSON.stringify(hr));
+              await page.evaluate(()=>window.__qa307.pause(true));
+              const time1=await page.evaluate(()=>document.getElementById('flyball').getAnimations()[0].currentTime);
+              await page.waitForTimeout(350);
+              const time2=await page.evaluate(()=>document.getElementById('flyball').getAnimations()[0].currentTime);
+              if(Math.abs(time2-time1)>2)throw Error('V307 pause did not freeze ball');
+              await page.evaluate(()=>window.__qa307.pause(false));
+              await page.waitForTimeout(650);
+              await page.screenshot({path:'baseball-3d-home-run.png'});
+              await page.waitForFunction(()=>window.__qa307Done.length===1&&!document.getElementById('scene').classList.contains('v307-hr-tracking'),null,{timeout:12000});
+              const hrEnd=await page.evaluate(()=>({done:window.__qa307Done,hidden:document.getElementById('v307HrCard').classList.contains('hidden'),data:document.getElementById('hitCam').dataset.hrDistance||null}));
+              if(!hrEnd.hidden||hrEnd.data||hrEnd.done[0][0]!=='HR')throw Error('V307 HR finish failed '+JSON.stringify(hrEnd));
+              await page.evaluate(()=>window.__qa307.restore());
+              console.log('V307 HOME RUN PASS',JSON.stringify({hr,hrEnd,pauseDrift:time2-time1}));
               await page.evaluate(()=>{
                 const game=document.getElementById('gameApp');
                 const scene=document.getElementById('scene');
@@ -328,4 +357,5 @@ jobs:
             baseball-3d-iphone-batting.png
             baseball-3d-half-break.png
             baseball-3d-real-half-break.png
+            baseball-3d-home-run.png
           if-no-files-found: ignore
